@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - dandi/model*.py
-      - tools/pubschemata.py
 
 jobs:
   publish:
