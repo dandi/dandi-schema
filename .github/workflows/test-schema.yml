@@ -2,13 +2,7 @@ name: Test model schemata
 
 on:
   push:
-    paths:
-      - dandi/model*.py
-      - tools/pubschemata.py
   pull_request:
-    paths:
-      - dandi/model*.py
-      - tools/pubschemata.py
 
 jobs:
   publish:
@@ -18,16 +12,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Need history for `git describe`
-          path: dandi
+          path: dandischema
 
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: '3.8'
 
-      - name: Install dandi
+      - name: Install dandischema
         run: python -m pip install .
-        working-directory: dandi
+        working-directory: dandischema
 
       - name: Checkout dandi/schema
         uses: actions/checkout@v2
@@ -39,7 +33,7 @@ jobs:
         run: |
           dirs="$(echo releases/*)"
           echo "Following directories will be checked for differences: $dirs"
-          python ../dandi/tools/pubschemata.py releases
+          python ../dandischema/tools/pubschemata.py releases
           git status
           git add -A releases
           if ! git diff --cached --exit-code $dirs
