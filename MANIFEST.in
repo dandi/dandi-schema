@@ -2,6 +2,6 @@
 # built from sdists to have the version set in their metadata.
 include versioneer.py
 
-graft dandi
+graft dandischema
 
 global-exclude *.py[cod]
