@@ -16,7 +16,7 @@ from setuptools import setup
 
 if sys.version_info < (3,):
     raise RuntimeError(
-        "dandi-cli's setup.py requires python 3 or later. "
+        "dandischema's setup.py requires python 3 or later. "
         "You are using %s" % sys.version
     )
 
@@ -45,4 +45,4 @@ SETUP_REQUIRES = ["setuptools >= 38.3.0"]
 SETUP_REQUIRES += ["wheel"] if "bdist_wheel" in sys.argv else []
 
 if __name__ == "__main__":
-    setup(name="dandi", setup_requires=SETUP_REQUIRES, **setup_kw)
+    setup(name="dandischema", setup_requires=SETUP_REQUIRES, **setup_kw)
