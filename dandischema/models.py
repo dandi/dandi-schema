@@ -5,7 +5,16 @@ import json
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
-from pydantic import UUID4, BaseModel, ByteSize, EmailStr, Field, HttpUrl, validator
+from pydantic import (
+    UUID4,
+    BaseModel,
+    ByteSize,
+    EmailStr,
+    Field,
+    HttpUrl,
+    ValidationError,
+    validator,
+)
 from ruamel import yaml
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -401,6 +410,7 @@ class PropertyValue(DandiBaseModel):
         nskey="schema",
     )
 
+    schemaKey: Literal["PropertyValue"] = Field("PropertyValue", readOnly=True)
     _ldmeta = {"nskey": "schema"}
 
 
@@ -616,7 +626,7 @@ class Agent(DandiBaseModel):
     )
     name: str = Field(nskey="schema")
     url: Optional[HttpUrl] = Field(None, nskey="schema")
-    schemaKey: Literal["Software"] = Field("Agent", readOnly=True)
+    schemaKey: Literal["Agent"] = Field("Agent", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -635,6 +645,7 @@ class EthicsApproval(DandiBaseModel):
     contactPoint: ContactPoint = Field(
         description="Information about the ethics approval committee.", nskey="schema"
     )
+    schemaKey: Literal["EthicsApproval"] = Field("EthicsApproval", readOnly=True)
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
@@ -655,6 +666,7 @@ class Resource(DandiBaseModel):
         "This relation should satisfy: dandiset <relation> resource",
         nskey="dandi",
     )
+    schemaKey: Literal["Resource"] = Field("Resource", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -690,6 +702,9 @@ class AccessRequirements(DandiBaseModel):
         nskey="dandi",
         rangeIncludes="schema:Date",
     )
+    schemaKey: Literal["AccessRequirements"] = Field(
+        "AccessRequirements", readOnly=True
+    )
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
@@ -716,6 +731,28 @@ class AssetsSummary(DandiBaseModel):
     variableMeasured: Optional[List[str]] = Field(None, readOnly=True)
 
     species: List[SpeciesType] = Field(readOnly=True)
+    schemaKey: Literal["AssetsSummary"] = Field("AssetsSummary", readOnly=True)
+
+    _ldmeta = {
+        "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
+        "nskey": "dandi",
+    }
+
+
+class Equipment(DandiBaseModel):
+
+    identifier: Optional[Identifier] = Field(None, nskey="schema")
+    name: str = Field(
+        title="Title",
+        description="A name for the equipment.",
+        max_length=150,
+        nskey="schema",
+    )
+    description: Optional[str] = Field(
+        None, description="The description of the activity.", nskey="schema"
+    )
+
+    schemaKey: Literal["Equipment"] = Field("Equipment", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -744,6 +781,7 @@ class Activity(DandiBaseModel):
     wasAssociatedWith: Optional[
         List[Union[Person, Organization, Software, Agent]]
     ] = Field(None, nskey="prov")
+    used: Optional[List[Equipment]] = Field(None, nskey="prov")
 
     schemaKey: Literal["Activity"] = Field("Activity", readOnly=True)
 
@@ -821,6 +859,9 @@ class RelatedParticipant(DandiBaseModel):
         description="Indicates how the current participant is related to the other participant "
         "This relation should satisfy: Participant <relation> relatedParticipant",
         nskey="dandi",
+    )
+    schemaKey: Literal["RelatedParticipant"] = Field(
+        "RelatedParticipant", readOnly=True
     )
 
     _ldmeta = {
@@ -1010,7 +1051,9 @@ class DandisetMeta(CommonModel, Identifiable):
             if val.roleName and RoleType.ContactPerson in val.roleName:
                 contacts.append(val)
         if len(contacts) == 0:
-            raise ValueError("At least one contributor must have role ContactPerson")
+            raise ValidationError(
+                "At least one contributor must have role ContactPerson"
+            )
         return values
 
     id: str = Field(
@@ -1168,7 +1211,14 @@ class PublishedDandisetMeta(DandisetMeta, Publishable):
 
 
 class PublishedAssetMeta(AssetMeta, Publishable):
-    pass
+    @validator("digest")
+    def check_data(cls, values):
+        try:
+            if len(values["dandi:dandi-etag"] + values["dandi:sha2-256"]) != 96:
+                raise ValueError
+        except (KeyError, ValueError):
+            raise ValidationError("Digest must have both dandi-etag and sha2-256.")
+        return values
 
 
 def get_schema_version():
