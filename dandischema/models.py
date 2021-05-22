@@ -1055,12 +1055,16 @@ class DandisetMeta(CommonModel, Identifiable):
             raise ValueError("At least one contributor must have role ContactPerson")
         return values
 
+    """
+    Example pre validator for converting from one version
+    to another
     @validator("about", pre=True)
     def convert_genericabout(cls, values):
         for value in values:
             if value["schemaKey"] == "GenericType":
                 value["schemaKey"] = "Other"
         return values
+    """
 
     id: str = Field(
         description="Uniform resource identifier",
@@ -1101,13 +1105,13 @@ class DandisetMeta(CommonModel, Identifiable):
         min_items=1, description="Licenses associated with the item.", nskey="schema"
     )
 
-    citation: TempOptional[str] = Field(readOnly=True, nskey="schema")
+    citation: str = Field(readOnly=True, nskey="schema")
 
     # From assets
-    assetsSummary: TempOptional[AssetsSummary] = Field(readOnly=True, nskey="dandi")
+    assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: TempOptional[List[HttpUrl]] = Field(readOnly=True, nskey="dandi")
+    manifestLocation: List[HttpUrl] = Field(readOnly=True, nskey="dandi")
 
     version: str = Field(readOnly=True, nskey="schema")
 

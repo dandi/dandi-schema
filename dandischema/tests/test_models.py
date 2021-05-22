@@ -218,17 +218,23 @@ def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
     """
     publish_meta = {
         "datePublished": str(datetime.now().year),
-        "publishedBy": "https://doi.test.datacite.org/dois",
+        "publishedBy": {
+            "id": "urn:uuid:08fffc59-9f1b-44d6-8e02-6729d266d1b6",
+            "name": "DANDI publish",
+            "startDate": "2021-05-18T19:58:39.310338-04:00",
+            "endDate": "2021-05-18T19:58:39.310361-04:00",
+            "wasAssociatedWith": [
+                {
+                    "id": "RRID:SCR_017571",
+                    "name": "DANDI API",
+                    "version": "0.1.0",
+                    "schemaKey": "Software",
+                }
+            ],
+            "schemaKey": "PublishActivity",
+        },
         "version": version,
         "doi": f"{prefix}/dandi.{dandi_id}.{version}",
-        "assetsSummary": {
-            "numberOfBytes": 10,
-            "numberOfFiles": 1,
-            "dataStandard": [{"key": "value"}],
-            "approach": [{"key": "value"}],
-            "measurementTechnique": [{"key": "value"}],
-            "species": [{"key": "value"}],
-        },
     }
     return publish_meta
 
@@ -278,6 +284,18 @@ def test_dantimeta_1():
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
+        "citation": "Last, first (2021). Test citation.",
+        "assetsSummary": {
+            "numberOfBytes": 10,
+            "numberOfFiles": 1,
+            "dataStandard": [{"name": "NWB"}],
+            "approach": [{"name": "electrophysiology"}],
+            "measurementTechnique": [{"name": "two-photon microscopy technique"}],
+            "species": [{"name": "Human"}],
+        },
+        "manifestLocation": [
+            "https://api.dandiarchive.org/api/dandisets/999999/versions/draft/assets/"
+        ],
     }
 
     # should work for DandisetMeta but PublishedDandisetMeta should raise an error
@@ -290,7 +308,6 @@ def test_dantimeta_1():
         "datePublished",
         "publishedBy",
         "doi",
-        "assetsSummary",
     }
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,

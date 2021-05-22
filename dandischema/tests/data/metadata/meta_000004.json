@@ -414,5 +414,15 @@
     }
   ],
   "citation": "Chandravadia, Nand; Liang, Dehua; Schjetnan, Andrea Gomez Palacio; Carlson, April; Faraut, Mailys; Chung, Jeffrey M.; Reed, Chrystal M.; Dichter, Ben; Maoz, Uri; Kalia, Suneil K.; Valiante, Taufik A.; Mamelak, Adam N.; Rutishauser, Ueli (2021) A NWB-based dataset and processing pipeline of human single-neuron activity during a declarative memory task. Online: https://dandiarchive.org/000004/draft",
-  "version": "draft"
+  "version": "draft",
+  "assetsSummary": {
+    "numberOfBytes": 10,
+    "numberOfFiles": 1,
+    "dataStandard": [{"name": "NWB"}],
+    "approach": [{"name": "electrophysiology"}],
+    "measurementTechnique": [
+      {"name": "two-photon microscopy technique"}],
+    "species": [{"name": "Human"}]
+  },
+  "manifestLocation": ["https://api.dandiarchive.org/api/dandisets/000004/versions/draft/assets/"]
 }
