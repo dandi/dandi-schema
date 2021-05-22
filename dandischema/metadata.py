@@ -14,7 +14,7 @@ def generate_context():
         "@version": 1.1,
         "dandi": "http://schema.dandiarchive.org/",
         "dandiasset": "http://iri.dandiarchive.org/",
-        "DANDI": "http://identifiers.org/DANDI:",
+        "DANDI": "http://dandiarchive.org/dandiset/",
         "dct": "http://purl.org/dc/terms/",
         "owl": "http://www.w3.org/2002/07/owl#",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
