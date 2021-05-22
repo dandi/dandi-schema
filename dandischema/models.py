@@ -5,16 +5,7 @@ import json
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
-from pydantic import (
-    UUID4,
-    BaseModel,
-    ByteSize,
-    EmailStr,
-    Field,
-    HttpUrl,
-    ValidationError,
-    validator,
-)
+from pydantic import UUID4, BaseModel, ByteSize, EmailStr, Field, HttpUrl, validator
 from ruamel import yaml
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -324,6 +315,7 @@ class HandleKeyEnumEncoder(json.JSONEncoder):
 
 class DandiBaseModel(BaseModel):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
+    schemaKey: Literal["DandiBaseModel"] = Field("DandiBaseModel", readOnly=True)
 
     @classmethod
     def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
@@ -423,7 +415,7 @@ DANDI = str
 RRID = str
 
 
-class TypeModel(DandiBaseModel):
+class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
     identifier: Optional[Union[HttpUrl, str]] = Field(
@@ -435,47 +427,47 @@ class TypeModel(DandiBaseModel):
     name: Optional[str] = Field(
         description="The name of the item.", max_length=150, nskey="schema"
     )
-    schemaKey: Literal["GenericType"] = Field("GenericType", readOnly=True)
+    schemaKey: Literal["BaseType"] = Field("BaseType", readOnly=True)
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
 
-class AssayType(TypeModel):
+class AssayType(BaseType):
     """OBI based identifier for the assay(s) used"""
 
     schemaKey: Literal["AssayType"] = Field("AssayType", readOnly=True)
 
 
-class SampleType(TypeModel):
+class SampleType(BaseType):
     """OBI based identifier for the sample type used"""
 
     schemaKey: Literal["SampleType"] = Field("SampleType", readOnly=True)
 
 
-class Anatomy(TypeModel):
+class Anatomy(BaseType):
     """UBERON or other identifier for anatomical part studied"""
 
     schemaKey: Literal["Anatomy"] = Field("Anatomy", readOnly=True)
 
 
-class StrainType(TypeModel):
+class StrainType(BaseType):
     """Identifier for the strain of the sample"""
 
     schemaKey: Literal["StrainType"] = Field("StrainType", readOnly=True)
 
 
-class SexType(TypeModel):
+class SexType(BaseType):
     """Identifier for the sex of the sample"""
 
     schemaKey: Literal["SexType"] = Field("SexType", readOnly=True)
 
 
-class SpeciesType(TypeModel):
+class SpeciesType(BaseType):
     """Identifier for species of the sample"""
 
     schemaKey: Literal["SpeciesType"] = Field("SpeciesType", readOnly=True)
 
 
-class Disorder(TypeModel):
+class Disorder(BaseType):
     """Biolink, SNOMED, or other identifier for disorder studied"""
 
     dxdate: Optional[List[Union[date, datetime]]] = Field(
@@ -488,13 +480,19 @@ class Disorder(TypeModel):
     schemaKey: Literal["Disorder"] = Field("Disorder", readOnly=True)
 
 
-class ApproachType(TypeModel):
+class Other(BaseType):
+    """An object to capture any type for about"""
+
+    schemaKey: Literal["Other"] = Field("Other", readOnly=True)
+
+
+class ApproachType(BaseType):
     """Identifier for approach used"""
 
     schemaKey: Literal["ApproachType"] = Field("ApproachType", readOnly=True)
 
 
-class MeasurementTechniqueType(TypeModel):
+class MeasurementTechniqueType(BaseType):
     """Identifier for measurement technique used"""
 
     schemaKey: Literal["MeasurementTechniqueType"] = Field(
@@ -502,7 +500,7 @@ class MeasurementTechniqueType(TypeModel):
     )
 
 
-class StandardsType(TypeModel):
+class StandardsType(BaseType):
     """Identifier for data standard used"""
 
     schemaKey: Literal["StandardsType"] = Field("StandardsType", readOnly=True)
@@ -542,6 +540,7 @@ class Contributor(DandiBaseModel):
         description="Identifier associated with a sponsored or gift award",
         nskey="dandi",
     )
+    schemaKey: Literal["Contributor"] = Field("Contributor", readOnly=True)
 
 
 class Organization(Contributor):
@@ -963,6 +962,7 @@ BioSample.update_forward_refs()
 
 class Identifiable(DandiBaseModel):
     identifier: Optional[Identifier] = Field(readOnly=True, nskey="schema")
+    schemaKey: Literal["Identifiable"] = Field("Identifiable", readOnly=True)
 
 
 class CommonModel(DandiBaseModel):
@@ -985,7 +985,7 @@ class CommonModel(DandiBaseModel):
         description="Contributors to this item.",
         nskey="schema",
     )
-    about: Optional[List[Union[Disorder, Anatomy, TypeModel]]] = Field(
+    about: Optional[List[Union[Disorder, Anatomy, Other]]] = Field(
         None,
         title="Subject matter of the dataset",
         description="The subject matter of the content, such as disorders, brain anatomy.",
@@ -1031,6 +1031,7 @@ class CommonModel(DandiBaseModel):
     relatedResource: Optional[List[Resource]] = Field(None, nskey="dandi")
 
     wasGeneratedBy: Optional[List[Activity]] = Field(None, nskey="prov")
+    schemaKey: Literal["CommonModel"] = Field("CommonModel", readOnly=True)
 
     def json_dict(self):
         """
@@ -1045,15 +1046,20 @@ class DandisetMeta(CommonModel, Identifiable):
     """A body of structured information describing a DANDI dataset."""
 
     @validator("contributor")
-    def check_data(cls, values):
+    def contributor_musthave_contact(cls, values):
         contacts = []
         for val in values:
             if val.roleName and RoleType.ContactPerson in val.roleName:
                 contacts.append(val)
         if len(contacts) == 0:
-            raise ValidationError(
-                "At least one contributor must have role ContactPerson"
-            )
+            raise ValueError("At least one contributor must have role ContactPerson")
+        return values
+
+    @validator("about", pre=True)
+    def convert_genericabout(cls, values):
+        for value in values:
+            if value["schemaKey"] == "GenericType":
+                value["schemaKey"] = "Other"
         return values
 
     id: str = Field(
@@ -1197,6 +1203,7 @@ class Publishable(DandiBaseModel):
     url: HttpUrl = Field(
         readOnly=True, description="permalink to the item", nskey="schema"
     )
+    schemaKey: Literal["Publishable"] = Field("Publishable", readOnly=True)
 
 
 class PublishedDandisetMeta(DandisetMeta, Publishable):
@@ -1217,7 +1224,7 @@ class PublishedAssetMeta(AssetMeta, Publishable):
             if len(values["dandi:dandi-etag"] + values["dandi:sha2-256"]) != 96:
                 raise ValueError
         except (KeyError, ValueError):
-            raise ValidationError("Digest must have both dandi-etag and sha2-256.")
+            raise ValueError("Digest must have both dandi-etag and sha2-256.")
         return values
 
 

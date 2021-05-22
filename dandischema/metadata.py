@@ -3,6 +3,7 @@ from pathlib import Path
 
 import jsonschema
 
+from .consts import DANDI_SCHEMA_VERSION
 from . import models
 
 
@@ -90,3 +91,12 @@ def validate_asset_json(data, schema_dir):
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
     jsonschema.validate(data, schema)
+
+
+def validate(obj, schema_version=None, schema_key=None):
+    schema_key = schema_key or obj.get("schemaKey")
+    if schema_key is None:
+        raise ValueError("Provided object has no known schemaKey")
+    schema_version = schema_version or obj.get("schemaVersion") or DANDI_SCHEMA_VERSION
+    klass = getattr(models, schema_key)
+    klass(**obj)

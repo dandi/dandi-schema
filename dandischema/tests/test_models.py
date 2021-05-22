@@ -5,10 +5,12 @@ from pathlib import Path
 import random
 
 from jsonschema import Draft6Validator
+import pydantic
 from pydantic import ValidationError
 import pytest
 import requests
 
+from .. import models
 from ..models import (
     AccessType,
     AssetMeta,
@@ -441,3 +443,23 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
 
     # trying to poste datacite
     datacite_post(datacite, meta.doi)
+
+
+def test_schemakey():
+    typemap = {
+        "AssetMeta": "Asset",
+        "BareAssetMeta": "Asset",
+        "DandisetMeta": "Dandiset",
+        "PublishedAssetMeta": "Asset",
+        "PublishedDandisetMeta": "Dandiset",
+    }
+    for val in dir(models):
+        if val in ["BaseModel"]:
+            continue
+        klass = getattr(models, val)
+        if isinstance(klass, pydantic.main.ModelMetaclass):
+            assert "schemaKey" in klass.__fields__
+            if val in typemap:
+                assert typemap[val] == klass.__fields__["schemaKey"].default
+            else:
+                assert val == klass.__fields__["schemaKey"].default
