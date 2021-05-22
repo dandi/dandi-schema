@@ -207,7 +207,7 @@ def test_datacite(dandi_id, schema):
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
-def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
+def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
     """
     checking datacite objects for specific metadata dictionaries,
     posting datacite object and checking the status code
@@ -228,6 +228,25 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
+        "url": f"http://dandiarchive.org/dandiset/{dandi_id}",
+        "citation": "A_last, A_first 2021",
+        "manifestLocation": [
+            f"http://api.dandiarchive.org/api/dandisets/{dandi_id}/versions/draft/assets/"
+        ],
+        "assetsSummary": {
+            "schemaKey": "AssetsSummary",
+            "numberOfBytes": 10,
+            "numberOfFiles": 1,
+            "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
+            "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
+            "measurementTechnique": [
+                {
+                    "schemaKey": "MeasurementTechniqueType",
+                    "name": "two-photon microscopy technique",
+                }
+            ],
+            "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
+        },
     }
     meta_dict.update(_basic_publishmeta(dandi_id=dandi_id))
     meta_dict.update(additional_meta)

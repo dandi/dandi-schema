@@ -1,1 +1,214 @@
-{"id": "DANDI:000008/draft", "name": "Phenotypic variation within and across transcriptomic cell types in mouse motor cortex", "access": [{"status": "dandi:Open"}], "license": ["spdx:CC-BY-4.0"], "identifier": "DANDI:000008", "repository": "https://dandiarchive.org/", "contributor": [{"name": "Scala, Federico", "roleName": ["dandi:DataCollector", "dandi:Author", "dandi:ContactPerson"], "schemaKey": "Person", "includeInCitation": true}, {"name": "Kobak, Dmitry", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0002-5639-7209", "includeInCitation": true}, {"name": "Bernabucci, Matteo", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0003-4458-117X", "includeInCitation": true}, {"name": "Bernaerts, Yves", "roleName": ["dandi:Author"], "schemaKey": "Person", "includeInCitation": true}, {"name": "Cadwell, Cathryn Rene", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0003-1963-8285", "includeInCitation": true}, {"name": "Castro, Jesus Ramon", "roleName": ["dandi:Author"], "schemaKey": "Person", "includeInCitation": true}, {"name": "Hartmanis, Leonard", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0002-4922-8781", "includeInCitation": true}, {"name": "Jiang, Xiaolong", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0001-8066-1383", "includeInCitation": true}, {"name": "Laturnus, Sophie", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0001-9532-788X", "includeInCitation": true}, {"name": "Miranda, Elanine", "roleName": ["dandi:Author"], "schemaKey": "Person", "includeInCitation": true}, {"name": "Mulherkar, Shalaka", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0001-8736-527X", "includeInCitation": true}, {"name": "Tan, Zheng Huan", "roleName": ["dandi:Author"], "schemaKey": "Person", "includeInCitation": true}, {"name": "Yao, Zizhen", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0002-9361-5607", "includeInCitation": true}, {"name": "Zeng, Hongkui", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0002-0326-5878", "includeInCitation": true}, {"name": "Sandberg, Rickard", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0001-6473-1740", "includeInCitation": true}, {"name": "Berens, Philipp", "roleName": ["dandi:Author"], "schemaKey": "Person", "identifier": "0000-0002-0199-4727", "includeInCitation": true}, {"name": "Tolias, Andreas Savas", "roleName": ["dandi:Author", "dandi:ContactPerson"], "schemaKey": "Person", "identifier": "0000-0002-4305-6376", "includeInCitation": true}], "description": "Data from the Tolias Lab shared in the BICCN project", "schemaVersion": "0.3.0", "relatedResource": [{"url": "https://www.biorxiv.org/content/10.1101/2020.02.03.929158v1.full", "relation": "dandi:IsDescribedBy", "identifier": "doi:10.1101/2020.02.03.929158"}]}
+{
+  "id": "DANDI:000008/draft",
+  "schemaKey": "Dandiset",
+  "schemaVersion": "0.3.2",
+  "name": "Phenotypic variation within and across transcriptomic cell types in mouse motor cortex",
+  "description": "Data from the Tolias Lab shared in the BICCN project",
+  "contributor": [
+    {
+      "schemaKey": "Person",
+      "name": "Scala, Federico",
+      "roleName": [
+        "dandirole:DataCollector",
+        "dandirole:Author",
+        "dandirole:ContactPerson"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0002-5639-7209",
+      "name": "Kobak, Dmitry",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0003-4458-117X",
+      "name": "Bernabucci, Matteo",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "name": "Bernaerts, Yves",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0003-1963-8285",
+      "name": "Cadwell, Cathryn Rene",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "name": "Castro, Jesus Ramon",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0002-4922-8781",
+      "name": "Hartmanis, Leonard",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0001-8066-1383",
+      "name": "Jiang, Xiaolong",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0001-9532-788X",
+      "name": "Laturnus, Sophie",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "name": "Miranda, Elanine",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0001-8736-527X",
+      "name": "Mulherkar, Shalaka",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "name": "Tan, Zheng Huan",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0002-9361-5607",
+      "name": "Yao, Zizhen",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0002-0326-5878",
+      "name": "Zeng, Hongkui",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0001-6473-1740",
+      "name": "Sandberg, Rickard",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0002-0199-4727",
+      "name": "Berens, Philipp",
+      "roleName": [
+        "dandirole:Author"
+      ],
+      "includeInCitation": true
+    },
+    {
+      "schemaKey": "Person",
+      "identifier": "0000-0002-4305-6376",
+      "name": "Tolias, Andreas Savas",
+      "roleName": [
+        "dandirole:Author",
+        "dandirole:ContactPerson"
+      ],
+      "includeInCitation": true
+    }
+  ],
+  "license": [
+    "spdx:CC-BY-4.0"
+  ],
+  "access": [
+    {
+      "schemaKey": "AccessRequirements",
+      "status": "dandi:OpenAccess"
+    }
+  ],
+  "url": "https://dandiarchive.org/000008/draft",
+  "repository": "https://dandiarchive.org/",
+  "relatedResource": [
+    {
+      "schemaKey": "Resource",
+      "identifier": "doi:10.1101/2020.02.03.929158",
+      "url": "https://www.biorxiv.org/content/10.1101/2020.02.03.929158v1.full",
+      "relation": "dandi:IsDescribedBy"
+    }
+  ],
+  "identifier": "DANDI:000008",
+  "citation": "Scala, Federico; Kobak, Dmitry; Bernabucci, Matteo; Bernaerts, Yves; Cadwell, Cathryn Rene; Castro, Jesus Ramon; Hartmanis, Leonard; Jiang, Xiaolong; Laturnus, Sophie; Miranda, Elanine; Mulherkar, Shalaka; Tan, Zheng Huan; Yao, Zizhen; Zeng, Hongkui; Sandberg, Rickard; Berens, Philipp; Tolias, Andreas Savas (2021) Phenotypic variation within and across transcriptomic cell types in mouse motor cortex. Online: https://dandiarchive.org/000008/draft",
+  "assetsSummary": {
+    "schemaKey": "AssetsSummary",
+    "numberOfBytes": 10,
+    "numberOfFiles": 1,
+    "dataStandard": [
+      {
+        "schemaKey": "StandardsType",
+        "name": "NWB"
+      }
+    ],
+    "approach": [
+      {
+        "schemaKey": "ApproachType",
+        "name": "electrophysiology"
+      }
+    ],
+    "measurementTechnique": [
+      {
+        "schemaKey": "MeasurementTechniqueType",
+        "name": "two-photon microscopy technique"
+      }
+    ],
+    "species": [
+      {
+        "schemaKey": "SpeciesType",
+        "name": "Human"
+      }
+    ]
+  },
+  "manifestLocation": [
+    "https://api.dandiarchive.org/api/dandisets/000008/versions/draft/assets/"
+  ],
+  "version": "draft"
+}
