@@ -231,10 +231,8 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
     meta_dict.update(_basic_publishmeta(dandi_id=dandi_id))
     meta_dict.update(additional_meta)
 
-    # creating PublishedDandisetMeta from the dictionary
-    meta = PublishedDandisetMeta(**meta_dict)
     # creating and validating datacite objects
-    datacite = to_datacite(meta)
+    datacite = to_datacite(**meta_dict)
     Draft6Validator.check_schema(schema)
     validator = Draft6Validator(schema)
     validator.validate(datacite["data"]["attributes"])

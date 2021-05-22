@@ -52,8 +52,9 @@ DATACITE_MAP = dict([(el.lower(), el) for el in DATACITE_IDENTYPE])
 
 
 def to_datacite(meta):
-    """Convert PublishedDandisetMeta to Datacite"""
-    assert isinstance(meta, PublishedDandisetMeta)
+    """Convert published Dandiset metadata to Datacite"""
+    if not isinstance(meta, PublishedDandisetMeta):
+        meta = PublishedDandisetMeta(**meta)
 
     attributes = {}
     attributes["identifiers"] = [
