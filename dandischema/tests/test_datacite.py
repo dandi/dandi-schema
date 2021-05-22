@@ -233,7 +233,7 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
     meta_dict.update(additional_meta)
 
     # creating and validating datacite objects
-    datacite = to_datacite(**meta_dict)
+    datacite = to_datacite(meta_dict)
     Draft6Validator.check_schema(schema)
     validator = Draft6Validator(schema)
     validator.validate(datacite["data"]["attributes"])
