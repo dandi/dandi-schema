@@ -7,6 +7,7 @@ import pytest
 
 from ..consts import DANDI_SCHEMA_VERSION
 from ..metadata import (
+    migrate_001,
     publish_model_schemata,
     validate,
     validate_asset_json,
@@ -87,7 +88,9 @@ def test_pydantic_validation(schema_dir):
         (
             {
                 "schemaKey": "Dandiset",
-                "contributor": [{"schemaKey": "Person", "roleName": ["dandi:Author"]}],
+                "contributor": [
+                    {"schemaKey": "Person", "roleName": ["dandirole:Author"]}
+                ],
             },
             "PublishedDandisetMeta",
             {
@@ -114,7 +117,7 @@ def test_pydantic_validation(schema_dir):
                     {
                         "schemaKey": "Person",
                         "name": "Last, first",
-                        "roleName": ["dandi:ContactPerson"],
+                        "roleName": ["dandirole:ContactPerson"],
                     }
                 ],
             },
@@ -221,3 +224,15 @@ def test_requirements(obj, schema_key, missingfields):
     with pytest.raises(ValidationError) as exc:
         validate(obj, schema_key=schema_key)
     assert set([el["loc"][0] for el in exc.value.errors()]) == missingfields
+
+
+def test_migrate(schema_dir):
+    with (METADATA_DIR / "meta_000004old.json").open() as fp:
+        data_as_dict = json.load(fp)
+    with pytest.raises(ValidationError) as exc:
+        validate(data_as_dict)
+    badfields = {"contributor", "access"}
+    assert set([el["loc"][0] for el in exc.value.errors()]) == badfields
+    newmeta = migrate_001(data_as_dict)
+    assert newmeta["schemaVersion"] == DANDI_SCHEMA_VERSION
+    validate_dandiset_json(newmeta, schema_dir)

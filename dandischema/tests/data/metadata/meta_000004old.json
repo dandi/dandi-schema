@@ -1,7 +1,8 @@
 {
   "id": "DANDI:000004/draft",
   "schemaKey": "Dandiset",
-  "schemaVersion": "0.3.2",
+  "identifier": "DANDI:000004",
+  "schemaVersion": "0.3.0",
   "name": "A NWB-based dataset and processing pipeline of human single-neuron activity during a declarative memory task",
   "description": "A challenge for data sharing in systems neuroscience is the multitude of different data formats used. Neurodata Without Borders: Neurophysiology 2.0 (NWB:N) has emerged as a standardized data format for the storage of cellular-level data together with meta-data, stimulus information, and behavior. A key next step to facilitate NWB:N adoption is to provide easy to use processing pipelines to import/export data from/to NWB:N. Here, we present a NWB-formatted dataset of 1863 single neurons recorded from the medial temporal lobes of 59 human subjects undergoing intracranial monitoring while they performed a recognition memory task. We provide code to analyze and export/import stimuli, behavior, and electrophysiological recordings to/from NWB in both MATLAB and Python. The data files are NWB:N compliant, which affords interoperability between programming languages and operating systems. This combined data and code release is a case study for how to utilize NWB:N for human single-neuron recordings and enables easy re-use of this hard-to-obtain data for both teaching and research on the mechanisms of human memory.",
   "contributor": [
@@ -11,21 +12,21 @@
       "name": "Chandravadia, Nand",
       "email": "nandc10@gmail.com",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ContactPerson",
-        "dandirole:DataCurator",
-        "dandirole:DataManager",
-        "dandirole:FormalAnalysis",
-        "dandirole:Investigation",
-        "dandirole:Maintainer",
-        "dandirole:Methodology",
-        "dandirole:ProjectLeader",
-        "dandirole:ProjectManager",
-        "dandirole:ProjectMember",
-        "dandirole:Researcher",
-        "dandirole:Software",
-        "dandirole:Validation",
-        "dandirole:Visualization"
+        "dandi:Author",
+        "dandi:ContactPerson",
+        "dandi:DataCurator",
+        "dandi:DataManager",
+        "dandi:FormalAnalysis",
+        "dandi:Investigation",
+        "dandi:Maintainer",
+        "dandi:Methodology",
+        "dandi:ProjectLeader",
+        "dandi:ProjectManager",
+        "dandi:ProjectMember",
+        "dandi:Researcher",
+        "dandi:Software",
+        "dandi:Validation",
+        "dandi:Visualization"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -41,11 +42,11 @@
       "name": "Liang, Dehua",
       "email": "liang134@mail.chapman.edu",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:Methodology",
-        "dandirole:ProjectMember",
-        "dandirole:Software",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:Methodology",
+        "dandi:ProjectMember",
+        "dandi:Software",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -62,10 +63,10 @@
       "name": "Schjetnan, Andrea Gomez Palacio",
       "email": "Andrea.Schjetan@uhnresearch.ca",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:DataCollector",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:DataCollector",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -82,10 +83,10 @@
       "name": "Carlson, April",
       "email": "april.carlson@tufts.edu",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:DataCurator",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:DataCurator",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -101,10 +102,10 @@
       "name": "Faraut, Mailys",
       "email": "mailyscm.faraut@gmail.com",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:DataCollector",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:DataCollector",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -120,9 +121,9 @@
       "name": "Chung, Jeffrey M.",
       "email": "Jeffrey.Chung@cshs.org",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -138,9 +139,9 @@
       "name": "Reed, Chrystal M.",
       "email": "Chrystal.Reed@csmc.edu",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -156,10 +157,10 @@
       "name": "Dichter, Ben",
       "email": "ben.dichter@gmail.com",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:Software",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:Software",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -180,10 +181,10 @@
       "name": "Maoz, Uri",
       "email": "maoz.uri@gmail.com",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:Conceptualization",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:Conceptualization",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -204,9 +205,9 @@
       "name": "Kalia, Suneil K.",
       "email": "suneil.kalia@uhn.ca",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -227,9 +228,9 @@
       "name": "Valiante, Taufik A.",
       "email": "Taufik.Valiante@uhn.ca",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -250,9 +251,9 @@
       "name": "Mamelak, Adam N.",
       "email": "Adam.Mamelak@cshs.org",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ProjectMember",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:ProjectMember",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -269,14 +270,14 @@
       "name": "Rutishauser, Ueli",
       "email": "Ueli.Rutishauser@cshs.org",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:Conceptualization",
-        "dandirole:FundingAcquisition",
-        "dandirole:ProjectMember",
-        "dandirole:Resources",
-        "dandirole:Software",
-        "dandirole:Supervision",
-        "dandirole:Validation"
+        "dandi:Author",
+        "dandi:Conceptualization",
+        "dandi:FundingAcquisition",
+        "dandi:ProjectMember",
+        "dandi:Resources",
+        "dandi:Software",
+        "dandi:Supervision",
+        "dandi:Validation"
       ],
       "includeInCitation": true,
       "affiliation": [
@@ -311,7 +312,7 @@
       "schemaKey": "Organization",
       "name": "Stroke, National Institute of Neurological Disorders and",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false,
       "awardNumber": "U01NS103792"
@@ -320,7 +321,7 @@
       "schemaKey": "Organization",
       "name": "Foundation, National Science",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false,
       "awardNumber": "1554105"
@@ -329,7 +330,7 @@
       "schemaKey": "Organization",
       "name": "Health, National Institute of Mental",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false,
       "awardNumber": "R01MH110831"
@@ -338,7 +339,7 @@
       "schemaKey": "Organization",
       "name": "Neuroscience, McKnight Endowment for",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false
     },
@@ -346,7 +347,7 @@
       "schemaKey": "Organization",
       "name": "Foundation, NARSAD Young Investigator grant from the Brain & Behavior Research",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false
     },
@@ -354,7 +355,7 @@
       "schemaKey": "Organization",
       "name": "Foundation, Kavli",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false
     },
@@ -362,7 +363,7 @@
       "schemaKey": "Organization",
       "name": "initiative, BRAIN",
       "roleName": [
-        "dandirole:Sponsor"
+        "dandi:Sponsor"
       ],
       "includeInCitation": false,
       "awardNumber": "U19NS104590"
@@ -391,10 +392,10 @@
   "access": [
     {
       "schemaKey": "AccessRequirements",
-      "status": "dandi:OpenAccess"
+      "status": "dandi:Open"
     }
   ],
-  "url": "https://dandiarchive.org/000004/draft",
+  "url": "https://dandiarchive.org/dandiset/000004/draft",
   "repository": "https://dandiarchive.org/",
   "relatedResource": [
     {
@@ -412,39 +413,16 @@
       "relation": "dandi:IsDescribedBy"
     }
   ],
-  "identifier": "DANDI:000004",
   "citation": "Chandravadia, Nand; Liang, Dehua; Schjetnan, Andrea Gomez Palacio; Carlson, April; Faraut, Mailys; Chung, Jeffrey M.; Reed, Chrystal M.; Dichter, Ben; Maoz, Uri; Kalia, Suneil K.; Valiante, Taufik A.; Mamelak, Adam N.; Rutishauser, Ueli (2021) A NWB-based dataset and processing pipeline of human single-neuron activity during a declarative memory task. Online: https://dandiarchive.org/000004/draft",
+  "version": "draft",
   "assetsSummary": {
-    "schemaKey": "AssetsSummary",
     "numberOfBytes": 10,
     "numberOfFiles": 1,
-    "dataStandard": [
-      {
-        "schemaKey": "StandardsType",
-        "name": "NWB"
-      }
-    ],
-    "approach": [
-      {
-        "schemaKey": "ApproachType",
-        "name": "electrophysiology"
-      }
-    ],
+    "dataStandard": [{"name": "NWB"}],
+    "approach": [{"name": "electrophysiology"}],
     "measurementTechnique": [
-      {
-        "schemaKey": "MeasurementTechniqueType",
-        "name": "two-photon microscopy technique"
-      }
-    ],
-    "species": [
-      {
-        "schemaKey": "SpeciesType",
-        "name": "Human"
-      }
-    ]
+      {"name": "two-photon microscopy technique"}],
+    "species": [{"name": "Human"}]
   },
-  "manifestLocation": [
-    "https://api.dandiarchive.org/api/dandisets/000004/versions/draft/assets/"
-  ],
-  "version": "draft"
+  "manifestLocation": ["https://api.dandiarchive.org/api/dandisets/000004/versions/draft/assets/"]
 }

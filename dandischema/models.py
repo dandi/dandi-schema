@@ -296,10 +296,10 @@ class Disorder(BaseType):
     schemaKey: Literal["Disorder"] = Field("Disorder", readOnly=True)
 
 
-class Other(BaseType):
+class GenericType(BaseType):
     """An object to capture any type for about"""
 
-    schemaKey: Literal["Other"] = Field("Other", readOnly=True)
+    schemaKey: Literal["GenericType"] = Field("GenericType", readOnly=True)
 
 
 class ApproachType(BaseType):
@@ -796,7 +796,7 @@ class CommonModel(DandiBaseModel):
         description="Contributors to this item.",
         nskey="schema",
     )
-    about: Optional[List[Union[Disorder, Anatomy, Other]]] = Field(
+    about: Optional[List[Union[Disorder, Anatomy, GenericType]]] = Field(
         None,
         title="Subject matter of the dataset",
         description="The subject matter of the content, such as disorders, brain anatomy.",
@@ -827,7 +827,7 @@ class CommonModel(DandiBaseModel):
     # Linking to this dandiset or the larger thing
     access: List[AccessRequirements] = Field(
         title="Access information",
-        default_factory=lambda: [AccessRequirements(status=AccessType.Open)],
+        default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
         nskey="dandi",
     )
     url: Optional[HttpUrl] = Field(
@@ -865,17 +865,6 @@ class DandisetMeta(CommonModel):
         if len(contacts) == 0:
             raise ValueError("At least one contributor must have role ContactPerson")
         return values
-
-    """
-    Example pre validator for converting from one version
-    to another
-    @validator("about", pre=True)
-    def convert_genericabout(cls, values):
-        for value in values:
-            if value["schemaKey"] == "GenericType":
-                value["schemaKey"] = "Other"
-        return values
-    """
 
     id: str = Field(
         description="Uniform resource identifier",

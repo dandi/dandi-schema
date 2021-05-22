@@ -95,7 +95,7 @@ def to_datacite(meta):
     contributors = []
     creators = []
     for contr_el in meta.contributor:
-        if RoleType("dandi:Sponsor") in contr_el.roleName:
+        if RoleType("dandirole:Sponsor") in contr_el.roleName:
             # no info about "funderIdentifierType", "awardUri", "awardTitle"
             dict_fund = {"funderName": contr_el.name}
             if contr_el.identifier:
@@ -104,7 +104,7 @@ def to_datacite(meta):
                 dict_fund["awardNumber"] = contr_el.awardNumber
             attributes.setdefault("fundingReferences", []).append(dict_fund)
             # if no more roles, it shouldn't be added to creators or contributors
-            contr_el.roleName.remove(RoleType("dandi:Sponsor"))
+            contr_el.roleName.remove(RoleType("dandirole:Sponsor"))
             if not contr_el.roleName:
                 continue
 
@@ -128,11 +128,11 @@ def to_datacite(meta):
         elif isinstance(contr_el, Organization):
             contr_dict["nameType"] = "Organizational"
 
-        if RoleType("dandi:Author") in getattr(contr_el, "roleName"):
+        if RoleType("dandirole:Author") in getattr(contr_el, "roleName"):
             create_dict = deepcopy(contr_dict)
             create_dict["creatorName"] = create_dict.pop("contributorName")
             creators.append(create_dict)
-            contr_el.roleName.remove(RoleType("dandi:Author"))
+            contr_el.roleName.remove(RoleType("dandirole:Author"))
             # if no more roles, it shouldn't be added to contributors
             if not contr_el.roleName:
                 continue

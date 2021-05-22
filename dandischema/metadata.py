@@ -10,9 +10,10 @@ from . import models
 def generate_context():
     import pydantic
 
-    fields = {
+    field_preamble = {
         "@version": 1.1,
         "dandi": "http://schema.dandiarchive.org/",
+        "dandirole": "http://schema.dandiarchive.org/roles/",
         "dandiasset": "http://iri.dandiarchive.org/",
         "DANDI": "http://dandiarchive.org/dandiset/",
         "dct": "http://purl.org/dc/terms/",
@@ -34,6 +35,7 @@ def generate_context():
         "PATO": "http://purl.obolibrary.org/obo/PATO_",
         "spdx": "http://spdx.org/licenses/",
     }
+    fields = {}
     for val in dir(models):
         klass = getattr(models, val)
         if not isinstance(klass, pydantic.main.ModelMetaclass):
@@ -62,7 +64,9 @@ def generate_context():
         fields[item.value] = {"@id": item.value, "@nest": "digest"}
     fields["Dandiset"] = "dandi:Dandiset"
     fields["Asset"] = "dandi:Asset"
-    return {"@context": fields}
+    fields = {k: fields[k] for k in sorted(fields)}
+    field_preamble.update(**fields)
+    return {"@context": field_preamble}
 
 
 def publish_model_schemata(releasedir):
@@ -104,3 +108,17 @@ def validate(obj, schema_version=None, schema_key=None):
     schema_version = schema_version or obj.get("schemaVersion") or DANDI_SCHEMA_VERSION
     klass = getattr(models, schema_key)
     klass(**obj)
+
+
+def migrate_001(obj):
+    schema_version = obj.get("schemaVersion")
+    if schema_version == DANDI_SCHEMA_VERSION:
+        return obj
+    for contrib in obj["contributor"]:
+        contrib["roleName"] = [
+            val.replace("dandi:", "dandirole:") for val in contrib["roleName"]
+        ]
+    for access in obj["access"]:
+        access["status"] = "dandi:OpenAccess"
+    obj["schemaVersion"] = DANDI_SCHEMA_VERSION
+    return obj

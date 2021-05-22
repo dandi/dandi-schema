@@ -143,9 +143,12 @@ def test_datacite(dandi_id, schema):
                 "contributor": [
                     {
                         "name": "A_last, A_first",
-                        "roleName": [RoleType("dandi:ContactPerson")],
+                        "roleName": [RoleType("dandirole:ContactPerson")],
                     },
-                    {"name": "B_last, B_first", "roleName": [RoleType("dandi:Author")]},
+                    {
+                        "name": "B_last, B_first",
+                        "roleName": [RoleType("dandirole:Author")],
+                    },
                 ],
             },
             {
@@ -162,11 +165,11 @@ def test_datacite(dandi_id, schema):
                 "contributor": [
                     {
                         "name": "A_last, A_first",
-                        "roleName": [RoleType("dandi:ContactPerson")],
+                        "roleName": [RoleType("dandirole:ContactPerson")],
                     },
                     {
                         "name": "B_last, B_first",
-                        "roleName": [RoleType("dandi:Sponsor")],
+                        "roleName": [RoleType("dandirole:Sponsor")],
                     },
                 ],
             },
@@ -183,13 +186,13 @@ def test_datacite(dandi_id, schema):
                     {
                         "name": "A_last, A_first",
                         "roleName": [
-                            RoleType("dandi:Author"),
-                            RoleType("dandi:Software"),
+                            RoleType("dandirole:Author"),
+                            RoleType("dandirole:Software"),
                         ],
                     },
                     {
                         "name": "B_last, B_first",
-                        "roleName": [RoleType("dandi:ContactPerson")],
+                        "roleName": [RoleType("dandirole:ContactPerson")],
                     },
                 ],
             },
@@ -223,7 +226,7 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
         "contributor": [
             {
                 "name": "A_last, A_first",
-                "roleName": [RoleType("dandi:ContactPerson")],
+                "roleName": [RoleType("dandirole:ContactPerson")],
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
@@ -255,23 +258,3 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
 
     # trying to poste datacite
     datacite_post(datacite, meta_dict["doi"])
-
-
-def test_schemakey():
-    typemap = {
-        "AssetMeta": "Asset",
-        "BareAssetMeta": "Asset",
-        "DandisetMeta": "Dandiset",
-        "PublishedAssetMeta": "Asset",
-        "PublishedDandisetMeta": "Dandiset",
-    }
-    for val in dir(models):
-        if val in ["BaseModel"]:
-            continue
-        klass = getattr(models, val)
-        if isinstance(klass, pydantic.main.ModelMetaclass):
-            assert "schemaKey" in klass.__fields__
-            if val in typemap:
-                assert typemap[val] == klass.__fields__["schemaKey"].default
-            else:
-                assert val == klass.__fields__["schemaKey"].default
