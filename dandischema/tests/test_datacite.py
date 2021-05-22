@@ -254,7 +254,7 @@ def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
                 assert attr[key] == el_flds
 
     # trying to poste datacite
-    datacite_post(datacite, meta.doi)
+    datacite_post(datacite, meta_dict["doi"])
 
 
 def test_schemakey():
