@@ -97,6 +97,10 @@ def validate(obj, schema_version=None, schema_key=None):
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
+    if schema_key == "Dandiset":
+        schema_key = "DandisetMeta"
+    elif schema_key == "Asset":
+        schema_key = "AssetMeta"
     schema_version = schema_version or obj.get("schemaVersion") or DANDI_SCHEMA_VERSION
     klass = getattr(models, schema_key)
     klass(**obj)

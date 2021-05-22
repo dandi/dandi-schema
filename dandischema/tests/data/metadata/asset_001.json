@@ -1,5 +1,6 @@
 {
   "id": "dandiasset:0b0a1a0b-e3ea-4cf6-be94-e02c830d54be",
+  "identifier": "0b0a1a0b-e3ea-4cf6-be94-e02c830d54be",
   "schemaVersion": "0.3.2",
   "keywords": [
     "test",
@@ -86,5 +87,6 @@
       "schemaKey": "Participant"
     }
   ],
-  "schemaKey": "Asset"
+  "schemaKey": "Asset",
+  "path": "/path/for/asset"
 }
