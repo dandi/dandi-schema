@@ -184,5 +184,5 @@ def to_datacite(meta):
     if getattr(meta, "keywords"):
         attributes["subjects"] = [{"subject": el} for el in meta.keywords]
 
-    datacite_dict = {"data": {"id": doi, "type": "dois", "attributes": attributes}}
+    datacite_dict = {"data": {"id": meta.doi, "type": "dois", "attributes": attributes}}
     return datacite_dict
