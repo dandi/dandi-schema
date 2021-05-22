@@ -5,12 +5,10 @@ from pathlib import Path
 import random
 
 from jsonschema import Draft6Validator
-import pydantic
 import pytest
 import requests
 
 from ..datacite import to_datacite
-from .. import models
 from ..models import LicenseType, PublishedDandisetMeta, RoleType
 
 
