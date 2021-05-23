@@ -6,7 +6,6 @@ import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
 from pydantic import UUID4, BaseModel, ByteSize, EmailStr, Field, HttpUrl, validator
-from ruamel import yaml
 
 from .consts import DANDI_SCHEMA_VERSION
 from .model_types import (
