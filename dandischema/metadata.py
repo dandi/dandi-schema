@@ -98,6 +98,26 @@ def validate_asset_json(data, schema_dir):
 
 
 def validate(obj, schema_version=None, schema_key=None):
+    """Validate object using pydantic
+    
+    Parameters
+    ----------
+    schema_version: str, optional
+       Version of schema to validate against.  If not specified, the schema version specified in
+       `schemaVersion` attribute of object will be used, and if not present - our current DANDI_SCHEMA_VERSION
+    schema_key: str, optional
+        Name of the schema key to be used, if not specified, `schemaKey` of the object will be consulted
+        
+     Returns
+     -------
+     None
+     
+     Raises
+     --------
+     ValueError:
+        if no schema_key is provided and object doesn't provide schemaKey
+     ValidationError
+        if obj fails validation
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")

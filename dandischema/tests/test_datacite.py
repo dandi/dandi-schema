@@ -55,9 +55,9 @@ def schema():
 
 
 def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
-    """
-    adding basic info required by PublishedDandisetMeta in addition to
-    fields required by DandisetMeta
+    """Return extra metadata required by PublishedDandisetMeta 
+    
+    Returned fields are additional to fields required by DandisetMeta
     """
     publish_meta = {
         "datePublished": str(datetime.now().year),
