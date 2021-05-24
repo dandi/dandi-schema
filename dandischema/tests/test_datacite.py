@@ -13,7 +13,7 @@ from ..models import LicenseType, PublishedDandisetMeta, RoleType
 
 
 def datacite_post(datacite, doi):
-    """ posting the datacite object and checking the status of the requests"""
+    """Post the datacite object and check the status of the request"""
 
     # removing doi in case it exists
     _clean_doi(doi)
@@ -36,7 +36,7 @@ def datacite_post(datacite, doi):
 
 
 def _clean_doi(doi):
-    """removing doi, ignoring the status code"""
+    """Remove doi. Status code is ignored"""
     requests.delete(
         f"https://api.test.datacite.org/dois/{doi}",
         auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),

@@ -25,6 +25,8 @@ def schema_dir(tmp_path_factory):
 def test_asset(schema_dir):
     with (METADATA_DIR / "asset_001.json").open() as fp:
         data_as_dict = json.load(fp)
+    # overload (here and below) schemaVersion until we support automagic schema migrations
+    # under assumption that the 0.3.2 schema would be forward compatible
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
     validate_asset_json(data_as_dict, schema_dir)
 
