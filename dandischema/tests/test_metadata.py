@@ -235,7 +235,7 @@ def test_requirements(obj, schema_key, missingfields):
     ],
 )
 def test_migrate_errors(obj, target):
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValueError):
         migrate(obj, to_version=target)
 
 
