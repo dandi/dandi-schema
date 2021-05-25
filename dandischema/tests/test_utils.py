@@ -1,6 +1,6 @@
 import pytest
 
-from ..utils import name2title
+from ..utils import name2title, version2tuple
 
 
 @pytest.mark.parametrize(
@@ -21,3 +21,21 @@ from ..utils import name2title
 )
 def test_name2title(name, title):
     assert name2title(name) == title
+
+
+@pytest.mark.parametrize(
+    "ver,error",
+    [
+        ("ContactPoint", True),
+        ("0.1.2", False),
+        ("0.12.20", False),
+        ("0.1.2a", True),
+        ("0.1.2-rc1", True),
+    ],
+)
+def test_version(ver, error):
+    if error:
+        with pytest.raises(ValueError):
+            version2tuple(ver)
+    else:
+        assert len(version2tuple(ver)) == 3

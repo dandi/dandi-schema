@@ -3,8 +3,9 @@ from pathlib import Path
 
 import jsonschema
 
-from .consts import DANDI_SCHEMA_VERSION
+from .consts import ALLOWED_INPUT_SCHEMAS, ALLOWED_TARGET_SCHEMAS, DANDI_SCHEMA_VERSION
 from . import models
+from .utils import version2tuple
 
 
 def generate_context():
@@ -129,17 +130,24 @@ def validate(obj, schema_version=None, schema_key=None):
     klass(**obj)
 
 
-def migrate_001(obj):
+def migrate(obj, to_version=DANDI_SCHEMA_VERSION):
+    if to_version not in ALLOWED_TARGET_SCHEMAS:
+        raise ValueError(f"Current target schemas: {ALLOWED_TARGET_SCHEMAS}.")
     schema_version = obj.get("schemaVersion")
     if schema_version == DANDI_SCHEMA_VERSION:
         return obj
-    for contrib in obj["contributor"]:
-        contrib["roleName"] = [
-            val.replace("dandi:", "dcite:") for val in contrib["roleName"]
-        ]
-    for contrib in obj["relatedResource"]:
-        contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
-    for access in obj["access"]:
-        access["status"] = "dandi:OpenAccess"
-    obj["schemaVersion"] = DANDI_SCHEMA_VERSION
+    if schema_version not in ALLOWED_INPUT_SCHEMAS:
+        raise ValueError(f"Current input schemas supported: {ALLOWED_INPUT_SCHEMAS}.")
+    if version2tuple(schema_version) > version2tuple(to_version):
+        raise ValueError(f"Cannot migrate from {schema_version} to lower {to_version}.")
+    if version2tuple(schema_version) < (0, 3, 2):
+        for contrib in obj["contributor"]:
+            contrib["roleName"] = [
+                val.replace("dandi:", "dcite:") for val in contrib["roleName"]
+            ]
+        for contrib in obj["relatedResource"]:
+            contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
+        for access in obj["access"]:
+            access["status"] = "dandi:OpenAccess"
+    obj["schemaVersion"] = to_version
     return obj
