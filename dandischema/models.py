@@ -170,10 +170,13 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                 # In pydantic 1.8+ all Literals are mapped on to enum
                 # This presently breaks the schema editor UI. Revert
                 # to const when generating the schema.
+                # Note: this no longer happens with custom metaclass
                 if prop == "schemaKey":
-                    if len(value["enum"]) == 1:
+                    if "enum" in value and len(value["enum"]) == 1:
                         value["const"] = value["enum"][0]
                         del value["enum"]
+                    else:
+                        value["const"] = value["default"]
 
 
 class PropertyValue(DandiBaseModel):
