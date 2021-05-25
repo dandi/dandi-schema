@@ -16,9 +16,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download latest auto
+      - name: Download auto
         run: |
-          auto_download_url="$(curl -fsSL https://api.github.com/repos/intuit/auto/releases/latest | jq -r '.assets[] | select(.name == "auto-linux.gz") | .browser_download_url')"
+          # Pin to v10.28.0, which (as of 2021-05-25) is the latest version
+          # with assets
+          auto_download_url="$(curl -fsSL https://api.github.com/repos/intuit/auto/releases/tags/v10.28.0 | jq -r '.assets[] | select(.name == "auto-linux.gz") | .browser_download_url')"
           wget -O- "$auto_download_url" | gunzip > ~/auto
           chmod a+x ~/auto
 
