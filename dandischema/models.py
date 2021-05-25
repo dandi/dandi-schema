@@ -499,18 +499,20 @@ class AssetsSummary(DandiBaseModel):
     numberOfSamples: Optional[int] = Field(None, readOnly=True)  # more of NWB
     numberOfCells: Optional[int] = Field(None, readOnly=True)
 
-    dataStandard: List[StandardsType] = Field(
+    dataStandard: Optional[List[StandardsType]] = Field(
         readOnly=True
     )  # TODO: types of things NWB, BIDS
     # Web UI: icons per each modality?
-    approach: List[ApproachType] = Field(
+    approach: Optional[List[ApproachType]] = Field(
         readOnly=True
     )  # TODO: types of things, BIDS etc...
     # Web UI: could be an icon with number, which if hovered on  show a list?
-    measurementTechnique: List[MeasurementTechniqueType] = Field(readOnly=True)
-    variableMeasured: Optional[List[str]] = Field(None, readOnly=True)
+    measurementTechnique: Optional[List[MeasurementTechniqueType]] = Field(
+        readOnly=True, nskey="schema"
+    )
+    variableMeasured: Optional[List[str]] = Field(None, readOnly=True, nskey="schema")
 
-    species: List[SpeciesType] = Field(readOnly=True)
+    species: Optional[List[SpeciesType]] = Field(readOnly=True)
     schemaKey: Literal["AssetsSummary"] = Field("AssetsSummary", readOnly=True)
 
     _ldmeta = {
@@ -600,29 +602,26 @@ class PublishActivity(Activity):
 
 class Locus(DandiBaseModel):
     identifier: Union[Identifier, List[Identifier]] = Field(
-        description="Identifier for genotyping locus"
+        description="Identifier for genotyping locus", nskey="schema"
     )
-    locus_type: str = Field()
-    symbol: str = Field()
+    locusType: Optional[str] = Field(None)
     schemaKey: Literal["Locus"] = Field("Locus", readOnly=True)
     _ldmeta = {"nskey": "dandi"}
 
 
 class Allele(DandiBaseModel):
     identifier: Union[Identifier, List[Identifier]] = Field(
-        description="Identifier for genotyping allele"
+        description="Identifier for genotyping allele", nskey="schema"
     )
-    allele_type: str = Field()
-    symbol: str = Field()
+    alleleSymbol: Optional[str] = Field(None)
+    alleleType: Optional[str] = Field(None)
     schemaKey: Literal["Allele"] = Field("Allele", readOnly=True)
     _ldmeta = {"nskey": "dandi"}
 
 
 class GenotypeInfo(DandiBaseModel):
     locus: Locus = Field(description="Locus at which information was extracted")
-    alleles: List[Allele] = Field(
-        max_items=3, description="Information about one allele"
-    )
+    alleles: List[Allele] = Field(description="Information about alleles at the locus")
     wasGeneratedBy: Optional[List["Session"]] = Field(None, nskey="prov")
     schemaKey: Literal["GenotypeInfo"] = Field("GenotypeInfo", readOnly=True)
     _ldmeta = {"nskey": "dandi"}
@@ -818,7 +817,7 @@ class CommonModel(DandiBaseModel):
         return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
 
 
-class DandisetMeta(CommonModel):
+class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
 
     @validator("contributor")
@@ -896,7 +895,7 @@ class DandisetMeta(CommonModel):
     }
 
 
-class BareAssetMeta(CommonModel):
+class BareAsset(CommonModel):
     """Metadata used to describe an asset anywhere (local or server).
 
     Derived from C2M2 (Level 0 and 1) and schema.org
@@ -964,7 +963,7 @@ class BareAssetMeta(CommonModel):
         return values
 
 
-class AssetMeta(BareAssetMeta):
+class Asset(BareAsset):
     """Metadata used to describe an asset on the server."""
 
     # all of the following are set by server
@@ -983,7 +982,7 @@ class Publishable(DandiBaseModel):
     schemaKey: Literal["Publishable"] = Field("Publishable", readOnly=True)
 
 
-class PublishedDandisetMeta(DandisetMeta, Publishable):
+class PublishedDandiset(Dandiset, Publishable):
     doi: str = Field(
         title="DOI",
         readOnly=True,
@@ -995,7 +994,7 @@ class PublishedDandisetMeta(DandisetMeta, Publishable):
     )
 
 
-class PublishedAssetMeta(AssetMeta, Publishable):
+class PublishedAsset(Asset, Publishable):
     @validator("digest")
     def digest_bothhashes(cls, values):
         try:

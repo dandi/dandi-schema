@@ -9,7 +9,7 @@ import pytest
 import requests
 
 from ..datacite import to_datacite
-from ..models import LicenseType, PublishedDandisetMeta, RoleType
+from ..models import LicenseType, PublishedDandiset, RoleType
 
 
 def datacite_post(datacite, doi):
@@ -55,9 +55,9 @@ def schema():
 
 
 def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
-    """Return extra metadata required by PublishedDandisetMeta 
-    
-    Returned fields are additional to fields required by DandisetMeta
+    """Return extra metadata required by PublishedDandiset
+
+    Returned fields are additional to fields required by Dandiset
     """
     publish_meta = {
         "datePublished": str(datetime.now().year),
@@ -95,11 +95,11 @@ def test_datacite(dandi_id, schema):
     ).open() as f:
         meta_js = json.load(f)
 
-    # updating with basic fields required for PublishDandisetMeta
+    # updating with basic fields required for PublishDandiset
     meta_js.update(
         _basic_publishmeta(dandi_id.replace("000", str(random.randrange(100, 999))))
     )
-    meta = PublishedDandisetMeta(**meta_js)
+    meta = PublishedDandiset(**meta_js)
 
     datacite = to_datacite(meta=meta)
 
@@ -141,11 +141,11 @@ def test_datacite(dandi_id, schema):
                 "contributor": [
                     {
                         "name": "A_last, A_first",
-                        "roleName": [RoleType("dandirole:ContactPerson")],
+                        "roleName": [RoleType("dcite:ContactPerson")],
                     },
                     {
                         "name": "B_last, B_first",
-                        "roleName": [RoleType("dandirole:Author")],
+                        "roleName": [RoleType("dcite:Author")],
                     },
                 ],
             },
@@ -163,11 +163,11 @@ def test_datacite(dandi_id, schema):
                 "contributor": [
                     {
                         "name": "A_last, A_first",
-                        "roleName": [RoleType("dandirole:ContactPerson")],
+                        "roleName": [RoleType("dcite:ContactPerson")],
                     },
                     {
                         "name": "B_last, B_first",
-                        "roleName": [RoleType("dandirole:Sponsor")],
+                        "roleName": [RoleType("dcite:Sponsor")],
                     },
                 ],
             },
@@ -184,13 +184,13 @@ def test_datacite(dandi_id, schema):
                     {
                         "name": "A_last, A_first",
                         "roleName": [
-                            RoleType("dandirole:Author"),
-                            RoleType("dandirole:Software"),
+                            RoleType("dcite:Author"),
+                            RoleType("dcite:Software"),
                         ],
                     },
                     {
                         "name": "B_last, B_first",
-                        "roleName": [RoleType("dandirole:ContactPerson")],
+                        "roleName": [RoleType("dcite:ContactPerson")],
                     },
                 ],
             },
@@ -224,7 +224,7 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
         "contributor": [
             {
                 "name": "A_last, A_first",
-                "roleName": [RoleType("dandirole:ContactPerson")],
+                "roleName": [RoleType("dcite:ContactPerson")],
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],

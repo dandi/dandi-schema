@@ -1,3 +1,5 @@
+import enum
+
 import pydantic
 from pydantic import ValidationError
 import pytest
@@ -6,24 +8,24 @@ from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
     AccessType,
-    AssetMeta,
-    DandisetMeta,
+    Asset,
+    Dandiset,
     DigestType,
     IdentifierType,
     LicenseType,
     ParticipantRelationType,
-    PublishedDandisetMeta,
+    PublishedDandiset,
     RelationType,
     RoleType,
 )
 
 
 def test_dandiset():
-    assert DandisetMeta.unvalidated()
+    assert Dandiset.unvalidated()
 
 
 def test_asset():
-    assert AssetMeta.unvalidated()
+    assert Asset.unvalidated()
 
 
 @pytest.mark.parametrize(
@@ -40,81 +42,82 @@ def test_asset():
         (
             RoleType,
             {
-                "Author": "dandirole:Author",
-                "Conceptualization": "dandirole:Conceptualization",
-                "ContactPerson": "dandirole:ContactPerson",
-                "DataCollector": "dandirole:DataCollector",
-                "DataCurator": "dandirole:DataCurator",
-                "DataManager": "dandirole:DataManager",
-                "FormalAnalysis": "dandirole:FormalAnalysis",
-                "FundingAcquisition": "dandirole:FundingAcquisition",
-                "Investigation": "dandirole:Investigation",
-                "Maintainer": "dandirole:Maintainer",
-                "Methodology": "dandirole:Methodology",
-                "Producer": "dandirole:Producer",
-                "ProjectLeader": "dandirole:ProjectLeader",
-                "ProjectManager": "dandirole:ProjectManager",
-                "ProjectMember": "dandirole:ProjectMember",
-                "ProjectAdministration": "dandirole:ProjectAdministration",
-                "Researcher": "dandirole:Researcher",
-                "Resources": "dandirole:Resources",
-                "Software": "dandirole:Software",
-                "Supervision": "dandirole:Supervision",
-                "Validation": "dandirole:Validation",
-                "Visualization": "dandirole:Visualization",
-                "Funder": "dandirole:Funder",
-                "Sponsor": "dandirole:Sponsor",
-                "StudyParticipant": "dandirole:StudyParticipant",
-                "Affiliation": "dandirole:Affiliation",
-                "EthicsApproval": "dandirole:EthicsApproval",
-                "Other": "dandirole:Other",
+                "Author": "dcite:Author",
+                "Conceptualization": "dcite:Conceptualization",
+                "ContactPerson": "dcite:ContactPerson",
+                "DataCollector": "dcite:DataCollector",
+                "DataCurator": "dcite:DataCurator",
+                "DataManager": "dcite:DataManager",
+                "FormalAnalysis": "dcite:FormalAnalysis",
+                "FundingAcquisition": "dcite:FundingAcquisition",
+                "Investigation": "dcite:Investigation",
+                "Maintainer": "dcite:Maintainer",
+                "Methodology": "dcite:Methodology",
+                "Producer": "dcite:Producer",
+                "ProjectLeader": "dcite:ProjectLeader",
+                "ProjectManager": "dcite:ProjectManager",
+                "ProjectMember": "dcite:ProjectMember",
+                "ProjectAdministration": "dcite:ProjectAdministration",
+                "Researcher": "dcite:Researcher",
+                "Resources": "dcite:Resources",
+                "Software": "dcite:Software",
+                "Supervision": "dcite:Supervision",
+                "Validation": "dcite:Validation",
+                "Visualization": "dcite:Visualization",
+                "Funder": "dcite:Funder",
+                "Sponsor": "dcite:Sponsor",
+                "StudyParticipant": "dcite:StudyParticipant",
+                "Affiliation": "dcite:Affiliation",
+                "EthicsApproval": "dcite:EthicsApproval",
+                "Other": "dcite:Other",
             },
         ),
         (
             RelationType,
             {
-                "IsCitedBy": "dandi:IsCitedBy",
-                "Cites": "dandi:Cites",
-                "IsSupplementTo": "dandi:IsSupplementTo",
-                "IsSupplementedBy": "dandi:IsSupplementedBy",
-                "IsContinuedBy": "dandi:IsContinuedBy",
-                "Continues": "dandi:Continues",
-                "Describes": "dandi:Describes",
-                "IsDescribedBy": "dandi:IsDescribedBy",
-                "HasMetadata": "dandi:HasMetadata",
-                "IsMetadataFor": "dandi:IsMetadataFor",
-                "HasVersion": "dandi:HasVersion",
-                "IsVersionOf": "dandi:IsVersionOf",
-                "IsNewVersionOf": "dandi:IsNewVersionOf",
-                "IsPreviousVersionOf": "dandi:IsPreviousVersionOf",
-                "IsPartOf": "dandi:IsPartOf",
-                "HasPart": "dandi:HasPart",
-                "IsReferencedBy": "dandi:IsReferencedBy",
-                "References": "dandi:References",
-                "IsDocumentedBy": "dandi:IsDocumentedBy",
-                "Documents": "dandi:Documents",
-                "IsCompiledBy": "dandi:IsCompiledBy",
-                "Compiles": "dandi:Compiles",
-                "IsVariantFormOf": "dandi:IsVariantFormOf",
-                "IsOriginalFormOf": "dandi:IsOriginalFormOf",
-                "IsIdenticalTo": "dandi:IsIdenticalTo",
-                "IsReviewedBy": "dandi:IsReviewedBy",
-                "Reviews": "dandi:Reviews",
-                "IsDerivedFrom": "dandi:IsDerivedFrom",
-                "IsSourceOf": "dandi:IsSourceOf",
-                "IsRequiredBy": "dandi:IsRequiredBy",
-                "Requires": "dandi:Requires",
-                "Obsoletes": "dandi:Obsoletes",
-                "IsObsoletedBy": "dandi:IsObsoletedBy",
+                "IsCitedBy": "dcite:IsCitedBy",
+                "Cites": "dcite:Cites",
+                "IsSupplementTo": "dcite:IsSupplementTo",
+                "IsSupplementedBy": "dcite:IsSupplementedBy",
+                "IsContinuedBy": "dcite:IsContinuedBy",
+                "Continues": "dcite:Continues",
+                "Describes": "dcite:Describes",
+                "IsDescribedBy": "dcite:IsDescribedBy",
+                "HasMetadata": "dcite:HasMetadata",
+                "IsMetadataFor": "dcite:IsMetadataFor",
+                "HasVersion": "dcite:HasVersion",
+                "IsVersionOf": "dcite:IsVersionOf",
+                "IsNewVersionOf": "dcite:IsNewVersionOf",
+                "IsPreviousVersionOf": "dcite:IsPreviousVersionOf",
+                "IsPartOf": "dcite:IsPartOf",
+                "HasPart": "dcite:HasPart",
+                "IsReferencedBy": "dcite:IsReferencedBy",
+                "References": "dcite:References",
+                "IsDocumentedBy": "dcite:IsDocumentedBy",
+                "Documents": "dcite:Documents",
+                "IsCompiledBy": "dcite:IsCompiledBy",
+                "Compiles": "dcite:Compiles",
+                "IsVariantFormOf": "dcite:IsVariantFormOf",
+                "IsOriginalFormOf": "dcite:IsOriginalFormOf",
+                "IsIdenticalTo": "dcite:IsIdenticalTo",
+                "IsReviewedBy": "dcite:IsReviewedBy",
+                "Reviews": "dcite:Reviews",
+                "IsDerivedFrom": "dcite:IsDerivedFrom",
+                "IsSourceOf": "dcite:IsSourceOf",
+                "IsRequiredBy": "dcite:IsRequiredBy",
+                "Requires": "dcite:Requires",
+                "Obsoletes": "dcite:Obsoletes",
+                "IsObsoletedBy": "dcite:IsObsoletedBy",
+                "IsPublishedIn": "dcite:IsPublishedIn",
             },
         ),
         (
             ParticipantRelationType,
             {
-                "IsChildOf": "dandi:IsChildOf",
-                "IsDizygoticTwinOf": "dandi:IsDizygoticTwinOf",
-                "IsMonozygoticTwinOf": "dandi:IsMonozygoticTwinOf",
-                "IsSiblingOf": "dandi:IsSiblingOf",
+                "isChildOf": "dandi:isChildOf",
+                "isDizygoticTwinOf": "dandi:isDizygoticTwinOf",
+                "isMonozygoticTwinOf": "dandi:isMonozygoticTwinOf",
+                "isSiblingOf": "dandi:isSiblingOf",
                 "isParentOf": "dandi:isParentOf",
             },
         ),
@@ -155,8 +158,8 @@ def test_types(enumtype, values):
 
 
 def test_autogenerated_titles():
-    schema = AssetMeta.schema()
-    assert schema["title"] == "Asset Meta"
+    schema = Asset.schema()
+    assert schema["title"] == "Asset"
     assert schema["properties"]["schemaVersion"]["title"] == "Schema Version"
     assert schema["definitions"]["PropertyValue"]["title"] == "Property Value"
 
@@ -173,7 +176,7 @@ def test_dantimeta_1():
         "contributor": [
             {
                 "name": "last name, first name",
-                "roleName": [RoleType("dandirole:ContactPerson")],
+                "roleName": [RoleType("dcite:ContactPerson")],
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
@@ -192,10 +195,10 @@ def test_dantimeta_1():
         "url": "https://dandiarchive.org/dandiset/999999/draft",
     }
 
-    # should work for DandisetMeta but PublishedDandisetMeta should raise an error
-    DandisetMeta(**meta_dict)
+    # should work for Dandiset but PublishedDandiset should raise an error
+    Dandiset(**meta_dict)
     with pytest.raises(ValidationError) as exc:
-        PublishedDandisetMeta(**meta_dict)
+        PublishedDandiset(**meta_dict)
 
     assert all([el["msg"] == "field required" for el in exc.value.errors()])
     assert set([el["loc"][0] for el in exc.value.errors()]) == {
@@ -205,18 +208,16 @@ def test_dantimeta_1():
     }
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,
-    # so PublishedDandisetMeta should work
+    # so PublishedDandiset should work
     meta_dict.update(_basic_publishmeta(dandi_id="DANDI:999999"))
-    PublishedDandisetMeta(**meta_dict)
+    PublishedDandiset(**meta_dict)
 
 
 def test_schemakey():
     typemap = {
-        "AssetMeta": "Asset",
-        "BareAssetMeta": "Asset",
-        "DandisetMeta": "Dandiset",
-        "PublishedAssetMeta": "Asset",
-        "PublishedDandisetMeta": "Dandiset",
+        "BareAsset": "Asset",
+        "PublishedAsset": "Asset",
+        "PublishedDandiset": "Dandiset",
     }
     for val in dir(models):
         if val in ["BaseModel"]:
@@ -228,3 +229,76 @@ def test_schemakey():
                 assert typemap[val] == klass.__fields__["schemaKey"].default
             else:
                 assert val == klass.__fields__["schemaKey"].default
+
+
+def test_duplicate_classes():
+    qnames = {}
+
+    def check_qname(qname, klass):
+        if (
+            qname
+            in [
+                "dandi:id",
+                "dandi:schemaKey",
+            ]
+            or qname.startswith("schema")
+            or qname.startswith("prov")
+        ):
+            return
+        if qname in qnames:
+            if qnames[qname] is None:
+                return
+            if issubclass(klass, (qnames[qname],)):
+                return
+            if issubclass(qnames[qname], klass):
+                qnames[qname] = klass
+                return
+            if qname == "dandi:repository" and klass.__name__ in (
+                "Resource",
+                "CommonModel",
+            ):
+                return
+            if qname == "dandi:relation" and klass.__name__ in (
+                "Resource",
+                "RelatedParticipant",
+            ):
+                return
+            if qname in "dandi:approach" and klass.__name__ in (
+                "Asset",
+                "AssetsSummary",
+            ):
+                return
+            if qname == "dandi:species" and klass.__name__ in (
+                "Participant",
+                "AssetsSummary",
+            ):
+                return
+            raise ValueError(f"{qname},{klass} already exists {qnames[qname]}")
+        qnames[qname] = klass
+
+    modelnames = dir(models)
+    modelnames.remove("CommonModel")
+    modelnames.remove("BaseType")
+    modelnames.remove("BaseModel")
+    modelnames.remove("DandiBaseModel")
+    for val in ["CommonModel", "BaseType"] + modelnames:
+        klass = getattr(models, val)
+        if not isinstance(klass, pydantic.main.ModelMetaclass):
+            continue
+        if isinstance(klass, enum.EnumMeta):
+            for enumval in klass:
+                qname = enumval.value
+                check_qname(qname, klass)
+        if hasattr(klass, "_ldmeta"):
+            if "nskey" in klass._ldmeta:
+                name = klass.__name__
+                qname = f'{klass._ldmeta["nskey"]}:{name}'
+            else:
+                qname = f"dandi:{name}"
+            check_qname(qname, klass)
+        for name, field in klass.__fields__.items():
+            if "nskey" in field.field_info.extra:
+                qname = field.field_info.extra["nskey"] + ":" + name
+            else:
+                qname = f"dandi:{name}"
+            check_qname(qname, klass)

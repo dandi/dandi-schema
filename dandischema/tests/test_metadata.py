@@ -42,7 +42,7 @@ def test_pydantic_validation(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
-    validate(data_as_dict, schema_key="DandisetMeta")
+    validate(data_as_dict, schema_key="Dandiset")
     validate(data_as_dict["about"][0])
     with pytest.raises(ValueError):
         validate({})
@@ -69,7 +69,7 @@ def test_pydantic_validation(schema_dir):
         ),
         (
             {"schemaKey": "Dandiset"},
-            "PublishedDandisetMeta",
+            "PublishedDandiset",
             {
                 "assetsSummary",
                 "citation",
@@ -90,11 +90,9 @@ def test_pydantic_validation(schema_dir):
         (
             {
                 "schemaKey": "Dandiset",
-                "contributor": [
-                    {"schemaKey": "Person", "roleName": ["dandirole:Author"]}
-                ],
+                "contributor": [{"schemaKey": "Person", "roleName": ["dcite:Author"]}],
             },
-            "PublishedDandisetMeta",
+            "PublishedDandiset",
             {
                 "assetsSummary",
                 "citation",
@@ -119,11 +117,11 @@ def test_pydantic_validation(schema_dir):
                     {
                         "schemaKey": "Person",
                         "name": "Last, first",
-                        "roleName": ["dandirole:ContactPerson"],
+                        "roleName": ["dcite:ContactPerson"],
                     }
                 ],
             },
-            "PublishedDandisetMeta",
+            "PublishedDandiset",
             {
                 "assetsSummary",
                 "citation",
@@ -155,7 +153,7 @@ def test_pydantic_validation(schema_dir):
         ),
         (
             {"schemaKey": "Asset"},
-            "PublishedAssetMeta",
+            "PublishedAsset",
             {
                 "datePublished",
                 "contentSize",
@@ -172,7 +170,7 @@ def test_pydantic_validation(schema_dir):
                 "schemaKey": "Asset",
                 "digest": {"dandi:sha2-256": sha256(b"test").hexdigest()},
             },
-            "PublishedAssetMeta",
+            "PublishedAsset",
             {
                 "datePublished",
                 "contentSize",
@@ -189,7 +187,7 @@ def test_pydantic_validation(schema_dir):
                 "schemaKey": "Asset",
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest()},
             },
-            "PublishedAssetMeta",
+            "PublishedAsset",
             {
                 "datePublished",
                 "contentSize",
@@ -209,7 +207,7 @@ def test_pydantic_validation(schema_dir):
                     "dandi:sha2-256": sha256(b"test").hexdigest(),
                 },
             },
-            "PublishedAssetMeta",
+            "PublishedAsset",
             {
                 "datePublished",
                 "contentSize",
@@ -233,7 +231,7 @@ def test_migrate(schema_dir):
         data_as_dict = json.load(fp)
     with pytest.raises(ValidationError) as exc:
         validate(data_as_dict)
-    badfields = {"contributor", "access"}
+    badfields = {"contributor", "access", "relatedResource"}
     assert set([el["loc"][0] for el in exc.value.errors()]) == badfields
     newmeta = migrate_001(data_as_dict)
     assert newmeta["schemaVersion"] == DANDI_SCHEMA_VERSION

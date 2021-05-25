@@ -9,9 +9,9 @@
       "schemaKey": "Person",
       "name": "Scala, Federico",
       "roleName": [
-        "dandirole:DataCollector",
-        "dandirole:Author",
-        "dandirole:ContactPerson"
+        "dcite:DataCollector",
+        "dcite:Author",
+        "dcite:ContactPerson"
       ],
       "includeInCitation": true
     },
@@ -20,7 +20,7 @@
       "identifier": "0000-0002-5639-7209",
       "name": "Kobak, Dmitry",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -29,7 +29,7 @@
       "identifier": "0000-0003-4458-117X",
       "name": "Bernabucci, Matteo",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -37,7 +37,7 @@
       "schemaKey": "Person",
       "name": "Bernaerts, Yves",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -46,7 +46,7 @@
       "identifier": "0000-0003-1963-8285",
       "name": "Cadwell, Cathryn Rene",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -54,7 +54,7 @@
       "schemaKey": "Person",
       "name": "Castro, Jesus Ramon",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -63,7 +63,7 @@
       "identifier": "0000-0002-4922-8781",
       "name": "Hartmanis, Leonard",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -72,7 +72,7 @@
       "identifier": "0000-0001-8066-1383",
       "name": "Jiang, Xiaolong",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -81,7 +81,7 @@
       "identifier": "0000-0001-9532-788X",
       "name": "Laturnus, Sophie",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -89,7 +89,7 @@
       "schemaKey": "Person",
       "name": "Miranda, Elanine",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -98,7 +98,7 @@
       "identifier": "0000-0001-8736-527X",
       "name": "Mulherkar, Shalaka",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -106,7 +106,7 @@
       "schemaKey": "Person",
       "name": "Tan, Zheng Huan",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -115,7 +115,7 @@
       "identifier": "0000-0002-9361-5607",
       "name": "Yao, Zizhen",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -124,7 +124,7 @@
       "identifier": "0000-0002-0326-5878",
       "name": "Zeng, Hongkui",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -133,7 +133,7 @@
       "identifier": "0000-0001-6473-1740",
       "name": "Sandberg, Rickard",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -142,7 +142,7 @@
       "identifier": "0000-0002-0199-4727",
       "name": "Berens, Philipp",
       "roleName": [
-        "dandirole:Author"
+        "dcite:Author"
       ],
       "includeInCitation": true
     },
@@ -151,8 +151,8 @@
       "identifier": "0000-0002-4305-6376",
       "name": "Tolias, Andreas Savas",
       "roleName": [
-        "dandirole:Author",
-        "dandirole:ContactPerson"
+        "dcite:Author",
+        "dcite:ContactPerson"
       ],
       "includeInCitation": true
     }
@@ -173,7 +173,7 @@
       "schemaKey": "Resource",
       "identifier": "doi:10.1101/2020.02.03.929158",
       "url": "https://www.biorxiv.org/content/10.1101/2020.02.03.929158v1.full",
-      "relation": "dandi:IsDescribedBy"
+      "relation": "dcite:IsDescribedBy"
     }
   ],
   "identifier": "DANDI:000008",
