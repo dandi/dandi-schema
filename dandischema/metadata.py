@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import typing as ty
 
 import jsonschema
 
@@ -104,10 +103,12 @@ def validate(obj, schema_version=None, schema_key=None):
     Parameters
     ----------
     schema_version: str, optional
-       Version of schema to validate against.  If not specified, the schema version specified in
-       `schemaVersion` attribute of object will be used, and if not present - our current DANDI_SCHEMA_VERSION
+       Version of schema to validate against.  If not specified, the schema
+       version specified in `schemaVersion` attribute of object will be used,
+       and if not present - our current DANDI_SCHEMA_VERSION
     schema_key: str, optional
-        Name of the schema key to be used, if not specified, `schemaKey` of the object will be consulted
+        Name of the schema key to be used, if not specified, `schemaKey` of the
+        object will be consulted
 
      Returns
      -------
