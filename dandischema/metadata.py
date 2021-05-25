@@ -15,7 +15,7 @@ def generate_context():
         "@version": 1.1,
         "dandi": "http://schema.dandiarchive.org/",
         "dcite": "http://schema.dandiarchive.org/datacite/",
-        "dandiasset": "http://iri.dandiarchive.org/",
+        "dandiasset": "http://dandiarchive.org/asset/"
         "DANDI": "http://dandiarchive.org/dandiset/",
         "dct": "http://purl.org/dc/terms/",
         "owl": "http://www.w3.org/2002/07/owl#",
@@ -86,13 +86,13 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
-def validate_dandiset_json(data: dict, schema_dir: str) -> None:
+def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
     jsonschema.validate(data, schema)
 
 
-def validate_asset_json(data: dict, schema_dir: str) -> None:
+def _validate_asset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
     jsonschema.validate(data, schema)
@@ -104,12 +104,12 @@ def validate(obj, schema_version=None, schema_key=None):
     Parameters
     ----------
     schema_version: str, optional
-       Version of schema to validate against.  If not specified, the schema
-       version specified in `schemaVersion` attribute of object will be used,
-       and if not present - our current DANDI_SCHEMA_VERSION
+      Version of schema to validate against.  If not specified, the schema
+      version specified in `schemaVersion` attribute of object will be used,
+      and if not present - our current DANDI_SCHEMA_VERSION
     schema_key: str, optional
-        Name of the schema key to be used, if not specified, `schemaKey` of the
-        object will be consulted
+      Name of the schema key to be used, if not specified, `schemaKey` of the
+      object will be consulted
 
      Returns
      -------
@@ -118,9 +118,9 @@ def validate(obj, schema_version=None, schema_key=None):
      Raises
      --------
      ValueError:
-        if no schema_key is provided and object doesn't provide schemaKey
+       if no schema_key is provided and object doesn't provide schemaKey
      ValidationError
-        if obj fails validation
+       if obj fails validation
     """
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:

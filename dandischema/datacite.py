@@ -49,7 +49,7 @@ DATACITE_IDENTYPE = {
     "URN",
     "w3id",
 }
-DATACITE_MAP = dict([(el.lower(), el) for el in DATACITE_IDENTYPE])
+DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
 def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
@@ -79,7 +79,7 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
     attributes["publisher"] = "DANDI Archive"
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
-    attributes["types"] = {"resourceType": "NWB", "resourceTypeGeneral": "Dataset"}
+    attributes["types"] = {"resourceType": "Neural Data", "resourceTypeGeneral": "Dataset"}
     # meta has also attribute url, but it often empty
     attributes["url"] = meta.url
     # assuming that all licenses are from SPDX?
@@ -129,7 +129,7 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
         elif isinstance(contr_el, Organization):
             contr_dict["nameType"] = "Organizational"
 
-        if RoleType("dcite:Author") in getattr(contr_el, "roleName"):
+        if RoleType("dcite:Author") in getattr(contr_el, "roleName", []):
             create_dict = deepcopy(contr_dict)
             create_dict["creatorName"] = create_dict.pop("contributorName")
             creators.append(create_dict)

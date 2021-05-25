@@ -47,6 +47,6 @@ def version2tuple(ver: str) -> tuple:
     """Convert version to numeric tuple"""
     import re
 
-    if re.match(r"\d+\.\d+\.\d+", ver) is None:
+    if re.match(r"\d+\.\d+\.\d+$", ver) is None:
         raise ValueError(r"Version must be well formed: \d+\.\d+\.\d+")
     return tuple([int(val) for val in ver.split(".")])
