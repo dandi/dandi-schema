@@ -35,17 +35,20 @@ jobs:
       - name: Generate model schemata
         run: python dandischema/tools/pubschemata.py schema/releases
 
-      - name: Commit changes
-        run: |
-          git config --global user.email "team@dandiarchive.org"
-          git config --global user.name "DANDI Bot"
-
-          git add releases
-          if ! git diff --quiet --cached
-          then git commit -m "Publish model schemata as of dandi-cli $(git -C ../dandi describe --tags)"
-               git push
-          else echo "No changes to commit"
-          fi
-        working-directory: schema
+      # Disabled to be reworked as discussed in
+      # https://github.com/dandi/dandischema/issues/2
+      # to be published only upon release of the dandischema
+      #- name: Commit changes
+      #  run: |
+      #    git config --global user.email "team@dandiarchive.org"
+      #    git config --global user.name "DANDI Bot"
+      #
+      #    git add releases
+      #    if ! git diff --quiet --cached
+      #    then git commit -m "Publish model schemata as of dandi-cli $(git -C ../dandi describe --tags)"
+      #         git push
+      #    else echo "No changes to commit"
+      #    fi
+      #  working-directory: schema
 
 # vim:set sts=2:
