@@ -14,6 +14,8 @@ jobs:
   release-check:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
+    outputs:
+      auto-version: ${{ steps.auto-version.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
