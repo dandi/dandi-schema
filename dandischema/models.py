@@ -141,6 +141,12 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         def schema_extra(schema: Dict[str, Any], model) -> None:
             schema["title"] = name2title(schema["title"])
             for prop, value in schema.get("properties", {}).items():
+                if schema["title"] == "Person":
+                    if prop == "name":
+                        # JSON schema doesn't support validating unicode
+                        # characters using the \w pattern, but Python does. So
+                        # we are dropping the regex pattern for the schema.
+                        del value["pattern"]
                 if value.get("title") is None or value["title"] == prop.title():
                     value["title"] = name2title(prop)
                 if value.get("format", None) == "uri":
