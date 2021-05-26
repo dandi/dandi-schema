@@ -1,19 +1,24 @@
+from copy import deepcopy
 import json
 from pathlib import Path
 
 import jsonschema
+import requests
 
+from .consts import ALLOWED_INPUT_SCHEMAS, ALLOWED_TARGET_SCHEMAS, DANDI_SCHEMA_VERSION
 from . import models
+from .utils import version2tuple
 
 
 def generate_context():
     import pydantic
 
-    fields = {
+    field_preamble = {
         "@version": 1.1,
         "dandi": "http://schema.dandiarchive.org/",
-        "dandiasset": "http://iri.dandiarchive.org/",
-        "DANDI": "http://identifiers.org/DANDI:",
+        "dcite": "http://schema.dandiarchive.org/datacite/",
+        "dandiasset": "http://dandiarchive.org/asset/",
+        "DANDI": "http://dandiarchive.org/dandiset/",
         "dct": "http://purl.org/dc/terms/",
         "owl": "http://www.w3.org/2002/07/owl#",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -33,6 +38,7 @@ def generate_context():
         "PATO": "http://purl.obolibrary.org/obo/PATO_",
         "spdx": "http://spdx.org/licenses/",
     }
+    fields = {}
     for val in dir(models):
         klass = getattr(models, val)
         if not isinstance(klass, pydantic.main.ModelMetaclass):
@@ -61,32 +67,110 @@ def generate_context():
         fields[item.value] = {"@id": item.value, "@nest": "digest"}
     fields["Dandiset"] = "dandi:Dandiset"
     fields["Asset"] = "dandi:Asset"
-    return {"@context": fields}
+    fields = {k: fields[k] for k in sorted(fields)}
+    field_preamble.update(**fields)
+    return {"@context": field_preamble}
 
 
-def publish_model_schemata(releasedir):
+def publish_model_schemata(releasedir: str) -> Path:
     version = models.get_schema_version()
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
-    (vdir / "dandiset.json").write_text(models.DandisetMeta.schema_json(indent=2))
-    (vdir / "asset.json").write_text(models.AssetMeta.schema_json(indent=2))
+    (vdir / "dandiset.json").write_text(models.Dandiset.schema_json(indent=2))
+    (vdir / "asset.json").write_text(models.Asset.schema_json(indent=2))
     (vdir / "published-dandiset.json").write_text(
-        models.PublishedDandisetMeta.schema_json(indent=2)
+        models.PublishedDandiset.schema_json(indent=2)
     )
     (vdir / "published-asset.json").write_text(
-        models.PublishedAssetMeta.schema_json(indent=2)
+        models.PublishedAsset.schema_json(indent=2)
     )
     (vdir / "context.json").write_text(json.dumps(generate_context(), indent=2))
     return vdir
 
 
-def validate_dandiset_json(data, schema_dir):
+def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
     jsonschema.validate(data, schema)
 
 
-def validate_asset_json(data, schema_dir):
+def _validate_asset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
     jsonschema.validate(data, schema)
+
+
+def validate(obj, schema_version=None, schema_key=None):
+    """Validate object using pydantic
+
+    Parameters
+    ----------
+    schema_version: str, optional
+      Version of schema to validate against.  If not specified, the schema
+      version specified in `schemaVersion` attribute of object will be used,
+      and if not present - our current DANDI_SCHEMA_VERSION
+    schema_key: str, optional
+      Name of the schema key to be used, if not specified, `schemaKey` of the
+      object will be consulted
+
+     Returns
+     -------
+     None
+
+     Raises
+     --------
+     ValueError:
+       if no schema_key is provided and object doesn't provide schemaKey
+     ValidationError
+       if obj fails validation
+    """
+    schema_key = schema_key or obj.get("schemaKey")
+    if schema_key is None:
+        raise ValueError("Provided object has no known schemaKey")
+    schema_version = schema_version or obj.get("schemaVersion") or DANDI_SCHEMA_VERSION
+    klass = getattr(models, schema_key)
+    klass(**obj)
+
+
+def migrate(
+    obj: dict, to_version: str = DANDI_SCHEMA_VERSION, skip_validation=False
+) -> dict:
+    """Migrate dandiset metadata object to new schema"""
+    obj = deepcopy(obj)
+    if to_version not in ALLOWED_TARGET_SCHEMAS:
+        raise ValueError(f"Current target schemas: {ALLOWED_TARGET_SCHEMAS}.")
+    schema_version = obj.get("schemaVersion")
+    if schema_version == DANDI_SCHEMA_VERSION:
+        return obj
+    if schema_version not in ALLOWED_INPUT_SCHEMAS:
+        raise ValueError(f"Current input schemas supported: {ALLOWED_INPUT_SCHEMAS}.")
+    if version2tuple(schema_version) > version2tuple(to_version):
+        raise ValueError(f"Cannot migrate from {schema_version} to lower {to_version}.")
+    if not (skip_validation):
+        schema = requests.get(
+            f"https://raw.githubusercontent.com/dandi/schema/"
+            f"master/releases/{schema_version}/dandiset.json"
+        ).json()
+        jsonschema.validate(obj, schema)
+    if version2tuple(schema_version) < (0, 3, 2):
+        if obj.get("schemaKey") is None:
+            obj["schemaKey"] = "Dandiset"
+        id = obj.get("id")
+        if not id.startswith("DANDI:"):
+            obj["id"] = f'DANDI:{obj["id"]}'
+        for contrib in obj["contributor"]:
+            contrib["roleName"] = [
+                val.replace("dandi:", "dcite:") for val in contrib["roleName"]
+            ]
+            for affiliation in contrib.get("affiliation", []):
+                affiliation["schemaKey"] = "Affiliation"
+        for contrib in obj["relatedResource"]:
+            contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
+        for access in obj["access"]:
+            access["status"] = "dandi:OpenAccess"
+        if obj.get("assetsSummary") is None:
+            obj["assetsSummary"] = {"numberOfFiles": 0, "numberOfBytes": 0}
+        if obj.get("manifestLocation") is None:
+            obj["manifestLocation"] = []
+        obj["schemaVersion"] = to_version
+    return obj

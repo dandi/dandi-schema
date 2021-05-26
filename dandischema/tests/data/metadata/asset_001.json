@@ -1,0 +1,92 @@
+{
+  "id": "dandiasset:0b0a1a0b-e3ea-4cf6-be94-e02c830d54be",
+  "identifier": "0b0a1a0b-e3ea-4cf6-be94-e02c830d54be",
+  "schemaVersion": "0.3.2",
+  "keywords": [
+    "test",
+    "sample",
+    "example",
+    "test-case"
+  ],
+  "access": [
+    {
+      "status": "dandi:OpenAccess",
+      "schemaKey": "AccessRequirements"
+    }
+  ],
+  "repository": "https://dandiarchive.org/",
+  "wasGeneratedBy": [
+    {
+      "identifier": "XYZ789",
+      "name": "XYZ789",
+      "description": "Some test data",
+      "used": [
+        {
+          "identifier": "probe:probe04",
+          "name": "Ecephys Probe",
+          "schemaKey": "Equipment"
+        }
+      ],
+      "schemaKey": "Session"
+    }
+  ],
+  "contentSize": 69105,
+  "encodingFormat": "application/x-nwb",
+  "digest": {
+    "dandi:sha1": "783ad2afe455839e5ab2fa659861f58a423fd17f"
+  },
+  "wasDerivedFrom": [
+    {
+      "identifier": "cell01",
+      "sampleType": {
+        "name": "cell",
+        "schemaKey": "SampleType"
+      },
+      "wasDerivedFrom": [
+        {
+          "identifier": "slice02",
+          "sampleType": {
+            "name": "slice",
+            "schemaKey": "SampleType"
+          },
+          "wasDerivedFrom": [
+            {
+              "identifier": "tissue03",
+              "sampleType": {
+                "name": "tissuesample",
+                "schemaKey": "SampleType"
+              },
+              "schemaKey": "BioSample"
+            }
+          ],
+          "schemaKey": "BioSample"
+        }
+      ],
+      "schemaKey": "BioSample"
+    }
+  ],
+  "wasAttributedTo": [
+    {
+      "identifier": "a1b2c3",
+      "age": {
+        "unitText": "Years from birth",
+        "value": "P170DT12212S",
+        "schemaKey": "PropertyValue"
+      },
+      "sex": {
+        "identifier": "http://purl.obolibrary.org/obo/PATO_0000384",
+        "name": "Male",
+        "schemaKey": "SexType"
+      },
+      "genotype": "Typical",
+      "species": {
+        "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_9606",
+        "name": "Human",
+        "schemaKey": "SpeciesType"
+      },
+      "schemaKey": "Participant"
+    }
+  ],
+  "schemaKey": "Asset",
+  "path": "/path/for/asset"
+}

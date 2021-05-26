@@ -41,3 +41,12 @@ def split_camel_case(s: str) -> Iterator[str]:
         last_start = m.start()
     if last_start < len(s):
         yield s[last_start:]
+
+
+def version2tuple(ver: str) -> tuple:
+    """Convert version to numeric tuple"""
+    import re
+
+    if re.match(r"\d+\.\d+\.\d+$", ver) is None:
+        raise ValueError(r"Version must be well formed: \d+\.\d+\.\d+")
+    return tuple([int(val) for val in ver.split(".")])

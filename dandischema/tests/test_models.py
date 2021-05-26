@@ -1,35 +1,31 @@
-from datetime import datetime
-import json
-import os
-from pathlib import Path
-import random
+import enum
 
-from jsonschema import Draft6Validator
+import pydantic
 from pydantic import ValidationError
 import pytest
-import requests
 
+from .test_datacite import _basic_publishmeta
+from .. import models
 from ..models import (
     AccessType,
-    AssetMeta,
-    DandisetMeta,
+    Asset,
+    Dandiset,
     DigestType,
     IdentifierType,
     LicenseType,
     ParticipantRelationType,
-    PublishedDandisetMeta,
+    PublishedDandiset,
     RelationType,
     RoleType,
-    to_datacite,
 )
 
 
 def test_dandiset():
-    assert DandisetMeta.unvalidated()
+    assert Dandiset.unvalidated()
 
 
 def test_asset():
-    assert AssetMeta.unvalidated()
+    assert Asset.unvalidated()
 
 
 @pytest.mark.parametrize(
@@ -38,89 +34,90 @@ def test_asset():
         (
             AccessType,
             {
-                "Open": "dandi:Open",
-                # "Embargoed": "dandi:Embargoed",
-                # "Restricted": "dandi:Restricted",
+                "OpenAccess": "dandi:OpenAccess",
+                # "EmbargoedAccess": "dandi:EmbargoedAccess",
+                # "RestrictedAccess": "dandi:RestrictedAccess",
             },
         ),
         (
             RoleType,
             {
-                "Author": "dandi:Author",
-                "Conceptualization": "dandi:Conceptualization",
-                "ContactPerson": "dandi:ContactPerson",
-                "DataCollector": "dandi:DataCollector",
-                "DataCurator": "dandi:DataCurator",
-                "DataManager": "dandi:DataManager",
-                "FormalAnalysis": "dandi:FormalAnalysis",
-                "FundingAcquisition": "dandi:FundingAcquisition",
-                "Investigation": "dandi:Investigation",
-                "Maintainer": "dandi:Maintainer",
-                "Methodology": "dandi:Methodology",
-                "Producer": "dandi:Producer",
-                "ProjectLeader": "dandi:ProjectLeader",
-                "ProjectManager": "dandi:ProjectManager",
-                "ProjectMember": "dandi:ProjectMember",
-                "ProjectAdministration": "dandi:ProjectAdministration",
-                "Researcher": "dandi:Researcher",
-                "Resources": "dandi:Resources",
-                "Software": "dandi:Software",
-                "Supervision": "dandi:Supervision",
-                "Validation": "dandi:Validation",
-                "Visualization": "dandi:Visualization",
-                "Funder": "dandi:Funder",
-                "Sponsor": "dandi:Sponsor",
-                "StudyParticipant": "dandi:StudyParticipant",
-                "Affiliation": "dandi:Affiliation",
-                "EthicsApproval": "dandi:EthicsApproval",
-                "Other": "dandi:Other",
+                "Author": "dcite:Author",
+                "Conceptualization": "dcite:Conceptualization",
+                "ContactPerson": "dcite:ContactPerson",
+                "DataCollector": "dcite:DataCollector",
+                "DataCurator": "dcite:DataCurator",
+                "DataManager": "dcite:DataManager",
+                "FormalAnalysis": "dcite:FormalAnalysis",
+                "FundingAcquisition": "dcite:FundingAcquisition",
+                "Investigation": "dcite:Investigation",
+                "Maintainer": "dcite:Maintainer",
+                "Methodology": "dcite:Methodology",
+                "Producer": "dcite:Producer",
+                "ProjectLeader": "dcite:ProjectLeader",
+                "ProjectManager": "dcite:ProjectManager",
+                "ProjectMember": "dcite:ProjectMember",
+                "ProjectAdministration": "dcite:ProjectAdministration",
+                "Researcher": "dcite:Researcher",
+                "Resources": "dcite:Resources",
+                "Software": "dcite:Software",
+                "Supervision": "dcite:Supervision",
+                "Validation": "dcite:Validation",
+                "Visualization": "dcite:Visualization",
+                "Funder": "dcite:Funder",
+                "Sponsor": "dcite:Sponsor",
+                "StudyParticipant": "dcite:StudyParticipant",
+                "Affiliation": "dcite:Affiliation",
+                "EthicsApproval": "dcite:EthicsApproval",
+                "Other": "dcite:Other",
             },
         ),
         (
             RelationType,
             {
-                "IsCitedBy": "dandi:IsCitedBy",
-                "Cites": "dandi:Cites",
-                "IsSupplementTo": "dandi:IsSupplementTo",
-                "IsSupplementedBy": "dandi:IsSupplementedBy",
-                "IsContinuedBy": "dandi:IsContinuedBy",
-                "Continues": "dandi:Continues",
-                "Describes": "dandi:Describes",
-                "IsDescribedBy": "dandi:IsDescribedBy",
-                "HasMetadata": "dandi:HasMetadata",
-                "IsMetadataFor": "dandi:IsMetadataFor",
-                "HasVersion": "dandi:HasVersion",
-                "IsVersionOf": "dandi:IsVersionOf",
-                "IsNewVersionOf": "dandi:IsNewVersionOf",
-                "IsPreviousVersionOf": "dandi:IsPreviousVersionOf",
-                "IsPartOf": "dandi:IsPartOf",
-                "HasPart": "dandi:HasPart",
-                "IsReferencedBy": "dandi:IsReferencedBy",
-                "References": "dandi:References",
-                "IsDocumentedBy": "dandi:IsDocumentedBy",
-                "Documents": "dandi:Documents",
-                "IsCompiledBy": "dandi:IsCompiledBy",
-                "Compiles": "dandi:Compiles",
-                "IsVariantFormOf": "dandi:IsVariantFormOf",
-                "IsOriginalFormOf": "dandi:IsOriginalFormOf",
-                "IsIdenticalTo": "dandi:IsIdenticalTo",
-                "IsReviewedBy": "dandi:IsReviewedBy",
-                "Reviews": "dandi:Reviews",
-                "IsDerivedFrom": "dandi:IsDerivedFrom",
-                "IsSourceOf": "dandi:IsSourceOf",
-                "IsRequiredBy": "dandi:IsRequiredBy",
-                "Requires": "dandi:Requires",
-                "Obsoletes": "dandi:Obsoletes",
-                "IsObsoletedBy": "dandi:IsObsoletedBy",
+                "IsCitedBy": "dcite:IsCitedBy",
+                "Cites": "dcite:Cites",
+                "IsSupplementTo": "dcite:IsSupplementTo",
+                "IsSupplementedBy": "dcite:IsSupplementedBy",
+                "IsContinuedBy": "dcite:IsContinuedBy",
+                "Continues": "dcite:Continues",
+                "Describes": "dcite:Describes",
+                "IsDescribedBy": "dcite:IsDescribedBy",
+                "HasMetadata": "dcite:HasMetadata",
+                "IsMetadataFor": "dcite:IsMetadataFor",
+                "HasVersion": "dcite:HasVersion",
+                "IsVersionOf": "dcite:IsVersionOf",
+                "IsNewVersionOf": "dcite:IsNewVersionOf",
+                "IsPreviousVersionOf": "dcite:IsPreviousVersionOf",
+                "IsPartOf": "dcite:IsPartOf",
+                "HasPart": "dcite:HasPart",
+                "IsReferencedBy": "dcite:IsReferencedBy",
+                "References": "dcite:References",
+                "IsDocumentedBy": "dcite:IsDocumentedBy",
+                "Documents": "dcite:Documents",
+                "IsCompiledBy": "dcite:IsCompiledBy",
+                "Compiles": "dcite:Compiles",
+                "IsVariantFormOf": "dcite:IsVariantFormOf",
+                "IsOriginalFormOf": "dcite:IsOriginalFormOf",
+                "IsIdenticalTo": "dcite:IsIdenticalTo",
+                "IsReviewedBy": "dcite:IsReviewedBy",
+                "Reviews": "dcite:Reviews",
+                "IsDerivedFrom": "dcite:IsDerivedFrom",
+                "IsSourceOf": "dcite:IsSourceOf",
+                "IsRequiredBy": "dcite:IsRequiredBy",
+                "Requires": "dcite:Requires",
+                "Obsoletes": "dcite:Obsoletes",
+                "IsObsoletedBy": "dcite:IsObsoletedBy",
+                "IsPublishedIn": "dcite:IsPublishedIn",
             },
         ),
         (
             ParticipantRelationType,
             {
-                "IsChildOf": "dandi:IsChildOf",
-                "IsDizygoticTwinOf": "dandi:IsDizygoticTwinOf",
-                "IsMonozygoticTwinOf": "dandi:IsMonozygoticTwinOf",
-                "IsSiblingOf": "dandi:IsSiblingOf",
+                "isChildOf": "dandi:isChildOf",
+                "isDizygoticTwinOf": "dandi:isDizygoticTwinOf",
+                "isMonozygoticTwinOf": "dandi:isMonozygoticTwinOf",
+                "isSiblingOf": "dandi:isSiblingOf",
                 "isParentOf": "dandi:isParentOf",
             },
         ),
@@ -161,103 +158,10 @@ def test_types(enumtype, values):
 
 
 def test_autogenerated_titles():
-    schema = AssetMeta.schema()
-    assert schema["title"] == "Asset Meta"
+    schema = Asset.schema()
+    assert schema["title"] == "Asset"
     assert schema["properties"]["schemaVersion"]["title"] == "Schema Version"
     assert schema["definitions"]["PropertyValue"]["title"] == "Property Value"
-
-
-def datacite_post(datacite, doi):
-    """ posting the datacite object and checking the status of the requests"""
-
-    # removing doi in case it exists
-    _clean_doi(doi)
-
-    # checking f I'm able to create doi
-    rp = requests.post(
-        "https://api.test.datacite.org/dois",
-        json=datacite,
-        headers={"Content-Type": "application/vnd.api+json"},
-        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
-    )
-    rp.raise_for_status()
-
-    # checking if i'm able to get the url
-    rg = requests.get(url=f"https://api.test.datacite.org/dois/{doi}/activities")
-    rg.raise_for_status()
-
-    # cleaning url
-    _clean_doi(doi)
-
-
-def _clean_doi(doi):
-    """removing doi, ignoring the status code"""
-    requests.delete(
-        f"https://api.test.datacite.org/dois/{doi}",
-        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
-    )
-
-
-@pytest.fixture(scope="module")
-def schema():
-    sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/master/source/"
-        "json/kernel-4.3/datacite_4.3_schema.json"
-    )
-    sr.raise_for_status()
-    schema = sr.json()
-    return schema
-
-
-def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
-    """
-    adding basic info required by PublishedDandisetMeta in addition to
-    fields required by DandisetMeta
-    """
-    publish_meta = {
-        "datePublished": str(datetime.now().year),
-        "publishedBy": "https://doi.test.datacite.org/dois",
-        "version": version,
-        "doi": f"{prefix}/dandi.{dandi_id}.{version}",
-        "assetsSummary": {
-            "numberOfBytes": 10,
-            "numberOfFiles": 1,
-            "dataStandard": [{"key": "value"}],
-            "approach": [{"key": "value"}],
-            "measurementTechnique": [{"key": "value"}],
-            "species": [{"key": "value"}],
-        },
-    }
-    return publish_meta
-
-
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
-@pytest.mark.parametrize("dandi_id", ["000004", "000008"])
-def test_datacite(dandi_id, schema):
-    """ checking to_datacite for a specific datasets"""
-
-    # reading metadata taken from exemplary dandisets and saved in json files
-    with (
-        Path(__file__).with_name("data") / "metadata" / f"meta_{dandi_id}.json"
-    ).open() as f:
-        meta_js = json.load(f)
-
-    # updating with basic fields required for PublishDandisetMeta
-    meta_js.update(
-        _basic_publishmeta(dandi_id.replace("000", str(random.randrange(100, 999))))
-    )
-    meta = PublishedDandisetMeta(**meta_js)
-
-    datacite = to_datacite(meta=meta)
-
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
-    validator.validate(datacite["data"]["attributes"])
-
-    # trying to post datacite
-    datacite_post(datacite, meta.doi)
 
 
 def test_dantimeta_1():
@@ -272,172 +176,129 @@ def test_dantimeta_1():
         "contributor": [
             {
                 "name": "last name, first name",
-                "roleName": [RoleType("dandi:ContactPerson")],
+                "roleName": [RoleType("dcite:ContactPerson")],
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
+        "citation": "Last, first (2021). Test citation.",
+        "assetsSummary": {
+            "numberOfBytes": 10,
+            "numberOfFiles": 1,
+            "dataStandard": [{"name": "NWB"}],
+            "approach": [{"name": "electrophysiology"}],
+            "measurementTechnique": [{"name": "two-photon microscopy technique"}],
+            "species": [{"name": "Human"}],
+        },
+        "manifestLocation": [
+            "https://api.dandiarchive.org/api/dandisets/999999/versions/draft/assets/"
+        ],
+        "url": "https://dandiarchive.org/dandiset/999999/draft",
     }
 
-    # should work for DandisetMeta but PublishedDandisetMeta should raise an error
-    DandisetMeta(**meta_dict)
+    # should work for Dandiset but PublishedDandiset should raise an error
+    Dandiset(**meta_dict)
     with pytest.raises(ValidationError) as exc:
-        PublishedDandisetMeta(**meta_dict)
+        PublishedDandiset(**meta_dict)
 
     assert all([el["msg"] == "field required" for el in exc.value.errors()])
     assert set([el["loc"][0] for el in exc.value.errors()]) == {
         "datePublished",
         "publishedBy",
         "doi",
-        "assetsSummary",
     }
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,
-    # so PublishedDandisetMeta should work
+    # so PublishedDandiset should work
     meta_dict.update(_basic_publishmeta(dandi_id="DANDI:999999"))
-    PublishedDandisetMeta(**meta_dict)
+    PublishedDandiset(**meta_dict)
 
 
-@pytest.mark.parametrize(
-    "additional_meta, datacite_checks",
-    [
-        # no additional meta
-        (
-            {},
-            {
-                "creators": (1, {"name": "A_last, A_first"}),
-                "titles": (1, {"title": "testing dataset"}),
-                "descriptions": (
-                    1,
-                    {"description": "testing", "descriptionType": "Abstract"},
-                ),
-                "publisher": (None, "DANDI Archive"),
-                "rightsList": (
-                    1,
-                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC_BY_40"},
-                ),
-                "types": (
-                    None,
-                    {"resourceType": "NWB", "resourceTypeGeneral": "Dataset"},
-                ),
-            },
-        ),
-        # additional contributor with dandi:Author
-        (
-            {
-                "contributor": [
-                    {
-                        "name": "A_last, A_first",
-                        "roleName": [RoleType("dandi:ContactPerson")],
-                    },
-                    {"name": "B_last, B_first", "roleName": [RoleType("dandi:Author")]},
-                ],
-            },
-            {
-                "creators": (1, {"name": "B_last, B_first"}),
-                "contributors": (
-                    1,
-                    {"name": "A_last, A_first", "contributorType": "ContactPerson"},
-                ),
-            },
-        ),
-        # additional contributor with dandi:Sponsor, fundingReferences should be created
-        (
-            {
-                "contributor": [
-                    {
-                        "name": "A_last, A_first",
-                        "roleName": [RoleType("dandi:ContactPerson")],
-                    },
-                    {
-                        "name": "B_last, B_first",
-                        "roleName": [RoleType("dandi:Sponsor")],
-                    },
-                ],
-            },
-            {
-                "creators": (1, {"name": "A_last, A_first"}),
-                "fundingReferences": (1, {"funderName": "B_last, B_first"}),
-            },
-        ),
-        # additional contributor with 2 roles: Author and Software (doesn't exist in datacite)
-        # the person should be in creators and contributors (with contributorType Other)
-        (
-            {
-                "contributor": [
-                    {
-                        "name": "A_last, A_first",
-                        "roleName": [
-                            RoleType("dandi:Author"),
-                            RoleType("dandi:Software"),
-                        ],
-                    },
-                    {
-                        "name": "B_last, B_first",
-                        "roleName": [RoleType("dandi:ContactPerson")],
-                    },
-                ],
-            },
-            {
-                "creators": (1, {"name": "A_last, A_first"}),
-                "contributors": (
-                    2,
-                    {"name": "A_last, A_first", "contributorType": "Other"},
-                ),
-            },
-        ),
-    ],
-)
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
-def test_dantimeta_datacite(schema, additional_meta, datacite_checks):
-    """
-    checking datacite objects for specific metadata dictionaries,
-    posting datacite object and checking the status code
-    """
-
-    dandi_id = f"DANDI:000{random.randrange(100, 999)}"
-
-    # meta data without doi, datePublished and publishedBy
-    meta_dict = {
-        "identifier": dandi_id,
-        "id": f"{dandi_id}/draft",
-        "name": "testing dataset",
-        "description": "testing",
-        "contributor": [
-            {
-                "name": "A_last, A_first",
-                "roleName": [RoleType("dandi:ContactPerson")],
-            }
-        ],
-        "license": [LicenseType("spdx:CC-BY-4.0")],
+def test_schemakey():
+    typemap = {
+        "BareAsset": "Asset",
+        "PublishedAsset": "Asset",
+        "PublishedDandiset": "Dandiset",
     }
-    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id))
-    meta_dict.update(additional_meta)
-
-    # creating PublishedDandisetMeta from the dictionary
-    meta = PublishedDandisetMeta(**meta_dict)
-    # creating and validating datacite objects
-    datacite = to_datacite(meta)
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
-    validator.validate(datacite["data"]["attributes"])
-
-    # checking some datacite fields
-    attr = datacite["data"]["attributes"]
-    for key, el in datacite_checks.items():
-        el_len, el_flds = el
-        if el_len:
-            # checking length and some fields from the first element
-            assert len(attr[key]) == el_len
-            for k, v in el_flds.items():
-                assert attr[key][0][k] == v
-        else:
-            if isinstance(el_flds, dict):
-                for k, v in el_flds.items():
-                    assert attr[key][k] == v
+    for val in dir(models):
+        if val in ["BaseModel"]:
+            continue
+        klass = getattr(models, val)
+        if isinstance(klass, pydantic.main.ModelMetaclass):
+            assert "schemaKey" in klass.__fields__
+            if val in typemap:
+                assert typemap[val] == klass.__fields__["schemaKey"].default
             else:
-                assert attr[key] == el_flds
+                assert val == klass.__fields__["schemaKey"].default
 
-    # trying to poste datacite
-    datacite_post(datacite, meta.doi)
+
+def test_duplicate_classes():
+    qnames = {}
+
+    def check_qname(qname, klass):
+        if (
+            qname
+            in [
+                "dandi:id",
+                "dandi:schemaKey",
+            ]
+            or qname.startswith("schema")
+            or qname.startswith("prov")
+        ):
+            return
+        if qname in qnames:
+            if qnames[qname] is None:
+                return
+            if issubclass(klass, (qnames[qname],)):
+                return
+            if issubclass(qnames[qname], klass):
+                qnames[qname] = klass
+                return
+            if qname == "dandi:repository" and klass.__name__ in (
+                "Resource",
+                "CommonModel",
+            ):
+                return
+            if qname == "dandi:relation" and klass.__name__ in (
+                "Resource",
+                "RelatedParticipant",
+            ):
+                return
+            if qname in "dandi:approach" and klass.__name__ in (
+                "Asset",
+                "AssetsSummary",
+            ):
+                return
+            if qname == "dandi:species" and klass.__name__ in (
+                "Participant",
+                "AssetsSummary",
+            ):
+                return
+            raise ValueError(f"{qname},{klass} already exists {qnames[qname]}")
+        qnames[qname] = klass
+
+    modelnames = dir(models)
+    modelnames.remove("CommonModel")
+    modelnames.remove("BaseType")
+    modelnames.remove("BaseModel")
+    modelnames.remove("DandiBaseModel")
+    for val in ["CommonModel", "BaseType"] + modelnames:
+        klass = getattr(models, val)
+        if not isinstance(klass, pydantic.main.ModelMetaclass):
+            continue
+        if isinstance(klass, enum.EnumMeta):
+            for enumval in klass:
+                qname = enumval.value
+                check_qname(qname, klass)
+        if hasattr(klass, "_ldmeta"):
+            if "nskey" in klass._ldmeta:
+                name = klass.__name__
+                qname = f'{klass._ldmeta["nskey"]}:{name}'
+            else:
+                qname = f"dandi:{name}"
+            check_qname(qname, klass)
+        for name, field in klass.__fields__.items():
+            if "nskey" in field.field_info.extra:
+                qname = field.field_info.extra["nskey"] + ":" + name
+            else:
+                qname = f"dandi:{name}"
+            check_qname(qname, klass)
