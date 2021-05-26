@@ -955,12 +955,11 @@ class BareAsset(CommonModel):
 
     @validator("digest")
     def digest_etag(cls, values):
-        print(values)
         try:
             if len(values[DigestType.dandi_etag]) != 32:
                 raise ValueError
         except (KeyError, ValueError):
-            raise ValueError("Digest must have an appropriate dandi-etag value.")
+            raise ValueError(f"Digest must have an appropriate dandi-etag value. Got {values[DigestType.dandi_etag]}")
         return values
 
 
@@ -1002,7 +1001,7 @@ class PublishedAsset(Asset, Publishable):
             if len(values[DigestType.dandi_etag] + values[DigestType.sha2_256]) != 96:
                 raise ValueError
         except (KeyError, ValueError):
-            raise ValueError("Digest must have both dandi-etag and sha2-256.")
+            raise ValueError("Digest must have both valid dandi-etag and sha2-256.")
         return values
 
 
