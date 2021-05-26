@@ -2,6 +2,7 @@ from hashlib import md5, sha256
 import json
 from pathlib import Path
 
+import jsonschema
 from pydantic import ValidationError
 import pytest
 
@@ -259,4 +260,8 @@ def test_migrate_040(schema_dir):
     assert set([el["loc"][0] for el in exc.value.errors()]) == badfields
     newmeta = migrate(data_as_dict, to_version=DANDI_SCHEMA_VERSION)
     assert newmeta["schemaVersion"] == DANDI_SCHEMA_VERSION
+    with pytest.raises(jsonschema.ValidationError):
+        _validate_dandiset_json(newmeta, schema_dir)
+    newmeta["assetsSummary"] = {"numberOfFiles": 1, "numberOfBytes": 1}
+    newmeta["manifestLocation"] = ["https://example.org/manifest"]
     _validate_dandiset_json(newmeta, schema_dir)

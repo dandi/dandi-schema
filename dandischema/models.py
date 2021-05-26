@@ -491,8 +491,8 @@ class AssetsSummary(DandiBaseModel):
     """Summary over assets contained in a dandiset (published or not)"""
 
     # stats which are not stats
-    numberOfBytes: int = Field(readOnly=True, sameas="schema:contentSize")
-    numberOfFiles: int = Field(readOnly=True)  # universe
+    numberOfBytes: int = Field(readOnly=True, gt=0, sameas="schema:contentSize")
+    numberOfFiles: int = Field(readOnly=True, gt=0)  # universe
     numberOfSubjects: Optional[int] = Field(None, readOnly=True)  # NWB + BIDS
     numberOfSamples: Optional[int] = Field(None, readOnly=True)  # more of NWB
     numberOfCells: Optional[int] = Field(None, readOnly=True)
@@ -855,7 +855,7 @@ class Dandiset(CommonModel):
     assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: List[HttpUrl] = Field(readOnly=True, nskey="dandi")
+    manifestLocation: List[HttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
 
     version: str = Field(readOnly=True, nskey="schema")
 
