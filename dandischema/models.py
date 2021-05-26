@@ -958,8 +958,13 @@ class BareAsset(CommonModel):
         try:
             if len(values[DigestType.dandi_etag]) != 32:
                 raise ValueError
-        except (KeyError, ValueError):
-            raise ValueError(f"Digest must have an appropriate dandi-etag value. Got {values[DigestType.dandi_etag]}")
+        except KeyError:
+            raise ValueError("Digest is missing dandi-etag value.")
+        except ValueError:
+            raise ValueError(
+                f"Digest must have an appropriate dandi-etag value. "
+                f"Got {values[DigestType.dandi_etag]}"
+            )
         return values
 
 
