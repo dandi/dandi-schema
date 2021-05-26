@@ -9,7 +9,7 @@ import pytest
 import requests
 
 from ..datacite import to_datacite
-from ..models import LicenseType, PublishedDandiset, RoleType
+from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
 
 
 def datacite_post(datacite, doi):
@@ -131,7 +131,7 @@ def test_datacite(dandi_id, schema):
                 ),
                 "types": (
                     None,
-                    {"resourceType": "NWB", "resourceTypeGeneral": "Dataset"},
+                    {"resourceType": "Neural Data", "resourceTypeGeneral": "Dataset"},
                 ),
             },
         ),
@@ -199,6 +199,30 @@ def test_datacite(dandi_id, schema):
                 "contributors": (
                     2,
                     {"name": "A_last, A_first", "contributorType": "Other"},
+                ),
+            },
+        ),
+        (
+            {
+                "relatedResource": [
+                    {
+                        "url": "https://github.com/org/project",
+                        "relation": RelationType("dcite:IsSupplementedBy"),
+                    },
+                    {
+                        "identifier": "doi:10.123/123",
+                        "relation": RelationType("dcite:IsDocumentedBy"),
+                    },
+                ],
+            },
+            {
+                "relatedIdentifiers": (
+                    2,
+                    {
+                        "relatedIdentifier": "https://github.com/org/project",
+                        "relatedIdentifierType": "URL",
+                        "relationType": "IsSupplementedBy",
+                    },
                 ),
             },
         ),

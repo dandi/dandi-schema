@@ -363,6 +363,7 @@ class Person(Contributor):
     )
     name: str = Field(
         description="Use the format: familyname, given names ...",
+        regex=r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$",
         nskey="schema",
         examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )

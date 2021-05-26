@@ -15,7 +15,7 @@ def generate_context():
         "@version": 1.1,
         "dandi": "http://schema.dandiarchive.org/",
         "dcite": "http://schema.dandiarchive.org/datacite/",
-        "dandiasset": "http://dandiarchive.org/asset/"
+        "dandiasset": "http://dandiarchive.org/asset/",
         "DANDI": "http://dandiarchive.org/dandiset/",
         "dct": "http://purl.org/dc/terms/",
         "owl": "http://www.w3.org/2002/07/owl#",

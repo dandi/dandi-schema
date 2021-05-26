@@ -79,7 +79,10 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
     attributes["publisher"] = "DANDI Archive"
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
-    attributes["types"] = {"resourceType": "Neural Data", "resourceTypeGeneral": "Dataset"}
+    attributes["types"] = {
+        "resourceType": "Neural Data",
+        "resourceTypeGeneral": "Dataset",
+    }
     # meta has also attribute url, but it often empty
     attributes["url"] = meta.url
     # assuming that all licenses are from SPDX?
@@ -160,9 +163,10 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
     if getattr(meta, "relatedResource"):
         attributes["relatedIdentifiers"] = []
         for rel_el in meta.relatedResource:
-            ident = rel_el.identifier.split(":")
-            if len(ident) == 2:
-                ident_tp, ident_nr = ident
+            if rel_el.identifier is not None:
+                if ":" not in rel_el.identifier:
+                    continue
+                ident_tp, ident_id = rel_el.identifier.split(":", 1)
                 if ident_tp.lower() in DATACITE_MAP:
                     ident_tp = DATACITE_MAP[ident_tp.lower()]
                 else:
@@ -170,15 +174,13 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
                         f"identifier has to be from the list: {DATACITE_IDENTYPE}, "
                         f"but {ident_tp} provided"
                     )
-            else:
-                raise ValueError(
-                    "identifier is expected to be type:number,"
-                    f" got {rel_el.identifier}"
-                )
+            elif rel_el.url is not None:
+                ident_id = rel_el.url
+                ident_tp = "URL"
             rel_dict = {
-                "relatedIdentifier": ident_nr,
+                "relatedIdentifier": ident_id,
                 # in theory it should be from the specific list that contains e.g. DOI, arXiv, ...
-                "relatedIdentifierType": ident_tp,
+                "relatedIdentifierType": ident_tp.upper(),
                 "relationType": rel_el.relation.name,
             }
             attributes["relatedIdentifiers"].append(rel_dict)

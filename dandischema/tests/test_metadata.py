@@ -7,11 +7,11 @@ import pytest
 
 from ..consts import DANDI_SCHEMA_VERSION
 from ..metadata import (
+    _validate_asset_json,
+    _validate_dandiset_json,
     migrate,
     publish_model_schemata,
     validate,
-    validate_asset_json,
-    validate_dandiset_json,
 )
 
 METADATA_DIR = Path(__file__).with_name("data") / "metadata"
@@ -28,14 +28,14 @@ def test_asset(schema_dir):
     # overload (here and below) schemaVersion until we support automagic schema migrations
     # under assumption that the 0.3.2 schema would be forward compatible
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
-    validate_asset_json(data_as_dict, schema_dir)
+    _validate_asset_json(data_as_dict, schema_dir)
 
 
 def test_dandiset(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
-    validate_dandiset_json(data_as_dict, schema_dir)
+    _validate_dandiset_json(data_as_dict, schema_dir)
 
 
 def test_pydantic_validation(schema_dir):
@@ -248,4 +248,4 @@ def test_migrate_040(schema_dir):
     assert set([el["loc"][0] for el in exc.value.errors()]) == badfields
     newmeta = migrate(data_as_dict, to_version=DANDI_SCHEMA_VERSION)
     assert newmeta["schemaVersion"] == DANDI_SCHEMA_VERSION
-    validate_dandiset_json(newmeta, schema_dir)
+    _validate_dandiset_json(newmeta, schema_dir)
