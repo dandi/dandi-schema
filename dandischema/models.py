@@ -26,6 +26,9 @@ else:
     from typing import Literal
 
 
+NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
+
+
 def create_enum(data):
     """Convert a JSON-LD enumeration to an Enum"""
     items = {}
@@ -368,7 +371,7 @@ class Person(Contributor):
     )
     name: str = Field(
         description="Use the format: familyname, given names ...",
-        regex=r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$",
+        regex=NAME_PATTERN,
         nskey="schema",
         examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )

@@ -1,7 +1,8 @@
 from copy import deepcopy
+import re
 import typing as ty
 
-from .models import Organization, Person, PublishedDandiset, RoleType
+from .models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -119,10 +120,10 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
         }
         if isinstance(contr_el, Person):
             contr_dict["nameType"] = "Personal"
-            if len(contr_el.name.split(",")) == 2:
-                contr_dict["familyName"], contr_dict["givenName"] = contr_el.name.split(
-                    ","
-                )
+            contr_dict["familyName"], contr_dict["givenName"] = re.findall(
+                NAME_PATTERN, contr_el.name
+            ).pop()
+
             if getattr(contr_el, "affiliation"):
                 contr_dict["affiliation"] = [
                     {"name": el.name} for el in contr_el.affiliation
