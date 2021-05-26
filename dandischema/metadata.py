@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import jsonschema
+import requests
 
 from .consts import ALLOWED_INPUT_SCHEMAS, ALLOWED_TARGET_SCHEMAS, DANDI_SCHEMA_VERSION
 from . import models
@@ -131,7 +132,9 @@ def validate(obj, schema_version=None, schema_key=None):
     klass(**obj)
 
 
-def migrate(obj: dict, to_version: str = DANDI_SCHEMA_VERSION) -> dict:
+def migrate(
+    obj: dict, to_version: str = DANDI_SCHEMA_VERSION, skip_validation=False
+) -> dict:
     """Migrate dandiset metadata object to new schema"""
     obj = deepcopy(obj)
     if to_version not in ALLOWED_TARGET_SCHEMAS:
@@ -143,6 +146,12 @@ def migrate(obj: dict, to_version: str = DANDI_SCHEMA_VERSION) -> dict:
         raise ValueError(f"Current input schemas supported: {ALLOWED_INPUT_SCHEMAS}.")
     if version2tuple(schema_version) > version2tuple(to_version):
         raise ValueError(f"Cannot migrate from {schema_version} to lower {to_version}.")
+    if not (skip_validation):
+        schema = requests.get(
+            f"https://raw.githubusercontent.com/dandi/schema/"
+            f"master/releases/{schema_version}/dandiset.json"
+        ).json()
+        jsonschema.validate(obj, schema)
     if version2tuple(schema_version) < (0, 3, 2):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
