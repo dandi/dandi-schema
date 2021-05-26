@@ -229,6 +229,7 @@ def test_requirements(obj, schema_key, missingfields):
 @pytest.mark.parametrize(
     "obj, target",
     [
+        ({}, "0.3.2"),
         ({"schemaVersion": "0.2.2"}, None),
         ({"schemaVersion": "0.3.0"}, "0.3.2"),
         ({"schemaVersion": "0.3.1"}, "0.3.0"),
@@ -242,9 +243,19 @@ def test_migrate_errors(obj, target):
 def test_migrate_040(schema_dir):
     with (METADATA_DIR / "meta_000004old.json").open() as fp:
         data_as_dict = json.load(fp)
+    with pytest.raises(ValueError) as exc:
+        validate(data_as_dict)
+    data_as_dict["schemaKey"] = "Dandiset"
     with pytest.raises(ValidationError) as exc:
         validate(data_as_dict)
-    badfields = {"contributor", "access", "relatedResource"}
+    badfields = {
+        "contributor",
+        "access",
+        "relatedResource",
+        "id",
+        "manifestLocation",
+        "assetsSummary",
+    }
     assert set([el["loc"][0] for el in exc.value.errors()]) == badfields
     newmeta = migrate(data_as_dict, to_version=DANDI_SCHEMA_VERSION)
     assert newmeta["schemaVersion"] == DANDI_SCHEMA_VERSION

@@ -1,7 +1,7 @@
 {
   "id": "DANDI:000008/draft",
   "schemaKey": "Dandiset",
-  "schemaVersion": "0.3.2",
+  "schemaVersion": "0.4.0",
   "name": "Phenotypic variation within and across transcriptomic cell types in mouse motor cortex",
   "description": "Data from the Tolias Lab shared in the BICCN project",
   "contributor": [

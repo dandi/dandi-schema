@@ -336,6 +336,22 @@ class Organization(Contributor):
     }
 
 
+class Affiliation(DandiBaseModel):
+    identifier: Optional[RORID] = Field(
+        None,
+        title="A ror.org identifier",
+        description="Use an ror.org identifier for institutions",
+        regex=r"^https://ror.org/[a-z0-9]+$",
+        nskey="schema",
+    )
+    name: str = Field(None, nskey="schema")
+
+    _ldmeta = {
+        "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
+        "nskey": "dandi",
+    }
+
+
 class Person(Contributor):
     identifier: Optional[ORCID] = Field(
         None,
@@ -350,7 +366,7 @@ class Person(Contributor):
         nskey="schema",
         examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )
-    affiliation: List[Organization] = Field(
+    affiliation: List[Affiliation] = Field(
         None,
         description="An organization that this person is affiliated with.",
         nskey="schema",
