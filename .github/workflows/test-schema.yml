@@ -1,12 +1,14 @@
-name: Test model schemata
+name: Test that old schemata are not modified
 
 on:
-  push:
   pull_request:
+    # Run whenever labels are modified, in addition to normal events:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
-  publish:
+  test:
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'release')
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v2
