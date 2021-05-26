@@ -6,6 +6,7 @@ import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
 from pydantic import UUID4, BaseModel, ByteSize, EmailStr, Field, HttpUrl, validator
+from pydantic.main import ModelMetaclass
 
 from .consts import DANDI_SCHEMA_VERSION
 from .model_types import (
@@ -94,9 +95,16 @@ class HandleKeyEnumEncoder(json.JSONEncoder):
         return super().encode(_sanitize(o))
 
 
-class DandiBaseModel(BaseModel):
+class DandiBaseModelMetaclass(ModelMetaclass):
+    def __new__(cls, name, bases, dct):
+        sk_name = dct.pop("schemaKey", None) or name
+        dct["schemaKey"]: Literal[sk_name] = Field(sk_name, readOnly=True)
+        objcls = super().__new__(cls, name, bases, dct)
+        return objcls
+
+
+class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
-    schemaKey: Literal["DandiBaseModel"] = Field("DandiBaseModel", readOnly=True)
 
     @classmethod
     def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
@@ -162,10 +170,13 @@ class DandiBaseModel(BaseModel):
                 # In pydantic 1.8+ all Literals are mapped on to enum
                 # This presently breaks the schema editor UI. Revert
                 # to const when generating the schema.
+                # Note: this no longer happens with custom metaclass
                 if prop == "schemaKey":
-                    if len(value["enum"]) == 1:
+                    if "enum" in value and len(value["enum"]) == 1:
                         value["const"] = value["enum"][0]
                         del value["enum"]
+                    else:
+                        value["const"] = value["default"]
 
 
 class PropertyValue(DandiBaseModel):
@@ -183,7 +194,6 @@ class PropertyValue(DandiBaseModel):
         nskey="schema",
     )
 
-    schemaKey: Literal["PropertyValue"] = Field("PropertyValue", readOnly=True)
     _ldmeta = {"nskey": "schema"}
 
 
@@ -208,44 +218,31 @@ class BaseType(DandiBaseModel):
     name: Optional[str] = Field(
         description="The name of the item.", max_length=150, nskey="schema"
     )
-    schemaKey: Literal["BaseType"] = Field("BaseType", readOnly=True)
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
 
 class AssayType(BaseType):
     """OBI based identifier for the assay(s) used"""
 
-    schemaKey: Literal["AssayType"] = Field("AssayType", readOnly=True)
-
 
 class SampleType(BaseType):
     """OBI based identifier for the sample type used"""
-
-    schemaKey: Literal["SampleType"] = Field("SampleType", readOnly=True)
 
 
 class Anatomy(BaseType):
     """UBERON or other identifier for anatomical part studied"""
 
-    schemaKey: Literal["Anatomy"] = Field("Anatomy", readOnly=True)
-
 
 class StrainType(BaseType):
     """Identifier for the strain of the sample"""
-
-    schemaKey: Literal["StrainType"] = Field("StrainType", readOnly=True)
 
 
 class SexType(BaseType):
     """Identifier for the sex of the sample"""
 
-    schemaKey: Literal["SexType"] = Field("SexType", readOnly=True)
-
 
 class SpeciesType(BaseType):
     """Identifier for species of the sample"""
-
-    schemaKey: Literal["SpeciesType"] = Field("SpeciesType", readOnly=True)
 
 
 class Disorder(BaseType):
@@ -258,40 +255,28 @@ class Disorder(BaseType):
         nskey="dandi",
         rangeIncludes="schema:Date",
     )
-    schemaKey: Literal["Disorder"] = Field("Disorder", readOnly=True)
 
 
 class GenericType(BaseType):
     """An object to capture any type for about"""
 
-    schemaKey: Literal["GenericType"] = Field("GenericType", readOnly=True)
-
 
 class ApproachType(BaseType):
     """Identifier for approach used"""
-
-    schemaKey: Literal["ApproachType"] = Field("ApproachType", readOnly=True)
 
 
 class MeasurementTechniqueType(BaseType):
     """Identifier for measurement technique used"""
 
-    schemaKey: Literal["MeasurementTechniqueType"] = Field(
-        "MeasurementTechniqueType", readOnly=True
-    )
-
 
 class StandardsType(BaseType):
     """Identifier for data standard used"""
-
-    schemaKey: Literal["StandardsType"] = Field("StandardsType", readOnly=True)
 
 
 class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(None, nskey="schema")
     url: Optional[HttpUrl] = Field(None, nskey="schema")
 
-    schemaKey: Literal["ContactPoint"] = Field("ContactPoint", readOnly=True)
     _ldmeta = {"nskey": "schema"}
 
 
@@ -321,7 +306,6 @@ class Contributor(DandiBaseModel):
         description="Identifier associated with a sponsored or gift award",
         nskey="dandi",
     )
-    schemaKey: Literal["Contributor"] = Field("Contributor", readOnly=True)
 
 
 class Organization(Contributor):
@@ -346,7 +330,6 @@ class Organization(Contributor):
         description="Contact for the organization",
         nskey="schema",
     )
-    schemaKey: Literal["Organization"] = Field("Organization", readOnly=True)
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
         "nskey": "dandi",
@@ -372,7 +355,6 @@ class Person(Contributor):
         description="An organization that this person is affiliated with.",
         nskey="schema",
     )
-    schemaKey: Literal["Person"] = Field("Person", readOnly=True)
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Person", "prov:Person"], "nskey": "dandi"}
 
@@ -390,7 +372,6 @@ class Software(DandiBaseModel):
     url: Optional[HttpUrl] = Field(
         None, description="Web page for the software", nskey="schema"
     )
-    schemaKey: Literal["Software"] = Field("Software", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:SoftwareApplication", "prov:Software"],
@@ -407,7 +388,6 @@ class Agent(DandiBaseModel):
     )
     name: str = Field(nskey="schema")
     url: Optional[HttpUrl] = Field(None, nskey="schema")
-    schemaKey: Literal["Agent"] = Field("Agent", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -426,7 +406,6 @@ class EthicsApproval(DandiBaseModel):
     contactPoint: ContactPoint = Field(
         description="Information about the ethics approval committee.", nskey="schema"
     )
-    schemaKey: Literal["EthicsApproval"] = Field("EthicsApproval", readOnly=True)
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
@@ -447,7 +426,6 @@ class Resource(DandiBaseModel):
         "This relation should satisfy: dandiset <relation> resource",
         nskey="dandi",
     )
-    schemaKey: Literal["Resource"] = Field("Resource", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -483,9 +461,6 @@ class AccessRequirements(DandiBaseModel):
         nskey="dandi",
         rangeIncludes="schema:Date",
     )
-    schemaKey: Literal["AccessRequirements"] = Field(
-        "AccessRequirements", readOnly=True
-    )
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
@@ -514,7 +489,6 @@ class AssetsSummary(DandiBaseModel):
     variableMeasured: Optional[List[str]] = Field(None, readOnly=True, nskey="schema")
 
     species: Optional[List[SpeciesType]] = Field(readOnly=True)
-    schemaKey: Literal["AssetsSummary"] = Field("AssetsSummary", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -534,8 +508,6 @@ class Equipment(DandiBaseModel):
     description: Optional[str] = Field(
         None, description="The description of the activity.", nskey="schema"
     )
-
-    schemaKey: Literal["Equipment"] = Field("Equipment", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -566,8 +538,6 @@ class Activity(DandiBaseModel):
     ] = Field(None, nskey="prov")
     used: Optional[List[Equipment]] = Field(None, nskey="prov")
 
-    schemaKey: Literal["Activity"] = Field("Activity", readOnly=True)
-
     _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
 
 
@@ -581,7 +551,6 @@ class Project(Activity):
     description: Optional[str] = Field(
         None, description="A brief description of the project.", nskey="schema"
     )
-    schemaKey: Literal["Project"] = Field("Project", readOnly=True)
 
 
 class Session(Activity):
@@ -594,11 +563,10 @@ class Session(Activity):
     description: Optional[str] = Field(
         None, description="A brief description of the session.", nskey="schema"
     )
-    schemaKey: Literal["Session"] = Field("Session", readOnly=True)
 
 
 class PublishActivity(Activity):
-    schemaKey: Literal["PublishActivity"] = Field("PublishActivity", readOnly=True)
+    pass
 
 
 class Locus(DandiBaseModel):
@@ -606,7 +574,6 @@ class Locus(DandiBaseModel):
         description="Identifier for genotyping locus", nskey="schema"
     )
     locusType: Optional[str] = Field(None)
-    schemaKey: Literal["Locus"] = Field("Locus", readOnly=True)
     _ldmeta = {"nskey": "dandi"}
 
 
@@ -616,7 +583,6 @@ class Allele(DandiBaseModel):
     )
     alleleSymbol: Optional[str] = Field(None)
     alleleType: Optional[str] = Field(None)
-    schemaKey: Literal["Allele"] = Field("Allele", readOnly=True)
     _ldmeta = {"nskey": "dandi"}
 
 
@@ -624,7 +590,6 @@ class GenotypeInfo(DandiBaseModel):
     locus: Locus = Field(description="Locus at which information was extracted")
     alleles: List[Allele] = Field(description="Information about alleles at the locus")
     wasGeneratedBy: Optional[List["Session"]] = Field(None, nskey="prov")
-    schemaKey: Literal["GenotypeInfo"] = Field("GenotypeInfo", readOnly=True)
     _ldmeta = {"nskey": "dandi"}
 
 
@@ -639,9 +604,6 @@ class RelatedParticipant(DandiBaseModel):
         description="Indicates how the current participant is related to the other participant "
         "This relation should satisfy: Participant <relation> relatedParticipant",
         nskey="dandi",
-    )
-    schemaKey: Literal["RelatedParticipant"] = Field(
-        "RelatedParticipant", readOnly=True
     )
 
     _ldmeta = {
@@ -696,8 +658,6 @@ class Participant(DandiBaseModel):
     relatedParticipant: Optional[List[RelatedParticipant]] = Field(None, nskey="dandi")
     sameAs: Optional[List[Identifier]] = Field(None, nskey="schema")
 
-    schemaKey: Literal["Participant"] = Field("Participant", readOnly=True)
-
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
         "rdfs:label": "Information about the participant.",
@@ -728,8 +688,6 @@ class BioSample(DandiBaseModel):
     )
     sameAs: Optional[List[Identifier]] = Field(None, nskey="schema")
     hasMember: Optional[List[Identifier]] = Field(None, nskey="prov")
-
-    schemaKey: Literal["BioSample"] = Field("BioSample", readOnly=True)
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Thing", "prov:Entity"],
@@ -807,7 +765,6 @@ class CommonModel(DandiBaseModel):
     relatedResource: Optional[List[Resource]] = Field(None, nskey="dandi")
 
     wasGeneratedBy: Optional[List[Activity]] = Field(None, nskey="prov")
-    schemaKey: Literal["CommonModel"] = Field("CommonModel", readOnly=True)
 
     def json_dict(self):
         """
@@ -887,8 +844,6 @@ class Dandiset(CommonModel):
         nskey="prov",
     )
 
-    schemaKey: Literal["Dandiset"] = Field("Dandiset", readOnly=True)
-
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Dataset", "prov:Entity"],
         "rdfs:label": "Information about the dataset",
@@ -945,7 +900,8 @@ class BareAsset(CommonModel):
         nskey="prov",
     )
 
-    schemaKey: Literal["Asset"] = Field("Asset", readOnly=True)
+    # Bare asset is to be just Asset.
+    schemaKey = "Asset"
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -984,7 +940,6 @@ class Publishable(DandiBaseModel):
         nskey="dandi",
     )  # TODO: formalize "publish" activity to at least the Actor
     datePublished: datetime = Field(readOnly=True, nskey="schema")
-    schemaKey: Literal["Publishable"] = Field("Publishable", readOnly=True)
 
 
 class PublishedDandiset(Dandiset, Publishable):
@@ -998,8 +953,13 @@ class PublishedDandiset(Dandiset, Publishable):
         readOnly=True, description="permalink to the item", nskey="schema"
     )
 
+    schemaKey = "Dandiset"
+
 
 class PublishedAsset(Asset, Publishable):
+
+    schemaKey = "Asset"
+
     @validator("digest")
     def digest_bothhashes(cls, values):
         try:
