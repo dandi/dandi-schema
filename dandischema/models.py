@@ -982,6 +982,9 @@ class PublishedDandiset(Dandiset, Publishable):
 
 
 class PublishedAsset(Asset, Publishable):
+
+    schemaKey = "Asset"
+
     @validator("digest")
     def digest_bothhashes(cls, values):
         try:
