@@ -869,6 +869,8 @@ class Dandiset(CommonModel):
         nskey="prov",
     )
 
+    newField: Optional[int]
+
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Dataset", "prov:Entity"],
         "rdfs:label": "Information about the dataset",
