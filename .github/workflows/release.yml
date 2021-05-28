@@ -19,6 +19,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
+        with:
+          # A full checkout is required so that auto will have access to tag
+          # information.
+          fetch-depth: 0
 
       - name: Download auto
         run: |
