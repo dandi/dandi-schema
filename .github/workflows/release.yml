@@ -49,6 +49,10 @@ jobs:
           fetch-depth: 0
           path: dandischema
 
+      - name: Delete schema-* tags so as not to confuse auto
+        run: |
+          git tag -l "schema-*" | xargs git tag -d
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
