@@ -28,6 +28,73 @@ def test_asset():
     assert Asset.unvalidated()
 
 
+def test_asset_digest():
+    from dandischema import migrate, models
+
+    digest_model = {"sha1": ""}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "value is not a valid enumeration member" in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest_type = "dandi_etag"
+    digest = 32 * "a"
+    digest_model = {models.DigestType[digest_type]: digest}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "Digest must have an appropriate dandi-etag value." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest = 32 * "a" + "-1"
+    digest_model = {models.DigestType[digest_type]: digest}
+    models.BareAsset(
+        contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+    )
+    digest_model = {models.DigestType[digest_type]: digest, "sha1": ""}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "value is not a valid enumeration member" in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest_model = {
+        models.DigestType[digest_type]: digest,
+        models.DigestType.sha2_256: 63 * "a",
+    }
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert "Digest is missing sha2_256 value" in set(
+        [el["msg"] for el in exc.value.errors()]
+    )
+    digest_model = {
+        models.DigestType[digest_type]: digest,
+        models.DigestType.sha2_256: 64 * "a",
+    }
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert "Digest is missing sha2_256 value" not in set(
+        [el["msg"] for el in exc.value.errors()]
+    )
+
+
 @pytest.mark.parametrize(
     "enumtype,values",
     [
