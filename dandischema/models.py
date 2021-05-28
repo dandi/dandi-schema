@@ -937,7 +937,8 @@ class BareAsset(CommonModel):
     @validator("digest")
     def digest_etag(cls, values):
         try:
-            if len(values[DigestType.dandi_etag]) != 32:
+            digest = values[DigestType.dandi_etag]
+            if "-" not in digest or len(digest.split("-")[0]) != 32:
                 raise ValueError
         except KeyError:
             raise ValueError("Digest is missing dandi-etag value.")
@@ -988,10 +989,14 @@ class PublishedAsset(Asset, Publishable):
     @validator("digest")
     def digest_bothhashes(cls, values):
         try:
-            if len(values[DigestType.dandi_etag] + values[DigestType.sha2_256]) != 96:
-                raise ValueError
-        except (KeyError, ValueError):
-            raise ValueError("Digest must have both valid dandi-etag and sha2-256.")
+            digest = values[DigestType.dandi_etag]
+            if "-" not in digest or len(digest.split("-")[0]) != 32:
+                raise ValueError("Digest is missing dandi-etag value")
+            digest = values[DigestType.sha2_256]
+            if len(digest) != 64:
+                raise ValueError("Digest is missing sha2_256 value")
+        except KeyError:
+            raise ValueError("Digest is missing dandi-etag or sha256 keys.")
         return values
 
 

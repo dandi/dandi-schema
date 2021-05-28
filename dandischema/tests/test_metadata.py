@@ -30,6 +30,7 @@ def test_asset(schema_dir):
     # under assumption that the 0.3.2 schema would be forward compatible
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
     _validate_asset_json(data_as_dict, schema_dir)
+    validate(data_as_dict)
 
 
 def test_dandiset(schema_dir):
@@ -147,7 +148,7 @@ def test_pydantic_validation(schema_dir):
         (
             {
                 "schemaKey": "Asset",
-                "digest": {"dandi:dandi-etag": md5(b"test").hexdigest()},
+                "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             None,
             {"contentSize", "encodingFormat", "id", "identifier", "path"},
@@ -186,7 +187,7 @@ def test_pydantic_validation(schema_dir):
         (
             {
                 "schemaKey": "Asset",
-                "digest": {"dandi:dandi-etag": md5(b"test").hexdigest()},
+                "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             "PublishedAsset",
             {
@@ -204,7 +205,7 @@ def test_pydantic_validation(schema_dir):
             {
                 "schemaKey": "Asset",
                 "digest": {
-                    "dandi:dandi-etag": md5(b"test").hexdigest(),
+                    "dandi:dandi-etag": md5(b"test").hexdigest() + "-1",
                     "dandi:sha2-256": sha256(b"test").hexdigest(),
                 },
             },
