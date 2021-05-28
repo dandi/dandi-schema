@@ -52,6 +52,7 @@ jobs:
       - name: Delete schema-* tags so as not to confuse auto
         run: |
           git tag -l "schema-*" | xargs git tag -d
+        working-directory: dandischema
 
       - name: Set up Python
         uses: actions/setup-python@v2
