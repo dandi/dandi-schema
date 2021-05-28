@@ -29,8 +29,6 @@ def test_asset():
 
 
 def test_asset_digest():
-    from dandischema import migrate, models
-
     digest_model = {"sha1": ""}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
