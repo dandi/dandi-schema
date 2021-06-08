@@ -1,3 +1,15 @@
+# 0.2.2 (Tue Jun 08 2021)
+
+#### 🐛 Bug Fix
+
+- fix: remove readOnly from constants [#28](https://github.com/dandi/dandischema/pull/28) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.2.1 (Fri May 28 2021)
 
 #### 🐛 Bug Fix
