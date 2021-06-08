@@ -186,6 +186,8 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                         del value["enum"]
                     else:
                         value["const"] = value["default"]
+                    if "readOnly" in value:
+                        del value["readOnly"]
 
 
 class PropertyValue(DandiBaseModel):
