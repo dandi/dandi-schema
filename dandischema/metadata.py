@@ -158,16 +158,20 @@ def migrate(
         id = obj.get("id")
         if not id.startswith("DANDI:"):
             obj["id"] = f'DANDI:{obj["id"]}'
-        for contrib in obj["contributor"]:
+        for contrib in obj.get("contributor", []):
+            if not contrib.get("roleName"):
+                continue
             contrib["roleName"] = [
                 val.replace("dandi:", "dcite:") for val in contrib["roleName"]
             ]
             for affiliation in contrib.get("affiliation", []):
                 affiliation["schemaKey"] = "Affiliation"
-        for contrib in obj["relatedResource"]:
+        for contrib in obj.get("relatedResource", []):
             contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
-        for access in obj["access"]:
+        for access in obj.get("access", []):
             access["status"] = "dandi:OpenAccess"
+        else:
+            obj["access"] = [{"status": "dandi:OpenAccess"}]
         if obj.get("assetsSummary") is None:
             obj["assetsSummary"] = {"numberOfFiles": 0, "numberOfBytes": 0}
         if obj.get("manifestLocation") is None:
