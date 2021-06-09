@@ -76,15 +76,21 @@ def publish_model_schemata(releasedir: str) -> Path:
     version = models.get_schema_version()
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
-    (vdir / "dandiset.json").write_text(models.Dandiset.schema_json(indent=2))
-    (vdir / "asset.json").write_text(models.Asset.schema_json(indent=2))
+    (vdir / "dandiset.json").write_text(
+        models.Dandiset.schema_json(indent=2).rstrip("\n") + "\n"
+    )
+    (vdir / "asset.json").write_text(
+        models.Asset.schema_json(indent=2).rstrip("\n") + "\n"
+    )
     (vdir / "published-dandiset.json").write_text(
-        models.PublishedDandiset.schema_json(indent=2)
+        models.PublishedDandiset.schema_json(indent=2).rstrip("\n") + "\n"
     )
     (vdir / "published-asset.json").write_text(
-        models.PublishedAsset.schema_json(indent=2)
+        models.PublishedAsset.schema_json(indent=2).rstrip("\n") + "\n"
     )
-    (vdir / "context.json").write_text(json.dumps(generate_context(), indent=2))
+    (vdir / "context.json").write_text(
+        json.dumps(generate_context(), indent=2).rstrip("\n") + "\n"
+    )
     return vdir
 
 
