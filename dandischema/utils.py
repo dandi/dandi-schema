@@ -50,3 +50,9 @@ def version2tuple(ver: str) -> tuple:
     if re.match(r"\d+\.\d+\.\d+$", ver) is None:
         raise ValueError(r"Version must be well formed: \d+\.\d+\.\d+")
     return tuple([int(val) for val in ver.split(".")])
+
+
+def _ensure_newline(obj):
+    if not obj.endswith("\n"):
+        return obj + "\n"
+    return obj

@@ -1,6 +1,6 @@
 import pytest
 
-from ..utils import name2title, version2tuple
+from ..utils import _ensure_newline, name2title, version2tuple
 
 
 @pytest.mark.parametrize(
@@ -39,3 +39,10 @@ def test_version(ver, error):
             version2tuple(ver)
     else:
         assert len(version2tuple(ver)) == 3
+
+
+def test_newline():
+    obj = "\n"
+    assert _ensure_newline(obj).endswith("\n")
+    obj = ""
+    assert _ensure_newline(obj).endswith("\n")
