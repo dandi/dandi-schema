@@ -242,7 +242,7 @@ def test_migrate_errors(obj, target):
         migrate(obj, to_version=target, skip_validation=True)
 
 
-def test_migrate_040(schema_dir):
+def test_migrate_041(schema_dir):
     with (METADATA_DIR / "meta_000004old.json").open() as fp:
         data_as_dict = json.load(fp)
     with pytest.raises(ValueError) as exc:
@@ -266,3 +266,13 @@ def test_migrate_040(schema_dir):
     newmeta["assetsSummary"] = {"numberOfFiles": 1, "numberOfBytes": 1}
     newmeta["manifestLocation"] = ["https://example.org/manifest"]
     _validate_dandiset_json(newmeta, schema_dir)
+
+
+def test_migrate_041_access(schema_dir):
+    with (METADATA_DIR / "meta_000004old.json").open() as fp:
+        data_as_dict = json.load(fp)
+    del data_as_dict["access"]
+    newmeta = migrate(
+        data_as_dict, to_version=DANDI_SCHEMA_VERSION, skip_validation=True
+    )
+    assert newmeta["access"] == [{"status": "dandi:OpenAccess"}]
