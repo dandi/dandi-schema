@@ -165,11 +165,10 @@ def migrate(
         if not id.startswith("DANDI:"):
             obj["id"] = f'DANDI:{obj["id"]}'
         for contrib in obj.get("contributor", []):
-            if not contrib.get("roleName"):
-                continue
-            contrib["roleName"] = [
-                val.replace("dandi:", "dcite:") for val in contrib["roleName"]
-            ]
+            if contrib.get("roleName"):
+                contrib["roleName"] = [
+                    val.replace("dandi:", "dcite:") for val in contrib["roleName"]
+                ]
             for affiliation in contrib.get("affiliation", []):
                 affiliation["schemaKey"] = "Affiliation"
         for contrib in obj.get("relatedResource", []):
