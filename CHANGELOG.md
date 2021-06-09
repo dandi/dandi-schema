@@ -1,3 +1,20 @@
+# 0.2.3 (Wed Jun 09 2021)
+
+#### 🐛 Bug Fix
+
+- fix: update migration code to account for missing fields [#30](https://github.com/dandi/dandischema/pull/30) ([@satra](https://github.com/satra))
+
+#### 🏠 Internal
+
+- Use DANDI_GITHUB_TOKEN to check out dandi/schema when releasing [#31](https://github.com/dandi/dandischema/pull/31) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 2
+
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.2.2 (Tue Jun 08 2021)
 
 #### 🐛 Bug Fix
