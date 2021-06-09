@@ -7,7 +7,7 @@ import requests
 
 from .consts import ALLOWED_INPUT_SCHEMAS, ALLOWED_TARGET_SCHEMAS, DANDI_SCHEMA_VERSION
 from . import models
-from .utils import version2tuple
+from .utils import _ensure_newline, version2tuple
 
 
 def generate_context():
@@ -77,19 +77,19 @@ def publish_model_schemata(releasedir: str) -> Path:
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
     (vdir / "dandiset.json").write_text(
-        models.Dandiset.schema_json(indent=2).rstrip("\n") + "\n"
+        _ensure_newline(models.Dandiset.schema_json(indent=2))
     )
     (vdir / "asset.json").write_text(
-        models.Asset.schema_json(indent=2).rstrip("\n") + "\n"
+        _ensure_newline(models.Asset.schema_json(indent=2))
     )
     (vdir / "published-dandiset.json").write_text(
-        models.PublishedDandiset.schema_json(indent=2).rstrip("\n") + "\n"
+        _ensure_newline(models.PublishedDandiset.schema_json(indent=2))
     )
     (vdir / "published-asset.json").write_text(
-        models.PublishedAsset.schema_json(indent=2).rstrip("\n") + "\n"
+        _ensure_newline(models.PublishedAsset.schema_json(indent=2))
     )
     (vdir / "context.json").write_text(
-        json.dumps(generate_context(), indent=2).rstrip("\n") + "\n"
+        _ensure_newline(json.dumps(generate_context(), indent=2))
     )
     return vdir
 
@@ -173,10 +173,11 @@ def migrate(
                 affiliation["schemaKey"] = "Affiliation"
         for contrib in obj.get("relatedResource", []):
             contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
-        for access in obj.get("access", []):
-            access["status"] = "dandi:OpenAccess"
-        else:
+        if "access" not in obj:
             obj["access"] = [{"status": "dandi:OpenAccess"}]
+        else:
+            for access in obj.get("access", []):
+                access["status"] = "dandi:OpenAccess"
         if obj.get("assetsSummary") is None:
             obj["assetsSummary"] = {"numberOfFiles": 0, "numberOfBytes": 0}
         if obj.get("manifestLocation") is None:
