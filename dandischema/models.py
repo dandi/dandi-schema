@@ -2,6 +2,7 @@ from copy import deepcopy
 from datetime import date, datetime
 from enum import Enum
 import json
+import os
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -33,6 +34,12 @@ if sys.version_info < (3, 8):
     from typing_extensions import Literal
 else:
     from typing import Literal
+
+# Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
+# localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
+# environment variable will use a less restrictive pydantic field that allows localhost.
+if os.environ["DANDI_ALLOW_LOCALHOST_URLS"]:
+    HttpUrl = AnyHttpUrl
 
 
 NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
@@ -869,7 +876,7 @@ class Dandiset(CommonModel):
     assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: List[AnyHttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
+    manifestLocation: List[HttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
 
     version: str = Field(readOnly=True, nskey="schema")
 
@@ -967,11 +974,11 @@ class Asset(BareAsset):
     # all of the following are set by server
     id: str = Field(readOnly=True, description="Uniform resource identifier")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[AnyHttpUrl] = Field(None, readOnly=True, nskey="schema")
+    contentUrl: List[HttpUrl] = Field(None, readOnly=True, nskey="schema")
 
 
 class Publishable(DandiBaseModel):
-    publishedBy: Union[AnyHttpUrl, PublishActivity] = Field(
+    publishedBy: Union[HttpUrl, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
         readOnly=True,
         nskey="dandi",
@@ -986,7 +993,7 @@ class PublishedDandiset(Dandiset, Publishable):
         regex=r"^10\.[A-Za-z0-9.\/-]+",
         nskey="dandi",
     )
-    url: AnyHttpUrl = Field(
+    url: HttpUrl = Field(
         readOnly=True, description="permalink to the item", nskey="schema"
     )
 
