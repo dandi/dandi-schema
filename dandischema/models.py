@@ -5,7 +5,16 @@ import json
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
-from pydantic import UUID4, BaseModel, ByteSize, EmailStr, Field, HttpUrl, validator
+from pydantic import (
+    UUID4,
+    AnyHttpUrl,
+    BaseModel,
+    ByteSize,
+    EmailStr,
+    Field,
+    HttpUrl,
+    validator,
+)
 from pydantic.main import ModelMetaclass
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -860,7 +869,7 @@ class Dandiset(CommonModel):
     assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: List[HttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
+    manifestLocation: List[AnyHttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
 
     version: str = Field(readOnly=True, nskey="schema")
 
@@ -958,11 +967,11 @@ class Asset(BareAsset):
     # all of the following are set by server
     id: str = Field(readOnly=True, description="Uniform resource identifier")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[HttpUrl] = Field(None, readOnly=True, nskey="schema")
+    contentUrl: List[AnyHttpUrl] = Field(None, readOnly=True, nskey="schema")
 
 
 class Publishable(DandiBaseModel):
-    publishedBy: Union[HttpUrl, PublishActivity] = Field(
+    publishedBy: Union[AnyHttpUrl, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
         readOnly=True,
         nskey="dandi",
@@ -977,7 +986,7 @@ class PublishedDandiset(Dandiset, Publishable):
         regex=r"^10\.[A-Za-z0-9.\/-]+",
         nskey="dandi",
     )
-    url: HttpUrl = Field(
+    url: AnyHttpUrl = Field(
         readOnly=True, description="permalink to the item", nskey="schema"
     )
 
