@@ -2,10 +2,20 @@ from copy import deepcopy
 from datetime import date, datetime
 from enum import Enum
 import json
+import os
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
-from pydantic import UUID4, BaseModel, ByteSize, EmailStr, Field, HttpUrl, validator
+from pydantic import (
+    UUID4,
+    AnyHttpUrl,
+    BaseModel,
+    ByteSize,
+    EmailStr,
+    Field,
+    HttpUrl,
+    validator,
+)
 from pydantic.main import ModelMetaclass
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -24,6 +34,12 @@ if sys.version_info < (3, 8):
     from typing_extensions import Literal
 else:
     from typing import Literal
+
+# Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
+# localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
+# environment variable will use a less restrictive pydantic field that allows localhost.
+if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
+    HttpUrl = AnyHttpUrl  # noqa: F811
 
 
 NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
