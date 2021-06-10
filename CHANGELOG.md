@@ -1,3 +1,15 @@
+# 0.2.4 (Thu Jun 10 2021)
+
+#### 🐛 Bug Fix
+
+- Allow location fields to have localhost URLs [#33](https://github.com/dandi/dandischema/pull/33) ([@dchiquito](https://github.com/dchiquito))
+
+#### Authors: 1
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+
+---
+
 # 0.2.3 (Wed Jun 09 2021)
 
 #### 🐛 Bug Fix
