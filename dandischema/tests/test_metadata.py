@@ -396,5 +396,4 @@ def test_migrate_041_access(schema_dir):
 )
 def test_aggregate(files, summary):
     metadata = (json.loads((METADATA_DIR / f).read_text()) for f in files)
-    metadata_summary = aggregate_assets_summary(metadata)
-    assert metadata_summary.json_dict() == summary
+    assert aggregate_assets_summary(metadata) == summary

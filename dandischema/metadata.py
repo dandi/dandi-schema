@@ -258,9 +258,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
 
 # TODO?: move/bind such helpers as .from_metadata or alike within
 #        model classes themselves to centralize access to those constructors.
-def aggregate_assets_summary(
-    metadata: Iterable[Dict[str, Any]]
-) -> models.AssetsSummary:
+def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     """Given an iterable of metadata records produce AssetSummary"""
     stats: _stats_type = {}
     for meta in metadata:
@@ -271,4 +269,4 @@ def aggregate_assets_summary(
     stats["numberOfCells"] = len(stats.pop("cell"))
 
     stats = {k: v if v else None for k, v in stats.items()}
-    return models.AssetsSummary(**stats)
+    return models.AssetsSummary(**stats).json_dict()
