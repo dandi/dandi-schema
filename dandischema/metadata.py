@@ -1,7 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, cast
+from typing import Any, Dict, Iterable, List, TypeVar, Union, cast
 
 import jsonschema
 import requests
@@ -187,6 +187,10 @@ def migrate(
     return obj
 
 
+_stats_var_type = TypeVar("_stats_var_type", int, list)
+_stats_type = Dict[str, _stats_var_type]
+
+
 def _get_samples(value, stats, hierarchy):
     if "sampleType" in value:
         sampletype = value["sampleType"]["name"]
@@ -200,7 +204,7 @@ def _get_samples(value, stats, hierarchy):
     return stats
 
 
-def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> None:
+def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     """Add information about asset to the `stats` dict (to populate AssetsSummary)"""
     if "schemaVersion" not in assetmeta:
         raise ValueError("Provided metadata has no schema version")
@@ -258,7 +262,7 @@ def aggregate_assets_summary(
     metadata: Iterable[Dict[str, Any]]
 ) -> models.AssetsSummary:
     """Given an iterable of metadata records produce AssetSummary"""
-    stats = {}
+    stats: _stats_type = {}
     for meta in metadata:
         _add_asset_to_stats(meta, stats)
 
