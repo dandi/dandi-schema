@@ -246,7 +246,8 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> Non
     if "nwb" in assetmeta["encodingFormat"]:
         if models.nwb_standard not in stats["dataStandard"]:
             stats["dataStandard"].append(models.nwb_standard)
-    if ".nii" in assetmeta["path"] or ".json" in assetmeta["path"]:
+    # TODO: RF assumption that any .json implies BIDS
+    if set(Path(assetmeta["path"]).suffixes).intersection((".json", ".nii")):
         if models.bids_standard not in stats["dataStandard"]:
             stats["dataStandard"].append(models.bids_standard)
 
