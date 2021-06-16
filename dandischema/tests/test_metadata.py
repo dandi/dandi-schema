@@ -305,6 +305,10 @@ def test_migrate_041_access(schema_dir):
                         "name": "Neurodata Without Borders (NWB)",
                     }
                 ],
+                "approach": [],
+                "measurementTechnique": [],
+                "variableMeasured": [],
+                "species": [],
             },
         ),
         (
@@ -404,6 +408,14 @@ def test_migrate_041_access(schema_dir):
 def test_aggregate(files, summary):
     metadata = (json.loads((METADATA_DIR / f).read_text()) for f in files)
     assert aggregate_assets_summary(metadata) == summary
+
+
+def test_aggregate_norecord():
+    assert aggregate_assets_summary([]) == {
+        "numberOfBytes": 0,
+        "numberOfFiles": 0,
+        "schemaKey": "AssetsSummary",
+    }
 
 
 @pytest.mark.parametrize(
