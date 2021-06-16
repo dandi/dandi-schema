@@ -262,13 +262,9 @@ def aggregate_assets_summary(
     for meta in metadata:
         _add_asset_to_stats(meta, stats)
 
-    stats["numberOfSubjects"] = len(stats["subjects"])
-    stats["numberOfSamples"] = len(stats["tissuesample"]) + len(stats["slice"])
-    stats["numberOfCells"] = len(stats["cell"])
-    del stats["subjects"]
-    del stats["tissuesample"]
-    del stats["slice"]
-    del stats["cell"]
+    stats["numberOfSubjects"] = len(stats.pop("subjects"))
+    stats["numberOfSamples"] = len(stats.pop("tissuesample")) + len(stats.pop("slice"))
+    stats["numberOfCells"] = len(stats.pop("cell"))
 
     stats = {k: v if v else None for k, v in stats.items()}
     return models.AssetsSummary(**stats)
