@@ -1,3 +1,18 @@
+# 0.2.5 (Wed Jun 16 2021)
+
+#### 🐛 Bug Fix
+
+- enh: implement metadata aggregator for asset summary [#34](https://github.com/dandi/dandischema/pull/34) ([@satra](https://github.com/satra) [@yarikoptic](https://github.com/yarikoptic))
+- Only attempt to remove contributorType if present [#37](https://github.com/dandi/dandischema/pull/37) ([@dchiquito](https://github.com/dchiquito))
+
+#### Authors: 3
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.2.4 (Thu Jun 10 2021)
 
 #### 🐛 Bug Fix
