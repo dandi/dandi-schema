@@ -1,6 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+from typing import Any, Dict, Iterable, TypeVar, cast
 
 import jsonschema
 import requests
@@ -133,7 +134,17 @@ def validate(obj, schema_version=None, schema_key=None):
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
-    schema_version = schema_version or obj.get("schemaVersion") or DANDI_SCHEMA_VERSION
+    schema_version = schema_version or obj.get("schemaVersion")
+    if schema_version not in ALLOWED_TARGET_SCHEMAS and schema_key in [
+        "Dandiset",
+        "PublishedDandiset",
+        "Asset",
+        "PublishedAsset",
+    ]:
+        raise ValueError(
+            f"Metadata version {schema_version} is not allowed. "
+            f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
+        )
     klass = getattr(models, schema_key)
     klass(**obj)
 
@@ -161,7 +172,7 @@ def migrate(
     if version2tuple(schema_version) < (0, 3, 2):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
-        id = obj.get("id")
+        id = str(obj.get("id"))
         if not id.startswith("DANDI:"):
             obj["id"] = f'DANDI:{obj["id"]}'
         for contrib in obj.get("contributor", []):
@@ -184,3 +195,89 @@ def migrate(
             obj["manifestLocation"] = []
         obj["schemaVersion"] = to_version
     return obj
+
+
+_stats_var_type = TypeVar("_stats_var_type", int, list)
+_stats_type = Dict[str, _stats_var_type]
+
+
+def _get_samples(value, stats, hierarchy):
+    if "sampleType" in value:
+        sampletype = value["sampleType"]["name"]
+        if value["identifier"] not in stats[sampletype]:
+            stats[sampletype].append(value["identifier"])
+    if "wasDerivedFrom" in value:
+        for entity in value["wasDerivedFrom"]:
+            if entity.get("schemaKey") == "BioSample":
+                stats = _get_samples(entity, stats, hierarchy)
+                break
+    return stats
+
+
+def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
+    """Add information about asset to the `stats` dict (to populate AssetsSummary)"""
+    if "schemaVersion" not in assetmeta:
+        raise ValueError("Provided metadata has no schema version")
+    schema_version = cast(str, assetmeta.get("schemaVersion"))
+    if schema_version not in ALLOWED_INPUT_SCHEMAS:
+        raise ValueError(
+            f"Metadata version {schema_version} is not allowed. "
+            f"Allowed are: {', '.join(ALLOWED_INPUT_SCHEMAS)}."
+        )
+
+    stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
+    stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
+    stats["numberOfBytes"] += assetmeta["contentSize"]
+    stats["numberOfFiles"] += 1
+
+    for key in ["approach", "measurementTechnique", "variableMeasured"]:
+        stats_values = stats.get(key) or []
+        for val in assetmeta.get(key) or []:
+            if key == "variableMeasured":
+                val = val["value"]
+            if val not in stats_values:
+                stats_values.append(val)
+        stats[key] = stats_values
+
+    stats["subjects"] = stats.get("subjects", [])
+    stats["species"] = stats.get("species", [])
+    for value in assetmeta["wasAttributedTo"]:
+        if value.get("schemaKey") == "Participant":
+            if "species" in value:
+                if value["species"] not in stats["species"]:
+                    stats["species"].append(value["species"])
+            if value["identifier"] not in stats["subjects"]:
+                stats["subjects"].append(value["identifier"])
+
+    hierarchy = ["cell", "slice", "tissuesample"]
+    for val in hierarchy:
+        stats[val] = stats.get(val, [])
+    for value in assetmeta.get("wasDerivedFrom") or []:
+        if value.get("schemaKey") == "BioSample":
+            stats = _get_samples(value, stats, hierarchy)
+            break
+
+    stats["dataStandard"] = stats.get("dataStandard", [])
+    if "nwb" in assetmeta["encodingFormat"]:
+        if models.nwb_standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(models.nwb_standard)
+    # TODO: RF assumption that any .json implies BIDS
+    if set(Path(assetmeta["path"]).suffixes).intersection((".json", ".nii")):
+        if models.bids_standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(models.bids_standard)
+
+
+# TODO?: move/bind such helpers as .from_metadata or alike within
+#        model classes themselves to centralize access to those constructors.
+def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
+    """Given an iterable of metadata records produce AssetSummary"""
+    stats: _stats_type = {}
+    for meta in metadata:
+        _add_asset_to_stats(meta, stats)
+
+    stats["numberOfSubjects"] = len(stats.pop("subjects"))
+    stats["numberOfSamples"] = len(stats.pop("tissuesample")) + len(stats.pop("slice"))
+    stats["numberOfCells"] = len(stats.pop("cell"))
+
+    stats = {k: v if v else None for k, v in stats.items()}
+    return models.AssetsSummary(**stats).json_dict()

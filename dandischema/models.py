@@ -125,6 +125,14 @@ class DandiBaseModelMetaclass(ModelMetaclass):
 class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
 
+    def json_dict(self):
+        """
+        Recursively convert the instance to a `dict` of JSONable values,
+        including converting enum values to strings.  `None` fields
+        are omitted.
+        """
+        return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+
     @classmethod
     def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
         """Allow model to be returned without validation"""
@@ -148,7 +156,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         return self
 
     @classmethod
-    def to_dictrepr(__pydantic_cls__: Type[BaseModel]):
+    def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]):
         return (
             __pydantic_cls__.unvalidated()
             .__repr__()
@@ -239,7 +247,7 @@ class BaseType(DandiBaseModel):
     identifier: Optional[Union[HttpUrl, str]] = Field(
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org",
-        regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\.]+$",
+        regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\._]+$",
         nskey="schema",
     )
     name: Optional[str] = Field(
@@ -298,6 +306,16 @@ class MeasurementTechniqueType(BaseType):
 
 class StandardsType(BaseType):
     """Identifier for data standard used"""
+
+
+nwb_standard = StandardsType(
+    name="Neurodata Without Borders (NWB)", identifier="RRID:SCR_015242"
+).json_dict()
+
+
+bids_standard = StandardsType(
+    name="Brain Imaging Data Structure (BIDS)", identifier="RRID:SCR_016124"
+).json_dict()
 
 
 class ContactPoint(DandiBaseModel):
@@ -809,14 +827,6 @@ class CommonModel(DandiBaseModel):
 
     wasGeneratedBy: Optional[List[Activity]] = Field(None, nskey="prov")
 
-    def json_dict(self):
-        """
-        Recursively convert the instance to a `dict` of JSONable values,
-        including converting enum values to strings.  `None` fields
-        are omitted.
-        """
-        return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
-
 
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
@@ -990,7 +1000,7 @@ class PublishedDandiset(Dandiset, Publishable):
     doi: str = Field(
         title="DOI",
         readOnly=True,
-        regex=r"^10\.[A-Za-z0-9.\/-]+",
+        regex=r"^10\.[A-Za-z0-9\.\/-]+",
         nskey="dandi",
     )
     url: HttpUrl = Field(

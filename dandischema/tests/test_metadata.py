@@ -10,6 +10,7 @@ from ..consts import DANDI_SCHEMA_VERSION
 from ..metadata import (
     _validate_asset_json,
     _validate_dandiset_json,
+    aggregate_assets_summary,
     migrate,
     publish_model_schemata,
     validate,
@@ -223,8 +224,10 @@ def test_pydantic_validation(schema_dir):
     ],
 )
 def test_requirements(obj, schema_key, missingfields):
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(ValueError):
         validate(obj, schema_key=schema_key)
+    with pytest.raises(ValidationError) as exc:
+        validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
     assert set([el["loc"][0] for el in exc.value.errors()]) == missingfields
 
 
@@ -249,7 +252,7 @@ def test_migrate_041(schema_dir):
         validate(data_as_dict)
     data_as_dict["schemaKey"] = "Dandiset"
     with pytest.raises(ValidationError) as exc:
-        validate(data_as_dict)
+        validate(data_as_dict, schema_version=DANDI_SCHEMA_VERSION)
     badfields = {
         "contributor",
         "access",
@@ -267,6 +270,11 @@ def test_migrate_041(schema_dir):
     newmeta["manifestLocation"] = ["https://example.org/manifest"]
     _validate_dandiset_json(newmeta, schema_dir)
 
+    # if already the target version - we do not change it, and do not crash
+    newmeta_2 = migrate(newmeta, to_version=DANDI_SCHEMA_VERSION)
+    assert newmeta_2 == newmeta
+    assert newmeta_2 is not newmeta  # but we do create a copy
+
 
 def test_migrate_041_access(schema_dir):
     with (METADATA_DIR / "meta_000004old.json").open() as fp:
@@ -276,3 +284,134 @@ def test_migrate_041_access(schema_dir):
         data_as_dict, to_version=DANDI_SCHEMA_VERSION, skip_validation=True
     )
     assert newmeta["access"] == [{"status": "dandi:OpenAccess"}]
+
+
+@pytest.mark.parametrize(
+    "files, summary",
+    [
+        (
+            ("asset3_01.json", "asset3_01.json"),
+            {
+                "schemaKey": "AssetsSummary",
+                "numberOfBytes": 18675680,
+                "numberOfFiles": 2,
+                "numberOfSubjects": 1,
+                "numberOfSamples": 1,
+                "numberOfCells": 1,
+                "dataStandard": [
+                    {
+                        "schemaKey": "StandardsType",
+                        "identifier": "RRID:SCR_015242",
+                        "name": "Neurodata Without Borders (NWB)",
+                    }
+                ],
+            },
+        ),
+        (
+            ("asset4_01.json", "asset4_02.json"),
+            {
+                "schemaKey": "AssetsSummary",
+                "numberOfBytes": 608720,
+                "numberOfFiles": 2,
+                "numberOfSubjects": 1,
+                "dataStandard": [
+                    {
+                        "schemaKey": "StandardsType",
+                        "identifier": "RRID:SCR_015242",
+                        "name": "Neurodata Without Borders (NWB)",
+                    }
+                ],
+                "approach": [
+                    {
+                        "schemaKey": "ApproachType",
+                        "name": "electrophysiological approach",
+                    },
+                    {"schemaKey": "ApproachType", "name": "behavioral approach"},
+                ],
+                "measurementTechnique": [
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "spike sorting technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "behavioral technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "surgical technique",
+                    },
+                ],
+                "variableMeasured": ["BehavioralEvents", "Units", "ElectrodeGroup"],
+                "species": [
+                    {
+                        "schemaKey": "SpeciesType",
+                        "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+                        "name": "House mouse",
+                    }
+                ],
+            },
+        ),
+        (
+            ("asset3_01.json", "asset4_01.json"),
+            {
+                "schemaKey": "AssetsSummary",
+                "numberOfBytes": 9687568,
+                "numberOfFiles": 2,
+                "numberOfSubjects": 2,
+                "numberOfSamples": 1,
+                "numberOfCells": 1,
+                "dataStandard": [
+                    {
+                        "schemaKey": "StandardsType",
+                        "identifier": "RRID:SCR_015242",
+                        "name": "Neurodata Without Borders (NWB)",
+                    }
+                ],
+                "approach": [
+                    {
+                        "schemaKey": "ApproachType",
+                        "name": "electrophysiological approach",
+                    },
+                    {"schemaKey": "ApproachType", "name": "behavioral approach"},
+                ],
+                "measurementTechnique": [
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "spike sorting technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "behavioral technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "surgical technique",
+                    },
+                ],
+                "variableMeasured": ["BehavioralEvents", "Units", "ElectrodeGroup"],
+                "species": [
+                    {
+                        "schemaKey": "SpeciesType",
+                        "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+                        "name": "House mouse",
+                    }
+                ],
+            },
+        ),
+    ],
+)
+def test_aggregate(files, summary):
+    metadata = (json.loads((METADATA_DIR / f).read_text()) for f in files)
+    assert aggregate_assets_summary(metadata) == summary
+
+
+@pytest.mark.parametrize(
+    "version", ["0.1.0", DANDI_SCHEMA_VERSION.rsplit(".", 1)[0], "10000.0.0"]
+)
+def test_aggregate_nonsupported(version):
+    with pytest.raises(ValueError) as exc:
+        aggregate_assets_summary([{"schemaVersion": version}])
+    assert "Allowed are" in str(exc)
+    assert DANDI_SCHEMA_VERSION in str(exc)
+    assert version in str(exc)
