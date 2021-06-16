@@ -247,8 +247,8 @@ def test_dantimeta_1():
         "license": [LicenseType("spdx:CC-BY-4.0")],
         "citation": "Last, first (2021). Test citation.",
         "assetsSummary": {
-            "numberOfBytes": 10,
-            "numberOfFiles": 1,
+            "numberOfBytes": 0,
+            "numberOfFiles": 0,
             "dataStandard": [{"name": "NWB"}],
             "approach": [{"name": "electrophysiology"}],
             "measurementTechnique": [{"name": "two-photon microscopy technique"}],
@@ -265,8 +265,13 @@ def test_dantimeta_1():
     with pytest.raises(ValidationError) as exc:
         PublishedDandiset(**meta_dict)
 
-    assert all([el["msg"] == "field required" for el in exc.value.errors()])
+    error_msgs = [
+        "field required",
+        "A Dandiset containing no files or zero bytes is not publishable",
+    ]
+    assert all([el["msg"] in error_msgs for el in exc.value.errors()])
     assert set([el["loc"][0] for el in exc.value.errors()]) == {
+        "assetsSummary",
         "datePublished",
         "publishedBy",
         "doi",
@@ -275,6 +280,7 @@ def test_dantimeta_1():
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,
     # so PublishedDandiset should work
     meta_dict.update(_basic_publishmeta(dandi_id="DANDI:999999"))
+    meta_dict["assetsSummary"].update(**{"numberOfBytes": 1, "numberOfFiles": 1})
     PublishedDandiset(**meta_dict)
 
 

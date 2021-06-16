@@ -530,8 +530,8 @@ class AssetsSummary(DandiBaseModel):
     """Summary over assets contained in a dandiset (published or not)"""
 
     # stats which are not stats
-    numberOfBytes: int = Field(readOnly=True, gt=0, sameas="schema:contentSize")
-    numberOfFiles: int = Field(readOnly=True, gt=0)  # universe
+    numberOfBytes: int = Field(readOnly=True, sameas="schema:contentSize")
+    numberOfFiles: int = Field(readOnly=True)  # universe
     numberOfSubjects: Optional[int] = Field(None, readOnly=True)  # NWB + BIDS
     numberOfSamples: Optional[int] = Field(None, readOnly=True)  # more of NWB
     numberOfCells: Optional[int] = Field(None, readOnly=True)
@@ -1008,6 +1008,14 @@ class PublishedDandiset(Dandiset, Publishable):
     )
 
     schemaKey = "Dandiset"
+
+    @validator("assetsSummary")
+    def check_filesbytes(cls, values):
+        if values.numberOfBytes == 0 or values.numberOfFiles == 0:
+            raise ValueError(
+                "A Dandiset containing no files or zero bytes is not publishable"
+            )
+        return values
 
 
 class PublishedAsset(Asset, Publishable):

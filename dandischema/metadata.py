@@ -241,7 +241,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
 
     stats["subjects"] = stats.get("subjects", [])
     stats["species"] = stats.get("species", [])
-    for value in assetmeta["wasAttributedTo"]:
+    for value in assetmeta.get("wasAttributedTo", []):
         if value.get("schemaKey") == "Participant":
             if "species" in value:
                 if value["species"] not in stats["species"]:
@@ -275,9 +275,11 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     for meta in metadata:
         _add_asset_to_stats(meta, stats)
 
-    stats["numberOfSubjects"] = len(stats.pop("subjects"))
-    stats["numberOfSamples"] = len(stats.pop("tissuesample")) + len(stats.pop("slice"))
-    stats["numberOfCells"] = len(stats.pop("cell"))
-
-    stats = {k: v if v else None for k, v in stats.items()}
+    stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
+    stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
+    stats["numberOfSubjects"] = len(stats.pop("subjects", [])) or None
+    stats["numberOfSamples"] = (
+        len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
+    ) or None
+    stats["numberOfCells"] = len(stats.pop("cell", [])) or None
     return models.AssetsSummary(**stats).json_dict()
