@@ -268,6 +268,11 @@ def test_migrate_041(schema_dir):
     newmeta["manifestLocation"] = ["https://example.org/manifest"]
     _validate_dandiset_json(newmeta, schema_dir)
 
+    # if already the target version - we do not change it, and do not crash
+    newmeta_2 = migrate(newmeta, to_version=DANDI_SCHEMA_VERSION)
+    assert newmeta_2 == newmeta
+    assert newmeta_2 is not newmeta  # but we do create a copy
+
 
 def test_migrate_041_access(schema_dir):
     with (METADATA_DIR / "meta_000004old.json").open() as fp:
