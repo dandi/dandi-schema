@@ -8,7 +8,6 @@ import pytest
 
 from ..consts import DANDI_SCHEMA_VERSION
 from ..metadata import (
-    _add_asset_to_stats,
     _validate_asset_json,
     _validate_dandiset_json,
     aggregate_assets_summary,

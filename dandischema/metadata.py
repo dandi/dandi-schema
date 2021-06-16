@@ -1,7 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, TypeVar, Union, cast
+from typing import Any, Dict, Iterable, TypeVar, cast
 
 import jsonschema
 import requests
@@ -256,8 +256,8 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             stats["dataStandard"].append(models.bids_standard)
 
 
-## TODO?: move/bind such helpers as .from_metadata or alike within
-##        model classes themselves to centralize access to those constructors.
+# TODO?: move/bind such helpers as .from_metadata or alike within
+#        model classes themselves to centralize access to those constructors.
 def aggregate_assets_summary(
     metadata: Iterable[Dict[str, Any]]
 ) -> models.AssetsSummary:
