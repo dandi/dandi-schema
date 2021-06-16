@@ -156,8 +156,7 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
     if not creators and contributors:
         creators = [deepcopy(contributors[0])]
         creators[0]["creatorName"] = creators[0].pop("contributorName")
-        if "contributorType" in creators[0]:
-            creators[0].pop("contributorType")
+        creators[0].pop("contributorType", None)
 
     attributes["contributors"] = contributors
     attributes["creators"] = creators
