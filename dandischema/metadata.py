@@ -134,7 +134,17 @@ def validate(obj, schema_version=None, schema_key=None):
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
-    schema_version = schema_version or obj.get("schemaVersion") or DANDI_SCHEMA_VERSION
+    schema_version = schema_version or obj.get("schemaVersion")
+    if schema_version not in ALLOWED_TARGET_SCHEMAS and schema_key in [
+        "Dandiset",
+        "PublishedDandiset",
+        "Asset",
+        "PublishedAsset",
+    ]:
+        raise ValueError(
+            f"Metadata version {schema_version} is not allowed. "
+            f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
+        )
     klass = getattr(models, schema_key)
     klass(**obj)
 

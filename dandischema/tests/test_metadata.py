@@ -224,8 +224,10 @@ def test_pydantic_validation(schema_dir):
     ],
 )
 def test_requirements(obj, schema_key, missingfields):
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(ValueError):
         validate(obj, schema_key=schema_key)
+    with pytest.raises(ValidationError) as exc:
+        validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
     assert set([el["loc"][0] for el in exc.value.errors()]) == missingfields
 
 
@@ -250,7 +252,7 @@ def test_migrate_041(schema_dir):
         validate(data_as_dict)
     data_as_dict["schemaKey"] = "Dandiset"
     with pytest.raises(ValidationError) as exc:
-        validate(data_as_dict)
+        validate(data_as_dict, schema_version=DANDI_SCHEMA_VERSION)
     badfields = {
         "contributor",
         "access",
