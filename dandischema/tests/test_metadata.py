@@ -8,9 +8,9 @@ import pytest
 
 from ..consts import DANDI_SCHEMA_VERSION
 from ..metadata import (
+    _add_asset_to_stats,
     _validate_asset_json,
     _validate_dandiset_json,
-    aggregate,
     migrate,
     publish_model_schemata,
     toSummary,
@@ -399,5 +399,5 @@ def test_aggregate(files, summary):
     stats = {}
     for filename in files:
         with (METADATA_DIR / filename).open() as fp:
-            aggregate(json.load(fp), stats)
+            _add_asset_to_stats(json.load(fp), stats)
     assert toSummary(stats) == summary

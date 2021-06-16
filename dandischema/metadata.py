@@ -1,6 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+from typing import Any, Dict, cast
 
 import jsonschema
 import requests
@@ -218,11 +219,11 @@ bids_standard = models.StandardsType(
 ).json_dict()
 
 
-def aggregate(assetmeta, stats):
-    """Aggregate information to fill AssetsSummary"""
+def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> None:
+    """Add information about asset to the `stats` dict (to populate AssetsSummary)"""
     if "schemaVersion" not in assetmeta:
-        raise ValueError("Provided metadata has unknown schema version")
-    schema_version = assetmeta.get("schemaVersion")
+        raise ValueError("Provided metadata has no schema version")
+    schema_version = cast(str, assetmeta.get("schemaVersion"))
     if version2tuple(schema_version) > version2tuple(DANDI_SCHEMA_VERSION):
         raise ValueError(
             f"Metadata version {schema_version} is newer than supported {DANDI_SCHEMA_VERSION}."
