@@ -1,3 +1,16 @@
+# 0.2.6 (Wed Jun 16 2021)
+
+#### 🐛 Bug Fix
+
+- fix: make assetsummary computable for dandisets with no assets [#38](https://github.com/dandi/dandischema/pull/38) ([@satra](https://github.com/satra) [@dchiquito](https://github.com/dchiquito))
+
+#### Authors: 2
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.2.5 (Wed Jun 16 2021)
 
 #### 🐛 Bug Fix
