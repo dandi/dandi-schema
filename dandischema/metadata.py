@@ -187,17 +187,6 @@ def migrate(
     return obj
 
 
-def _append_values(field, assetmeta, values):
-    if not assetmeta.get(field):
-        return values
-    for val in assetmeta.get(field):
-        if field == "variableMeasured":
-            val = val["value"]
-        if val not in values:
-            values.append(val)
-    return values
-
-
 def _get_samples(value, stats, hierarchy):
     if "sampleType" in value:
         sampletype = value["sampleType"]["name"]
@@ -235,7 +224,13 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> Non
     stats["numberOfFiles"] += 1
 
     for key in ["approach", "measurementTechnique", "variableMeasured"]:
-        stats[key] = _append_values(key, assetmeta, stats.get(key) or [])
+        stats_values = stats.get(key) or []
+        for val in assetmeta.get(key) or []:
+            if key == "variableMeasured":
+                val = val["value"]
+            if val not in stats_values:
+                stats_values.append(val)
+        stats[key] = stats_values
 
     stats["subjects"] = stats.get("subjects", [])
     stats["species"] = stats.get("species", [])
