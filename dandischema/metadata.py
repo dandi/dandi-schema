@@ -162,7 +162,7 @@ def migrate(
     if version2tuple(schema_version) < (0, 3, 2):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
-        id = obj.get("id")
+        id = str(obj.get("id"))
         if not id.startswith("DANDI:"):
             obj["id"] = f'DANDI:{obj["id"]}'
         for contrib in obj.get("contributor", []):
