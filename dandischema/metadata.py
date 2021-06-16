@@ -211,7 +211,8 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     schema_version = cast(str, assetmeta.get("schemaVersion"))
     if schema_version not in ALLOWED_INPUT_SCHEMAS:
         raise ValueError(
-            f"Metadata version {schema_version} is not allowed. Allowed are: {', '.join(ALLOWED_INPUT_SCHEMAS)}."
+            f"Metadata version {schema_version} is not allowed. "
+            f"Allowed are: {', '.join(ALLOWED_INPUT_SCHEMAS)}."
         )
 
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
