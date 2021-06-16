@@ -200,14 +200,6 @@ def _get_samples(value, stats, hierarchy):
     return stats
 
 
-nwb_standard = models.StandardsType(
-    name="Neurodata Without Borders (NWB)", identifier="RRID:SCR_015242"
-).json_dict()
-bids_standard = models.StandardsType(
-    name="Brain Imaging Data Structure (BIDS)", identifier="RRID:SCR_016124"
-).json_dict()
-
-
 def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> None:
     """Add information about asset to the `stats` dict (to populate AssetsSummary)"""
     if "schemaVersion" not in assetmeta:
@@ -252,11 +244,11 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> Non
 
     stats["dataStandard"] = stats.get("dataStandard", [])
     if "nwb" in assetmeta["encodingFormat"]:
-        if nwb_standard not in stats["dataStandard"]:
-            stats["dataStandard"].append(nwb_standard)
+        if models.nwb_standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(models.nwb_standard)
     if ".nii" in assetmeta["path"] or ".json" in assetmeta["path"]:
-        if bids_standard not in stats["dataStandard"]:
-            stats["dataStandard"].append(bids_standard)
+        if models.bids_standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(models.bids_standard)
 
 
 def toSummary(stats: dict) -> dict:

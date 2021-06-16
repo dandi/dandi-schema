@@ -308,6 +308,16 @@ class StandardsType(BaseType):
     """Identifier for data standard used"""
 
 
+nwb_standard = StandardsType(
+    name="Neurodata Without Borders (NWB)", identifier="RRID:SCR_015242"
+).json_dict()
+
+
+bids_standard = StandardsType(
+    name="Brain Imaging Data Structure (BIDS)", identifier="RRID:SCR_016124"
+).json_dict()
+
+
 class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(None, nskey="schema")
     url: Optional[HttpUrl] = Field(None, nskey="schema")
