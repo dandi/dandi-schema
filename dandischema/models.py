@@ -156,7 +156,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         return self
 
     @classmethod
-    def to_dictrepr(__pydantic_cls__: Type[BaseModel]):
+    def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]):
         return (
             __pydantic_cls__.unvalidated()
             .__repr__()
