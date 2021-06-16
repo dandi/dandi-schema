@@ -125,6 +125,14 @@ class DandiBaseModelMetaclass(ModelMetaclass):
 class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
 
+    def json_dict(self):
+        """
+        Recursively convert the instance to a `dict` of JSONable values,
+        including converting enum values to strings.  `None` fields
+        are omitted.
+        """
+        return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+
     @classmethod
     def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
         """Allow model to be returned without validation"""
@@ -239,7 +247,7 @@ class BaseType(DandiBaseModel):
     identifier: Optional[Union[HttpUrl, str]] = Field(
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org",
-        regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\.]+$",
+        regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\._]+$",
         nskey="schema",
     )
     name: Optional[str] = Field(
@@ -809,14 +817,6 @@ class CommonModel(DandiBaseModel):
 
     wasGeneratedBy: Optional[List[Activity]] = Field(None, nskey="prov")
 
-    def json_dict(self):
-        """
-        Recursively convert the instance to a `dict` of JSONable values,
-        including converting enum values to strings.  `None` fields
-        are omitted.
-        """
-        return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
-
 
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
@@ -990,7 +990,7 @@ class PublishedDandiset(Dandiset, Publishable):
     doi: str = Field(
         title="DOI",
         readOnly=True,
-        regex=r"^10\.[A-Za-z0-9.\/-]+",
+        regex=r"^10\.[A-Za-z0-9\.\/-]+",
         nskey="dandi",
     )
     url: HttpUrl = Field(

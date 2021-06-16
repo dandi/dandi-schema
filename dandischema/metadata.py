@@ -184,3 +184,94 @@ def migrate(
             obj["manifestLocation"] = []
         obj["schemaVersion"] = to_version
     return obj
+
+
+def _append_values(field, assetmeta, values):
+    if not assetmeta.get(field):
+        return values
+    for val in assetmeta.get(field):
+        if field == "variableMeasured":
+            val = val["value"]
+        if val not in values:
+            values.append(val)
+    return values
+
+
+def _get_samples(value, stats, hierarchy):
+    if "sampleType" in value:
+        sampletype = value["sampleType"]["name"]
+        if value["identifier"] not in stats[sampletype]:
+            stats[sampletype].append(value["identifier"])
+    if "wasDerivedFrom" in value:
+        for entity in value["wasDerivedFrom"]:
+            if entity.get("schemaKey") == "BioSample":
+                stats = _get_samples(entity, stats, hierarchy)
+                break
+    return stats
+
+
+nwb_standard = models.StandardsType(
+    name="Neurodata Without Borders (NWB)", identifier="RRID:SCR_015242"
+).json_dict()
+bids_standard = models.StandardsType(
+    name="Brain Imaging Data Structure (BIDS)", identifier="RRID:SCR_016124"
+).json_dict()
+
+
+def aggregate(assetmeta, stats):
+    """Aggregate information to fill AssetsSummary"""
+    if "schemaVersion" not in assetmeta:
+        raise ValueError("Provided metadata has unknown schema version")
+    schema_version = assetmeta.get("schemaVersion")
+    if version2tuple(schema_version) > version2tuple(DANDI_SCHEMA_VERSION):
+        raise ValueError(
+            f"Metadata version {schema_version} is newer than supported {DANDI_SCHEMA_VERSION}."
+        )
+
+    stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
+    stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
+    stats["numberOfBytes"] += assetmeta["contentSize"]
+    stats["numberOfFiles"] += 1
+
+    for key in ["approach", "measurementTechnique", "variableMeasured"]:
+        stats[key] = _append_values(key, assetmeta, stats.get(key) or [])
+
+    stats["subjects"] = stats.get("subjects", [])
+    stats["species"] = stats.get("species", [])
+    for value in assetmeta["wasAttributedTo"]:
+        if value.get("schemaKey") == "Participant":
+            if "species" in value:
+                if value["species"] not in stats["species"]:
+                    stats["species"].append(value["species"])
+            if value["identifier"] not in stats["subjects"]:
+                stats["subjects"].append(value["identifier"])
+
+    hierarchy = ["cell", "slice", "tissuesample"]
+    for val in hierarchy:
+        stats[val] = stats.get(val, [])
+    for value in assetmeta.get("wasDerivedFrom") or []:
+        if value.get("schemaKey") == "BioSample":
+            stats = _get_samples(value, stats, hierarchy)
+            break
+
+    stats["dataStandard"] = stats.get("dataStandard", [])
+    if "nwb" in assetmeta["encodingFormat"]:
+        if nwb_standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(nwb_standard)
+    if ".nii" in assetmeta["path"] or ".json" in assetmeta["path"]:
+        if bids_standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(bids_standard)
+
+
+def toSummary(stats: dict) -> dict:
+    """Convert aggregated stats to an AssetsSummary conformant dict"""
+    stats["numberOfSubjects"] = len(stats["subjects"])
+    stats["numberOfSamples"] = len(stats["tissuesample"]) + len(stats["slice"])
+    stats["numberOfCells"] = len(stats["cell"])
+    del stats["subjects"]
+    del stats["tissuesample"]
+    del stats["slice"]
+    del stats["cell"]
+
+    stats = {k: v if v else None for k, v in stats.items()}
+    return models.AssetsSummary(**stats).json_dict()

@@ -10,8 +10,10 @@ from ..consts import DANDI_SCHEMA_VERSION
 from ..metadata import (
     _validate_asset_json,
     _validate_dandiset_json,
+    aggregate,
     migrate,
     publish_model_schemata,
+    toSummary,
     validate,
 )
 
@@ -276,3 +278,126 @@ def test_migrate_041_access(schema_dir):
         data_as_dict, to_version=DANDI_SCHEMA_VERSION, skip_validation=True
     )
     assert newmeta["access"] == [{"status": "dandi:OpenAccess"}]
+
+
+@pytest.mark.parametrize(
+    "files, summary",
+    [
+        (
+            ("asset3_01.json", "asset3_01.json"),
+            {
+                "schemaKey": "AssetsSummary",
+                "numberOfBytes": 18675680,
+                "numberOfFiles": 2,
+                "numberOfSubjects": 1,
+                "numberOfSamples": 1,
+                "numberOfCells": 1,
+                "dataStandard": [
+                    {
+                        "schemaKey": "StandardsType",
+                        "identifier": "RRID:SCR_015242",
+                        "name": "Neurodata Without Borders (NWB)",
+                    }
+                ],
+            },
+        ),
+        (
+            ("asset4_01.json", "asset4_02.json"),
+            {
+                "schemaKey": "AssetsSummary",
+                "numberOfBytes": 608720,
+                "numberOfFiles": 2,
+                "numberOfSubjects": 1,
+                "dataStandard": [
+                    {
+                        "schemaKey": "StandardsType",
+                        "identifier": "RRID:SCR_015242",
+                        "name": "Neurodata Without Borders (NWB)",
+                    }
+                ],
+                "approach": [
+                    {
+                        "schemaKey": "ApproachType",
+                        "name": "electrophysiological approach",
+                    },
+                    {"schemaKey": "ApproachType", "name": "behavioral approach"},
+                ],
+                "measurementTechnique": [
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "spike sorting technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "behavioral technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "surgical technique",
+                    },
+                ],
+                "variableMeasured": ["BehavioralEvents", "Units", "ElectrodeGroup"],
+                "species": [
+                    {
+                        "schemaKey": "SpeciesType",
+                        "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+                        "name": "House mouse",
+                    }
+                ],
+            },
+        ),
+        (
+            ("asset3_01.json", "asset4_01.json"),
+            {
+                "schemaKey": "AssetsSummary",
+                "numberOfBytes": 9687568,
+                "numberOfFiles": 2,
+                "numberOfSubjects": 2,
+                "numberOfSamples": 1,
+                "numberOfCells": 1,
+                "dataStandard": [
+                    {
+                        "schemaKey": "StandardsType",
+                        "identifier": "RRID:SCR_015242",
+                        "name": "Neurodata Without Borders (NWB)",
+                    }
+                ],
+                "approach": [
+                    {
+                        "schemaKey": "ApproachType",
+                        "name": "electrophysiological approach",
+                    },
+                    {"schemaKey": "ApproachType", "name": "behavioral approach"},
+                ],
+                "measurementTechnique": [
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "spike sorting technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "behavioral technique",
+                    },
+                    {
+                        "schemaKey": "MeasurementTechniqueType",
+                        "name": "surgical technique",
+                    },
+                ],
+                "variableMeasured": ["BehavioralEvents", "Units", "ElectrodeGroup"],
+                "species": [
+                    {
+                        "schemaKey": "SpeciesType",
+                        "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+                        "name": "House mouse",
+                    }
+                ],
+            },
+        ),
+    ],
+)
+def test_aggregate(files, summary):
+    stats = {}
+    for filename in files:
+        with (METADATA_DIR / filename).open() as fp:
+            aggregate(json.load(fp), stats)
+    assert toSummary(stats) == summary
