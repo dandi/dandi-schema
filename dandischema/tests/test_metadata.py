@@ -397,3 +397,14 @@ def test_migrate_041_access(schema_dir):
 def test_aggregate(files, summary):
     metadata = (json.loads((METADATA_DIR / f).read_text()) for f in files)
     assert aggregate_assets_summary(metadata) == summary
+
+
+@pytest.mark.parametrize(
+    "version", ["0.1.0", DANDI_SCHEMA_VERSION.rsplit(".", 1)[0], "10000.0.0"]
+)
+def test_aggregate_nonsupported(version):
+    with pytest.raises(ValueError) as exc:
+        aggregate_assets_summary([{"schemaVersion": version}])
+    assert "Allowed are" in str(exc)
+    assert DANDI_SCHEMA_VERSION in str(exc)
+    assert version in str(exc)

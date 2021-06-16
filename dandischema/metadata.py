@@ -209,9 +209,9 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     if "schemaVersion" not in assetmeta:
         raise ValueError("Provided metadata has no schema version")
     schema_version = cast(str, assetmeta.get("schemaVersion"))
-    if version2tuple(schema_version) > version2tuple(DANDI_SCHEMA_VERSION):
+    if schema_version not in ALLOWED_INPUT_SCHEMAS:
         raise ValueError(
-            f"Metadata version {schema_version} is newer than supported {DANDI_SCHEMA_VERSION}."
+            f"Metadata version {schema_version} is not allowed. Allowed are: {', '.join(ALLOWED_INPUT_SCHEMAS)}."
         )
 
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
