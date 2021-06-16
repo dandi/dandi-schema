@@ -11,9 +11,9 @@ from ..metadata import (
     _add_asset_to_stats,
     _validate_asset_json,
     _validate_dandiset_json,
+    aggregate_assets_summary,
     migrate,
     publish_model_schemata,
-    toSummary,
     validate,
 )
 
@@ -396,8 +396,6 @@ def test_migrate_041_access(schema_dir):
     ],
 )
 def test_aggregate(files, summary):
-    stats = {}
-    for filename in files:
-        with (METADATA_DIR / filename).open() as fp:
-            _add_asset_to_stats(json.load(fp), stats)
-    assert toSummary(stats) == summary
+    metadata = (json.loads((METADATA_DIR / f).read_text()) for f in files)
+    metadata_summary = aggregate_assets_summary(metadata)
+    assert metadata_summary.json_dict() == summary

@@ -1,7 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-from typing import Any, Dict, cast
+from typing import Any, Dict, Iterable, cast
 
 import jsonschema
 import requests
@@ -252,8 +252,16 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: Dict[str, Any]) -> Non
             stats["dataStandard"].append(models.bids_standard)
 
 
-def toSummary(stats: dict) -> dict:
-    """Convert aggregated stats to an AssetsSummary conformant dict"""
+## TODO?: move/bind such helpers as .from_metadata or alike within
+##        model classes themselves to centralize access to those constructors.
+def aggregate_assets_summary(
+    metadata: Iterable[Dict[str, Any]]
+) -> models.AssetsSummary:
+    """Given an iterable of metadata records produce AssetSummary"""
+    stats = {}
+    for meta in metadata:
+        _add_asset_to_stats(meta, stats)
+
     stats["numberOfSubjects"] = len(stats["subjects"])
     stats["numberOfSamples"] = len(stats["tissuesample"]) + len(stats["slice"])
     stats["numberOfCells"] = len(stats["cell"])
@@ -263,4 +271,4 @@ def toSummary(stats: dict) -> dict:
     del stats["cell"]
 
     stats = {k: v if v else None for k, v in stats.items()}
-    return models.AssetsSummary(**stats).json_dict()
+    return models.AssetsSummary(**stats)
