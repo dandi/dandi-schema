@@ -154,6 +154,10 @@ def migrate(
 ) -> dict:
     """Migrate dandiset metadata object to new schema"""
     obj = deepcopy(obj)
+    if len(ALLOWED_TARGET_SCHEMAS) > 1:
+        raise NotImplementedError(
+            "ATM code below supports migration to current version only"
+        )
     if to_version not in ALLOWED_TARGET_SCHEMAS:
         raise ValueError(f"Current target schemas: {ALLOWED_TARGET_SCHEMAS}.")
     schema_version = obj.get("schemaVersion")
@@ -169,7 +173,7 @@ def migrate(
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
         jsonschema.validate(obj, schema)
-    if version2tuple(schema_version) < (0, 3, 2):
+    if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
         id = str(obj.get("id"))
