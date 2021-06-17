@@ -2,6 +2,9 @@ from copy import deepcopy
 import re
 import typing as ty
 
+from jsonschema import Draft6Validator
+import requests
+
 from .models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
 
 DATACITE_CONTRTYPE = {
@@ -53,7 +56,9 @@ DATACITE_IDENTYPE = {
 DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
-def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
+def to_datacite(
+    meta: ty.Union[dict, PublishedDandiset], validate: bool = False
+) -> dict:
     """Convert published Dandiset metadata to Datacite"""
     if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
@@ -85,7 +90,7 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
         "resourceTypeGeneral": "Dataset",
     }
     # meta has also attribute url, but it often empty
-    attributes["url"] = meta.url
+    attributes["url"] = str(meta.url)
     # assuming that all licenses are from SPDX?
     attributes["rightsList"] = [
         {
@@ -142,21 +147,22 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
             if not contr_el.roleName:
                 continue
 
+        contr_all = []
         if getattr(contr_el, "roleName"):
             contr_all = [
                 el.name for el in contr_el.roleName if el.name in DATACITE_CONTRTYPE
             ]
-            if contr_all:
-                contr_dict["contributorType"] = contr_all[0]
-            else:
-                contr_dict["contributorType"] = "Other"
+        if contr_all:
+            contr_dict["contributorType"] = contr_all[0]
+        else:
+            contr_dict["contributorType"] = "Other"
         contributors.append(contr_dict)
 
     # if there are no creators, the first contributor is also treated as the creator
     if not creators and contributors:
         creators = [deepcopy(contributors[0])]
         creators[0]["creatorName"] = creators[0].pop("contributorName")
-        creators[0].pop("contributorType", None)
+        creators[0].pop("contributorType")
 
     attributes["contributors"] = contributors
     attributes["creators"] = creators
@@ -190,4 +196,25 @@ def to_datacite(meta: ty.Union[dict, PublishedDandiset]) -> dict:
         attributes["subjects"] = [{"subject": el} for el in meta.keywords]
 
     datacite_dict = {"data": {"id": meta.doi, "type": "dois", "attributes": attributes}}
+
+    if validate:
+        validate_datacite(datacite_dict)
+
     return datacite_dict
+
+
+def _get_datacite_schema():
+    sr = requests.get(
+        "https://raw.githubusercontent.com/datacite/schema/master/source/"
+        "json/kernel-4.3/datacite_4.3_schema.json"
+    )
+    sr.raise_for_status()
+    schema = sr.json()
+    return schema
+
+
+def validate_datacite(datacite_dict):
+    schema = _get_datacite_schema()
+    Draft6Validator.check_schema(schema)
+    validator = Draft6Validator(schema)
+    validator.validate(datacite_dict["data"]["attributes"])

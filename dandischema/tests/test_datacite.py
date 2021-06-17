@@ -8,7 +8,7 @@ from jsonschema import Draft6Validator
 import pytest
 import requests
 
-from ..datacite import to_datacite
+from ..datacite import _get_datacite_schema, to_datacite
 from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
 
 
@@ -45,13 +45,7 @@ def _clean_doi(doi):
 
 @pytest.fixture(scope="module")
 def schema():
-    sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/master/source/"
-        "json/kernel-4.3/datacite_4.3_schema.json"
-    )
-    sr.raise_for_status()
-    schema = sr.json()
-    return schema
+    return _get_datacite_schema()
 
 
 def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
