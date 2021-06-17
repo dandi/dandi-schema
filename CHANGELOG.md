@@ -1,3 +1,16 @@
+# 0.2.7 (Thu Jun 17 2021)
+
+#### 🐛 Bug Fix
+
+- fix: allow migration for versions greater than 0.3.2 [#40](https://github.com/dandi/dandischema/pull/40) ([@satra](https://github.com/satra) [@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 2
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.2.6 (Wed Jun 16 2021)
 
 #### 🐛 Bug Fix
