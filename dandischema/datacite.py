@@ -205,7 +205,9 @@ def to_datacite(
 
 def _get_datacite_schema():
     sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/732cc7ef29f4cad4d6adfac83544133cd57a2e5e/source/json/kernel-4.3/datacite_4.3_schema.json"
+        "https://raw.githubusercontent.com/datacite/schema/"
+        "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"
+        "source/json/kernel-4.3/datacite_4.3_schema.json"
     )
     sr.raise_for_status()
     schema = sr.json()
