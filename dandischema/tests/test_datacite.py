@@ -95,11 +95,7 @@ def test_datacite(dandi_id, schema):
     )
     meta = PublishedDandiset(**meta_js)
 
-    datacite = to_datacite(meta=meta)
-
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
-    validator.validate(datacite["data"]["attributes"])
+    datacite = to_datacite(meta=meta, validate=True)
 
     # trying to post datacite
     datacite_post(datacite, meta.doi)
