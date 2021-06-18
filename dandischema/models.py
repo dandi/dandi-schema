@@ -138,7 +138,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         tempval = val
         if "Published" in cls.__name__:
             tempval = "Published" + tempval
-        if "BareAsset" == cls.__name__:
+        elif "BareAsset" == cls.__name__:
             tempval = "Bare" + tempval
         if tempval != cls.__name__:
             raise ValueError(
