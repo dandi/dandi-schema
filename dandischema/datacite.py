@@ -72,7 +72,7 @@ def to_datacite(
             "identifierType": "URL",
         },
         {
-            "identifier": f"https://dandiarchive.org/dandiset/{meta.identifier}",
+            "identifier": str(meta.url),
             "identifierType": "URL",
         },
     ]
