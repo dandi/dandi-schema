@@ -133,6 +133,19 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         """
         return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
 
+    @validator("schemaKey", always=True)
+    def ensure_schemakey(cls, val):
+        tempval = val
+        if "Published" in cls.__name__:
+            tempval = "Published" + tempval
+        elif "BareAsset" == cls.__name__:
+            tempval = "Bare" + tempval
+        if tempval != cls.__name__:
+            raise ValueError(
+                f"schemaKey {tempval} does not match classname {cls.__name__}"
+            )
+        return val
+
     @classmethod
     def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
         """Allow model to be returned without validation"""

@@ -4,11 +4,11 @@ import os
 from pathlib import Path
 import random
 
-from jsonschema import Draft6Validator
+from jsonschema import Draft7Validator
 import pytest
 import requests
 
-from ..datacite import to_datacite
+from ..datacite import _get_datacite_schema, to_datacite
 from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
 
 
@@ -45,13 +45,7 @@ def _clean_doi(doi):
 
 @pytest.fixture(scope="module")
 def schema():
-    sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/master/source/"
-        "json/kernel-4.3/datacite_4.3_schema.json"
-    )
-    sr.raise_for_status()
-    schema = sr.json()
-    return schema
+    return _get_datacite_schema()
 
 
 def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
@@ -101,11 +95,7 @@ def test_datacite(dandi_id, schema):
     )
     meta = PublishedDandiset(**meta_js)
 
-    datacite = to_datacite(meta=meta)
-
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
-    validator.validate(datacite["data"]["attributes"])
+    datacite = to_datacite(meta=meta, validate=True)
 
     # trying to post datacite
     datacite_post(datacite, meta.doi)
@@ -277,8 +267,8 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
 
     # creating and validating datacite objects
     datacite = to_datacite(meta_dict)
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
     validator.validate(datacite["data"]["attributes"])
 
     # checking some datacite fields
