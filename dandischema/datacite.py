@@ -90,7 +90,7 @@ def to_datacite(
         "resourceTypeGeneral": "Dataset",
     }
     # meta has also attribute url, but it often empty
-    attributes["url"] = str(meta.url)
+    attributes["url"] = str(meta.url or "")
     # assuming that all licenses are from SPDX?
     attributes["rightsList"] = [
         {
