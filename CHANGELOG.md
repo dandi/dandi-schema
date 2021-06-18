@@ -1,3 +1,15 @@
+# 0.2.8 (Fri Jun 18 2021)
+
+#### 🐛 Bug Fix
+
+- Fix: Make the library more robust for publishing [#41](https://github.com/dandi/dandischema/pull/41) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.2.7 (Thu Jun 17 2021)
 
 #### 🐛 Bug Fix
