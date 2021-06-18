@@ -48,7 +48,7 @@ def schema():
     return _get_datacite_schema()
 
 
-def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
+def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
     """Return extra metadata required by PublishedDandiset
 
     Returned fields are additional to fields required by Dandiset
@@ -71,7 +71,7 @@ def _basic_publishmeta(dandi_id, version="v.0", prefix="10.80507"):
             "schemaKey": "PublishActivity",
         },
         "version": version,
-        "doi": f"{prefix}/dandi.{dandi_id}.{version}",
+        "doi": f"{prefix}/dandi.{dandi_id}/{version}",
     }
     return publish_meta
 
@@ -88,6 +88,11 @@ def test_datacite(dandi_id, schema):
         Path(__file__).with_name("data") / "metadata" / f"meta_{dandi_id}.json"
     ).open() as f:
         meta_js = json.load(f)
+
+    version = "0.0.0"
+    meta_js["id"] = meta_js["id"].replace(meta_js["version"], version)
+    meta_js["url"] = meta_js["url"].replace(meta_js["version"], version)
+    meta_js["version"] = version
 
     # updating with basic fields required for PublishDandiset
     meta_js.update(
@@ -227,12 +232,14 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
     posting datacite object and checking the status code
     """
 
-    dandi_id = f"DANDI:000{random.randrange(100, 999)}"
+    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id = f"DANDI:{dandi_id_noprefix}"
+    version = "0.0.0"
 
     # meta data without doi, datePublished and publishedBy
     meta_dict = {
         "identifier": dandi_id,
-        "id": f"{dandi_id}/draft",
+        "id": f"{dandi_id}/{version}",
         "name": "testing dataset",
         "description": "testing",
         "contributor": [
@@ -242,10 +249,11 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
-        "url": f"http://dandiarchive.org/dandiset/{dandi_id}",
+        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+        "version": version,
         "citation": "A_last, A_first 2021",
         "manifestLocation": [
-            f"http://api.dandiarchive.org/api/dandisets/{dandi_id}/versions/draft/assets/"
+            f"https://api.dandiarchive.org/api/dandisets/{dandi_id_noprefix}/versions/draft/assets/"
         ],
         "assetsSummary": {
             "schemaKey": "AssetsSummary",
@@ -262,7 +270,7 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
             "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
         },
     }
-    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id))
+    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
     meta_dict.update(additional_meta)
 
     # creating and validating datacite objects
