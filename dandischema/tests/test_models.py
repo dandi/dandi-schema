@@ -9,14 +9,20 @@ from .. import models
 from ..models import (
     AccessType,
     Asset,
+    DandiBaseModel,
     Dandiset,
     DigestType,
     IdentifierType,
     LicenseType,
+    List,
+    Optional,
+    Organization,
     ParticipantRelationType,
+    Person,
     PublishedDandiset,
     RelationType,
     RoleType,
+    Union,
 )
 
 
@@ -373,3 +379,30 @@ def test_duplicate_classes():
             else:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)
+
+
+def test_schemakey_roundtrip():
+    class TempKlass(DandiBaseModel):
+        contributor: Optional[List[Union[Organization, Person]]]
+
+    contributor = [
+        {
+            "name": "first",
+            "roleName": [],
+            "schemaKey": "Person",
+            "affiliation": [],
+            "includeInCitation": True,
+        },
+        {
+            "name": "last2, first2",
+            "roleName": ["dcite:ContactPerson"],
+            "schemaKey": "Person",
+            "affiliation": [],
+            "includeInCitation": True,
+        },
+    ]
+    with pytest.raises(pydantic.ValidationError):
+        TempKlass(contributor=contributor)
+    contributor[0]["name"] = "last, first"
+    klassobj = TempKlass(contributor=contributor)
+    assert all([isinstance(val, Person) for val in klassobj.contributor])
