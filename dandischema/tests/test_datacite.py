@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import random
 
-from jsonschema import Draft6Validator
+from jsonschema import Draft7Validator
 import pytest
 import requests
 
@@ -267,8 +267,8 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
 
     # creating and validating datacite objects
     datacite = to_datacite(meta_dict)
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
     validator.validate(datacite["data"]["attributes"])
 
     # checking some datacite fields

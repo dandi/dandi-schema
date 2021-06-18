@@ -2,7 +2,7 @@ from copy import deepcopy
 import re
 import typing as ty
 
-from jsonschema import Draft6Validator
+from jsonschema import Draft7Validator
 import requests
 
 from .models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
@@ -205,8 +205,7 @@ def to_datacite(
 
 def _get_datacite_schema():
     sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/master/source/"
-        "json/kernel-4.3/datacite_4.3_schema.json"
+        "https://raw.githubusercontent.com/datacite/schema/732cc7ef29f4cad4d6adfac83544133cd57a2e5e/source/json/kernel-4.3/datacite_4.3_schema.json"
     )
     sr.raise_for_status()
     schema = sr.json()
@@ -215,6 +214,6 @@ def _get_datacite_schema():
 
 def validate_datacite(datacite_dict):
     schema = _get_datacite_schema()
-    Draft6Validator.check_schema(schema)
-    validator = Draft6Validator(schema)
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
     validator.validate(datacite_dict["data"]["attributes"])
