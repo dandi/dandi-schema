@@ -43,10 +43,11 @@ if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
 
 
 NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
-ASSET_UUID_PATTERN = (
-    r"^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*"
+UUID_PATTERN = (
+    "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*"
     "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
+ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 DANDI_DOI_PATTERN = r"^10.80507/dandi\.\d{6}/\d+\.\d+\.\d+"
 DANDI_PUBID_PATTERN = r"^DANDI:\d{6}/\d+\.\d+\.\d+"
 
@@ -1031,7 +1032,7 @@ class PublishedDandiset(Dandiset, Publishable):
     )
     url: DANDIURL = Field(
         readOnly=True,
-        description="permalink to the item",
+        description="permalink to the dandiset",
         regex=r"^https://dandiarchive.org/dandiset/\d{6}/\d+\.\d+\.\d+$",
         nskey="schema",
     )
