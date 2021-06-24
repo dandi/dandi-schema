@@ -48,6 +48,7 @@ jobs:
         with:
           fetch-depth: 0
           path: dandischema
+          token: ${{ secrets.DANDI_GITHUB_TOKEN }}
 
       - name: Delete schema-* tags so as not to confuse auto
         run: |
@@ -107,7 +108,7 @@ jobs:
           python -m build
           twine upload dist/*
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DANDI_GITHUB_TOKEN }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         working-directory: dandischema
