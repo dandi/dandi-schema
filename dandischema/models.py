@@ -43,6 +43,13 @@ if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
 
 
 NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
+UUID_PATTERN = (
+    "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*"
+    "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
+)
+ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
+DANDI_DOI_PATTERN = r"^10.80507/dandi\.\d{6}/\d+\.\d+\.\d+"
+DANDI_PUBID_PATTERN = r"^DANDI:\d{6}/\d+\.\d+\.\d+"
 
 
 def create_enum(data):
@@ -252,6 +259,7 @@ ORCID = str
 RORID = str
 DANDI = str
 RRID = str
+DANDIURL = str
 
 
 class BaseType(DandiBaseModel):
@@ -1010,14 +1018,23 @@ class Publishable(DandiBaseModel):
 
 
 class PublishedDandiset(Dandiset, Publishable):
+    id: str = Field(
+        description="Uniform resource identifier",
+        regex=DANDI_PUBID_PATTERN,
+        readOnly=True,
+    )
+
     doi: str = Field(
         title="DOI",
         readOnly=True,
-        regex=r"^10\.[A-Za-z0-9\.\/-]+",
+        regex=DANDI_DOI_PATTERN,
         nskey="dandi",
     )
-    url: HttpUrl = Field(
-        readOnly=True, description="permalink to the item", nskey="schema"
+    url: DANDIURL = Field(
+        readOnly=True,
+        description="permalink to the dandiset",
+        regex=r"^https://dandiarchive.org/dandiset/\d{6}/\d+\.\d+\.\d+$",
+        nskey="schema",
     )
 
     schemaKey = "Dandiset"
@@ -1032,6 +1049,12 @@ class PublishedDandiset(Dandiset, Publishable):
 
 
 class PublishedAsset(Asset, Publishable):
+
+    id: str = Field(
+        description="Uniform resource identifier",
+        regex=ASSET_UUID_PATTERN,
+        readOnly=True,
+    )
 
     schemaKey = "Asset"
 

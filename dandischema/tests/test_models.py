@@ -241,7 +241,7 @@ def test_dantimeta_1():
     meta_dict = {
         "identifier": "DANDI:999999",
         "id": "DANDI:999999/draft",
-        "version": "v.1",
+        "version": "1.0.0",
         "name": "testing dataset",
         "description": "testing",
         "contributor": [
@@ -274,6 +274,9 @@ def test_dantimeta_1():
     error_msgs = [
         "field required",
         "A Dandiset containing no files or zero bytes is not publishable",
+        'string does not match regex "^https://dandiarchive.org/dandiset/'
+        '\\d{6}/\\d+\\.\\d+\\.\\d+$"',
+        'string does not match regex "^DANDI:\\d{6}/\\d+\\.\\d+\\.\\d+"',
     ]
     assert all([el["msg"] in error_msgs for el in exc.value.errors()])
     assert set([el["loc"][0] for el in exc.value.errors()]) == {
@@ -281,11 +284,16 @@ def test_dantimeta_1():
         "datePublished",
         "publishedBy",
         "doi",
+        "url",
+        "id",
     }
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,
     # so PublishedDandiset should work
-    meta_dict.update(_basic_publishmeta(dandi_id="DANDI:999999"))
+    meta_dict["url"] = "https://dandiarchive.org/dandiset/999999/0.0.0"
+    meta_dict["id"] = "DANDI:999999/0.0.0"
+    meta_dict["version"] = "0.0.0"
+    meta_dict.update(_basic_publishmeta(dandi_id="999999"))
     meta_dict["assetsSummary"].update(**{"numberOfBytes": 1, "numberOfFiles": 1})
     PublishedDandiset(**meta_dict)
 
