@@ -62,6 +62,7 @@ def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
             "endDate": "2021-05-18T19:58:39.310361-04:00",
             "wasAssociatedWith": [
                 {
+                    "id": "urn:uuid:9267d2e1-4a37-463b-9b10-dad3c66d8eaa",
                     "identifier": "RRID:SCR_017571",
                     "name": "DANDI API",
                     "version": "0.1.0",
