@@ -62,7 +62,7 @@ def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
             "endDate": "2021-05-18T19:58:39.310361-04:00",
             "wasAssociatedWith": [
                 {
-                    "id": "RRID:SCR_017571",
+                    "identifier": "RRID:SCR_017571",
                     "name": "DANDI API",
                     "version": "0.1.0",
                     "schemaKey": "Software",
