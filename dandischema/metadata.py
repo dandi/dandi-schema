@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, TypeVar, cast
 
 import jsonschema
+import pydantic
 import requests
 
 from .consts import ALLOWED_INPUT_SCHEMAS, ALLOWED_TARGET_SCHEMAS, DANDI_SCHEMA_VERSION
@@ -107,7 +108,7 @@ def _validate_asset_json(data: dict, schema_dir: str) -> None:
     jsonschema.validate(data, schema)
 
 
-def validate(obj, schema_version=None, schema_key=None):
+def validate(obj, schema_version=None, schema_key=None, for_post=False):
     """Validate object using pydantic
 
     Parameters
@@ -119,6 +120,8 @@ def validate(obj, schema_version=None, schema_key=None):
     schema_key: str, optional
       Name of the schema key to be used, if not specified, `schemaKey` of the
       object will be consulted
+    for_post: bool, optional
+      Checks if the metadata is suitable for posting to the api server
 
      Returns
      -------
@@ -146,7 +149,19 @@ def validate(obj, schema_version=None, schema_key=None):
             f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
         )
     klass = getattr(models, schema_key)
-    klass(**obj)
+    if not for_post:
+        klass(**obj)
+    try:
+        klass(**obj)
+    except pydantic.ValidationError as exc:
+        reraise = False
+        messages = []
+        for el in exc.value.errors():
+            if el["msg"] != "field required":
+                reraise = True
+                messages.append(el["msg"])
+        if reraise:
+            raise ValueError(messages)
 
 
 def migrate(
