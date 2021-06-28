@@ -108,7 +108,7 @@ def _validate_asset_json(data: dict, schema_dir: str) -> None:
     jsonschema.validate(data, schema)
 
 
-def validate(obj, schema_version=None, schema_key=None, for_post=False):
+def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     """Validate object using pydantic
 
     Parameters
@@ -120,10 +120,9 @@ def validate(obj, schema_version=None, schema_key=None, for_post=False):
     schema_key: str, optional
       Name of the schema key to be used, if not specified, `schemaKey` of the
       object will be consulted
-    for_post: bool, optional
-      Checks if the metadata is suitable for posting to the api server. If fails validation,
-      but ValidationError only includes "field required" errors, a `ValueError` is raised with
-      the list of all errors.
+    missing_ok: bool, optional
+      This flag allows checking if all fields have appropriate values but ignores
+      missing fields. A `ValueError` is raised with the list of all errors.
 
      Returns
      -------
@@ -132,7 +131,8 @@ def validate(obj, schema_version=None, schema_key=None, for_post=False):
      Raises
      --------
      ValueError:
-       if no schema_key is provided and object doesn't provide schemaKey
+       if no schema_key is provided and object doesn't provide schemaKey or
+       is missing properly formatted values
      ValidationError
        if obj fails validation
     """
@@ -151,11 +151,11 @@ def validate(obj, schema_version=None, schema_key=None, for_post=False):
             f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
         )
     klass = getattr(models, schema_key)
-    if not for_post:
-        klass(**obj)
     try:
         klass(**obj)
     except pydantic.ValidationError as exc:
+        if not missing_ok:
+            raise
         reraise = False
         messages = []
         for el in exc.value.errors():
