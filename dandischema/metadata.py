@@ -158,12 +158,12 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
             raise
         reraise = False
         messages = []
-        for el in exc.value.errors():
+        for el in exc.errors():
             if el["msg"] != "field required":
                 reraise = True
                 messages.append(el["msg"])
         if reraise:
-            raise ValueError(messages)
+            ValueError(messages)
 
 
 def migrate(
