@@ -597,3 +597,27 @@ RoleTypeDict = {
         },
     ]
 }
+
+AgeReferenceTypeDict = {
+    "@graph": [
+        {
+            "@id": "dandi:AgeReferenceType",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "An enumeration of age reference",
+            "rdfs:label": "Age reference type",
+            "rdfs:subClassOf": {"@id": "schema:Enumeration"},
+        },
+        {
+            "@id": "dandi:BirthReference",
+            "@type": "dandi:AgeReferenceType",
+            "rdfs:comment": "Age since Birth",
+            "rdfs:label": "BirthReference",
+        },
+        {
+            "@id": "dandi:GestationalReference",
+            "@type": "dandi:AgeReferenceType",
+            "rdfs:comment": "Age of a pregnancy (https://en.wikipedia.org/wiki/Gestational_age)",
+            "rdfs:label": "GestationalReference",
+        },
+    ]
+}
