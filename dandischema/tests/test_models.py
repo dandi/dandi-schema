@@ -22,6 +22,7 @@ from ..models import (
     PublishedDandiset,
     RelationType,
     RoleType,
+    AgeReferenceType,
     Union,
 )
 
@@ -220,6 +221,13 @@ def test_asset_digest():
                 "blake2b_256": "dandi:blake2b-256",
                 "blake3": "dandi:blake3",
                 "dandi_etag": "dandi:dandi-etag",
+            },
+        ),
+        (
+            AgeReferenceType,
+            {
+                "BirthReference": "dandi:BirthReference",
+                "GestationalReference": "dandi:GestationalReference",
             },
         ),
     ],
