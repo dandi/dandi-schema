@@ -121,7 +121,9 @@ def validate(obj, schema_version=None, schema_key=None, for_post=False):
       Name of the schema key to be used, if not specified, `schemaKey` of the
       object will be consulted
     for_post: bool, optional
-      Checks if the metadata is suitable for posting to the api server
+      Checks if the metadata is suitable for posting to the api server. If fails validation,
+      but ValidationError only includes "field required" errors, a `ValueError` is raised with
+      the list of all errors.
 
      Returns
      -------
