@@ -241,7 +241,7 @@ class PropertyValue(DandiBaseModel):
     minValue: float = Field(None, nskey="schema")
     unitText: str = Field(None, nskey="schema")
     value: Union[Any, List[Any]] = Field(None, nskey="schema")
-    valueReference: "PropertyValue" = Field(
+    valueReference: Optional[AgeReferenceType] = Field(
         None, nskey="schema"
     )  # Note: recursive (circular or not)
     propertyID: Union[IdentifierType, HttpUrl] = Field(
