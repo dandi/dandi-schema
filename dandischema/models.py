@@ -21,6 +21,7 @@ from pydantic.main import ModelMetaclass
 from .consts import DANDI_SCHEMA_VERSION
 from .model_types import (
     AccessTypeDict,
+    AgeReferenceTypeDict,
     DigestTypeDict,
     IdentifierTypeDict,
     LicenseTypeDict,
@@ -91,6 +92,7 @@ if len(AccessTypeDict["@graph"]) > 2:
     AccessTypeDict["@graph"].pop()
     AccessTypeDict["@graph"].pop()
 AccessType = create_enum(AccessTypeDict)
+AgeReferenceType = create_enum(AgeReferenceTypeDict)
 RoleType = create_enum(RoleTypeDict)
 RelationType = create_enum(RelationTypeDict)
 ParticipantRelationType = create_enum(ParticipantRelationTypeDict)
