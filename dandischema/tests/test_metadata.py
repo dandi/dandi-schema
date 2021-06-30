@@ -232,6 +232,30 @@ def test_requirements(obj, schema_key, missingfields):
 
 
 @pytest.mark.parametrize(
+    "obj, schema_key, errors",
+    [
+        (
+            {"schemaKey": "Dandiset"},
+            None,
+            {"field required"},
+        ),
+        (
+            {"schemaKey": "Dandiset", "identifier": "000000"},
+            None,
+            {'string does not match regex "^DANDI\\:\\d{6}$"', "field required"},
+        ),
+    ],
+)
+def test_missing_ok(obj, schema_key, errors):
+    validate(
+        obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION, missing_ok=True
+    )
+    with pytest.raises(ValueError) as exc:
+        validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
+    assert set([el["msg"] for el in exc.value.errors()]) == errors
+
+
+@pytest.mark.parametrize(
     "obj, target",
     [
         ({}, "0.3.2"),
