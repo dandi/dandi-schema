@@ -1,3 +1,17 @@
+# 0.2.10 (Wed Jun 30 2021)
+
+#### 🐛 Bug Fix
+
+- enh: allow checking to see data are matched but allow for missing fields [#48](https://github.com/dandi/dandischema/pull/48) ([@satra](https://github.com/satra))
+- adding AgeReferenceType [#50](https://github.com/dandi/dandischema/pull/50) ([@djarecka](https://github.com/djarecka))
+
+#### Authors: 2
+
+- Dorota Jarecka ([@djarecka](https://github.com/djarecka))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.2.9 (Thu Jun 24 2021)
 
 #### 🐛 Bug Fix
