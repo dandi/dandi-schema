@@ -14,6 +14,7 @@ from pydantic import (
     EmailStr,
     Field,
     HttpUrl,
+    root_validator,
     validator,
 )
 from pydantic.main import ModelMetaclass
@@ -499,7 +500,7 @@ class EthicsApproval(DandiBaseModel):
 class Resource(DandiBaseModel):
     identifier: Optional[Identifier] = Field(None, nskey="schema")
     name: Optional[str] = Field(None, title="A title of the resource", nskey="schema")
-    url: HttpUrl = Field(title="URL of the resource", nskey="schema")
+    url: Optional[HttpUrl] = Field(None, title="URL of the resource", nskey="schema")
     repository: Optional[str] = Field(
         None,
         title="Name of the repository",
@@ -519,6 +520,13 @@ class Resource(DandiBaseModel):
         "dataset, publication, Webpage)",
         "nskey": "dandi",
     }
+
+    @root_validator
+    def identifier_or_url(cls, values):
+        identifier, url = values.get("identifier"), values.get("url")
+        if identifier is None and url is None:
+            raise ValueError("Both identifier and url cannot be None")
+        return values
 
 
 class AccessRequirements(DandiBaseModel):

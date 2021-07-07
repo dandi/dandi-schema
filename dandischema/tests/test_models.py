@@ -8,6 +8,7 @@ from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
     AccessType,
+    AgeReferenceType,
     Asset,
     DandiBaseModel,
     Dandiset,
@@ -21,8 +22,8 @@ from ..models import (
     Person,
     PublishedDandiset,
     RelationType,
+    Resource,
     RoleType,
-    AgeReferenceType,
     Union,
 )
 
@@ -422,3 +423,10 @@ def test_schemakey_roundtrip():
     contributor[0]["name"] = "last, first"
     klassobj = TempKlass(contributor=contributor)
     assert all([isinstance(val, Person) for val in klassobj.contributor])
+
+
+def test_resource():
+    with pytest.raises(pydantic.ValidationError):
+        Resource(relation=RelationType.IsCitedBy)
+    Resource(identifier="123", relation=RelationType.IsCitedBy)
+    Resource(url="http://example.org/resource", relation=RelationType.IsCitedBy)
