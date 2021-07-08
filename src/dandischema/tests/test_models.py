@@ -8,6 +8,7 @@ from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
     AccessType,
+    AgeReferenceType,
     Asset,
     DandiBaseModel,
     Dandiset,
@@ -22,7 +23,6 @@ from ..models import (
     PublishedDandiset,
     RelationType,
     RoleType,
-    AgeReferenceType,
     Union,
 )
 

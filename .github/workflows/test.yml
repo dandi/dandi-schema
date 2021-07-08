@@ -42,7 +42,7 @@ jobs:
         pip install ".[test]"
 
     - name: Run all tests
-      run: python -m pytest -s -v --cov=dandischema --cov-report=xml dandischema
+      run: python -m pytest -s -v --cov=dandischema --cov-report=xml --pyargs dandischema
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
