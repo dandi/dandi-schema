@@ -77,7 +77,7 @@ jobs:
       - name: Check out dandischema
         uses: actions/checkout@v2
         with:
-          # Fetch all commits so that versioneer will return something
+          # Fetch all commits so that versioningit will return something
           # compatible with semantic-version
           fetch-depth: 0
           path: dandischema

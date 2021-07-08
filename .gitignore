@@ -13,3 +13,4 @@ pip-wheel-metadata/
 sandbox/
 venv/
 venvs/
+dandischema/_version.py
