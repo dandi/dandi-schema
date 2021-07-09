@@ -14,6 +14,7 @@ from pydantic import (
     EmailStr,
     Field,
     HttpUrl,
+    root_validator,
     validator,
 )
 from pydantic.main import ModelMetaclass
@@ -45,8 +46,7 @@ if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
 
 NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
 UUID_PATTERN = (
-    "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*"
-    "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
+    "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 DANDI_DOI_PATTERN = r"^10.80507/dandi\.\d{6}/\d+\.\d+\.\d+"
@@ -237,14 +237,14 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
 
 
 class PropertyValue(DandiBaseModel):
-    maxValue: float = Field(None, nskey="schema")
-    minValue: float = Field(None, nskey="schema")
-    unitText: str = Field(None, nskey="schema")
-    value: Union[Any, List[Any]] = Field(None, nskey="schema")
-    valueReference: "PropertyValue" = Field(
+    maxValue: Optional[float] = Field(None, nskey="schema")
+    minValue: Optional[float] = Field(None, nskey="schema")
+    unitText: Optional[str] = Field(None, nskey="schema")
+    value: Union[Any, List[Any]] = Field(nskey="schema")
+    valueReference: Optional["PropertyValue"] = Field(
         None, nskey="schema"
     )  # Note: recursive (circular or not)
-    propertyID: Union[IdentifierType, HttpUrl] = Field(
+    propertyID: Optional[Union[IdentifierType, HttpUrl]] = Field(
         None,
         description="A commonly used identifier for"
         "the characteristic represented by the property.",
@@ -268,13 +268,14 @@ class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
     identifier: Optional[Union[HttpUrl, str]] = Field(
+        None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org",
         regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\._]+$",
         nskey="schema",
     )
     name: Optional[str] = Field(
-        description="The name of the item.", max_length=150, nskey="schema"
+        None, description="The name of the item.", max_length=150, nskey="schema"
     )
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
@@ -412,7 +413,7 @@ class Affiliation(DandiBaseModel):
         regex=r"^https://ror.org/[a-z0-9]+$",
         nskey="schema",
     )
-    name: str = Field(None, nskey="schema")
+    name: str = Field(nskey="schema")
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
@@ -434,7 +435,7 @@ class Person(Contributor):
         nskey="schema",
         examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )
-    affiliation: List[Affiliation] = Field(
+    affiliation: Optional[List[Affiliation]] = Field(
         None,
         description="An organization that this person is affiliated with.",
         nskey="schema",
@@ -487,8 +488,10 @@ class EthicsApproval(DandiBaseModel):
         title="Approved protocol identifier",
         description="Approved Protocol identifier, often a number or alphanumeric string.",
     )
-    contactPoint: ContactPoint = Field(
-        description="Information about the ethics approval committee.", nskey="schema"
+    contactPoint: Optional[ContactPoint] = Field(
+        None,
+        description="Information about the ethics approval committee.",
+        nskey="schema",
     )
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
@@ -497,7 +500,7 @@ class EthicsApproval(DandiBaseModel):
 class Resource(DandiBaseModel):
     identifier: Optional[Identifier] = Field(None, nskey="schema")
     name: Optional[str] = Field(None, title="A title of the resource", nskey="schema")
-    url: HttpUrl = Field(None, title="URL of the resource", nskey="schema")
+    url: Optional[HttpUrl] = Field(None, title="URL of the resource", nskey="schema")
     repository: Optional[str] = Field(
         None,
         title="Name of the repository",
@@ -517,6 +520,13 @@ class Resource(DandiBaseModel):
         "dataset, publication, Webpage)",
         "nskey": "dandi",
     }
+
+    @root_validator
+    def identifier_or_url(cls, values):
+        identifier, url = values.get("identifier"), values.get("url")
+        if identifier is None and url is None:
+            raise ValueError("Both identifier and url cannot be None")
+        return values
 
 
 class AccessRequirements(DandiBaseModel):
@@ -701,7 +711,7 @@ class RelatedParticipant(DandiBaseModel):
 class Participant(DandiBaseModel):
     """Description about the sample that was studied"""
 
-    identifier: Optional[Identifier] = Field(nskey="schema")
+    identifier: Identifier = Field(nskey="schema")
     altName: Optional[List[Identifier]] = Field(None, nskey="dandi")
 
     strain: Optional[StrainType] = Field(
@@ -752,9 +762,9 @@ class Participant(DandiBaseModel):
 class BioSample(DandiBaseModel):
     """Description of the sample that was studied"""
 
-    identifier: Optional[Identifier] = Field(nskey="schema")
-    sampleType: Optional[SampleType] = Field(
-        None, description="OBI based identifier for the sample used", nskey="dandi"
+    identifier: Identifier = Field(nskey="schema")
+    sampleType: SampleType = Field(
+        description="OBI based identifier for the sample used", nskey="dandi"
     )
     assayType: Optional[List[AssayType]] = Field(
         None, description="OBI based identifier for the assay(s) used", nskey="dandi"
@@ -893,10 +903,10 @@ class Dandiset(CommonModel):
         min_items=1,
     )
     dateCreated: Optional[datetime] = Field(
-        nskey="schema", title="Dandiset creation date and time", readOnly=True
+        None, nskey="schema", title="Dandiset creation date and time", readOnly=True
     )
     dateModified: Optional[datetime] = Field(
-        nskey="schema", title="Last modification date and time", readOnly=True
+        None, nskey="schema", title="Last modification date and time", readOnly=True
     )
 
     license: List[LicenseType] = Field(
@@ -943,10 +953,12 @@ class BareAsset(CommonModel):
     path: str = Field(nskey="dandi")
 
     dateModified: Optional[datetime] = Field(
-        nskey="schema", title="Asset (file or metadata) modification date and time"
+        None,
+        nskey="schema",
+        title="Asset (file or metadata) modification date and time",
     )
     blobDateModified: Optional[datetime] = Field(
-        nskey="dandi", title="Asset file modification date and time"
+        None, nskey="dandi", title="Asset file modification date and time"
     )
 
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
@@ -966,7 +978,7 @@ class BareAsset(CommonModel):
     )
 
     wasDerivedFrom: Optional[List[BioSample]] = Field(None, nskey="prov")
-    wasAttributedTo: List[Participant] = Field(
+    wasAttributedTo: Optional[List[Participant]] = Field(
         None, description="Participant(s) to which this file belongs to", nskey="prov"
     )
     wasGeneratedBy: Optional[List[Union[Session, Project, Activity]]] = Field(
@@ -1007,7 +1019,7 @@ class Asset(BareAsset):
     # all of the following are set by server
     id: str = Field(readOnly=True, description="Uniform resource identifier")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[HttpUrl] = Field(None, readOnly=True, nskey="schema")
+    contentUrl: List[HttpUrl] = Field(readOnly=True, nskey="schema")
 
 
 class Publishable(DandiBaseModel):
@@ -1015,7 +1027,7 @@ class Publishable(DandiBaseModel):
         description="The URL should contain the provenance of the publishing process.",
         readOnly=True,
         nskey="dandi",
-    )  # TODO: formalize "publish" activity to at least the Actor
+    )
     datePublished: datetime = Field(readOnly=True, nskey="schema")
 
 

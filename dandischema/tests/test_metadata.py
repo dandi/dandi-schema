@@ -144,7 +144,15 @@ def test_pydantic_validation(schema_dir):
         (
             {"schemaKey": "Asset"},
             None,
-            {"contentSize", "encodingFormat", "id", "identifier", "path", "digest"},
+            {
+                "contentSize",
+                "encodingFormat",
+                "id",
+                "identifier",
+                "path",
+                "digest",
+                "contentUrl",
+            },
         ),
         (
             {
@@ -152,7 +160,7 @@ def test_pydantic_validation(schema_dir):
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             None,
-            {"contentSize", "encodingFormat", "id", "identifier", "path"},
+            {"contentSize", "encodingFormat", "id", "identifier", "path", "contentUrl"},
         ),
         (
             {"schemaKey": "Asset"},
@@ -166,6 +174,7 @@ def test_pydantic_validation(schema_dir):
                 "identifier",
                 "path",
                 "digest",
+                "contentUrl",
             },
         ),
         (
@@ -183,6 +192,7 @@ def test_pydantic_validation(schema_dir):
                 "identifier",
                 "path",
                 "digest",
+                "contentUrl",
             },
         ),
         (
@@ -200,6 +210,7 @@ def test_pydantic_validation(schema_dir):
                 "identifier",
                 "path",
                 "digest",
+                "contentUrl",
             },
         ),
         (
@@ -219,6 +230,7 @@ def test_pydantic_validation(schema_dir):
                 "id",
                 "identifier",
                 "path",
+                "contentUrl",
             },
         ),
     ],
