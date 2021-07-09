@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from ..dandietag import DandiETag, Part, PartGenerator, mb, tb
+from ..dandietag import DandiETag, ETagHashlike, Part, PartGenerator, mb, tb
 
 
 @pytest.mark.parametrize(
@@ -123,3 +123,11 @@ def test_add_digest_out_of_order():
         etagger._add_digest(p, d)
     assert etagger.complete
     assert etagger.as_str() == ETAG
+
+
+def test_etaghashlike():
+    sizes = [mb(20), mb(30), mb(75), mb(5)]
+    hasher = ETagHashlike(sum(sizes))
+    for sz in sizes:
+        hasher.update(b"\0" * sz)
+    assert hasher.hexdigest() == "4dc80858c50371577551592f20ac0075-3"
