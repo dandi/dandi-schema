@@ -716,41 +716,48 @@ class GenotypeInfo(DandiBaseModel):
 
 class RelatedParticipant(DandiBaseModel):
     identifier: Optional[Identifier] = Field(None, nskey="schema")
-    name: Optional[str] = Field(None, title="Name of the participant", nskey="schema")
+    name: Optional[str] = Field(
+        None, title="Name of the participant or subject", nskey="schema"
+    )
     url: Optional[HttpUrl] = Field(
-        None, title="URL of the related participant", nskey="schema"
+        None, title="URL of the related participant or subject", nskey="schema"
     )
     relation: ParticipantRelationType = Field(
-        title="Participant relation",
-        description="Indicates how the current participant is related to the other participant "
-        "This relation should satisfy: Participant <relation> relatedParticipant",
+        title="Participant or subject relation",
+        description="Indicates how the current participant or subject is related"
+        " to the other participant or subject  This relation should "
+        "satisfy: Participant/Subject <relation> relatedParticipant/Subject",
         nskey="dandi",
     )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
-        "rdfs:comment": "Another participant related to the participant (e.g., another "
-        "parent, sibling, child)",
+        "rdfs:comment": "Another participant or subject related to the current "
+        "participant or subject (e.g., another parent, sibling, child)",
         "nskey": "dandi",
     }
 
 
 class Participant(DandiBaseModel):
-    """Description about the Participant studied.
+    """Description about the Participant or Subject studied.
 
-    The Participant can be any individual or synthesized Agent. The properties
-    of the Participant refers to information at the timepoint when the Participant
-    engaged in the data being described.
+    The Participant or Subject can be any individual or synthesized Agent. The
+    properties of the Participant or Subject refers to information at the timepoint
+    when the Participant or Subject engaged in the production of data being described.
     """
 
     identifier: Identifier = Field(nskey="schema")
     altName: Optional[List[Identifier]] = Field(None, nskey="dandi")
 
     strain: Optional[StrainType] = Field(
-        None, description="Identifier for the strain of the participant.", nskey="dandi"
+        None,
+        description="Identifier for the strain of the participant or subject.",
+        nskey="dandi",
     )
     cellLine: Optional[Identifier] = Field(
-        None, description="Cell line associated with the participant.", nskey="dandi"
+        None,
+        description="Cell line associated with the participant or subject.",
+        nskey="dandi",
     )
     vendor: Optional[Organization] = Field(None, nskey="dandi")
     age: Optional[PropertyValue] = Field(
@@ -764,39 +771,43 @@ class Participant(DandiBaseModel):
 
     sex: Optional[SexType] = Field(
         None,
-        description="OBI based identifier for sex of the participant if available.",
+        description="Identifier for sex of the participant or subject if "
+        "available. (e.g. from OBI)",
         nskey="dandi",
     )
     genotype: Optional[Union[List[GenotypeInfo], Identifier]] = Field(
         None,
-        description="Genotype descriptor of participant if available",
+        description="Genotype descriptor of participant or subject if available",
         nskey="dandi",
     )
     species: Optional[SpeciesType] = Field(
         None,
-        description="An identifier indicating the taxonomic classification of the participant.",
+        description="An identifier indicating the taxonomic classification of "
+        "the participant or subject.",
         nskey="dandi",
     )
     disorder: Optional[List[Disorder]] = Field(
         None,
-        description="Any current diagnosed disease or disorder associated with the participant.",
+        description="Any current diagnosed disease or disorder associated with "
+        "the participant or subject.",
         nskey="dandi",
     )
 
     relatedParticipant: Optional[List[RelatedParticipant]] = Field(
         None,
-        description="Information about related participants in a study or across studies.",
+        description="Information about related participants or subjects in a "
+        "study or across studies.",
         nskey="dandi",
     )
     sameAs: Optional[List[Identifier]] = Field(
         None,
-        description="An identifier to link participants across datasets.",
+        description="An identifier to link participants or subjects across datasets.",
         nskey="schema",
     )
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
-        "rdfs:label": "Information about the participant.",
+        "rdfs:label": "Information about the participant or subject.",
         "nskey": "dandi",
     }
 
@@ -826,7 +837,7 @@ class BioSample(DandiBaseModel):
     )
     wasAttributedTo: Optional[List[Participant]] = Field(
         None,
-        description="Participant(s) to which this sample belongs to.",
+        description="Participant(s) or Subject(s) associated with this sample.",
         nskey="prov",
     )
     sameAs: Optional[List[Identifier]] = Field(None, nskey="schema")
@@ -1042,7 +1053,9 @@ class BareAsset(CommonModel):
 
     wasDerivedFrom: Optional[List[BioSample]] = Field(None, nskey="prov")
     wasAttributedTo: Optional[List[Participant]] = Field(
-        None, description="Participant(s) to which this file belongs to.", nskey="prov"
+        None,
+        description="Participant(s) or subject(s) associated with this file.",
+        nskey="prov",
     )
     wasGeneratedBy: Optional[List[Union[Session, Project, Activity]]] = Field(
         None,
