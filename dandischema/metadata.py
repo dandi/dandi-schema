@@ -7,7 +7,12 @@ import jsonschema
 import pydantic
 import requests
 
-from .consts import ALLOWED_INPUT_SCHEMAS, ALLOWED_TARGET_SCHEMAS, DANDI_SCHEMA_VERSION
+from .consts import (
+    ALLOWED_INPUT_SCHEMAS,
+    ALLOWED_TARGET_SCHEMAS,
+    ALLOWED_VALID_SCHEMAS,
+    DANDI_SCHEMA_VERSION,
+)
 from . import models
 from .utils import _ensure_newline, version2tuple
 
@@ -140,7 +145,7 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
     schema_version = schema_version or obj.get("schemaVersion")
-    if schema_version not in ALLOWED_TARGET_SCHEMAS and schema_key in [
+    if schema_version not in ALLOWED_VALID_SCHEMAS and schema_key in [
         "Dandiset",
         "PublishedDandiset",
         "Asset",
