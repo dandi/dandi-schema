@@ -579,7 +579,7 @@ class AccessRequirements(DandiBaseModel):
         if status == AccessType.EmbargoedAccess and embargoed is None:
             raise ValueError("An embargo date. For NIH supported awards, this "
             "must comply with NIH policy. For other datasets, this will be at "
-            "most a year from dandiset creation.")
+            "most a year from the dandiset creation.")
         return values
     """
 
@@ -724,16 +724,16 @@ class RelatedParticipant(DandiBaseModel):
     )
     relation: ParticipantRelationType = Field(
         title="Participant or subject relation",
-        description="Indicates how the current participant or subject is related"
-        " to the other participant or subject  This relation should "
-        "satisfy: Participant/Subject <relation> relatedParticipant/Subject",
+        description="Indicates how the current participant or subject is related "
+        "to the other participant or subject. This relation should "
+        "satisfy: Participant/Subject <relation> relatedParticipant/Subject.",
         nskey="dandi",
     )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
         "rdfs:comment": "Another participant or subject related to the current "
-        "participant or subject (e.g., another parent, sibling, child)",
+        "participant or subject (e.g., another parent, sibling, child).",
         "nskey": "dandi",
     }
 
@@ -881,20 +881,20 @@ class CommonModel(DandiBaseModel):
     )
     studyTarget: Optional[List[str]] = Field(
         None,
-        description="What the objectives or specific questions of the study are.",
+        description="Objectives or specific questions of the study.",
         nskey="dandi",
     )
     license: Optional[List[LicenseType]] = Field(
         None,
         description="Licenses associated with the item. DANDI only supports a "
         "subset of Creative Commons Licenses (creativecommons.org) "
-        "relevant to datasets.",
+        "applicable to datasets.",
         nskey="schema",
     )
     protocol: Optional[List[HttpUrl]] = Field(
         None,
         description="A list of persistent URLs describing the protocol (e.g. "
-        "protocols.io, or other dois).",
+        "protocols.io, or other DOIs).",
         nskey="dandi",
     )
     ethicsApproval: Optional[List[EthicsApproval]] = Field(
@@ -983,7 +983,7 @@ class Dandiset(CommonModel):
         min_items=1,
         description="Licenses associated with the item. DANDI only supports a "
         "subset of Creative Commons Licenses (creativecommons.org) "
-        "relevant to datasets.",
+        "applicable to datasets.",
         nskey="schema",
     )
 
@@ -1000,7 +1000,7 @@ class Dandiset(CommonModel):
     wasGeneratedBy: Optional[List[Project]] = Field(
         None,
         title="Associated projects",
-        description="Describe the project(s) that generated this Dandiset.",
+        description="Project(s) that generated this Dandiset.",
         nskey="prov",
     )
 
