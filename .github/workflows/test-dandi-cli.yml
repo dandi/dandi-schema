@@ -21,9 +21,10 @@ jobs:
           - ubuntu-18.04
           - macos-latest
         python:
-          - 3.7
+          # Use the only Python which is ATM also used by dandi-api
+          # - 3.7
           - 3.8
-          - 3.9
+          # - 3.9
         version:
           - master
           - release
@@ -31,11 +32,11 @@ jobs:
           - normal
         include:
           - os: ubuntu-18.04
-            python: 3.7
+            python: 3.8
             mode: dandi-devel
             version: master
           - os: ubuntu-18.04
-            python: 3.7
+            python: 3.8
             mode: dandi-devel
             version: release
         exclude:
