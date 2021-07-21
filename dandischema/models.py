@@ -200,6 +200,8 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                     value["title"] = name2title(prop)
                 if value.get("format", None) == "uri":
                     value["maxLength"] = 1000
+                if value.get("pattern", None) and "https" in value.get("pattern"):
+                    value["format"] = "uri"
                 allOf = value.get("allOf")
                 anyOf = value.get("anyOf")
                 items = value.get("items")
@@ -270,11 +272,11 @@ DANDIURL = str
 class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
-    identifier: Optional[Union[HttpUrl, str]] = Field(
+    identifier: Optional[str] = Field(
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
-        regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\._]+$",
+        regex=r"(^(https?)://)|(^[a-zA-Z0-9]+:[a-zA-Z0-9-/\._]+$)",
         nskey="schema",
     )
     name: Optional[str] = Field(
