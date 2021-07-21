@@ -86,5 +86,14 @@ jobs:
         run: pip install .
         working-directory: dandischema
 
+      - name: Build dandi-api image with this version of dandischema
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          docker build \
+            -t dandiarchive/dandiarchive-api \
+            -f tools/api-with-schema.Dockerfile \
+            .
+        working-directory: dandischema
+
       - name: Run dandi-cli tests
         run: python -m pytest -s -v --pyargs dandi
