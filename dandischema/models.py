@@ -49,7 +49,7 @@ UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
-DANDI_DOI_PATTERN = r"^10.80507/dandi\.\d{6}/\d+\.\d+\.\d+"
+DANDI_DOI_PATTERN = r"^10.[0-9]{5}/dandi\.\d{6}/\d+\.\d+\.\d+"
 DANDI_PUBID_PATTERN = r"^DANDI:\d{6}/\d+\.\d+\.\d+"
 
 
