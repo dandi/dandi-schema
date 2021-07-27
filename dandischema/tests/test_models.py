@@ -1,4 +1,5 @@
 import enum
+import json
 
 import pydantic
 from pydantic import ValidationError
@@ -8,8 +9,10 @@ from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
     AccessType,
+    Affiliation,
     AgeReferenceType,
     Asset,
+    BaseType,
     DandiBaseModel,
     Dandiset,
     DigestType,
@@ -430,3 +433,14 @@ def test_resource():
         Resource(relation=RelationType.IsCitedBy)
     Resource(identifier="123", relation=RelationType.IsCitedBy)
     Resource(url="http://example.org/resource", relation=RelationType.IsCitedBy)
+
+
+def test_basetype():
+    props = json.loads(BaseType.schema_json())["properties"]["identifier"]
+    assert "anyOf" not in props
+    assert props.get("maxLength") == 1000
+
+
+def test_https_regex():
+    props = json.loads(Affiliation.schema_json())["properties"]["identifier"]
+    assert props["format"] == "uri"

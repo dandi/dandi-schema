@@ -3,6 +3,7 @@ from datetime import date, datetime
 from enum import Enum
 import json
 import os
+import re
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -200,7 +201,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                     value["title"] = name2title(prop)
                 if value.get("format", None) == "uri":
                     value["maxLength"] = 1000
-                if re.match("https?://", value.get("pattern", "")):
+                if re.match("\\^https?://", value.get("pattern", "")):
                     value["format"] = "uri"
                 allOf = value.get("allOf")
                 anyOf = value.get("anyOf")
@@ -288,13 +289,14 @@ class BaseType(DandiBaseModel):
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
             for prop, value in schema.get("properties", {}).items():
+                # This check removes the anyOf field from the identifier property
+                # in the schema generation. This relates to a UI issue where two
+                # basic properties, in this case "string", is dropped from the UI.
                 if prop == "identifier":
-                    options = value.pop("anyOf", None)
-                    if "format" in options[0]:
-                        value.update(**options[0])
-                    else:
-                        value.update(**options[1])
-                    value["maxLength"] = 1000
+                    for option in value.pop("anyOf", []):
+                        if option.get("format", "") == "uri":
+                            value.update(**option)
+                            value["maxLength"] = 1000
 
 
 class AssayType(BaseType):
