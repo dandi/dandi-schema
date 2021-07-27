@@ -200,7 +200,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                     value["title"] = name2title(prop)
                 if value.get("format", None) == "uri":
                     value["maxLength"] = 1000
-                if value.get("pattern", "").startswith("^http"):
+                if re.match("https?://", value.get("pattern", "")):
                     value["format"] = "uri"
                 allOf = value.get("allOf")
                 anyOf = value.get("anyOf")
@@ -1048,6 +1048,7 @@ class BareAsset(CommonModel):
     blobDateModified: Optional[datetime] = Field(
         None, nskey="dandi", title="Asset file modification date and time"
     )
+    # overload to restrict with max_items=1
     access: List[AccessRequirements] = Field(
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
