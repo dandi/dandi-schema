@@ -200,7 +200,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                     value["title"] = name2title(prop)
                 if value.get("format", None) == "uri":
                     value["maxLength"] = 1000
-                if value.get("pattern", None) and "https" in value.get("pattern"):
+                if value.get("pattern", None) and value.get("pattern", "").startswith("https://"):
                     value["format"] = "uri"
                 allOf = value.get("allOf")
                 anyOf = value.get("anyOf")
