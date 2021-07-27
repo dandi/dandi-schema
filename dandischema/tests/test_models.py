@@ -444,3 +444,4 @@ def test_basetype():
 def test_https_regex():
     props = json.loads(Affiliation.schema_json())["properties"]["identifier"]
     assert props["format"] == "uri"
+    assert props.get("maxLength") == 1000

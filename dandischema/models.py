@@ -199,10 +199,10 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                         del value["pattern"]
                 if value.get("title") is None or value["title"] == prop.title():
                     value["title"] = name2title(prop)
-                if value.get("format", None) == "uri":
-                    value["maxLength"] = 1000
                 if re.match("\\^https?://", value.get("pattern", "")):
                     value["format"] = "uri"
+                if value.get("format", None) == "uri":
+                    value["maxLength"] = 1000
                 allOf = value.get("allOf")
                 anyOf = value.get("anyOf")
                 items = value.get("items")
