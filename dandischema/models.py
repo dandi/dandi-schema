@@ -1048,7 +1048,7 @@ class BareAsset(CommonModel):
         title="Asset (file or metadata) modification date and time",
     )
     blobDateModified: Optional[datetime] = Field(
-        None, nskey="dandi", title="Asset file modification date and time"
+        None, nskey="dandi", title="Asset file modification date and time."
     )
     # overload to restrict with max_items=1
     access: List[AccessRequirements] = Field(
