@@ -200,7 +200,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                     value["title"] = name2title(prop)
                 if value.get("format", None) == "uri":
                     value["maxLength"] = 1000
-                if value.get("pattern", None) and value.get("pattern", "").startswith("https://"):
+                if value.get("pattern", "").startswith("^http"):
                     value["format"] = "uri"
                 allOf = value.get("allOf")
                 anyOf = value.get("anyOf")
@@ -1047,6 +1047,12 @@ class BareAsset(CommonModel):
     )
     blobDateModified: Optional[datetime] = Field(
         None, nskey="dandi", title="Asset file modification date and time"
+    )
+    access: List[AccessRequirements] = Field(
+        title="Access information",
+        default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
+        nskey="dandi",
+        max_items=1,
     )
 
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
