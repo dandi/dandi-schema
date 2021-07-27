@@ -13,6 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       NO_ET: 1
+      DANDI_ALLOW_LOCALHOST_URLS: 1
     strategy:
       fail-fast: false
       matrix:
