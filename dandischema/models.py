@@ -1077,7 +1077,7 @@ class BareAsset(CommonModel):
     wasDerivedFrom: Optional[List[BioSample]] = Field(None, nskey="prov")
     wasAttributedTo: Optional[List[Participant]] = Field(
         None,
-        description="Participant(s) or subject(s) associated with this file.",
+        description="Associated participant(s) or subject(s).",
         nskey="prov",
     )
     wasGeneratedBy: Optional[List[Union[Session, Project, Activity]]] = Field(
