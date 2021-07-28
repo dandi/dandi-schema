@@ -1,3 +1,15 @@
+# 0.3.1 (Wed Jul 28 2021)
+
+#### 🐛 Bug Fix
+
+- ensure schemaKeys are set properly [#68](https://github.com/dandi/dandischema/pull/68) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.3.0 (Wed Jul 28 2021)
 
 #### 🚀 Enhancement
