@@ -1,3 +1,36 @@
+# 0.3.0 (Wed Jul 28 2021)
+
+#### 🚀 Enhancement
+
+- improve help options [#60](https://github.com/dandi/dandischema/pull/60) ([@satra](https://github.com/satra))
+- Copy dandietag code from dandi-cli [#58](https://github.com/dandi/dandischema/pull/58) ([@jwodder](https://github.com/jwodder))
+- fix: clean up optional components of the schema [#52](https://github.com/dandi/dandischema/pull/52) ([@satra](https://github.com/satra))
+
+#### 🐛 Bug Fix
+
+- Use a generic DOI site instead of 10.80507 [#65](https://github.com/dandi/dandischema/pull/65) ([@dchiquito](https://github.com/dchiquito) [@satra](https://github.com/satra))
+
+#### ⚠️ Pushed to `master`
+
+- BF: do not refer to dandi-cli for LICENSE file ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🧪 Tests
+
+- Set DANDI_ALLOW_LOCALHOST_URLS when running dandi-cli tests [#66](https://github.com/dandi/dandischema/pull/66) ([@jwodder](https://github.com/jwodder))
+- RF(CI): run dandi-cli tests only against 3.8 (but all OSes) [#64](https://github.com/dandi/dandischema/pull/64) ([@yarikoptic](https://github.com/yarikoptic))
+- Run dandi-cli tests with dandi-api image built with local version of dandischema [#63](https://github.com/dandi/dandischema/pull/63) ([@jwodder](https://github.com/jwodder))
+- fix: change id to indentifier for software [#46](https://github.com/dandi/dandischema/pull/46) ([@satra](https://github.com/satra))
+- Add workflow for testing dandischema against latest release of dandi-cli [#49](https://github.com/dandi/dandischema/pull/49) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 4
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.2.10 (Wed Jun 30 2021)
 
 #### 🐛 Bug Fix
