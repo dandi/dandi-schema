@@ -288,6 +288,7 @@ class BaseType(DandiBaseModel):
     class Config:
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
+            schema["title"] = name2title(schema["title"])
             for prop, value in schema.get("properties", {}).items():
                 # This check removes the anyOf field from the identifier property
                 # in the schema generation. This relates to a UI issue where two
@@ -297,6 +298,15 @@ class BaseType(DandiBaseModel):
                         if option.get("format", "") == "uri":
                             value.update(**option)
                             value["maxLength"] = 1000
+                # Have to replicate this
+                if prop == "schemaKey":
+                    if "enum" in value and len(value["enum"]) == 1:
+                        value["const"] = value["enum"][0]
+                        del value["enum"]
+                    else:
+                        value["const"] = value["default"]
+                    if "readOnly" in value:
+                        del value["readOnly"]
 
 
 class AssayType(BaseType):

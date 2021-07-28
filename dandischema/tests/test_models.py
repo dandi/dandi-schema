@@ -436,9 +436,12 @@ def test_resource():
 
 
 def test_basetype():
-    props = json.loads(BaseType.schema_json())["properties"]["identifier"]
-    assert "anyOf" not in props
-    assert props.get("maxLength") == 1000
+    props = json.loads(BaseType.schema_json())["properties"]
+    identifier = props["identifier"]
+    assert "anyOf" not in identifier
+    assert identifier.get("maxLength") == 1000
+    key = props["schemaKey"]
+    assert key["const"] == "BaseType"
 
 
 def test_https_regex():
