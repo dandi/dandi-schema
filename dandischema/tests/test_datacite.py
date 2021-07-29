@@ -298,3 +298,122 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
 
     # trying to poste datacite
     datacite_post(datacite, meta_dict["doi"])
+
+
+def test_datacite_publish():
+    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id = f"DANDI:{dandi_id_noprefix}"
+    version = "0.0.0"
+
+    # meta data without doi, datePublished and publishedBy
+    meta_dict = {
+        "identifier": dandi_id,
+        "id": f"{dandi_id}/{version}",
+        "name": "testing dataset",
+        "description": "testing",
+        "contributor": [
+            {
+                "name": "A_last, A_first",
+                "roleName": [RoleType("dcite:ContactPerson")],
+            }
+        ],
+        "license": [LicenseType("spdx:CC-BY-4.0")],
+        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+        "version": version,
+        "citation": "A_last, A_first 2021",
+        "manifestLocation": [
+            f"https://api.dandiarchive.org/api/dandisets/{dandi_id_noprefix}/versions/draft/assets/"
+        ],
+        "assetsSummary": {
+            "schemaKey": "AssetsSummary",
+            "numberOfBytes": 10,
+            "numberOfFiles": 1,
+            "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
+            "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
+            "measurementTechnique": [
+                {
+                    "schemaKey": "MeasurementTechniqueType",
+                    "name": "two-photon microscopy technique",
+                }
+            ],
+            "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
+        },
+    }
+    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    # creating and validating datacite objects
+    datacite = to_datacite(meta_dict, publish=True)
+
+    assert datacite == {
+        # 'data': {}
+        "data": {
+            "id": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
+            "type": "dois",
+            "attributes": {
+                "event": "publish",
+                "contributors": [
+                    {
+                        "affiliation": [],
+                        "contributorName": "A_last, A_first",
+                        "contributorType": "ContactPerson",
+                        "familyName": "A_last",
+                        "givenName": "A_first",
+                        "name": "A_last, A_first",
+                        "nameType": "Personal",
+                        "schemeURI": "orcid.org",
+                    }
+                ],
+                "creators": [
+                    {
+                        "affiliation": [],
+                        "creatorName": "A_last, A_first",
+                        "familyName": "A_last",
+                        "givenName": "A_first",
+                        "name": "A_last, A_first",
+                        "nameType": "Personal",
+                        "schemeURI": "orcid.org",
+                    }
+                ],
+                "descriptions": [
+                    {"description": "testing", "descriptionType": "Abstract"}
+                ],
+                "doi": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
+                "identifiers": [
+                    {
+                        "identifier": (
+                            f"https://doi.org/10.80507"
+                            f"/dandi.{dandi_id_noprefix}/{version}"
+                        ),
+                        "identifierType": "DOI",
+                    },
+                    {
+                        "identifier": f"https://identifiers.org/{dandi_id}/{version}",
+                        "identifierType": "URL",
+                    },
+                    {
+                        "identifier": (
+                            f"https://dandiarchive.org/dandiset"
+                            f"/{dandi_id_noprefix}/{version}"
+                        ),
+                        "identifierType": "URL",
+                    },
+                ],
+                "publicationYear": "1970",
+                "publisher": "DANDI Archive",
+                "rightsList": [
+                    {
+                        "rightsIdentifier": "CC_BY_40",
+                        "rightsIdentifierScheme": "SPDX",
+                        "schemeURI": "https://spdx.org/licenses/",
+                    }
+                ],
+                "schemaVersion": "http://datacite.org/schema/kernel-4",
+                "titles": [{"title": "testing dataset"}],
+                "types": {
+                    "resourceType": "Neural Data",
+                    "resourceTypeGeneral": "Dataset",
+                },
+                "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+            },
+        }
+    }
