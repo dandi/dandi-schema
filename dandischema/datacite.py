@@ -57,13 +57,18 @@ DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
 def to_datacite(
-    meta: ty.Union[dict, PublishedDandiset], validate: bool = False
+    meta: ty.Union[dict, PublishedDandiset],
+    validate: bool = False,
+    publish: bool = False,
 ) -> dict:
     """Convert published Dandiset metadata to Datacite"""
     if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
 
     attributes = {}
+    if publish:
+        attributes['event'] = 'publish'
+
     attributes["identifiers"] = [
         # TODO: the first element is ignored, not sure how to fix it...
         {"identifier": f"https://doi.org/{meta.doi}", "identifierType": "DOI"},
