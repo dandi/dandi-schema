@@ -1,3 +1,15 @@
+# 0.3.2 (Thu Jul 29 2021)
+
+#### 🐛 Bug Fix
+
+- Datacite publish argument [#70](https://github.com/dandi/dandischema/pull/70) ([@dchiquito](https://github.com/dchiquito))
+
+#### Authors: 1
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+
+---
+
 # 0.3.1 (Wed Jul 28 2021)
 
 #### 🐛 Bug Fix
