@@ -620,7 +620,7 @@ class AssetsSummary(DandiBaseModel):
     numberOfSamples: Optional[int] = Field(None, readOnly=True)  # more of NWB
     numberOfCells: Optional[int] = Field(None, readOnly=True)
 
-    dataStandard: Optional[List[StandardsType]] = Field(readOnly=True)
+    dataStandard: Optional[List[StandardsType]] = Field(readOnly=True, nskey="dandi")
     # Web UI: icons per each modality?
     approach: Optional[List[ApproachType]] = Field(readOnly=True)
     # Web UI: could be an icon with number, which if hovered on  show a list?
