@@ -195,7 +195,7 @@ def migrate(
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
         jsonschema.validate(obj, schema)
-    if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
+    if version2tuple(schema_version) < version2tuple("0.4.0"):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
         id = str(obj.get("id"))
@@ -219,6 +219,13 @@ def migrate(
             obj["assetsSummary"] = {"numberOfFiles": 0, "numberOfBytes": 0}
         if obj.get("manifestLocation") is None:
             obj["manifestLocation"] = []
+    if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
+        for val in obj.get("about", []):
+            if "schemaKey" not in val:
+                val["schemaKey"] = "GenericType"
+        for val in obj.get("access", []):
+            if "schemaKey" not in val:
+                val["schemaKey"] = "AccessRequirements"
         obj["schemaVersion"] = to_version
     return obj
 

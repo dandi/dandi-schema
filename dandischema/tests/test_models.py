@@ -16,6 +16,7 @@ from ..models import (
     DandiBaseModel,
     Dandiset,
     DigestType,
+    Disorder,
     IdentifierType,
     LicenseType,
     List,
@@ -448,3 +449,20 @@ def test_https_regex():
     props = json.loads(Affiliation.schema_json())["properties"]["identifier"]
     assert props["format"] == "uri"
     assert props.get("maxLength") == 1000
+
+
+def test_schemakey_in_required():
+    props = json.loads(Affiliation.schema_json())["properties"]["required"]
+    assert "schemaKey" in props
+
+
+def test_missing_schemakey():
+    with pytest.raises(pydantic.ValidationError) as exc:
+        Disorder()
+    assert any(
+        [
+            "MissingSchemaKey does not match classname Disorder" in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    Disorder(schemaKey="Disorder")
