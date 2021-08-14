@@ -194,7 +194,9 @@ def migrate(
             f"https://raw.githubusercontent.com/dandi/schema/"
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
-        jsonschema.validate(obj, schema)
+        jsonschema.validate(
+            obj, schema, format_checker=jsonschema.draft7_format_checker
+        )
     if version2tuple(schema_version) < version2tuple("0.4.0"):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
