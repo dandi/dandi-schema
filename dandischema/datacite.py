@@ -176,16 +176,33 @@ def to_datacite(
         attributes["relatedIdentifiers"] = []
         for rel_el in meta.relatedResource:
             if rel_el.identifier is not None:
-                if ":" not in rel_el.identifier:
-                    continue
-                ident_tp, ident_id = rel_el.identifier.split(":", 1)
-                if ident_tp.lower() in DATACITE_MAP:
-                    ident_tp = DATACITE_MAP[ident_tp.lower()]
-                else:
-                    raise ValueError(
-                        f"identifier has to be from the list: {DATACITE_IDENTYPE}, "
-                        f"but {ident_tp} provided"
-                    )
+                if ":" in rel_el.identifier:
+                    ident_tp, ident_id = rel_el.identifier.split(":", 1)
+                    #breakpoint()
+                    if ident_tp.lower() in DATACITE_MAP:
+                        ident_tp = DATACITE_MAP[ident_tp.lower()]
+                    else:
+                        raise ValueError(
+                            f"identifier has to be from the list: {DATACITE_IDENTYPE}, "
+                            f"but {ident_tp} provided"
+                        )
+                else: # trying to find identifier if url provided
+                    if "doi.org/" in rel_el.identifier:
+                        ident_tp = "DOI"
+                        ident_id = rel_el.identifier.split("doi.org/")[1]
+                    elif "osf.io/" in rel_el.identifier:
+                        ident_tp = "DOI"
+                        # i'm not sure, but looks like everything from osf has prefix 10.17605
+                        ident_id = "10.17605/OSF.IO/" + rel_el.identifier.split("osf.io/")[1]
+                    elif "biorxiv.org/" in rel_el.identifier:
+                        ident_tp = "DOI"
+                        ident_id = rel_el.identifier.split("biorxiv.org/content/")[1].split("v")[0]
+                    # if any other url is passed
+                    elif "https://" in rel_el.identifier:
+                        ident_id = rel_el.identifier
+                        ident_tp = "URL"
+                    else:
+                        continue
             elif rel_el.url is not None:
                 ident_id = rel_el.url
                 ident_tp = "URL"
