@@ -178,7 +178,6 @@ def to_datacite(
             if rel_el.identifier is not None:
                 if ":" in rel_el.identifier:
                     ident_tp, ident_id = rel_el.identifier.split(":", 1)
-                    #breakpoint()
                     if ident_tp.lower() in DATACITE_MAP:
                         ident_tp = DATACITE_MAP[ident_tp.lower()]
                     else:
@@ -186,7 +185,7 @@ def to_datacite(
                             f"identifier has to be from the list: {DATACITE_IDENTYPE}, "
                             f"but {ident_tp} provided"
                         )
-                else: # trying to find identifier if url provided
+                else:  # trying to find identifier if url provided
                     if "doi.org/" in rel_el.identifier:
                         ident_tp = "DOI"
                         ident_id = rel_el.identifier.split("doi.org/")[1]
