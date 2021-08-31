@@ -176,7 +176,7 @@ def to_datacite(
         attributes["relatedIdentifiers"] = []
         for rel_el in meta.relatedResource:
             if rel_el.identifier is not None:
-                if ":" in rel_el.identifier:
+                if "doi:" in rel_el.identifier.lower():
                     ident_tp, ident_id = rel_el.identifier.split(":", 1)
                     if ident_tp.lower() in DATACITE_MAP:
                         ident_tp = DATACITE_MAP[ident_tp.lower()]
@@ -193,6 +193,8 @@ def to_datacite(
                         ident_tp = "DOI"
                         # i'm not sure, but looks like everything from osf has prefix 10.17605
                         ident_id = "10.17605/OSF.IO/" + rel_el.identifier.split("osf.io/")[1]
+                        if ident_id[-1] == "/":
+                            ident_id = ident_id[:-1]
                     elif "biorxiv.org/" in rel_el.identifier:
                         ident_tp = "DOI"
                         ident_id = rel_el.identifier.split("biorxiv.org/content/")[1].split("v")[0]
@@ -206,7 +208,7 @@ def to_datacite(
                 ident_id = rel_el.url
                 ident_tp = "URL"
             rel_dict = {
-                "relatedIdentifier": ident_id,
+                "relatedIdentifier": ident_id.lower(),
                 # in theory it should be from the specific list that contains e.g. DOI, arXiv, ...
                 "relatedIdentifierType": ident_tp.upper(),
                 "relationType": rel_el.relation.name,
