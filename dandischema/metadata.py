@@ -8,10 +8,10 @@ import pydantic
 import requests
 
 from .consts import (
-    ALLOWED_INPUT_SCHEMAS,
+    ALLOWED_SCHEMAS,
     ALLOWED_TARGET_SCHEMAS,
-    ALLOWED_VALIDATION_SCHEMAS,
     DANDI_SCHEMA_VERSION,
+    schema_info,
 )
 from . import models
 from .utils import _ensure_newline, version2tuple
@@ -145,7 +145,7 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
     schema_version = schema_version or obj.get("schemaVersion")
-    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in [
+    if schema_version not in ALLOWED_SCHEMAS and schema_key in [
         "Dandiset",
         "PublishedDandiset",
         "Asset",
@@ -153,7 +153,7 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     ]:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
+            f"Allowed are: {', '.join(ALLOWED_SCHEMAS)}."
         )
     klass = getattr(models, schema_key)
     try:
@@ -185,8 +185,8 @@ def migrate(
     schema_version = obj.get("schemaVersion")
     if schema_version == DANDI_SCHEMA_VERSION:
         return obj
-    if schema_version not in ALLOWED_INPUT_SCHEMAS:
-        raise ValueError(f"Current input schemas supported: {ALLOWED_INPUT_SCHEMAS}.")
+    if schema_version not in ALLOWED_SCHEMAS:
+        raise ValueError(f"Current input schemas supported: {ALLOWED_SCHEMAS}.")
     if version2tuple(schema_version) > version2tuple(to_version):
         raise ValueError(f"Cannot migrate from {schema_version} to lower {to_version}.")
     if not (skip_validation):
@@ -245,11 +245,13 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     if "schemaVersion" not in assetmeta:
         raise ValueError("Provided metadata has no schema version")
     schema_version = cast(str, assetmeta.get("schemaVersion"))
-    if schema_version not in ALLOWED_INPUT_SCHEMAS:
+    if schema_version not in ALLOWED_SCHEMAS:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(ALLOWED_INPUT_SCHEMAS)}."
+            f"Allowed are: {', '.join(ALLOWED_SCHEMAS)}."
         )
+
+    # TODO: add process before returning stats
 
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
     stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
@@ -309,3 +311,24 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
     return models.AssetsSummary(**stats).json_dict()
+
+
+def process(meta: Dict[str, Any]):
+    if "schemaVersion" not in meta:
+        raise ValueError("Provided metadata has no schema version")
+    schema_key = meta.get("schemaKey", None)
+    if schema_key is None:
+        raise ValueError("Provided metadata has no known schemaKey")
+    schema_version = meta.get("schemaVersion", None)
+    if schema_version is None or schema_version not in ALLOWED_SCHEMAS:
+        raise ValueError(
+            f"Metadata version {schema_version} is not allowed. "
+            f"Allowed are: {', '.join(ALLOWED_SCHEMAS)}."
+        )
+    if schema_key not in ["Dandiset", "PublishedDandiset", "Asset", "PublishedAsset"]:
+        raise ValueError("Process only works on Dandiset and Asset schemas")
+    op = schema_info["process"].get(schema_version, None)
+    if op is None:
+        return meta
+    if op == "migrate":
+        return migrate(meta)
