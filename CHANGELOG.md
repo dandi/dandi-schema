@@ -1,3 +1,15 @@
+# 0.3.4 (Wed Sep 15 2021)
+
+#### 🐛 Bug Fix
+
+- remove NC license [#83](https://github.com/dandi/dandischema/pull/83) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.3.3 (Thu Sep 09 2021)
 
 #### 🐛 Bug Fix
