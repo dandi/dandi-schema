@@ -1,4 +1,4 @@
-DANDI_SCHEMA_VERSION = "0.5.2"
+DANDI_SCHEMA_VERSION = "0.5.3"
 ALLOWED_INPUT_SCHEMAS = [
     "0.3.0",
     "0.3.1",
@@ -8,6 +8,7 @@ ALLOWED_INPUT_SCHEMAS = [
     "0.4.3",
     "0.4.4",
     "0.5.1",
+    "0.5.2",
 ]
 
 # ATM we allow only for a single target version which is current
