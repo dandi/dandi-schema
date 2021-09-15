@@ -176,7 +176,7 @@ def to_datacite(
         attributes["relatedIdentifiers"] = []
         for rel_el in meta.relatedResource:
             if rel_el.identifier is not None:
-                if "doi:" in rel_el.identifier.lower():
+                if rel_el.identifier.lower().startswith("doi"):
                     ident_tp, ident_id = rel_el.identifier.split(":", 1)
                     if ident_tp.lower() in DATACITE_MAP:
                         ident_tp = DATACITE_MAP[ident_tp.lower()]
