@@ -174,7 +174,7 @@ def test_datacite(dandi_id, schema):
                 ),
             },
         ),
-        # additional contributor with dandi:Author
+        # additional contributor with dandi:Author, and one without roleName
         (
             {
                 "contributor": [
@@ -186,12 +186,16 @@ def test_datacite(dandi_id, schema):
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:Author")],
                     },
+                    {
+                        "name": "C_last, C_first"
+                    },
+
                 ],
             },
             {
                 "creators": (1, {"name": "B_last, B_first"}),
                 "contributors": (
-                    1,
+                    2,
                     {"name": "A_last, A_first", "contributorType": "ContactPerson"},
                 ),
             },

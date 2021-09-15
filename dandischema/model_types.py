@@ -144,12 +144,6 @@ LicenseTypeDict = {
             "@type": "dandi:LicenseType",
             "rdfs:label": "Attribution 4.0 International (CC BY 4.0)",
         },
-        {
-            "@id": "spdx:CC-BY-NC-4.0",
-            "rdfs:seeAlso": "https://creativecommons.org/licenses/by-nc/4.0/legalcode",
-            "@type": "dandi:LicenseType",
-            "rdfs:label": "Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)",
-        },
     ]
 }
 
