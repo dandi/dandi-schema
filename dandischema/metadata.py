@@ -124,7 +124,9 @@ def _validate_asset_json(data: dict, schema_dir: str) -> None:
     _validate_obj(data, schema)
 
 
-def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
+def validate(
+    obj, schema_version=None, schema_key=None, missing_ok=False, json_validation=False
+):
     """Validate object using pydantic
 
     Parameters
@@ -139,6 +141,8 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     missing_ok: bool, optional
       This flag allows checking if all fields have appropriate values but ignores
       missing fields. A `ValueError` is raised with the list of all errors.
+    json_validation: bool, optional
+      This flag checks the object against the json schema version.
 
      Returns
      -------
@@ -166,6 +170,12 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
             f"Metadata version {schema_version} is not allowed. "
             f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
         )
+    if json_validation:
+        schema = requests.get(
+            f"https://raw.githubusercontent.com/dandi/schema/"
+            f"master/releases/{schema_version}/dandiset.json"
+        ).json()
+        _validate_obj(obj, schema)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
