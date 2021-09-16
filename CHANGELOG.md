@@ -1,3 +1,32 @@
+# 0.3.4 (Wed Sep 15 2021)
+
+#### 🐛 Bug Fix
+
+- remove NC license [#83](https://github.com/dandi/dandischema/pull/83) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
+# 0.3.3 (Thu Sep 09 2021)
+
+#### 🐛 Bug Fix
+
+- fixing to_datacie, allowing for None in roleName [#81](https://github.com/dandi/dandischema/pull/81) ([@djarecka](https://github.com/djarecka))
+
+#### 🏠 Internal
+
+- Switch to versioningit (non-src-layout) [#56](https://github.com/dandi/dandischema/pull/56) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 2
+
+- Dorota Jarecka ([@djarecka](https://github.com/djarecka))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+
+---
+
 # 0.3.2 (Thu Jul 29 2021)
 
 #### 🐛 Bug Fix

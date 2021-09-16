@@ -110,7 +110,7 @@ def to_datacite(
     contributors = []
     creators = []
     for contr_el in meta.contributor:
-        if RoleType("dcite:Sponsor") in contr_el.roleName:
+        if contr_el.roleName and RoleType("dcite:Sponsor") in contr_el.roleName:
             # no info about "funderIdentifierType", "awardUri", "awardTitle"
             dict_fund = {"funderName": contr_el.name}
             if contr_el.identifier:
@@ -143,7 +143,7 @@ def to_datacite(
         elif isinstance(contr_el, Organization):
             contr_dict["nameType"] = "Organizational"
 
-        if RoleType("dcite:Author") in getattr(contr_el, "roleName", []):
+        if contr_el.roleName and RoleType("dcite:Author") in contr_el.roleName:
             create_dict = deepcopy(contr_dict)
             create_dict["creatorName"] = create_dict.pop("contributorName")
             creators.append(create_dict)
@@ -153,7 +153,7 @@ def to_datacite(
                 continue
 
         contr_all = []
-        if getattr(contr_el, "roleName"):
+        if contr_el.roleName:
             contr_all = [
                 el.name for el in contr_el.roleName if el.name in DATACITE_CONTRTYPE
             ]
