@@ -101,16 +101,27 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
+def _validate_obj(data, schema):
+    validator = jsonschema.Draft7Validator(
+        schema, format_checker=jsonschema.draft7_format_checker
+    )
+    error_list = []
+    for error in sorted(validator.iter_errors(data), key=str):
+        error_list.append([error.message, tuple(error.absolute_path)])
+    if error_list:
+        raise jsonschema.ValidationError(error_list)
+
+
 def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
-    jsonschema.validate(data, schema)
+    _validate_obj(data, schema)
 
 
 def _validate_asset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
-    jsonschema.validate(data, schema)
+    _validate_obj(data, schema)
 
 
 def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
@@ -194,9 +205,7 @@ def migrate(
             f"https://raw.githubusercontent.com/dandi/schema/"
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
-        jsonschema.validate(
-            obj, schema, format_checker=jsonschema.draft7_format_checker
-        )
+        _validate_obj(obj, schema)
     if version2tuple(schema_version) < version2tuple("0.4.0"):
         if obj.get("schemaKey") is None:
             obj["schemaKey"] = "Dandiset"
@@ -224,11 +233,16 @@ def migrate(
     if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
         for val in obj.get("about", []):
             if "schemaKey" not in val:
-                val["schemaKey"] = "GenericType"
+                raise ValueError("Cannot auto migrate. SchemaKey missing")
         for val in obj.get("access", []):
             if "schemaKey" not in val:
                 val["schemaKey"] = "AccessRequirements"
-        obj["schemaVersion"] = to_version
+        for resource in obj.get("relatedResource", []):
+            resource["schemaKey"] = "Resource"
+        if "schemaKey" not in obj.get("assetsSummary"):
+            obj["assetsSummary"]["schemaKey"] = "AssetsSummary"
+
+    obj["schemaVersion"] = to_version
     return obj
 
 

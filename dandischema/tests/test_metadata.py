@@ -302,7 +302,11 @@ def test_migrate_041(schema_dir):
     assert newmeta["schemaVersion"] == DANDI_SCHEMA_VERSION
     with pytest.raises(jsonschema.ValidationError):
         _validate_dandiset_json(newmeta, schema_dir)
-    newmeta["assetsSummary"] = {"numberOfFiles": 1, "numberOfBytes": 1}
+    newmeta["assetsSummary"] = {
+        "numberOfFiles": 1,
+        "numberOfBytes": 1,
+        "schemaKey": "AssetsSummary",
+    }
     newmeta["manifestLocation"] = ["https://example.org/manifest"]
     _validate_dandiset_json(newmeta, schema_dir)
 
@@ -319,7 +323,9 @@ def test_migrate_041_access(schema_dir):
     newmeta = migrate(
         data_as_dict, to_version=DANDI_SCHEMA_VERSION, skip_validation=True
     )
-    assert newmeta["access"] == [{"status": "dandi:OpenAccess"}]
+    assert newmeta["access"] == [
+        {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
+    ]
 
 
 @pytest.mark.parametrize(
