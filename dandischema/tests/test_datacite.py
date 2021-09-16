@@ -406,10 +406,11 @@ def test_datacite_publish(metadata_basic):
           },
          ("10.1101/2021.04.26.441423", "DOI")
          ),
+        # osf should stay as an url
         ({"identifier": "https://osf.io/n35zy/",
           "relation": RelationType("dcite:IsSupplementedBy"),
           },
-         ("10.17605/OSF.IO/N35ZY", "DOI")
+         ("https://osf.io/n35zy/", "URL")
          ),
     ],
 )

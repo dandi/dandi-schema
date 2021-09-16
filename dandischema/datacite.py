@@ -189,17 +189,11 @@ def to_datacite(
                     if "doi.org/" in rel_el.identifier:
                         ident_tp = "DOI"
                         ident_id = rel_el.identifier.split("doi.org/")[1]
-                    elif "osf.io/" in rel_el.identifier:
-                        ident_tp = "DOI"
-                        # i'm not sure, but looks like everything from osf has prefix 10.17605
-                        ident_id = "10.17605/OSF.IO/" + rel_el.identifier.split("osf.io/")[1]
-                        if ident_id[-1] == "/":
-                            ident_id = ident_id[:-1]
                     elif "biorxiv.org/" in rel_el.identifier:
                         ident_tp = "DOI"
                         ident_id = rel_el.identifier.split("biorxiv.org/content/")[1].split("v")[0]
                     # if any other url is passed
-                    elif "https://" in rel_el.identifier:
+                    elif rel_el.identifier.startswith("https://"):
                         ident_id = rel_el.identifier
                         ident_tp = "URL"
                     else:
