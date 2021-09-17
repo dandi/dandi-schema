@@ -53,6 +53,17 @@ def test_pydantic_validation(schema_dir):
         validate({})
 
 
+def test_json_schemakey_validation():
+    with pytest.raises(jsonschema.ValidationError) as exc:
+        validate(
+            {"identifier": "DANDI:000000", "schemaVersion": "0.4.4"},
+            json_validation=True,
+            schema_key="Dandiset",
+            schema_version="0.6.0",
+        )
+    assert "'schemaKey' is a required property" in str(exc.value)
+
+
 @pytest.mark.parametrize(
     "schema_version, schema_key",
     [
