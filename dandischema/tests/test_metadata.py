@@ -43,11 +43,27 @@ def test_dandiset(schema_dir):
 def test_pydantic_validation(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
+    data_as_dict["schemaVersion"] = "0.4.4"
+    validate(data_as_dict, schema_key="Dandiset", json_validation=True)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
-    validate(data_as_dict, schema_key="Dandiset")
+    validate(data_as_dict, schema_key="Dandiset", json_validation=True)
     validate(data_as_dict["about"][0])
     with pytest.raises(ValueError):
         validate({})
+
+
+@pytest.mark.parametrize(
+    "schema_version, schema_key",
+    [
+        ("0.4.2", "Dandiset"),
+        ("0.4.2", "PublishedDandiset"),
+        ("0.4.2", "Asset"),
+        ("0.4.2", "PublishedAsset"),
+    ],
+)
+def test_mismatch_key(schema_version, schema_key):
+    with pytest.raises(ValueError):
+        validate({}, schema_version=schema_version, schema_key=schema_key)
 
 
 @pytest.mark.parametrize(
@@ -272,6 +288,17 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
     exc_errors = [el["msg"] for el in exc.value.errors()]
     assert len(exc_errors) == num_errors
     assert set(exc_errors) == errors
+
+
+def test_missing_ok_error():
+    with pytest.raises(ValueError):
+        validate(
+            {
+                "schemaKey": "Dandiset",
+                "identifier": "000000",
+                "schemaVersion": "0.4.4",
+            }
+        )
 
 
 @pytest.mark.parametrize(

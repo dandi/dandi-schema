@@ -107,8 +107,9 @@ def _validate_obj(data, schema, missing_ok=False):
     )
     error_list = []
     for error in sorted(validator.iter_errors(data), key=str):
-        if missing_ok and "is a required property" not in error.message:
-            error_list.append([error.message, tuple(error.absolute_path)])
+        if missing_ok and "is a required property" in error.message:
+            continue
+        error_list.append([error.message, tuple(error.absolute_path)])
     if error_list:
         raise jsonschema.ValidationError(str(error_list))
 
@@ -169,7 +170,7 @@ def validate(
     ]:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
+            f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
     if json_validation:
         if schema_version == DANDI_SCHEMA_VERSION:
