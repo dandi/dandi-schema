@@ -101,15 +101,16 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
-def _validate_obj(data, schema):
+def _validate_obj(data, schema, missing_ok=False):
     validator = jsonschema.Draft7Validator(
         schema, format_checker=jsonschema.draft7_format_checker
     )
     error_list = []
     for error in sorted(validator.iter_errors(data), key=str):
-        error_list.append([error.message, tuple(error.absolute_path)])
+        if missing_ok and "is a required property" not in error.message:
+            error_list.append([error.message, tuple(error.absolute_path)])
     if error_list:
-        raise jsonschema.ValidationError(error_list)
+        raise jsonschema.ValidationError(str(error_list))
 
 
 def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
@@ -171,11 +172,15 @@ def validate(
             f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
         )
     if json_validation:
-        schema = requests.get(
-            f"https://raw.githubusercontent.com/dandi/schema/"
-            f"master/releases/{schema_version}/dandiset.json"
-        ).json()
-        _validate_obj(obj, schema)
+        if schema_version == DANDI_SCHEMA_VERSION:
+            klass = getattr(models, schema_key)
+            schema = klass.schema()
+        else:
+            schema = requests.get(
+                f"https://raw.githubusercontent.com/dandi/schema/"
+                f"master/releases/{schema_version}/dandiset.json"
+            ).json()
+        _validate_obj(obj, schema, missing_ok)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
@@ -189,7 +194,7 @@ def validate(
                 reraise = True
                 messages.append(el["msg"])
         if reraise:
-            ValueError(messages)
+            raise ValueError(messages)
 
 
 def migrate(
@@ -216,34 +221,13 @@ def migrate(
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
         _validate_obj(obj, schema)
-    if version2tuple(schema_version) < version2tuple("0.4.0"):
-        if obj.get("schemaKey") is None:
-            obj["schemaKey"] = "Dandiset"
-        id = str(obj.get("id"))
-        if not id.startswith("DANDI:"):
-            obj["id"] = f'DANDI:{obj["id"]}'
-        for contrib in obj.get("contributor", []):
-            if contrib.get("roleName"):
-                contrib["roleName"] = [
-                    val.replace("dandi:", "dcite:") for val in contrib["roleName"]
-                ]
-            for affiliation in contrib.get("affiliation", []):
-                affiliation["schemaKey"] = "Affiliation"
-        for contrib in obj.get("relatedResource", []):
-            contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
-        if "access" not in obj:
-            obj["access"] = [{"status": "dandi:OpenAccess"}]
-        else:
-            for access in obj.get("access", []):
-                access["status"] = "dandi:OpenAccess"
-        if obj.get("assetsSummary") is None:
-            obj["assetsSummary"] = {"numberOfFiles": 0, "numberOfBytes": 0}
-        if obj.get("manifestLocation") is None:
-            obj["manifestLocation"] = []
     if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
         for val in obj.get("about", []):
             if "schemaKey" not in val:
-                raise ValueError("Cannot auto migrate. SchemaKey missing")
+                if val["identifier"] and "UBERON" in val["identifier"]:
+                    val["schemaKey"] = "Anatomy"
+                else:
+                    raise ValueError("Cannot auto migrate. SchemaKey missing")
         for val in obj.get("access", []):
             if "schemaKey" not in val:
                 val["schemaKey"] = "AccessRequirements"
@@ -251,8 +235,9 @@ def migrate(
             resource["schemaKey"] = "Resource"
         if "schemaKey" not in obj.get("assetsSummary"):
             obj["assetsSummary"]["schemaKey"] = "AssetsSummary"
-
-    obj["schemaVersion"] = to_version
+        if "schemaKey" not in obj:
+            obj["schemaKey"] = "Dandiset"
+        obj["schemaVersion"] = to_version
     return obj
 
 

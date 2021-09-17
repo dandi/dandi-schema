@@ -164,7 +164,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         return val
 
     """
-    @root_validator(pre=True)
+    @root_validator(pre=True, allow_reuse=True)
     def check_schemaKey_present(cls, values):
         if "schemaKey" not in values:
             raise ValueError(
