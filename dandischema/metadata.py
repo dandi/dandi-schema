@@ -222,7 +222,7 @@ def migrate(
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
         _validate_obj(obj, schema)
-    if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
+    if version2tuple(schema_version) < version2tuple("0.6.0"):
         for val in obj.get("about", []):
             if "schemaKey" not in val:
                 if "identifier" in val and "UBERON" in val["identifier"]:
