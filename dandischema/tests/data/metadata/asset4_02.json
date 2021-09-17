@@ -45,7 +45,7 @@
   "path": "sub-anm372907/sub-anm372907_ses-20170613.nwb",
   "repository": "https://dandiarchive.org/",
   "schemaKey": "Asset",
-  "schemaVersion": "0.4.1",
+  "schemaVersion": "0.4.4",
   "variableMeasured": [
     {
       "schemaKey": "PropertyValue",

@@ -224,7 +224,7 @@ def migrate(
     if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
         for val in obj.get("about", []):
             if "schemaKey" not in val:
-                if val["identifier"] and "UBERON" in val["identifier"]:
+                if "identifier" in val and "UBERON" in val["identifier"]:
                     val["schemaKey"] = "Anatomy"
                 else:
                     raise ValueError("Cannot auto migrate. SchemaKey missing")
