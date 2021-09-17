@@ -2,6 +2,7 @@ from hashlib import md5, sha256
 import json
 from pathlib import Path
 
+import jsonschema
 from pydantic import ValidationError
 import pytest
 
@@ -291,13 +292,24 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
 
 
 def test_missing_ok_error():
+    with pytest.raises(jsonschema.ValidationError):
+        validate(
+            {
+                "schemaKey": "Dandiset",
+                "identifier": "000000",
+                "schemaVersion": "0.4.4",
+            },
+            json_validation=True,
+            missing_ok=True,
+        )
     with pytest.raises(ValueError):
         validate(
             {
                 "schemaKey": "Dandiset",
                 "identifier": "000000",
                 "schemaVersion": "0.4.4",
-            }
+            },
+            missing_ok=True,
         )
 
 
