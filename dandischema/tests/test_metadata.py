@@ -2,7 +2,6 @@ from hashlib import md5, sha256
 import json
 from pathlib import Path
 
-import jsonschema
 from pydantic import ValidationError
 import pytest
 
@@ -54,7 +53,7 @@ def test_pydantic_validation(schema_dir):
 
 
 def test_json_schemakey_validation():
-    with pytest.raises(jsonschema.ValidationError) as exc:
+    with pytest.raises(ValueError) as exc:
         validate(
             {"identifier": "DANDI:000000", "schemaVersion": "0.4.4"},
             json_validation=True,
@@ -303,7 +302,7 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
 
 
 def test_missing_ok_error():
-    with pytest.raises(jsonschema.ValidationError):
+    with pytest.raises(ValueError):
         validate(
             {
                 "schemaKey": "Dandiset",

@@ -101,7 +101,7 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
-def _validate_obj(data, schema, missing_ok=False):
+def _validate_obj_json(data, schema, missing_ok=False):
     validator = jsonschema.Draft7Validator(
         schema, format_checker=jsonschema.draft7_format_checker
     )
@@ -109,21 +109,21 @@ def _validate_obj(data, schema, missing_ok=False):
     for error in sorted(validator.iter_errors(data), key=str):
         if missing_ok and "is a required property" in error.message:
             continue
-        error_list.append([error.message, tuple(error.absolute_path)])
+        error_list.append([error])
     if error_list:
-        raise jsonschema.ValidationError(str(error_list))
+        raise ValueError(error_list)
 
 
 def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj(data, schema)
+    _validate_obj_json(data, schema)
 
 
 def _validate_asset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj(data, schema)
+    _validate_obj_json(data, schema)
 
 
 def validate(
@@ -181,7 +181,7 @@ def validate(
                 f"https://raw.githubusercontent.com/dandi/schema/"
                 f"master/releases/{schema_version}/dandiset.json"
             ).json()
-        _validate_obj(obj, schema, missing_ok)
+        _validate_obj_json(obj, schema, missing_ok)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
@@ -193,7 +193,7 @@ def validate(
         for el in exc.errors():
             if el["msg"] != "field required":
                 reraise = True
-                messages.append(el["msg"])
+                messages.append(el)
         if reraise:
             raise ValueError(messages)
 
@@ -221,7 +221,7 @@ def migrate(
             f"https://raw.githubusercontent.com/dandi/schema/"
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
-        _validate_obj(obj, schema)
+        _validate_obj_json(obj, schema)
     if version2tuple(schema_version) < version2tuple("0.6.0"):
         for val in obj.get("about", []):
             if "schemaKey" not in val:
