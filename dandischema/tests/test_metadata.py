@@ -2,10 +2,10 @@ from hashlib import md5, sha256
 import json
 from pathlib import Path
 
-from pydantic import ValidationError
 import pytest
 
 from ..consts import DANDI_SCHEMA_VERSION
+from ..exceptions import ValidationError
 from ..metadata import (
     _validate_asset_json,
     _validate_dandiset_json,
@@ -53,14 +53,14 @@ def test_pydantic_validation(schema_dir):
 
 
 def test_json_schemakey_validation():
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(ValidationError) as exc:
         validate(
             {"identifier": "DANDI:000000", "schemaVersion": "0.4.4"},
             json_validation=True,
             schema_key="Dandiset",
             schema_version="0.6.0",
         )
-    assert "'schemaKey' is a required property" in str(exc.value)
+    assert "'schemaKey' is a required property" in str(exc.value.args[0])
 
 
 @pytest.mark.parametrize(
@@ -266,7 +266,7 @@ def test_requirements(obj, schema_key, missingfields):
         validate(obj, schema_key=schema_key)
     with pytest.raises(ValidationError) as exc:
         validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
-    assert set([el["loc"][0] for el in exc.value.errors()]) == missingfields
+    assert set([el["loc"][0] for el in exc.value.errors]) == missingfields
 
 
 @pytest.mark.parametrize(
@@ -296,13 +296,13 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
     )
     with pytest.raises(ValueError) as exc:
         validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
-    exc_errors = [el["msg"] for el in exc.value.errors()]
+    exc_errors = [el["msg"] for el in exc.value.errors]
     assert len(exc_errors) == num_errors
     assert set(exc_errors) == errors
 
 
 def test_missing_ok_error():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         validate(
             {
                 "schemaKey": "Dandiset",
@@ -312,7 +312,7 @@ def test_missing_ok_error():
             json_validation=True,
             missing_ok=True,
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         validate(
             {
                 "schemaKey": "Dandiset",
