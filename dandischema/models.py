@@ -135,13 +135,6 @@ class DandiBaseModelMetaclass(ModelMetaclass):
 class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
 
-    """
-    def __init__(self, **kwargs):
-        if "schemaKey" not in kwargs:
-            kwargs["schemaKey"] = "MissingSchemaKey"
-        super().__init__(**kwargs)
-    """
-
     def json_dict(self):
         """
         Recursively convert the instance to a `dict` of JSONable values,
@@ -162,16 +155,6 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                 f"schemaKey {tempval} does not match classname {cls.__name__}"
             )
         return val
-
-    """
-    @root_validator(pre=True, allow_reuse=True)
-    def check_schemaKey_present(cls, values):
-        if "schemaKey" not in values:
-            raise ValueError(
-                f"schemaKey missing from object {values} in class {cls.__name__}"
-            )
-        return values
-    """
 
     @classmethod
     def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
@@ -208,8 +191,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         def schema_extra(schema: Dict[str, Any], model) -> None:
             schema["title"] = name2title(schema["title"])
             if schema["type"] == "object":
-                schema["required"] = schema.get("required", [])
-                schema["required"].append("schemaKey")
+                schema["required"] = schema.get("required", []) + ["schemaKey"]
             for prop, value in schema.get("properties", {}).items():
                 if schema["title"] == "Person":
                     if prop == "name":

@@ -144,7 +144,7 @@ def validate(
       This flag allows checking if all fields have appropriate values but ignores
       missing fields. A `ValueError` is raised with the list of all errors.
     json_validation: bool, optional
-      This flag checks the object against the json schema version.
+      If set to True, `obj` is first validated against the corresponding jsonschema.
 
      Returns
      -------
