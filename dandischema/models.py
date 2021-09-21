@@ -190,6 +190,8 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model) -> None:
             schema["title"] = name2title(schema["title"])
+            if schema["type"] == "object":
+                schema["required"] = schema.get("required", []) + ["schemaKey"]
             for prop, value in schema.get("properties", {}).items():
                 if schema["title"] == "Person":
                     if prop == "name":
@@ -288,7 +290,7 @@ class BaseType(DandiBaseModel):
     class Config:
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
-            schema["title"] = name2title(schema["title"])
+            DandiBaseModel.Config.schema_extra(schema=schema, model=model)
             for prop, value in schema.get("properties", {}).items():
                 # This check removes the anyOf field from the identifier property
                 # in the schema generation. This relates to a UI issue where two
@@ -298,15 +300,6 @@ class BaseType(DandiBaseModel):
                         if option.get("format", "") == "uri":
                             value.update(**option)
                             value["maxLength"] = 1000
-                # Have to replicate this
-                if prop == "schemaKey":
-                    if "enum" in value and len(value["enum"]) == 1:
-                        value["const"] = value["enum"][0]
-                        del value["enum"]
-                    else:
-                        value["const"] = value["default"]
-                    if "readOnly" in value:
-                        del value["readOnly"]
 
 
 class AssayType(BaseType):
@@ -362,12 +355,14 @@ class StandardsType(BaseType):
 
 
 nwb_standard = StandardsType(
-    name="Neurodata Without Borders (NWB)", identifier="RRID:SCR_015242"
+    name="Neurodata Without Borders (NWB)",
+    identifier="RRID:SCR_015242",
 ).json_dict()
 
 
 bids_standard = StandardsType(
-    name="Brain Imaging Data Structure (BIDS)", identifier="RRID:SCR_016124"
+    name="Brain Imaging Data Structure (BIDS)",
+    identifier="RRID:SCR_016124",
 ).json_dict()
 
 

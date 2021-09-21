@@ -13,6 +13,7 @@ from .consts import (
     ALLOWED_VALIDATION_SCHEMAS,
     DANDI_SCHEMA_VERSION,
 )
+from .exceptions import ValidationError
 from . import models
 from .utils import _ensure_newline, version2tuple
 
@@ -101,19 +102,34 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
+def _validate_obj_json(data, schema, missing_ok=False):
+    validator = jsonschema.Draft7Validator(
+        schema, format_checker=jsonschema.draft7_format_checker
+    )
+    error_list = []
+    for error in sorted(validator.iter_errors(data), key=str):
+        if missing_ok and "is a required property" in error.message:
+            continue
+        error_list.append([error])
+    if error_list:
+        raise ValidationError(error_list)
+
+
 def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
-    jsonschema.validate(data, schema)
+    _validate_obj_json(data, schema)
 
 
 def _validate_asset_json(data: dict, schema_dir: str) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
-    jsonschema.validate(data, schema)
+    _validate_obj_json(data, schema)
 
 
-def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
+def validate(
+    obj, schema_version=None, schema_key=None, missing_ok=False, json_validation=False
+):
     """Validate object using pydantic
 
     Parameters
@@ -128,6 +144,8 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     missing_ok: bool, optional
       This flag allows checking if all fields have appropriate values but ignores
       missing fields. A `ValueError` is raised with the list of all errors.
+    json_validation: bool, optional
+      If set to True, `obj` is first validated against the corresponding jsonschema.
 
      Returns
      -------
@@ -153,22 +171,28 @@ def validate(obj, schema_version=None, schema_key=None, missing_ok=False):
     ]:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(ALLOWED_TARGET_SCHEMAS)}."
+            f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
+    if json_validation:
+        if schema_version == DANDI_SCHEMA_VERSION:
+            klass = getattr(models, schema_key)
+            schema = klass.schema()
+        else:
+            schema = requests.get(
+                f"https://raw.githubusercontent.com/dandi/schema/"
+                f"master/releases/{schema_version}/dandiset.json"
+            ).json()
+        _validate_obj_json(obj, schema, missing_ok)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
     except pydantic.ValidationError as exc:
-        if not missing_ok:
-            raise
-        reraise = False
         messages = []
         for el in exc.errors():
-            if el["msg"] != "field required":
-                reraise = True
-                messages.append(el["msg"])
-        if reraise:
-            ValueError(messages)
+            if not missing_ok or el["msg"] != "field required":
+                messages.append(el)
+        if messages:
+            raise ValidationError(messages)
 
 
 def migrate(
@@ -194,31 +218,23 @@ def migrate(
             f"https://raw.githubusercontent.com/dandi/schema/"
             f"master/releases/{schema_version}/dandiset.json"
         ).json()
-        jsonschema.validate(obj, schema)
-    if version2tuple(schema_version) < version2tuple(DANDI_SCHEMA_VERSION):
-        if obj.get("schemaKey") is None:
+        _validate_obj_json(obj, schema)
+    if version2tuple(schema_version) < version2tuple("0.6.0"):
+        for val in obj.get("about", []):
+            if "schemaKey" not in val:
+                if "identifier" in val and "UBERON" in val["identifier"]:
+                    val["schemaKey"] = "Anatomy"
+                else:
+                    raise ValueError("Cannot auto migrate. SchemaKey missing")
+        for val in obj.get("access", []):
+            if "schemaKey" not in val:
+                val["schemaKey"] = "AccessRequirements"
+        for resource in obj.get("relatedResource", []):
+            resource["schemaKey"] = "Resource"
+        if "schemaKey" not in obj.get("assetsSummary"):
+            obj["assetsSummary"]["schemaKey"] = "AssetsSummary"
+        if "schemaKey" not in obj:
             obj["schemaKey"] = "Dandiset"
-        id = str(obj.get("id"))
-        if not id.startswith("DANDI:"):
-            obj["id"] = f'DANDI:{obj["id"]}'
-        for contrib in obj.get("contributor", []):
-            if contrib.get("roleName"):
-                contrib["roleName"] = [
-                    val.replace("dandi:", "dcite:") for val in contrib["roleName"]
-                ]
-            for affiliation in contrib.get("affiliation", []):
-                affiliation["schemaKey"] = "Affiliation"
-        for contrib in obj.get("relatedResource", []):
-            contrib["relation"] = contrib["relation"].replace("dandi:", "dcite:")
-        if "access" not in obj:
-            obj["access"] = [{"status": "dandi:OpenAccess"}]
-        else:
-            for access in obj.get("access", []):
-                access["status"] = "dandi:OpenAccess"
-        if obj.get("assetsSummary") is None:
-            obj["assetsSummary"] = {"numberOfFiles": 0, "numberOfBytes": 0}
-        if obj.get("manifestLocation") is None:
-            obj["manifestLocation"] = []
         obj["schemaVersion"] = to_version
     return obj
 

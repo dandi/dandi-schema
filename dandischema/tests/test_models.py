@@ -447,3 +447,8 @@ def test_https_regex():
     props = json.loads(Affiliation.schema_json())["properties"]["identifier"]
     assert props["format"] == "uri"
     assert props.get("maxLength") == 1000
+
+
+def test_schemakey_in_required():
+    props = json.loads(Affiliation.schema_json())["required"]
+    assert "schemaKey" in props

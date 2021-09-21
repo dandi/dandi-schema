@@ -19,7 +19,7 @@
   "identifier": "b3cb65f3-e63c-4cef-acd3-ce293394b0f6",
   "path": "sub-mouse-AAYYT/sub-mouse-AAYYT_ses-20180420-sample-2_slice-20180420-slice-2_cell-20180420-sample-2_icephys.nwb",
   "repository": "https://dandiarchive.org/",
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.4",
   "wasAttributedTo": [
     {
       "age": {
