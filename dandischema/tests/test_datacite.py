@@ -48,6 +48,49 @@ def schema():
     return _get_datacite_schema()
 
 
+@pytest.fixture(scope="function")
+def metadata_basic():
+    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id = f"DANDI:{dandi_id_noprefix}"
+    version = "0.0.0"
+    # meta data without doi, datePublished and publishedBy
+    meta_dict = {
+        "identifier": dandi_id,
+        "id": f"{dandi_id}/{version}",
+        "name": "testing dataset",
+        "description": "testing",
+        "contributor": [
+            {
+                "name": "A_last, A_first",
+                "roleName": [RoleType("dcite:ContactPerson")],
+            }
+        ],
+        "license": [LicenseType("spdx:CC-BY-4.0")],
+        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+        "version": version,
+        "citation": "A_last, A_first 2021",
+        "manifestLocation": [
+            f"https://api.dandiarchive.org/api/dandisets/{dandi_id_noprefix}/versions/draft/assets/"
+        ],
+        "assetsSummary": {
+            "schemaKey": "AssetsSummary",
+            "numberOfBytes": 10,
+            "numberOfFiles": 1,
+            "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
+            "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
+            "measurementTechnique": [
+                {
+                    "schemaKey": "MeasurementTechniqueType",
+                    "name": "two-photon microscopy technique",
+                }
+            ],
+            "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
+        },
+    }
+
+    return meta_dict
+
+
 def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
     """Return extra metadata required by PublishedDandiset
 
@@ -231,55 +274,20 @@ def test_datacite(dandi_id, schema):
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
-def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
+def test_dandimeta_datacite(schema, metadata_basic, additional_meta, datacite_checks):
     """
     checking datacite objects for specific metadata dictionaries,
     posting datacite object and checking the status code
     """
 
-    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
-    dandi_id = f"DANDI:{dandi_id_noprefix}"
-    version = "0.0.0"
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
 
-    # meta data without doi, datePublished and publishedBy
-    meta_dict = {
-        "identifier": dandi_id,
-        "id": f"{dandi_id}/{version}",
-        "name": "testing dataset",
-        "description": "testing",
-        "contributor": [
-            {
-                "name": "A_last, A_first",
-                "roleName": [RoleType("dcite:ContactPerson")],
-            }
-        ],
-        "license": [LicenseType("spdx:CC-BY-4.0")],
-        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
-        "version": version,
-        "citation": "A_last, A_first 2021",
-        "manifestLocation": [
-            f"https://api.dandiarchive.org/api/dandisets/{dandi_id_noprefix}/versions/draft/assets/"
-        ],
-        "assetsSummary": {
-            "schemaKey": "AssetsSummary",
-            "numberOfBytes": 10,
-            "numberOfFiles": 1,
-            "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
-            "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
-            "measurementTechnique": [
-                {
-                    "schemaKey": "MeasurementTechniqueType",
-                    "name": "two-photon microscopy technique",
-                }
-            ],
-            "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
-        },
-    }
-    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
-    meta_dict.update(additional_meta)
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_basic.update(additional_meta)
 
     # creating and validating datacite objects
-    datacite = to_datacite(meta_dict)
+    datacite = to_datacite(metadata_basic)
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema)
     validator.validate(datacite["data"]["attributes"])
@@ -301,52 +309,18 @@ def test_dandimeta_datacite(schema, additional_meta, datacite_checks):
                 assert attr[key] == el_flds
 
     # trying to poste datacite
-    datacite_post(datacite, meta_dict["doi"])
+    datacite_post(datacite, metadata_basic["doi"])
 
 
-def test_datacite_publish():
-    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
-    dandi_id = f"DANDI:{dandi_id_noprefix}"
-    version = "0.0.0"
+def test_datacite_publish(metadata_basic):
 
-    # meta data without doi, datePublished and publishedBy
-    meta_dict = {
-        "identifier": dandi_id,
-        "id": f"{dandi_id}/{version}",
-        "name": "testing dataset",
-        "description": "testing",
-        "contributor": [
-            {
-                "name": "A_last, A_first",
-                "roleName": [RoleType("dcite:ContactPerson")],
-            }
-        ],
-        "license": [LicenseType("spdx:CC-BY-4.0")],
-        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
-        "version": version,
-        "citation": "A_last, A_first 2021",
-        "manifestLocation": [
-            f"https://api.dandiarchive.org/api/dandisets/{dandi_id_noprefix}/versions/draft/assets/"
-        ],
-        "assetsSummary": {
-            "schemaKey": "AssetsSummary",
-            "numberOfBytes": 10,
-            "numberOfFiles": 1,
-            "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
-            "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
-            "measurementTechnique": [
-                {
-                    "schemaKey": "MeasurementTechniqueType",
-                    "name": "two-photon microscopy technique",
-                }
-            ],
-            "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
-        },
-    }
-    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    version = metadata_basic["version"]
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
 
     # creating and validating datacite objects
-    datacite = to_datacite(meta_dict, publish=True)
+    datacite = to_datacite(metadata_basic, publish=True)
 
     assert datacite == {
         # 'data': {}
@@ -421,3 +395,45 @@ def test_datacite_publish():
             },
         }
     }
+
+
+@pytest.mark.parametrize(
+    "related_res_url, related_ident_exp",
+    [
+        ({"identifier": "https://doi.org/10.1101/2021.04.26.441423",
+          "relation": RelationType("dcite:IsSupplementedBy"),
+          },
+         ("10.1101/2021.04.26.441423", "DOI")
+         ),
+        ({"identifier": "https://www.biorxiv.org/content/10.1101/2021.04.26.441423v2",
+          "relation": RelationType("dcite:IsSupplementedBy"),
+          },
+         ("10.1101/2021.04.26.441423", "DOI")
+         ),
+        # osf should stay as an url
+        ({"identifier": "https://osf.io/n35zy/",
+          "relation": RelationType("dcite:IsSupplementedBy"),
+          },
+         ("https://osf.io/n35zy/", "URL")
+         ),
+    ],
+)
+@pytest.mark.skipif(
+    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
+)
+def test_datacite_related_res_url(metadata_basic, related_res_url, related_ident_exp):
+    """
+    checking if urls provided in the relatedResource.identifier could be
+    translated to DOI for some websites: e.g. bioarxiv.org, doi.org
+    """
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_basic["relatedResource"] = [related_res_url]
+
+    # creating and validating datacite objects
+    datacite = to_datacite(metadata_basic)
+    relIdent = datacite["data"]['attributes']['relatedIdentifiers'][0]
+    assert relIdent['relatedIdentifier'] == related_ident_exp[0].lower()
+    assert relIdent['relatedIdentifierType'] == related_ident_exp[1]
