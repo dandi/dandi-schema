@@ -400,6 +400,32 @@ def test_duplicate_classes():
             check_qname(qname, klass)
 
 
+def test_properties_mismatch():
+    prop_names = {}
+    errors = []
+    modelnames = dir(models)
+    modelnames.remove("BaseModel")
+    modelnames.remove("DandiBaseModel")
+    modelnames.remove("CommonModel")
+    modelnames.remove("Contributor")
+    modelnames.remove("Publishable")
+    for val in modelnames:
+        klass = getattr(models, val)
+        if not isinstance(klass, pydantic.main.ModelMetaclass):
+            continue
+        if not hasattr(klass, "_ldmeta") or "nskey" not in klass._ldmeta:
+            errors.append(f"{klass} does not have nskey")
+        for name, field in klass.__fields__.items():
+            nskey = field.field_info.extra.get("nskey", "dandi")
+            if name not in prop_names:
+                prop_names[name] = nskey
+            elif nskey != prop_names[name]:
+                errors.append(
+                    f"{klass}:{name} has multiple nskeys: {nskey}, {prop_names[name]}"
+                )
+    assert errors == []
+
+
 def test_schemakey_roundtrip():
     class TempKlass(DandiBaseModel):
         contributor: Optional[List[Union[Organization, Person]]]
