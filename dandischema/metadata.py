@@ -62,15 +62,18 @@ def generate_context():
                 fields[name] = "@type"
             elif name == "digest":
                 fields[name] = "@nest"
-            elif "nskey" in field.field_info.extra:
-                if name not in fields:
+            elif name not in fields:
+                if "nskey" in field.field_info.extra:
                     fields[name] = {"@id": field.field_info.extra["nskey"] + ":" + name}
-                    if "List" in str(field.outer_type_):
-                        fields[name]["@container"] = "@set"
-                    if name == "contributor":
-                        fields[name]["@container"] = "@list"
-                    if "enum" in str(field.type_) or name == "url":
-                        fields[name]["@type"] = "@id"
+                else:
+                    fields[name] = {"@id": "dandi:" + name}
+                if "List" in str(field.outer_type_):
+                    fields[name]["@container"] = "@set"
+                if name == "contributor":
+                    fields[name]["@container"] = "@list"
+                if "enum" in str(field.type_) or name == "url":
+                    fields[name]["@type"] = "@id"
+
     for item in models.DigestType:
         fields[item.value] = {"@id": item.value, "@nest": "digest"}
     fields["Dandiset"] = "dandi:Dandiset"
