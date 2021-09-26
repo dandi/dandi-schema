@@ -1,3 +1,23 @@
+# 0.4.0 (Sun Sep 26 2021)
+
+#### 🚀 Enhancement
+
+- Release 0.6.0 [#86](https://github.com/dandi/dandischema/pull/86) ([@satra](https://github.com/satra))
+
+#### 🐛 Bug Fix
+
+- adds all properties to context with implicit dandi schema [#84](https://github.com/dandi/dandischema/pull/84) ([@satra](https://github.com/satra))
+- make schemaKey required and improve validation and migration functions [#77](https://github.com/dandi/dandischema/pull/77) ([@satra](https://github.com/satra) [@yarikoptic](https://github.com/yarikoptic))
+- [fix] creating identifier from url in relatedResource [#78](https://github.com/dandi/dandischema/pull/78) ([@djarecka](https://github.com/djarecka) [@satra](https://github.com/satra))
+
+#### Authors: 3
+
+- Dorota Jarecka ([@djarecka](https://github.com/djarecka))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.3.4 (Wed Sep 15 2021)
 
 #### 🐛 Bug Fix
