@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from ..consts import DANDI_SCHEMA_VERSION
-from ..exceptions import ValidationError
+from ..exceptions import JsonschemaValidationError, PydanticValidationError
 from ..metadata import (
     _validate_asset_json,
     _validate_dandiset_json,
@@ -53,7 +53,7 @@ def test_pydantic_validation(schema_dir):
 
 
 def test_json_schemakey_validation():
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(JsonschemaValidationError) as exc:
         validate(
             {"identifier": "DANDI:000000", "schemaVersion": "0.4.4"},
             json_validation=True,
@@ -264,7 +264,7 @@ def test_mismatch_key(schema_version, schema_key):
 def test_requirements(obj, schema_key, missingfields):
     with pytest.raises(ValueError):
         validate(obj, schema_key=schema_key)
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(PydanticValidationError) as exc:
         validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
     assert set([el["loc"][0] for el in exc.value.errors]) == missingfields
 
@@ -302,7 +302,7 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
 
 
 def test_missing_ok_error():
-    with pytest.raises(ValidationError):
+    with pytest.raises(JsonschemaValidationError):
         validate(
             {
                 "schemaKey": "Dandiset",
@@ -312,7 +312,7 @@ def test_missing_ok_error():
             json_validation=True,
             missing_ok=True,
         )
-    with pytest.raises(ValidationError):
+    with pytest.raises(PydanticValidationError):
         validate(
             {
                 "schemaKey": "Dandiset",
