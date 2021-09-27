@@ -8,6 +8,7 @@ from jsonschema import Draft7Validator
 import pytest
 import requests
 
+from .utils import skipif_no_network
 from ..datacite import _get_datacite_schema, to_datacite
 from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
 
@@ -43,6 +44,7 @@ def _clean_doi(doi):
     )
 
 
+@skipif_no_network
 @pytest.fixture(scope="module")
 def schema():
     return _get_datacite_schema()
@@ -120,6 +122,7 @@ def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
     return publish_meta
 
 
+@skipif_no_network
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
@@ -150,6 +153,7 @@ def test_datacite(dandi_id, schema):
     datacite_post(datacite, meta.doi)
 
 
+@skipif_no_network
 @pytest.mark.parametrize(
     "additional_meta, datacite_checks",
     [
@@ -186,10 +190,7 @@ def test_datacite(dandi_id, schema):
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:Author")],
                     },
-                    {
-                        "name": "C_last, C_first"
-                    },
-
+                    {"name": "C_last, C_first"},
                 ],
             },
             {
@@ -400,22 +401,28 @@ def test_datacite_publish(metadata_basic):
 @pytest.mark.parametrize(
     "related_res_url, related_ident_exp",
     [
-        ({"identifier": "https://doi.org/10.1101/2021.04.26.441423",
-          "relation": RelationType("dcite:IsSupplementedBy"),
-          },
-         ("10.1101/2021.04.26.441423", "DOI")
-         ),
-        ({"identifier": "https://www.biorxiv.org/content/10.1101/2021.04.26.441423v2",
-          "relation": RelationType("dcite:IsSupplementedBy"),
-          },
-         ("10.1101/2021.04.26.441423", "DOI")
-         ),
+        (
+            {
+                "identifier": "https://doi.org/10.1101/2021.04.26.441423",
+                "relation": RelationType("dcite:IsSupplementedBy"),
+            },
+            ("10.1101/2021.04.26.441423", "DOI"),
+        ),
+        (
+            {
+                "identifier": "https://www.biorxiv.org/content/10.1101/2021.04.26.441423v2",
+                "relation": RelationType("dcite:IsSupplementedBy"),
+            },
+            ("10.1101/2021.04.26.441423", "DOI"),
+        ),
         # osf should stay as an url
-        ({"identifier": "https://osf.io/n35zy/",
-          "relation": RelationType("dcite:IsSupplementedBy"),
-          },
-         ("https://osf.io/n35zy/", "URL")
-         ),
+        (
+            {
+                "identifier": "https://osf.io/n35zy/",
+                "relation": RelationType("dcite:IsSupplementedBy"),
+            },
+            ("https://osf.io/n35zy/", "URL"),
+        ),
     ],
 )
 @pytest.mark.skipif(
@@ -434,6 +441,6 @@ def test_datacite_related_res_url(metadata_basic, related_res_url, related_ident
 
     # creating and validating datacite objects
     datacite = to_datacite(metadata_basic)
-    relIdent = datacite["data"]['attributes']['relatedIdentifiers'][0]
-    assert relIdent['relatedIdentifier'] == related_ident_exp[0].lower()
-    assert relIdent['relatedIdentifierType'] == related_ident_exp[1]
+    relIdent = datacite["data"]["attributes"]["relatedIdentifiers"][0]
+    assert relIdent["relatedIdentifier"] == related_ident_exp[0].lower()
+    assert relIdent["relatedIdentifierType"] == related_ident_exp[1]

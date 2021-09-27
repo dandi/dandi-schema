@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from .utils import skipif_no_network
 from ..consts import DANDI_SCHEMA_VERSION
 from ..exceptions import ValidationError
 from ..metadata import (
@@ -40,6 +41,7 @@ def test_dandiset(schema_dir):
     _validate_dandiset_json(data_as_dict, schema_dir)
 
 
+@skipif_no_network
 def test_pydantic_validation(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
@@ -301,6 +303,7 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
     assert set(exc_errors) == errors
 
 
+@skipif_no_network
 def test_missing_ok_error():
     with pytest.raises(ValidationError):
         validate(
@@ -337,6 +340,7 @@ def test_migrate_errors(obj, target):
         migrate(obj, to_version=target, skip_validation=True)
 
 
+@skipif_no_network
 def test_migrate_044(schema_dir):
     with (METADATA_DIR / "meta_000004old.json").open() as fp:
         data_as_dict = json.load(fp)
