@@ -1,10 +1,14 @@
+from typing import Any, Dict, List
+import jsonschema.exceptions
+
+
 class JsonschemaValidationError(ValueError):
     """Validation errors were detected by jsonschema.
 
     All errors are contained in the .args[0] of the exception instance.
     """
     @property
-    def errors(self):
+    def errors(self) -> List[jsonschema.exceptions.ValidationError]:
         return self.args[0]
 
 
@@ -14,5 +18,5 @@ class PydanticValidationError(ValueError):
     All errors are contained in the .args[0] of the exception instance.
     """
     @property
-    def errors(self):
+    def errors(self) -> List[Dict[str, Any]]:
         return self.args[0]
