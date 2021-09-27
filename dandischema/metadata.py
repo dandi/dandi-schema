@@ -113,7 +113,7 @@ def _validate_obj_json(data, schema, missing_ok=False):
     for error in sorted(validator.iter_errors(data), key=str):
         if missing_ok and "is a required property" in error.message:
             continue
-        error_list.append([error])
+        error_list.append(error)
     if error_list:
         raise JsonschemaValidationError(error_list)
 
