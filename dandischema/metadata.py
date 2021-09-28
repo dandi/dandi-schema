@@ -13,7 +13,7 @@ from .consts import (
     ALLOWED_VALIDATION_SCHEMAS,
     DANDI_SCHEMA_VERSION,
 )
-from .exceptions import ValidationError
+from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
 from .utils import _ensure_newline, version2tuple
 
@@ -113,9 +113,9 @@ def _validate_obj_json(data, schema, missing_ok=False):
     for error in sorted(validator.iter_errors(data), key=str):
         if missing_ok and "is a required property" in error.message:
             continue
-        error_list.append([error])
+        error_list.append(error)
     if error_list:
-        raise ValidationError(error_list)
+        raise JsonschemaValidationError(error_list)
 
 
 def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
@@ -195,7 +195,7 @@ def validate(
             if not missing_ok or el["msg"] != "field required":
                 messages.append(el)
         if messages:
-            raise ValidationError(messages)
+            raise PydanticValidationError(messages)
 
 
 def migrate(
