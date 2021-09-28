@@ -2,7 +2,11 @@ from typing import Any, Dict, List
 import jsonschema.exceptions
 
 
-class JsonschemaValidationError(ValueError):
+class ValidationError(ValueError):
+    pass
+
+
+class JsonschemaValidationError(ValidationError):
     """Validation errors were detected by jsonschema.
 
     All errors are contained in the .args[0] of the exception instance.
@@ -12,7 +16,7 @@ class JsonschemaValidationError(ValueError):
         return self.args[0]
 
 
-class PydanticValidationError(ValueError):
+class PydanticValidationError(ValidationError):
     """Validation errors were detected by pydantic.
 
     All errors are contained in the .args[0] of the exception instance.
