@@ -60,7 +60,7 @@ def test_json_schemakey_validation():
             schema_key="Dandiset",
             schema_version="0.6.0",
         )
-    assert "'schemaKey' is a required property" in str(exc.value.args[0])
+    assert "'schemaKey' is a required property" in str(exc.value.errors)
 
 
 @pytest.mark.parametrize(
