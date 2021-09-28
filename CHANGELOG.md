@@ -1,3 +1,20 @@
+# 0.4.1 (Tue Sep 28 2021)
+
+#### 🐛 Bug Fix
+
+- Better exception classes [#89](https://github.com/dandi/dandischema/pull/89) ([@dchiquito](https://github.com/dchiquito))
+
+#### 🧪 Tests
+
+- Mark tests requiring network access and add a test workflow that disables network access [#88](https://github.com/dandi/dandischema/pull/88) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 2
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+
+---
+
 # 0.4.0 (Sun Sep 26 2021)
 
 #### 🚀 Enhancement
