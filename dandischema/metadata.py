@@ -177,13 +177,26 @@ def validate(
             f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
     if json_validation:
+        print(schema_version, DANDI_SCHEMA_VERSION)
         if schema_version == DANDI_SCHEMA_VERSION:
             klass = getattr(models, schema_key)
             schema = klass.schema()
         else:
+            schema_map = {
+                "Dandiset": "dandiset",
+                "PublishedDandiset": "published-dandiset",
+                "Asset": "asset",
+                "PublishedAsset": "published-asset",
+            }
+            if schema_key not in schema_map:
+                raise ValueError(
+                    "Only dandisets and assets can be validated "
+                    "using json schema for older versions"
+                )
+            schema_name = schema_map[schema_key]
             schema = requests.get(
                 f"https://raw.githubusercontent.com/dandi/schema/"
-                f"master/releases/{schema_version}/dandiset.json"
+                f"master/releases/{schema_version}/{schema_name}.json"
             ).json()
         _validate_obj_json(obj, schema, missing_ok)
     klass = getattr(models, schema_key)
