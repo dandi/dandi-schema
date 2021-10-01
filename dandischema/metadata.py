@@ -177,7 +177,6 @@ def validate(
             f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
     if json_validation:
-        print(schema_version, DANDI_SCHEMA_VERSION)
         if schema_version == DANDI_SCHEMA_VERSION:
             klass = getattr(models, schema_key)
             schema = klass.schema()
