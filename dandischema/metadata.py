@@ -165,12 +165,7 @@ def validate(
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
     schema_version = schema_version or obj.get("schemaVersion")
-    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in [
-        "Dandiset",
-        "PublishedDandiset",
-        "Asset",
-        "PublishedAsset",
-    ]:
+    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in schema_map:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
             f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
