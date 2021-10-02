@@ -509,6 +509,7 @@ def test_aggregate_nonsupported(version):
     assert version in str(exc)
 
 
+@skipif_no_network
 def test_validate_older():
     with pytest.raises(ValueError):
         validate(
