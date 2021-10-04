@@ -507,3 +507,18 @@ def test_aggregate_nonsupported(version):
     assert "Allowed are" in str(exc)
     assert DANDI_SCHEMA_VERSION in str(exc)
     assert version in str(exc)
+
+
+@skipif_no_network
+def test_validate_older():
+    with pytest.raises(ValueError):
+        validate(
+            {"schemaVersion": "0.5.2", "schemaKey": "Anykey"}, json_validation=True
+        )
+    with pytest.raises(JsonschemaValidationError):
+        validate({"schemaVersion": "0.5.2", "schemaKey": "Asset"}, json_validation=True)
+    with pytest.raises(JsonschemaValidationError):
+        validate(
+            {"schemaVersion": DANDI_SCHEMA_VERSION, "schemaKey": "Asset"},
+            json_validation=True,
+        )
