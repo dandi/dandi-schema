@@ -1,3 +1,16 @@
+# 0.4.2 (Mon Oct 04 2021)
+
+#### 🐛 Bug Fix
+
+- fix: associate schema key with schemas for older versions [#91](https://github.com/dandi/dandischema/pull/91) ([@satra](https://github.com/satra) [@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 2
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.4.1 (Tue Sep 28 2021)
 
 #### 🐛 Bug Fix
