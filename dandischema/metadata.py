@@ -17,6 +17,13 @@ from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
 from .utils import _ensure_newline, version2tuple
 
+schema_map = {
+    "Dandiset": "dandiset.json",
+    "PublishedDandiset": "published-dandiset.json",
+    "Asset": "asset.json",
+    "PublishedAsset": "published-asset.json",
+}
+
 
 def generate_context():
     import pydantic
@@ -87,18 +94,10 @@ def publish_model_schemata(releasedir: str) -> Path:
     version = models.get_schema_version()
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
-    (vdir / "dandiset.json").write_text(
-        _ensure_newline(models.Dandiset.schema_json(indent=2))
-    )
-    (vdir / "asset.json").write_text(
-        _ensure_newline(models.Asset.schema_json(indent=2))
-    )
-    (vdir / "published-dandiset.json").write_text(
-        _ensure_newline(models.PublishedDandiset.schema_json(indent=2))
-    )
-    (vdir / "published-asset.json").write_text(
-        _ensure_newline(models.PublishedAsset.schema_json(indent=2))
-    )
+    for class_, filename in schema_map.items():
+        (vdir / filename).write_text(
+            _ensure_newline(getattr(models, class_).schema_json(indent=2))
+        )
     (vdir / "context.json").write_text(
         _ensure_newline(json.dumps(generate_context(), indent=2))
     )
@@ -166,12 +165,7 @@ def validate(
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
     schema_version = schema_version or obj.get("schemaVersion")
-    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in [
-        "Dandiset",
-        "PublishedDandiset",
-        "Asset",
-        "PublishedAsset",
-    ]:
+    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in schema_map:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
             f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
@@ -181,9 +175,15 @@ def validate(
             klass = getattr(models, schema_key)
             schema = klass.schema()
         else:
+            if schema_key not in schema_map:
+                raise ValueError(
+                    "Only dandisets and assets can be validated "
+                    "using json schema for older versions"
+                )
+            schema_filename = schema_map[schema_key]
             schema = requests.get(
                 f"https://raw.githubusercontent.com/dandi/schema/"
-                f"master/releases/{schema_version}/dandiset.json"
+                f"master/releases/{schema_version}/{schema_filename}"
             ).json()
         _validate_obj_json(obj, schema, missing_ok)
     klass = getattr(models, schema_key)
