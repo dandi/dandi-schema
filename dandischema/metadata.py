@@ -292,9 +292,10 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             if "species" in value:
                 if value["species"] not in stats["species"]:
                     stats["species"].append(value["species"])
-            subject = value["identifier"].replace("_", "-")
-            if subject not in stats["subjects"]:
-                stats["subjects"].append(subject)
+            if value.get("identifier", None):
+                subject = value["identifier"].replace("_", "-")
+                if subject not in stats["subjects"]:
+                    stats["subjects"].append(subject)
 
     hierarchy = ["cell", "slice", "tissuesample"]
     for val in hierarchy:
