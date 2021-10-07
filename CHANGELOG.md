@@ -1,3 +1,15 @@
+# 0.4.3 (Thu Oct 07 2021)
+
+#### 🐛 Bug Fix
+
+- enh: add subject and sample aggregating for bids dandisets [#92](https://github.com/dandi/dandischema/pull/92) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.4.2 (Mon Oct 04 2021)
 
 #### 🐛 Bug Fix
