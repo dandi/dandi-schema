@@ -249,8 +249,9 @@ _stats_type = Dict[str, _stats_var_type]
 def _get_samples(value, stats, hierarchy):
     if "sampleType" in value:
         sampletype = value["sampleType"]["name"]
-        if value["identifier"] not in stats[sampletype]:
-            stats[sampletype].append(value["identifier"])
+        obj = value["identifier"].replace("_", "-")
+        if obj not in stats[sampletype]:
+            stats[sampletype].append(obj)
     if "wasDerivedFrom" in value:
         for entity in value["wasDerivedFrom"]:
             if entity.get("schemaKey") == "BioSample":
@@ -291,8 +292,10 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             if "species" in value:
                 if value["species"] not in stats["species"]:
                     stats["species"].append(value["species"])
-            if value["identifier"] not in stats["subjects"]:
-                stats["subjects"].append(value["identifier"])
+            if value.get("identifier", None):
+                subject = value["identifier"].replace("_", "-")
+                if subject not in stats["subjects"]:
+                    stats["subjects"].append(subject)
 
     hierarchy = ["cell", "slice", "tissuesample"]
     for val in hierarchy:
@@ -301,6 +304,16 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
         if value.get("schemaKey") == "BioSample":
             stats = _get_samples(value, stats, hierarchy)
             break
+
+    for part in Path(assetmeta["path"]).name.split("_"):
+        if part.startswith("sub-"):
+            subject = part.replace("sub-", "")
+            if subject not in stats["subjects"]:
+                stats["subjects"].append(subject)
+        if part.startswith("sample-"):
+            sample = part.replace("sample-", "")
+            if sample not in stats["tissuesample"]:
+                stats["tissuesample"].append(sample)
 
     stats["dataStandard"] = stats.get("dataStandard", [])
     if "nwb" in assetmeta["encodingFormat"]:
