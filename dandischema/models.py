@@ -45,7 +45,7 @@ if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
 
 
-NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
+NAME_PATTERN = r"^([\w\s\-]+),\s+([\w\s\-\.]+)$"
 UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
@@ -279,7 +279,7 @@ class BaseType(DandiBaseModel):
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
-        regex=r"^[a-zA-Z0-9]+:[a-zA-Z0-9-/\._]+$",
+        regex=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
         nskey="schema",
     )
     name: Optional[str] = Field(
