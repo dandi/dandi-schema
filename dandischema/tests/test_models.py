@@ -285,8 +285,8 @@ def test_dantimeta_1():
     error_msgs = [
         "field required",
         "A Dandiset containing no files or zero bytes is not publishable",
-        'string does not match regex "^https://dandiarchive.org/dandiset/'
-        '\\d{6}/\\d+\\.\\d+\\.\\d+$"',
+        'string does not match regex "^https?:\\/\\/\\S+\\/dandiset\\/'
+        '\\d{6}\\/\\d+\\.\\d+\\.\\d+$"',
         'string does not match regex "^DANDI:\\d{6}/\\d+\\.\\d+\\.\\d+"',
     ]
     assert all([el["msg"] in error_msgs for el in exc.value.errors()])

@@ -1151,7 +1151,7 @@ class PublishedDandiset(Dandiset, Publishable):
     url: DANDIURL = Field(
         readOnly=True,
         description="Permalink to the Dandiset.",
-        regex=r"^https://dandiarchive.org/dandiset/\d{6}/\d+\.\d+\.\d+$",
+        regex=r"^https?:\/\/\S+\/dandiset\/\d{6}\/\d+\.\d+\.\d+$",
         nskey="schema",
     )
 
