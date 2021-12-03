@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import random
+from typing import Any, Dict, Tuple
 
 from jsonschema import Draft7Validator
 import pytest
@@ -13,7 +14,7 @@ from ..datacite import _get_datacite_schema, to_datacite
 from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
 
 
-def datacite_post(datacite, doi):
+def datacite_post(datacite: dict, doi: str) -> None:
     """Post the datacite object and check the status of the request"""
 
     # removing doi in case it exists
@@ -36,7 +37,7 @@ def datacite_post(datacite, doi):
     _clean_doi(doi)
 
 
-def _clean_doi(doi):
+def _clean_doi(doi: str) -> None:
     """Remove doi. Status code is ignored"""
     requests.delete(
         f"https://api.test.datacite.org/dois/{doi}",
@@ -46,12 +47,12 @@ def _clean_doi(doi):
 
 @skipif_no_network
 @pytest.fixture(scope="module")
-def schema():
+def schema() -> Any:
     return _get_datacite_schema()
 
 
 @pytest.fixture(scope="function")
-def metadata_basic():
+def metadata_basic() -> Dict[str, Any]:
     dandi_id_noprefix = f"000{random.randrange(100, 999)}"
     dandi_id = f"DANDI:{dandi_id_noprefix}"
     version = "0.0.0"
@@ -93,7 +94,9 @@ def metadata_basic():
     return meta_dict
 
 
-def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
+def _basic_publishmeta(
+    dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
+) -> Dict[str, Any]:
     """Return extra metadata required by PublishedDandiset
 
     Returned fields are additional to fields required by Dandiset
@@ -127,7 +130,7 @@ def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
-def test_datacite(dandi_id, schema):
+def test_datacite(dandi_id: str, schema: Any) -> None:
     """checking to_datacite for a specific datasets"""
 
     # reading metadata taken from exemplary dandisets and saved in json files
@@ -299,7 +302,12 @@ def test_datacite(dandi_id, schema):
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
-def test_dandimeta_datacite(schema, metadata_basic, additional_meta, datacite_checks):
+def test_dandimeta_datacite(
+    schema: Any,
+    metadata_basic: Dict[str, Any],
+    additional_meta: Dict[str, Any],
+    datacite_checks: Dict[str, Any],
+) -> None:
     """
     checking datacite objects for specific metadata dictionaries,
     posting datacite object and checking the status code
@@ -337,7 +345,7 @@ def test_dandimeta_datacite(schema, metadata_basic, additional_meta, datacite_ch
     datacite_post(datacite, metadata_basic["doi"])
 
 
-def test_datacite_publish(metadata_basic):
+def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
 
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
@@ -460,7 +468,11 @@ def test_datacite_publish(metadata_basic):
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
-def test_datacite_related_res_url(metadata_basic, related_res_url, related_ident_exp):
+def test_datacite_related_res_url(
+    metadata_basic: Dict[str, Any],
+    related_res_url: Dict[str, Any],
+    related_ident_exp: Tuple[str, str],
+) -> None:
     """
     checking if urls provided in the relatedResource.identifier could be
     translated to DOI for some websites: e.g. bioarxiv.org, doi.org

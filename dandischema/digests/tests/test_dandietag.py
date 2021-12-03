@@ -1,3 +1,4 @@
+from pathlib import Path
 import re
 
 import pytest
@@ -18,7 +19,9 @@ from ..dandietag import DandiETag, ETagHashlike, Part, PartGenerator, mb, tb
         (tb(5), 549755814, 549754694, 10000),
     ],
 )
-def test_part_generator(file_size, initial_part_size, final_part_size, part_count):
+def test_part_generator(
+    file_size: int, initial_part_size: int, final_part_size: int, part_count: int
+) -> None:
     pg = PartGenerator.for_file_size(file_size)
     assert pg == PartGenerator(part_count, initial_part_size, final_part_size)
     assert len(pg) == part_count
@@ -44,13 +47,13 @@ def test_part_generator(file_size, initial_part_size, final_part_size, part_coun
         pg[-1]
 
 
-def test_part_generator_too_large():
+def test_part_generator_too_large() -> None:
     with pytest.raises(ValueError) as excinfo:
         PartGenerator.for_file_size(tb(5) + 1)
     assert str(excinfo.value) == "File is larger than the S3 maximum object size."
 
 
-def test_dandietag_tiny(tmp_path):
+def test_dandietag_tiny(tmp_path: Path) -> None:
     f = tmp_path / "sample.txt"
     f.write_bytes(b"123")
     s = DandiETag.from_file(f).as_str()
@@ -59,7 +62,7 @@ def test_dandietag_tiny(tmp_path):
     assert len(s) <= DandiETag.MAX_STR_LENGTH
 
 
-def test_dandietag_null(tmp_path):
+def test_dandietag_null(tmp_path: Path) -> None:
     f = tmp_path / "sample.dat"
     f.write_bytes(b"\0")
     s = DandiETag.from_file(f).as_str()
@@ -84,7 +87,7 @@ PART_DIGESTS = [
 ETAG = "8e5394f58846c6874be226c5a251f780-10"
 
 
-def test_add_next_digest():
+def test_add_next_digest() -> None:
     etagger = DandiETag(mb(640))
     assert etagger.part_qty == 10
     for i, d in enumerate(PART_DIGESTS):
@@ -102,7 +105,7 @@ def test_add_next_digest():
     assert len(s) <= DandiETag.MAX_STR_LENGTH
 
 
-def test_add_digest_reversed():
+def test_add_digest_reversed() -> None:
     etagger = DandiETag(mb(640))
     assert etagger.part_qty == 10
     assert not etagger.complete
@@ -113,7 +116,7 @@ def test_add_digest_reversed():
     assert etagger.as_str() == ETAG
 
 
-def test_add_digest_out_of_order():
+def test_add_digest_out_of_order() -> None:
     etagger = DandiETag(mb(640))
     assert etagger.part_qty == 10
     assert not etagger.complete
@@ -125,7 +128,7 @@ def test_add_digest_out_of_order():
     assert etagger.as_str() == ETAG
 
 
-def test_etaghashlike():
+def test_etaghashlike() -> None:
     sizes = [mb(20), mb(30), mb(75), mb(5)]
     hasher = ETagHashlike(sum(sizes))
     for sz in sizes:

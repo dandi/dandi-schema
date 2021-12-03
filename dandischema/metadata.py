@@ -1,7 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, TypeVar, cast
+from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast
 
 import jsonschema
 import pydantic
@@ -25,7 +25,7 @@ schema_map = {
 }
 
 
-def generate_context():
+def generate_context() -> dict:
     import pydantic
 
     field_preamble = {
@@ -90,7 +90,7 @@ def generate_context():
     return {"@context": field_preamble}
 
 
-def publish_model_schemata(releasedir: str) -> Path:
+def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     version = models.get_schema_version()
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
@@ -104,7 +104,7 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
-def _validate_obj_json(data, schema, missing_ok=False):
+def _validate_obj_json(data: Any, schema: Any, missing_ok: bool = False) -> None:
     validator = jsonschema.Draft7Validator(
         schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
     )
@@ -130,8 +130,12 @@ def _validate_asset_json(data: dict, schema_dir: str) -> None:
 
 
 def validate(
-    obj, schema_version=None, schema_key=None, missing_ok=False, json_validation=False
-):
+    obj: dict,
+    schema_version: Optional[str] = None,
+    schema_key: Optional[str] = None,
+    missing_ok: bool = False,
+    json_validation: bool = False,
+) -> None:
     """Validate object using pydantic
 
     Parameters
@@ -199,7 +203,7 @@ def validate(
 
 
 def migrate(
-    obj: dict, to_version: str = DANDI_SCHEMA_VERSION, skip_validation=False
+    obj: dict, to_version: str = DANDI_SCHEMA_VERSION, skip_validation: bool = False
 ) -> dict:
     """Migrate dandiset metadata object to new schema"""
     obj = deepcopy(obj)
@@ -246,7 +250,7 @@ _stats_var_type = TypeVar("_stats_var_type", int, list)
 _stats_type = Dict[str, _stats_var_type]
 
 
-def _get_samples(value, stats, hierarchy):
+def _get_samples(value: dict, stats: _stats_type, hierarchy: Any) -> _stats_type:
     if "sampleType" in value:
         sampletype = value["sampleType"]["name"]
         obj = value["identifier"].replace("_", "-")

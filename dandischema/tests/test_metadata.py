@@ -1,6 +1,7 @@
 from hashlib import md5, sha256
 import json
 from pathlib import Path
+from typing import Any, Dict, Optional, Sequence, Set
 
 import pytest
 
@@ -20,11 +21,11 @@ METADATA_DIR = Path(__file__).with_name("data") / "metadata"
 
 
 @pytest.fixture(scope="module")
-def schema_dir(tmp_path_factory):
+def schema_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
     return publish_model_schemata(tmp_path_factory.mktemp("schema_dir"))
 
 
-def test_asset(schema_dir):
+def test_asset(schema_dir: Path) -> None:
     with (METADATA_DIR / "asset_001.json").open() as fp:
         data_as_dict = json.load(fp)
     # overload (here and below) schemaVersion until we support automagic schema migrations
@@ -34,7 +35,7 @@ def test_asset(schema_dir):
     validate(data_as_dict)
 
 
-def test_dandiset(schema_dir):
+def test_dandiset(schema_dir: Path) -> None:
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
@@ -48,7 +49,7 @@ def test_id(schema_dir):
 
 
 @skipif_no_network
-def test_pydantic_validation(schema_dir):
+def test_pydantic_validation(schema_dir: Path) -> None:
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = "0.4.4"
@@ -61,7 +62,7 @@ def test_pydantic_validation(schema_dir):
 
 
 @skipif_no_network
-def test_json_schemakey_validation():
+def test_json_schemakey_validation() -> None:
     with pytest.raises(JsonschemaValidationError) as exc:
         validate(
             {"identifier": "DANDI:000000", "schemaVersion": "0.4.4"},
@@ -81,7 +82,7 @@ def test_json_schemakey_validation():
         ("0.4.2", "PublishedAsset"),
     ],
 )
-def test_mismatch_key(schema_version, schema_key):
+def test_mismatch_key(schema_version: str, schema_key: str) -> None:
     with pytest.raises(ValueError):
         validate({}, schema_version=schema_version, schema_key=schema_key)
 
@@ -270,7 +271,9 @@ def test_mismatch_key(schema_version, schema_key):
         ),
     ],
 )
-def test_requirements(obj, schema_key, missingfields):
+def test_requirements(
+    obj: Dict[str, Any], schema_key: Optional[str], missingfields: Set[str]
+) -> None:
     with pytest.raises(ValueError):
         validate(obj, schema_key=schema_key)
     with pytest.raises(PydanticValidationError) as exc:
@@ -299,7 +302,9 @@ def test_requirements(obj, schema_key, missingfields):
         ),
     ],
 )
-def test_missing_ok(obj, schema_key, errors, num_errors):
+def test_missing_ok(
+    obj: Dict[str, Any], schema_key: Optional[str], errors: Set[str], num_errors: int
+) -> None:
     validate(
         obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION, missing_ok=True
     )
@@ -311,7 +316,7 @@ def test_missing_ok(obj, schema_key, errors, num_errors):
 
 
 @skipif_no_network
-def test_missing_ok_error():
+def test_missing_ok_error() -> None:
     with pytest.raises(JsonschemaValidationError):
         validate(
             {
@@ -342,13 +347,13 @@ def test_missing_ok_error():
         ({"schemaVersion": "0.6.0"}, "0.5.2"),
     ],
 )
-def test_migrate_errors(obj, target):
+def test_migrate_errors(obj: Dict[str, Any], target: Optional[str]) -> None:
     with pytest.raises(ValueError):
         migrate(obj, to_version=target, skip_validation=True)
 
 
 @skipif_no_network
-def test_migrate_044(schema_dir):
+def test_migrate_044(schema_dir: Path) -> None:
     with (METADATA_DIR / "meta_000004old.json").open() as fp:
         data_as_dict = json.load(fp)
     with pytest.raises(ValueError):
@@ -492,12 +497,12 @@ def test_migrate_044(schema_dir):
         ),
     ],
 )
-def test_aggregate(files, summary):
+def test_aggregate(files: Sequence[str], summary: Dict[str, Any]) -> None:
     metadata = (json.loads((METADATA_DIR / f).read_text()) for f in files)
     assert aggregate_assets_summary(metadata) == summary
 
 
-def test_aggregate_norecord():
+def test_aggregate_norecord() -> None:
     assert aggregate_assets_summary([]) == {
         "numberOfBytes": 0,
         "numberOfFiles": 0,
@@ -508,7 +513,7 @@ def test_aggregate_norecord():
 @pytest.mark.parametrize(
     "version", ["0.1.0", DANDI_SCHEMA_VERSION.rsplit(".", 1)[0], "10000.0.0"]
 )
-def test_aggregate_nonsupported(version):
+def test_aggregate_nonsupported(version: str) -> None:
     with pytest.raises(ValueError) as exc:
         aggregate_assets_summary([{"schemaVersion": version}])
     assert "Allowed are" in str(exc)
@@ -517,7 +522,7 @@ def test_aggregate_nonsupported(version):
 
 
 @skipif_no_network
-def test_validate_older():
+def test_validate_older() -> None:
     with pytest.raises(ValueError):
         validate(
             {"schemaVersion": "0.5.2", "schemaKey": "Anykey"}, json_validation=True
@@ -531,7 +536,7 @@ def test_validate_older():
         )
 
 
-def test_aggregation_bids():
+def test_aggregation_bids() -> None:
     data = [
         {
             "id": "dandiasset:6668d37f-e842-4b73-8c20-082a1dd0d31a",
