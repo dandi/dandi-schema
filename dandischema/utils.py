@@ -52,7 +52,7 @@ def version2tuple(ver: str) -> tuple:
     return tuple([int(val) for val in ver.split(".")])
 
 
-def _ensure_newline(obj):
+def _ensure_newline(obj: str) -> str:
     if not obj.endswith("\n"):
         return obj + "\n"
     return obj

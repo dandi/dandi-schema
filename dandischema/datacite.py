@@ -67,7 +67,7 @@ def to_datacite(
 
     attributes = {}
     if publish:
-        attributes['event'] = 'publish'
+        attributes["event"] = "publish"
 
     attributes["identifiers"] = [
         # TODO: the first element is ignored, not sure how to fix it...
@@ -191,7 +191,9 @@ def to_datacite(
                         ident_id = rel_el.identifier.split("doi.org/")[1]
                     elif "biorxiv.org/" in rel_el.identifier:
                         ident_tp = "DOI"
-                        ident_id = rel_el.identifier.split("biorxiv.org/content/")[1].split("v")[0]
+                        ident_id = rel_el.identifier.split("biorxiv.org/content/")[
+                            1
+                        ].split("v")[0]
                     # if any other url is passed
                     elif rel_el.identifier.startswith("https://"):
                         ident_id = rel_el.identifier
@@ -220,7 +222,7 @@ def to_datacite(
     return datacite_dict
 
 
-def _get_datacite_schema():
+def _get_datacite_schema() -> ty.Any:
     sr = requests.get(
         "https://raw.githubusercontent.com/datacite/schema/"
         "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"
@@ -231,7 +233,7 @@ def _get_datacite_schema():
     return schema
 
 
-def validate_datacite(datacite_dict):
+def validate_datacite(datacite_dict: dict) -> None:
     schema = _get_datacite_schema()
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema)
