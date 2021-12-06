@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from copy import deepcopy
 from datetime import date, datetime
 from enum import Enum
@@ -148,7 +146,7 @@ class HandleKeyEnumEncoder(json.JSONEncoder):
 class DandiBaseModelMetaclass(ModelMetaclass):
     def __new__(
         cls, name: str, bases: Tuple[type, ...], dct: Dict[str, Any]
-    ) -> DandiBaseModelMetaclass:
+    ) -> "DandiBaseModelMetaclass":
         sk_name = dct.pop("schemaKey", None) or name
         dct["schemaKey"]: Literal[sk_name] = Field(sk_name, readOnly=True)
         objcls = super().__new__(cls, name, bases, dct)
