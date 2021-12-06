@@ -53,7 +53,7 @@ def generate_context() -> dict:
         "PATO": "http://purl.obolibrary.org/obo/PATO_",
         "spdx": "http://spdx.org/licenses/",
     }
-    fields = {}
+    fields: Dict[str, Any] = {}
     for val in dir(models):
         klass = getattr(models, val)
         if not isinstance(klass, pydantic.main.ModelMetaclass):
@@ -117,13 +117,13 @@ def _validate_obj_json(data: Any, schema: Any, missing_ok: bool = False) -> None
         raise JsonschemaValidationError(error_list)
 
 
-def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
+def _validate_dandiset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
     _validate_obj_json(data, schema)
 
 
-def _validate_asset_json(data: dict, schema_dir: str) -> None:
+def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
     _validate_obj_json(data, schema)
@@ -203,7 +203,9 @@ def validate(
 
 
 def migrate(
-    obj: dict, to_version: str = DANDI_SCHEMA_VERSION, skip_validation: bool = False
+    obj: dict,
+    to_version: Optional[str] = DANDI_SCHEMA_VERSION,
+    skip_validation: bool = False,
 ) -> dict:
     """Migrate dandiset metadata object to new schema"""
     obj = deepcopy(obj)
@@ -238,7 +240,7 @@ def migrate(
                 val["schemaKey"] = "AccessRequirements"
         for resource in obj.get("relatedResource", []):
             resource["schemaKey"] = "Resource"
-        if "schemaKey" not in obj.get("assetsSummary"):
+        if "schemaKey" not in obj["assetsSummary"]:
             obj["assetsSummary"]["schemaKey"] = "AssetsSummary"
         if "schemaKey" not in obj:
             obj["schemaKey"] = "Dandiset"

@@ -95,7 +95,8 @@ def test_add_next_digest() -> None:
         with pytest.raises(ValueError) as excinfo:
             etagger.as_str()
         assert str(excinfo.value) == "Not all part hashes submitted"
-        assert etagger.get_next_part().number == i + 1
+        p = etagger.get_next_part()
+        assert p is not None and p.number == i + 1
         etagger._add_next_digest(d)
     assert etagger.complete
     assert etagger.get_next_part() is None
