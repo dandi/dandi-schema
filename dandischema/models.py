@@ -155,6 +155,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         )
 
     @validator("schemaKey", always=True)
+    @classmethod
     def ensure_schemakey(cls, val: str) -> str:
         tempval = val
         if "Published" in cls.__name__:
