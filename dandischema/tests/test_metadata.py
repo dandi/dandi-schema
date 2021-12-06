@@ -308,7 +308,7 @@ def test_missing_ok(
     validate(
         obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION, missing_ok=True
     )
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(PydanticValidationError) as exc:
         validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
     exc_errors = [el["msg"] for el in exc.value.errors]
     assert len(exc_errors) == num_errors

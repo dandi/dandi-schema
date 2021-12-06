@@ -1,6 +1,6 @@
 from copy import deepcopy
 import re
-import typing as ty
+from typing import Any, Dict, Union
 
 from jsonschema import Draft7Validator
 import requests
@@ -57,7 +57,7 @@ DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
 def to_datacite(
-    meta: ty.Union[dict, PublishedDandiset],
+    meta: Union[dict, PublishedDandiset],
     validate: bool = False,
     publish: bool = False,
 ) -> dict:
@@ -65,7 +65,7 @@ def to_datacite(
     if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
 
-    attributes = {}
+    attributes: Dict[str, Any] = {}
     if publish:
         attributes["event"] = "publish"
 
@@ -123,7 +123,7 @@ def to_datacite(
             if not contr_el.roleName:
                 continue
 
-        contr_dict = {
+        contr_dict: Dict[str, Any] = {
             "name": contr_el.name,
             "contributorName": contr_el.name,
             "schemeURI": "orcid.org",
@@ -134,7 +134,7 @@ def to_datacite(
                 NAME_PATTERN, contr_el.name
             ).pop()
 
-            if getattr(contr_el, "affiliation"):
+            if hasattr(contr_el, "affiliation") and contr_el.affiliation is not None:
                 contr_dict["affiliation"] = [
                     {"name": el.name} for el in contr_el.affiliation
                 ]
@@ -180,7 +180,7 @@ def to_datacite(
     attributes["contributors"] = contributors
     attributes["creators"] = creators
 
-    if getattr(meta, "relatedResource"):
+    if hasattr(meta, "relatedResource") and meta.relatedResource:
         attributes["relatedIdentifiers"] = []
         for rel_el in meta.relatedResource:
             if rel_el.identifier is not None:
@@ -219,7 +219,7 @@ def to_datacite(
             }
             attributes["relatedIdentifiers"].append(rel_dict)
 
-    if getattr(meta, "keywords"):
+    if hasattr(meta, "keywords") and meta.keywords is not None:
         attributes["subjects"] = [{"subject": el} for el in meta.keywords]
 
     datacite_dict = {"data": {"id": meta.doi, "type": "dois", "attributes": attributes}}
@@ -230,7 +230,7 @@ def to_datacite(
     return datacite_dict
 
 
-def _get_datacite_schema() -> ty.Any:
+def _get_datacite_schema() -> Any:
     sr = requests.get(
         "https://raw.githubusercontent.com/datacite/schema/"
         "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"

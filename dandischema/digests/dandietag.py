@@ -124,7 +124,8 @@ class DandiETag:
             return None
 
     def get_part_etag(self, p: Part) -> Optional[str]:
-        return self._md5_digests[p.number - 1].hex()
+        d = self._md5_digests[p.number - 1]
+        return d.hex() if d is not None else None
 
     def as_str(self) -> str:
         if not self.complete:

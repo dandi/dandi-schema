@@ -7,7 +7,7 @@ import json
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
 
 from pydantic import (
     UUID4,
@@ -53,10 +53,12 @@ DANDI_INSTANCE_URL_PATTERN = (
 # localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
 # environment variable will use a less restrictive pydantic field that allows localhost.
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
-    HttpUrl = AnyHttpUrl  # noqa: F811
+    UrlType = AnyHttpUrl
     DANDI_INSTANCE_URL_PATTERN = (
         rf"({DANDI_INSTANCE_URL_PATTERN}|http://localhost(:\d+)?)"
     )
+else:
+    UrlType = HttpUrl
 
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
@@ -150,19 +152,22 @@ class DandiBaseModelMetaclass(ModelMetaclass):
         sk_name = dct.pop("schemaKey", None) or name
         dct["schemaKey"]: Literal[sk_name] = Field(sk_name, readOnly=True)
         objcls = super().__new__(cls, name, bases, dct)
+        assert isinstance(objcls, DandiBaseModelMetaclass)
         return objcls
 
 
 class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
 
-    def json_dict(self) -> Any:
+    def json_dict(self) -> dict:
         """
         Recursively convert the instance to a `dict` of JSONable values,
         including converting enum values to strings.  `None` fields
         are omitted.
         """
-        return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+        return cast(
+            dict, json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+        )
 
     @validator("schemaKey", always=True)
     def ensure_schemakey(cls, val: str) -> str:
@@ -194,10 +199,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                 else:
                     value = deepcopy(field.default)
                 data[name] = value
-        self = __pydantic_cls__.__new__(__pydantic_cls__)
-        object.__setattr__(self, "__dict__", data)
-        object.__setattr__(self, "__fields_set__", set(data.keys()))
-        return self
+        return __pydantic_cls__.construct(**data)
 
     @classmethod
     def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]) -> str:
@@ -276,7 +278,7 @@ class PropertyValue(DandiBaseModel):
     valueReference: Optional["PropertyValue"] = Field(
         None, nskey="schema"
     )  # Note: recursive (circular or not)
-    propertyID: Optional[Union[IdentifierType, HttpUrl]] = Field(
+    propertyID: Optional[Union[IdentifierType, UrlType]] = Field(
         None,
         description="A commonly used identifier for"
         "the characteristic represented by the property. "
@@ -308,7 +310,7 @@ DANDIURL = str
 class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
-    identifier: Optional[Union[HttpUrl, str]] = Field(
+    identifier: Optional[Union[UrlType, str]] = Field(
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
@@ -403,7 +405,7 @@ class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(
         None, description="Email address of contact.", nskey="schema"
     )
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None,
         description="A Web page to find information on how to contact.",
         nskey="schema",
@@ -422,7 +424,7 @@ class Contributor(DandiBaseModel):
     )
     name: Optional[str] = Field(None, nskey="schema")
     email: Optional[EmailStr] = Field(None, nskey="schema")
-    url: Optional[HttpUrl] = Field(None, nskey="schema")
+    url: Optional[UrlType] = Field(None, nskey="schema")
     roleName: Optional[List[RoleType]] = Field(
         None,
         title="Role",
@@ -521,7 +523,7 @@ class Software(DandiBaseModel):
     )
     name: str = Field(nskey="schema")
     version: str = Field(nskey="schema")
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None, description="Web page for the software.", nskey="schema"
     )
 
@@ -539,7 +541,7 @@ class Agent(DandiBaseModel):
         nskey="schema",
     )
     name: str = Field(nskey="schema")
-    url: Optional[HttpUrl] = Field(None, nskey="schema")
+    url: Optional[UrlType] = Field(None, nskey="schema")
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -567,7 +569,7 @@ class EthicsApproval(DandiBaseModel):
 class Resource(DandiBaseModel):
     identifier: Optional[Identifier] = Field(None, nskey="schema")
     name: Optional[str] = Field(None, title="A title of the resource", nskey="schema")
-    url: Optional[HttpUrl] = Field(None, title="URL of the resource", nskey="schema")
+    url: Optional[UrlType] = Field(None, title="URL of the resource", nskey="schema")
     repository: Optional[str] = Field(
         None,
         title="Name of the repository",
@@ -771,7 +773,7 @@ class RelatedParticipant(DandiBaseModel):
     name: Optional[str] = Field(
         None, title="Name of the participant or subject", nskey="schema"
     )
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None, title="URL of the related participant or subject", nskey="schema"
     )
     relation: ParticipantRelationType = Field(
@@ -943,7 +945,7 @@ class CommonModel(DandiBaseModel):
         "applicable to datasets.",
         nskey="schema",
     )
-    protocol: Optional[List[HttpUrl]] = Field(
+    protocol: Optional[List[UrlType]] = Field(
         None,
         description="A list of persistent URLs describing the protocol (e.g. "
         "protocols.io, or other DOIs).",
@@ -970,10 +972,10 @@ class CommonModel(DandiBaseModel):
         nskey="dandi",
         readOnly=True,
     )
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None, readOnly=True, description="permalink to the item", nskey="schema"
     )
-    repository: HttpUrl = Field(
+    repository: UrlType = Field(
         DANDI_INSTANCE_URL,
         readOnly=True,
         description="location of the item",
@@ -1048,7 +1050,7 @@ class Dandiset(CommonModel):
     assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: List[HttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
+    manifestLocation: List[UrlType] = Field(readOnly=True, min_items=1, nskey="dandi")
 
     version: str = Field(readOnly=True, nskey="schema")
 
@@ -1073,7 +1075,7 @@ class BareAsset(CommonModel):
     """
 
     contentSize: ByteSize = Field(nskey="schema")
-    encodingFormat: Union[HttpUrl, str] = Field(
+    encodingFormat: Union[UrlType, str] = Field(
         title="File encoding format", nskey="schema"
     )
     digest: Dict[DigestType, str] = Field(
@@ -1100,9 +1102,9 @@ class BareAsset(CommonModel):
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
     # need to come up with things for neurophys
     # TODO: waiting on input <https://github.com/dandi/dandi-cli/pull/226>
-    dataType: Optional[HttpUrl] = Field(None, nskey="dandi")
+    dataType: Optional[UrlType] = Field(None, nskey="dandi")
 
-    sameAs: Optional[List[HttpUrl]] = Field(None, nskey="schema")
+    sameAs: Optional[List[UrlType]] = Field(None, nskey="schema")
 
     # TODO
     approach: Optional[List[ApproachType]] = Field(None, readOnly=True, nskey="dandi")
@@ -1176,11 +1178,11 @@ class Asset(BareAsset):
     # all of the following are set by server
     id: str = Field(readOnly=True, description="Uniform resource identifier.")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[HttpUrl] = Field(readOnly=True, nskey="schema")
+    contentUrl: List[UrlType] = Field(readOnly=True, nskey="schema")
 
 
 class Publishable(DandiBaseModel):
-    publishedBy: Union[HttpUrl, PublishActivity] = Field(
+    publishedBy: Union[UrlType, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
         readOnly=True,
         nskey="dandi",
