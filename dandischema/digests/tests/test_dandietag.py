@@ -97,7 +97,9 @@ def test_add_next_digest() -> None:
         assert str(excinfo.value) == "Not all part hashes submitted"
         p = etagger.get_next_part()
         assert p is not None and p.number == i + 1
+        assert etagger.get_part_etag(p) is None
         etagger._add_next_digest(d)
+        assert etagger.get_part_etag(p) == d.hex()
     assert etagger.complete
     assert etagger.get_next_part() is None
     s = etagger.as_str()
