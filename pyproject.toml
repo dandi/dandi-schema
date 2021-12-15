@@ -1,6 +1,6 @@
 [build-system]
 # Setuptools version should match setup.py; wheel because pip will insert it noisily
-requires = ["setuptools >= 42.0.0", "versioningit ~= 0.1.0", "wheel"]
+requires = ["setuptools >= 42.0.0", "versioningit ~= 0.3.0", "wheel"]
 build-backend = 'setuptools.build_meta'
 
 [tool.versioningit]
