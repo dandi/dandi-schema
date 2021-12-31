@@ -189,6 +189,8 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     class Config:
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model) -> None:
+            if schema["title"] == "PropertyValue":
+                schema["required"] = ["value"] + schema.get("required", [])
             schema["title"] = name2title(schema["title"])
             if schema["type"] == "object":
                 schema["required"] = schema.get("required", []) + ["schemaKey"]
@@ -258,6 +260,14 @@ class PropertyValue(DandiBaseModel):
         "For example, a known prefix like DOI or a full URL.",
         nskey="schema",
     )
+
+    @validator("value", always=True)
+    def ensure_value(cls, val):
+        if val is None or not val:
+            raise ValueError(
+                "The value field of a PropertyValue cannot be None or empty."
+            )
+        return val
 
     _ldmeta = {"nskey": "schema"}
 
