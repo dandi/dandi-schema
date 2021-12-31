@@ -267,7 +267,7 @@ class PropertyValue(DandiBaseModel):
 
     @validator("value", always=True)
     def ensure_value(cls, val):
-        if val is None or not val:
+        if not val:
             raise ValueError(
                 "The value field of a PropertyValue cannot be None or empty."
             )
