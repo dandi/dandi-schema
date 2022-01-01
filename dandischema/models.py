@@ -5,7 +5,7 @@ import json
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
 
 from pydantic import (
     UUID4,
@@ -42,7 +42,9 @@ else:
 # localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
 # environment variable will use a less restrictive pydantic field that allows localhost.
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
-    HttpUrl = AnyHttpUrl  # noqa: F811
+    UrlType = AnyHttpUrl
+else:
+    UrlType = HttpUrl
 
 
 NAME_PATTERN = r"^([\w\s\-]+)?,\s+([\w\s\-\.]+)?$"
@@ -54,7 +56,7 @@ DANDI_DOI_PATTERN = r"^10.(48324|80507)/dandi\.\d{6}/\d+\.\d+\.\d+"
 DANDI_PUBID_PATTERN = r"^DANDI:\d{6}/\d+\.\d+\.\d+"
 
 
-def create_enum(data):
+def create_enum(data: dict) -> Type[Enum]:
     """Convert a JSON-LD enumeration to an Enum"""
     items = {}
     klass = None
@@ -76,7 +78,7 @@ def create_enum(data):
     return newklass
 
 
-def split_name(name):
+def split_name(name: str) -> str:
     space_added = []
     for c in name:
         if c.upper() == c:
@@ -101,15 +103,17 @@ LicenseType = create_enum(LicenseTypeDict)
 IdentifierType = create_enum(IdentifierTypeDict)
 DigestType = create_enum(DigestTypeDict)
 
+M = TypeVar("M", bound=BaseModel)
 
-def diff_models(model1, model2):
+
+def diff_models(model1: M, model2: M) -> None:
     """Perform a field-wise diff"""
     for field in model1.__fields__:
         if getattr(model1, field) != getattr(model2, field):
             print(f"{field} is different")
 
 
-def _sanitize(o):
+def _sanitize(o: Any) -> Any:
     if isinstance(o, dict):
         return {_sanitize(k): _sanitize(v) for k, v in o.items()}
     elif isinstance(o, (set, tuple, list)):
@@ -120,31 +124,37 @@ def _sanitize(o):
 
 
 class HandleKeyEnumEncoder(json.JSONEncoder):
-    def encode(self, o):
+    def encode(self, o: Any) -> Any:
         return super().encode(_sanitize(o))
 
 
 class DandiBaseModelMetaclass(ModelMetaclass):
-    def __new__(cls, name, bases, dct):
+    def __new__(
+        cls, name: str, bases: Tuple[type, ...], dct: Dict[str, Any]
+    ) -> "DandiBaseModelMetaclass":
         sk_name = dct.pop("schemaKey", None) or name
         dct["schemaKey"]: Literal[sk_name] = Field(sk_name, readOnly=True)
         objcls = super().__new__(cls, name, bases, dct)
+        assert isinstance(objcls, DandiBaseModelMetaclass)
         return objcls
 
 
 class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
     id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
 
-    def json_dict(self):
+    def json_dict(self) -> dict:
         """
         Recursively convert the instance to a `dict` of JSONable values,
         including converting enum values to strings.  `None` fields
         are omitted.
         """
-        return json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+        return cast(
+            dict, json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+        )
 
     @validator("schemaKey", always=True)
-    def ensure_schemakey(cls, val):
+    @classmethod
+    def ensure_schemakey(cls, val: str) -> str:
         tempval = val
         if "Published" in cls.__name__:
             tempval = "Published" + tempval
@@ -173,13 +183,10 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
                 else:
                     value = deepcopy(field.default)
                 data[name] = value
-        self = __pydantic_cls__.__new__(__pydantic_cls__)
-        object.__setattr__(self, "__dict__", data)
-        object.__setattr__(self, "__fields_set__", set(data.keys()))
-        return self
+        return __pydantic_cls__.construct(**data)
 
     @classmethod
-    def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]):
+    def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]) -> str:
         return (
             __pydantic_cls__.unvalidated()
             .__repr__()
@@ -188,7 +195,7 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
 
     class Config:
         @staticmethod
-        def schema_extra(schema: Dict[str, Any], model) -> None:
+        def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
             schema["title"] = name2title(schema["title"])
             if schema["type"] == "object":
                 schema["required"] = schema.get("required", []) + ["schemaKey"]
@@ -251,7 +258,7 @@ class PropertyValue(DandiBaseModel):
     valueReference: Optional["PropertyValue"] = Field(
         None, nskey="schema"
     )  # Note: recursive (circular or not)
-    propertyID: Optional[Union[IdentifierType, HttpUrl]] = Field(
+    propertyID: Optional[Union[IdentifierType, UrlType]] = Field(
         None,
         description="A commonly used identifier for"
         "the characteristic represented by the property. "
@@ -275,7 +282,7 @@ DANDIURL = str
 class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
-    identifier: Optional[Union[HttpUrl, str]] = Field(
+    identifier: Optional[Union[UrlType, str]] = Field(
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
@@ -370,7 +377,7 @@ class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(
         None, description="Email address of contact.", nskey="schema"
     )
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None,
         description="A Web page to find information on how to contact.",
         nskey="schema",
@@ -389,7 +396,7 @@ class Contributor(DandiBaseModel):
     )
     name: Optional[str] = Field(None, nskey="schema")
     email: Optional[EmailStr] = Field(None, nskey="schema")
-    url: Optional[HttpUrl] = Field(None, nskey="schema")
+    url: Optional[UrlType] = Field(None, nskey="schema")
     roleName: Optional[List[RoleType]] = Field(
         None,
         title="Role",
@@ -488,7 +495,7 @@ class Software(DandiBaseModel):
     )
     name: str = Field(nskey="schema")
     version: str = Field(nskey="schema")
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None, description="Web page for the software.", nskey="schema"
     )
 
@@ -506,7 +513,7 @@ class Agent(DandiBaseModel):
         nskey="schema",
     )
     name: str = Field(nskey="schema")
-    url: Optional[HttpUrl] = Field(None, nskey="schema")
+    url: Optional[UrlType] = Field(None, nskey="schema")
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -534,7 +541,7 @@ class EthicsApproval(DandiBaseModel):
 class Resource(DandiBaseModel):
     identifier: Optional[Identifier] = Field(None, nskey="schema")
     name: Optional[str] = Field(None, title="A title of the resource", nskey="schema")
-    url: Optional[HttpUrl] = Field(None, title="URL of the resource", nskey="schema")
+    url: Optional[UrlType] = Field(None, title="URL of the resource", nskey="schema")
     repository: Optional[str] = Field(
         None,
         title="Name of the repository",
@@ -556,7 +563,7 @@ class Resource(DandiBaseModel):
     }
 
     @root_validator
-    def identifier_or_url(cls, values):
+    def identifier_or_url(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         identifier, url = values.get("identifier"), values.get("url")
         if identifier is None and url is None:
             raise ValueError("Both identifier and url cannot be None")
@@ -595,7 +602,7 @@ class AccessRequirements(DandiBaseModel):
     """
     # TODO: Enable when embargoed access is supported.
     @root_validator
-    def open_or_embargoed(cls, values):
+    def open_or_embargoed(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         status, embargoed = values.get("status"), values.get("embargoedUntil")
         if status == AccessType.EmbargoedAccess and embargoed is None:
             raise ValueError("An embargo date. For NIH supported awards, this "
@@ -740,7 +747,7 @@ class RelatedParticipant(DandiBaseModel):
     name: Optional[str] = Field(
         None, title="Name of the participant or subject", nskey="schema"
     )
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None, title="URL of the related participant or subject", nskey="schema"
     )
     relation: ParticipantRelationType = Field(
@@ -912,7 +919,7 @@ class CommonModel(DandiBaseModel):
         "applicable to datasets.",
         nskey="schema",
     )
-    protocol: Optional[List[HttpUrl]] = Field(
+    protocol: Optional[List[UrlType]] = Field(
         None,
         description="A list of persistent URLs describing the protocol (e.g. "
         "protocols.io, or other DOIs).",
@@ -938,10 +945,10 @@ class CommonModel(DandiBaseModel):
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
         nskey="dandi",
     )
-    url: Optional[HttpUrl] = Field(
+    url: Optional[UrlType] = Field(
         None, readOnly=True, description="permalink to the item", nskey="schema"
     )
-    repository: HttpUrl = Field(
+    repository: UrlType = Field(
         "https://dandiarchive.org/",
         readOnly=True,
         description="location of the item",
@@ -956,7 +963,9 @@ class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
 
     @validator("contributor")
-    def contributor_musthave_contact(cls, values):
+    def contributor_musthave_contact(
+        cls, values: List[Union[Person, Organization]]
+    ) -> List[Union[Person, Organization]]:
         contacts = []
         for val in values:
             if val.roleName and RoleType.ContactPerson in val.roleName:
@@ -1014,7 +1023,7 @@ class Dandiset(CommonModel):
     assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: List[HttpUrl] = Field(readOnly=True, min_items=1, nskey="dandi")
+    manifestLocation: List[UrlType] = Field(readOnly=True, min_items=1, nskey="dandi")
 
     version: str = Field(readOnly=True, nskey="schema")
 
@@ -1039,7 +1048,7 @@ class BareAsset(CommonModel):
     """
 
     contentSize: ByteSize = Field(nskey="schema")
-    encodingFormat: Union[HttpUrl, str] = Field(
+    encodingFormat: Union[UrlType, str] = Field(
         title="File encoding format", nskey="schema"
     )
     digest: Dict[DigestType, str] = Field(
@@ -1066,9 +1075,9 @@ class BareAsset(CommonModel):
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
     # need to come up with things for neurophys
     # TODO: waiting on input <https://github.com/dandi/dandi-cli/pull/226>
-    dataType: Optional[HttpUrl] = Field(None, nskey="dandi")
+    dataType: Optional[UrlType] = Field(None, nskey="dandi")
 
-    sameAs: Optional[List[HttpUrl]] = Field(None, nskey="schema")
+    sameAs: Optional[List[UrlType]] = Field(None, nskey="schema")
 
     # TODO
     approach: Optional[List[ApproachType]] = Field(None, readOnly=True, nskey="dandi")
@@ -1102,7 +1111,7 @@ class BareAsset(CommonModel):
     }
 
     @validator("digest")
-    def digest_etag(cls, values):
+    def digest_etag(cls, values: Dict[DigestType, str]) -> Dict[DigestType, str]:
         try:
             digest = values[DigestType.dandi_etag]
             if "-" not in digest or len(digest.split("-")[0]) != 32:
@@ -1123,11 +1132,11 @@ class Asset(BareAsset):
     # all of the following are set by server
     id: str = Field(readOnly=True, description="Uniform resource identifier.")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[HttpUrl] = Field(readOnly=True, nskey="schema")
+    contentUrl: List[UrlType] = Field(readOnly=True, nskey="schema")
 
 
 class Publishable(DandiBaseModel):
-    publishedBy: Union[HttpUrl, PublishActivity] = Field(
+    publishedBy: Union[UrlType, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
         readOnly=True,
         nskey="dandi",
@@ -1158,7 +1167,7 @@ class PublishedDandiset(Dandiset, Publishable):
     schemaKey = "Dandiset"
 
     @validator("assetsSummary")
-    def check_filesbytes(cls, values):
+    def check_filesbytes(cls, values: AssetsSummary) -> AssetsSummary:
         if values.numberOfBytes == 0 or values.numberOfFiles == 0:
             raise ValueError(
                 "A Dandiset containing no files or zero bytes is not publishable"
@@ -1177,7 +1186,7 @@ class PublishedAsset(Asset, Publishable):
     schemaKey = "Asset"
 
     @validator("digest")
-    def digest_bothhashes(cls, values):
+    def digest_bothhashes(cls, values: Dict[DigestType, str]) -> Dict[DigestType, str]:
         try:
             digest = values[DigestType.dandi_etag]
             if "-" not in digest or len(digest.split("-")[0]) != 32:
@@ -1190,5 +1199,5 @@ class PublishedAsset(Asset, Publishable):
         return values
 
 
-def get_schema_version():
+def get_schema_version() -> str:
     return DANDI_SCHEMA_VERSION

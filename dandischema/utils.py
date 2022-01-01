@@ -1,5 +1,5 @@
 import re
-from typing import Iterator
+from typing import Iterator, List
 
 TITLE_CASE_LOWER = {
     "a",
@@ -22,7 +22,7 @@ TITLE_CASE_LOWER = {
 
 def name2title(name: str) -> str:
     # For use in autopopulating the titles of model schema fields
-    words = []
+    words: List[str] = []
     for w in split_camel_case(name):
         w = w.lower()
         if w == "id" or w == "url":
@@ -52,7 +52,7 @@ def version2tuple(ver: str) -> tuple:
     return tuple([int(val) for val in ver.split(".")])
 
 
-def _ensure_newline(obj):
+def _ensure_newline(obj: str) -> str:
     if not obj.endswith("\n"):
         return obj + "\n"
     return obj
