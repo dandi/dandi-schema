@@ -23,6 +23,7 @@ from ..models import (
     Organization,
     ParticipantRelationType,
     Person,
+    PropertyValue,
     PublishedDandiset,
     RelationType,
     Resource,
@@ -481,3 +482,20 @@ def test_https_regex():
 def test_schemakey_in_required():
     props = json.loads(Affiliation.schema_json())["required"]
     assert "schemaKey" in props
+
+
+@pytest.mark.parametrize("value", [None, [], {}, (), ""])
+def test_propertyvalue(value):
+    with pytest.raises(pydantic.ValidationError):
+        PropertyValue(value=value)
+
+
+def test_propertyvalue_valid():
+    PropertyValue(value=1)
+
+
+def test_propertyvalue_json():
+    reqprops = json.loads(PropertyValue.schema_json())["definitions"]["PropertyValue"][
+        "required"
+    ]
+    assert "value" in reqprops
