@@ -305,7 +305,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             stats = _get_samples(value, stats, hierarchy)
             break
 
-    for part in Path(assetmeta["path"]).name.split("_"):
+    for part in Path(assetmeta["path"]).name.split(".")[0].split("_"):
         if part.startswith("sub-"):
             subject = part.replace("sub-", "")
             if subject not in stats["subjects"]:
