@@ -410,11 +410,11 @@ def test_datacite_publish(metadata_basic):
         ),
         # identifier without https
         (
-                {
-                    "identifier": "doi.org/10.1101/2021.04.26.441423",
-                    "relation": RelationType("dcite:IsSupplementedBy"),
-                },
-                ("10.1101/2021.04.26.441423", "DOI"),
+            {
+                "identifier": "doi.org/10.1101/2021.04.26.441423",
+                "relation": RelationType("dcite:IsSupplementedBy"),
+            },
+            ("10.1101/2021.04.26.441423", "DOI"),
         ),
         (
             {
