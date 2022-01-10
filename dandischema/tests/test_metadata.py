@@ -54,6 +54,7 @@ def test_pydantic_validation(schema_dir):
         validate({})
 
 
+@skipif_no_network
 def test_json_schemakey_validation():
     with pytest.raises(JsonschemaValidationError) as exc:
         validate(

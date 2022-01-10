@@ -450,6 +450,9 @@ def test_schemakey_roundtrip():
     ]
     with pytest.raises(pydantic.ValidationError):
         TempKlass(contributor=contributor)
+    contributor[0]["name"] = ", "
+    with pytest.raises(pydantic.ValidationError):
+        TempKlass(contributor=contributor)
     contributor[0]["name"] = "last, first"
     klassobj = TempKlass(contributor=contributor)
     assert all([isinstance(val, Person) for val in klassobj.contributor])
