@@ -1,3 +1,35 @@
+# 0.5.0 (Tue Jan 11 2022)
+
+#### 🚀 Enhancement
+
+- fixing to_datacite: more flexible for urls [#107](https://github.com/dandi/dandischema/pull/107) ([@djarecka](https://github.com/djarecka) [@satra](https://github.com/satra))
+
+#### 🐛 Bug Fix
+
+- Add dandi:dandi-zarr-checksum digest [#108](https://github.com/dandi/dandischema/pull/108) ([@dchiquito](https://github.com/dchiquito) [@satra](https://github.com/satra))
+- fix: raise validation error on mismatched name [#97](https://github.com/dandi/dandischema/pull/97) ([@satra](https://github.com/satra))
+- fix: allows aggregation after discarding path extensions [#105](https://github.com/dandi/dandischema/pull/105) ([@satra](https://github.com/satra))
+- fix: address pydantic issue to make value required [#106](https://github.com/dandi/dandischema/pull/106) ([@satra](https://github.com/satra))
+- Update versioningit version [#103](https://github.com/dandi/dandischema/pull/103) ([@jwodder](https://github.com/jwodder))
+
+#### 🏠 Internal
+
+- Remove duplicate "requests" dependency [#101](https://github.com/dandi/dandischema/pull/101) ([@jwodder](https://github.com/jwodder))
+- Update codecov action to v2 [#95](https://github.com/dandi/dandischema/pull/95) ([@jwodder](https://github.com/jwodder))
+
+#### 🧪 Tests
+
+- Test against Python 3.10 [#99](https://github.com/dandi/dandischema/pull/99) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 4
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- Dorota Jarecka ([@djarecka](https://github.com/djarecka))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.4.3 (Thu Oct 07 2021)
 
 #### 🐛 Bug Fix
