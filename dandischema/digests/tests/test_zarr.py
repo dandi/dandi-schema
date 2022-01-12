@@ -7,6 +7,7 @@ from dandischema.digests.zarr import (
     ZarrChecksumListing,
     ZarrChecksums,
     ZarrJSONChecksumSerializer,
+    get_checksum,
 )
 
 
@@ -107,3 +108,43 @@ def test_zarr_deserialize():
         ),
         md5="c",
     )
+
+
+@pytest.mark.parametrize(
+    "files,directories,checksum",
+    [
+        ({}, {}, "481a2f77ab786a0f45aafd5db0971caa"),
+        (
+            {"foo/bar": "a"},
+            {},
+            "cdcfdfca3622e20df03219273872549e",
+        ),
+        (
+            {},
+            {"foo/bar": "a"},
+            "243aca82c6872222747183dd738b6fcb",
+        ),
+        (
+            {"foo/bar": "a", "foo/baz": "b"},
+            {},
+            "785295076ae9156b363e442ef6d485e0",
+        ),
+        (
+            {},
+            {"foo/bar": "a", "foo/baz": "b"},
+            "ebca8bb8e716237e0f71657d1045930f",
+        ),
+        (
+            {},
+            {"foo/baz": "b", "foo/bar": "a"},
+            "ebca8bb8e716237e0f71657d1045930f",
+        ),
+        (
+            {"foo/baz": "a"},
+            {"foo/bar": "b"},
+            "9c34644ba03b7e9f58ebd1caef4215ad",
+        ),
+    ],
+)
+def test_zarr_get_checksum(files, directories, checksum):
+    assert get_checksum(files=files, directories=directories) == checksum

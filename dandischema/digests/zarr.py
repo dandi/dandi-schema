@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pydantic
 
@@ -119,6 +119,7 @@ class ZarrJSONChecksumSerializer:
 
         This method wraps aggregate_checksum and should not be overridden.
         """
+        print(files)
         if checksums is None:
             checksums = ZarrChecksums(
                 files=files if files is not None else [],
@@ -134,3 +135,14 @@ class ZarrJSONChecksumSerializer:
 # S3. However, an empty zarr file still needs to have a checksum, even if it has no checksum file.
 # For convenience, we define this constant as the "null" checksum.
 EMPTY_CHECKSUM = ZarrJSONChecksumSerializer().generate_listing(ZarrChecksums()).md5
+
+
+def get_checksum(files: Dict[str, str], directories: Dict[str, str]) -> str:
+    """Calculate the checksum of a directory."""
+    checksum_listing = ZarrJSONChecksumSerializer().generate_listing(
+        files=sorted([ZarrChecksum(md5=md5, path=path) for path, md5 in files.items()]),
+        directories=sorted(
+            [ZarrChecksum(md5=md5, path=path) for path, md5 in directories.items()]
+        ),
+    )
+    return checksum_listing.md5
