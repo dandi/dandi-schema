@@ -7,7 +7,7 @@ import pydantic
 
 
 """Passed to the json() method of pydantic models for serialization."""
-ENCODING_KWARGS = {'separators': (',', ':')}
+ENCODING_KWARGS = {"separators": (",", ":")}
 
 
 class ZarrChecksum(pydantic.BaseModel):
@@ -44,7 +44,7 @@ class ZarrChecksums(pydantic.BaseModel):
         for i in range(0, len(checksums)):
             if checksums[i].path == checksum.path:
                 return i
-        raise ValueError('Not found')
+        raise ValueError("Not found")
 
     def add_file_checksums(self, checksums: List[ZarrChecksum]):
         for new_checksum in checksums:
@@ -58,14 +58,18 @@ class ZarrChecksums(pydantic.BaseModel):
         """Add a list of directory checksums to the listing."""
         for new_checksum in checksums:
             try:
-                self.directories[self._index(self.directories, new_checksum)] = new_checksum
+                self.directories[
+                    self._index(self.directories, new_checksum)
+                ] = new_checksum
             except ValueError:
                 self.directories.append(new_checksum)
         self.directories = sorted(self.directories)
 
     def remove_checksums(self, paths: List[str]):
         """Remove a list of paths from the listing."""
-        self.files = sorted(filter(lambda checksum: checksum.path not in paths, self.files))
+        self.files = sorted(
+            filter(lambda checksum: checksum.path not in paths, self.files)
+        )
         self.directories = sorted(
             filter(lambda checksum: checksum.path not in paths, self.directories)
         )
@@ -89,7 +93,7 @@ class ZarrJSONChecksumSerializer:
         # content = json.dumps([asdict(zarr_md5) for zarr_md5 in checksums], separators=(',', ':'))0
         content = checksums.json(**ENCODING_KWARGS)
         h = hashlib.md5()
-        h.update(content.encode('utf-8'))
+        h.update(content.encode("utf-8"))
         return h.hexdigest()
 
     def serialize(self, zarr_checksum_listing: ZarrChecksumListing) -> str:
