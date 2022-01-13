@@ -423,6 +423,12 @@ class Contributor(DandiBaseModel):
         description="Identifier associated with a sponsored or gift award.",
         nskey="dandi",
     )
+    orcidID: Optional[Identifier] = Field(
+        None,
+        title="Orcid ID",
+        description="Orcid ID....",
+        nskey="dandi",
+    )
 
 
 class Organization(Contributor):
