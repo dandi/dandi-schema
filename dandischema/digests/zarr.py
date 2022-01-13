@@ -121,11 +121,10 @@ class ZarrJSONChecksumSerializer:
 
         This method wraps aggregate_checksum and should not be overridden.
         """
-        print(files)
         if checksums is None:
             checksums = ZarrChecksums(
-                files=files if files is not None else [],
-                directories=directories if directories is not None else [],
+                files=sorted(files) if files is not None else [],
+                directories=sorted(directories) if directories is not None else [],
             )
         return ZarrChecksumListing(
             checksums=checksums,
@@ -142,9 +141,9 @@ EMPTY_CHECKSUM = ZarrJSONChecksumSerializer().generate_listing(ZarrChecksums()).
 def get_checksum(files: Dict[str, str], directories: Dict[str, str]) -> str:
     """Calculate the checksum of a directory."""
     checksum_listing = ZarrJSONChecksumSerializer().generate_listing(
-        files=sorted([ZarrChecksum(md5=md5, path=path) for path, md5 in files.items()]),
-        directories=sorted(
-            [ZarrChecksum(md5=md5, path=path) for path, md5 in directories.items()]
-        ),
+        files=[ZarrChecksum(md5=md5, path=path) for path, md5 in files.items()],
+        directories=[
+            ZarrChecksum(md5=md5, path=path) for path, md5 in directories.items()
+        ],
     )
     return checksum_listing.md5
