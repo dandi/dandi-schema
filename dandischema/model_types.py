@@ -79,6 +79,12 @@ DigestTypeDict = {
             "rdfs:comment": "S3-style ETag",
             "rdfs:label": "DANDI ETag",
         },
+        {
+            "@id": "dandi:dandi-zarr-checksum",
+            "@type": "dandi:DigestType",
+            "rdfs:comment": "DANDI Zarr checksum",
+            "rdfs:label": "DANDI Zarr",
+        },
     ]
 }
 

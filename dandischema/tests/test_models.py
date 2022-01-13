@@ -225,6 +225,7 @@ def test_asset_digest():
                 "blake2b_256": "dandi:blake2b-256",
                 "blake3": "dandi:blake3",
                 "dandi_etag": "dandi:dandi-etag",
+                "dandi_zarr_checksum": "dandi:dandi-zarr-checksum",
             },
         ),
         (
@@ -447,6 +448,9 @@ def test_schemakey_roundtrip():
             "includeInCitation": True,
         },
     ]
+    with pytest.raises(pydantic.ValidationError):
+        TempKlass(contributor=contributor)
+    contributor[0]["name"] = ", "
     with pytest.raises(pydantic.ValidationError):
         TempKlass(contributor=contributor)
     contributor[0]["name"] = "last, first"
