@@ -18,6 +18,93 @@ def test_zarr_checksum_sort_order():
     assert sorted([b, a]) == [a, b]
 
 
+# ZarrChecksums tests
+
+
+def test_zarr_checkums_is_empty():
+    assert ZarrChecksums(directories=[], files=[]).is_empty
+    assert not ZarrChecksums(
+        directories=[ZarrChecksum(md5="md5", path="path")], files=[]
+    ).is_empty
+    assert not ZarrChecksums(
+        directories=[], files=[ZarrChecksum(md5="md5", path="path")]
+    ).is_empty
+
+
+a = ZarrChecksum(path="a", md5="a")
+b = ZarrChecksum(path="b", md5="b")
+c = ZarrChecksum(path="c", md5="c")
+
+
+@pytest.mark.parametrize(
+    ("initial", "new_checksums", "expected"),
+    [
+        ([], [], []),
+        ([a], [], [a]),
+        ([], [a], [a]),
+        ([a], [a], [a]),
+        ([b], [a], [a, b]),
+        ([a, c], [b], [a, b, c]),
+        ([b], [c, a], [a, b, c]),
+    ],
+)
+def test_zarr_checkums_add_file_checksums(initial, new_checksums, expected):
+    checksums = ZarrChecksums(directories=[], files=initial)
+    checksums.add_file_checksums(new_checksums)
+    assert checksums.files == expected
+    assert checksums.directories == []
+
+
+@pytest.mark.parametrize(
+    ("initial", "new_checksums", "expected"),
+    [
+        ([], [], []),
+        ([a], [], [a]),
+        ([], [a], [a]),
+        ([a], [a], [a]),
+        ([b], [a], [a, b]),
+        ([a, c], [b], [a, b, c]),
+        ([b], [c, a], [a, b, c]),
+    ],
+)
+def test_zarr_checkums_add_directory_checksums(initial, new_checksums, expected):
+    checksums = ZarrChecksums(directories=initial, files=[])
+    checksums.add_directory_checksums(new_checksums)
+    assert checksums.directories == expected
+    assert checksums.files == []
+
+
+@pytest.mark.parametrize(
+    (
+        "initial_files",
+        "initial_directories",
+        "removed_checksums",
+        "expected_files",
+        "expected_directories",
+    ),
+    [
+        ([], [], [], [], []),
+        ([a], [], ["a"], [], []),
+        ([], [a], ["a"], [], []),
+        ([a], [b], ["a"], [], [b]),
+        ([a], [b], ["b"], [a], []),
+        ([a, b, c], [], ["b"], [a, c], []),
+        ([], [a, b, c], ["b"], [], [a, c]),
+    ],
+)
+def test_zarr_checkums_remove_checksums(
+    initial_files,
+    initial_directories,
+    removed_checksums,
+    expected_files,
+    expected_directories,
+):
+    checksums = ZarrChecksums(files=initial_files, directories=initial_directories)
+    checksums.remove_checksums(removed_checksums)
+    assert checksums.files == expected_files
+    assert checksums.directories == expected_directories
+
+
 # ZarrJSONChecksumSerializer tests
 
 
