@@ -42,7 +42,7 @@ class ZarrChecksums(pydantic.BaseModel):
         return self.files == [] and self.directories == []
 
     def _index(self, checksums: List[ZarrChecksum], checksum: ZarrChecksum):
-        # O(n) performance, consider an ordered dict for optimization
+        # O(n) performance, consider using the bisect module or an ordered dict for optimization
         for i in range(0, len(checksums)):
             if checksums[i].path == checksum.path:
                 return i
