@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import total_ordering
 import hashlib
 from typing import Dict, List, Optional
 
@@ -10,6 +11,7 @@ import pydantic
 ENCODING_KWARGS = {"separators": (",", ":")}
 
 
+@total_ordering
 class ZarrChecksum(pydantic.BaseModel):
     """
     A checksum for a single file/directory in a zarr file.
