@@ -103,6 +103,58 @@ def test_asset_digest():
     assert "Digest is missing sha2_256 value" not in set(
         [el["msg"] for el in exc.value.errors()]
     )
+    digest_type = "dandi_zarr_checksum"
+    digest = 33 * "a"
+    digest_model = {models.DigestType[digest_type]: digest}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "Digest must have an appropriate dandi-zarr-checksum value." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest = 32 * "a"
+    digest_model = {models.DigestType[digest_type]: digest}
+    models.BareAsset(
+        contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+    )
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        )
+    assert all(
+        [
+            "field required" in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest_model = {
+        models.DigestType[digest_type]: digest,
+        models.DigestType.dandi_etag: digest + "-1",
+    }
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "Digest cannot have both etag and zarr checksums." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "Digest cannot have both etag and zarr checksums." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
 
 
 @pytest.mark.parametrize(

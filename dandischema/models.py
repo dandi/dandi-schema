@@ -1116,19 +1116,38 @@ class BareAsset(CommonModel):
     }
 
     @validator("digest")
-    def digest_etag(cls, values):
-        try:
-            digest = values[DigestType.dandi_etag]
-            if "-" not in digest or len(digest.split("-")[0]) != 32:
-                raise ValueError
-        except KeyError:
-            raise ValueError("Digest is missing dandi-etag value.")
-        except ValueError:
-            raise ValueError(
-                f"Digest must have an appropriate dandi-etag value. "
-                f"Got {values[DigestType.dandi_etag]}"
-            )
-        return values
+    def digest_check(cls, values):
+        digest = values.get(DigestType.dandi_etag, None)
+        if digest is not None:
+            try:
+                if "-" not in digest or len(digest.split("-")[0]) != 32:
+                    raise ValueError
+            except KeyError:
+                raise ValueError("Digest is missing dandi-etag value.")
+            except ValueError:
+                raise ValueError(
+                    f"Digest must have an appropriate dandi-etag value. "
+                    f"Got {values[DigestType.dandi_etag]}"
+                )
+            if values.get(DigestType.dandi_zarr_checksum, None) is not None:
+                raise ValueError("Digest cannot have both etag and zarr checksums.")
+            return values
+        digest = values.get(DigestType.dandi_zarr_checksum, None)
+        if digest is not None:
+            try:
+                if len(digest) != 32:
+                    raise ValueError
+            except KeyError:
+                raise ValueError("Digest is missing dandi-zarr-checksum value.")
+            except ValueError:
+                raise ValueError(
+                    f"Digest must have an appropriate dandi-zarr-checksum value. "
+                    f"Got {values[DigestType.dandi_zarr_checksum]}"
+                )
+            if values.get(DigestType.dandi_etag, None) is not None:
+                raise ValueError("Digest cannot have both etag and zarr checksums.")
+            return values
+        raise ValueError("Asset has no digest.")
 
 
 class Asset(BareAsset):
@@ -1191,17 +1210,39 @@ class PublishedAsset(Asset, Publishable):
     schemaKey = "Asset"
 
     @validator("digest")
-    def digest_bothhashes(cls, values):
-        try:
-            digest = values[DigestType.dandi_etag]
-            if "-" not in digest or len(digest.split("-")[0]) != 32:
-                raise ValueError("Digest is missing dandi-etag value")
-            digest = values[DigestType.sha2_256]
-            if len(digest) != 64:
-                raise ValueError("Digest is missing sha2_256 value")
-        except KeyError:
-            raise ValueError("Digest is missing dandi-etag or sha256 keys.")
-        return values
+    def digest_allhashes(cls, values):
+        digest = values.get(DigestType.dandi_etag, None)
+        if digest is not None:
+            try:
+                if "-" not in digest or len(digest.split("-")[0]) != 32:
+                    raise ValueError("Digest is missing dandi-etag value")
+                digest = values[DigestType.sha2_256]
+                if len(digest) != 64:
+                    raise ValueError("Digest is missing sha2_256 value")
+            except KeyError:
+                raise ValueError("Digest is missing dandi-etag or sha256 keys.")
+            if values.get(DigestType.dandi_zarr_checksum, None) is not None:
+                raise ValueError("Digest cannot have both etag and zarr checksums.")
+            return values
+        digest = values.get(DigestType.dandi_zarr_checksum, None)
+        if digest is not None:
+            try:
+                if len(digest) != 32:
+                    raise ValueError
+            except KeyError:
+                raise ValueError("Digest is missing dandi-zarr-checksum value.")
+            except ValueError:
+                raise ValueError(
+                    f"Digest must have an appropriate dandi-zarr-checksum value. "
+                    f"Got {values[DigestType.dandi_zarr_checksum]}"
+                )
+            if (
+                values.get(DigestType.dandi_etag, None) is not None
+                or values.get(DigestType.sha2_256, None) is not None
+            ):
+                raise ValueError("Digest cannot have both etag and zarr checksums.")
+            return values
+        raise ValueError("PublishedAsset has no required digests.")
 
 
 def get_schema_version():
