@@ -8,11 +8,13 @@ import pytest
 from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
+    AccessRequirements,
     AccessType,
     Affiliation,
     AgeReferenceType,
     Asset,
     BaseType,
+    CommonModel,
     DandiBaseModel,
     Dandiset,
     DigestType,
@@ -164,7 +166,7 @@ def test_asset_digest():
             AccessType,
             {
                 "OpenAccess": "dandi:OpenAccess",
-                # "EmbargoedAccess": "dandi:EmbargoedAccess",
+                "EmbargoedAccess": "dandi:EmbargoedAccess",
                 # "RestrictedAccess": "dandi:RestrictedAccess",
             },
         ),
@@ -567,3 +569,15 @@ def test_propertyvalue_json():
         "required"
     ]
     assert "value" == reqprops[1]
+
+
+def test_embargoedaccess():
+    with pytest.raises(pydantic.ValidationError):
+        CommonModel(access=[AccessRequirements(status=AccessType.EmbargoedAccess)])
+    CommonModel(
+        access=[
+            AccessRequirements(
+                status=AccessType.EmbargoedAccess, embargoedUntil="2022-12-31"
+            )
+        ]
+    )

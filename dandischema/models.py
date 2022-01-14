@@ -91,7 +91,6 @@ def split_name(name):
 
 if len(AccessTypeDict["@graph"]) > 2:
     AccessTypeDict["@graph"].pop()
-    AccessTypeDict["@graph"].pop()
 AccessType = create_enum(AccessTypeDict)
 AgeReferenceType = create_enum(AgeReferenceTypeDict)
 RoleType = create_enum(RoleTypeDict)
@@ -606,17 +605,15 @@ class AccessRequirements(DandiBaseModel):
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
-    """
-    # TODO: Enable when embargoed access is supported.
     @root_validator
     def open_or_embargoed(cls, values):
         status, embargoed = values.get("status"), values.get("embargoedUntil")
         if status == AccessType.EmbargoedAccess and embargoed is None:
-            raise ValueError("An embargo date. For NIH supported awards, this "
-            "must comply with NIH policy. For other datasets, this will be at "
-            "most a year from the dandiset creation.")
+            raise ValueError(
+                "An embargo end date is required for NIH awards that "
+                "complies with NIH resource sharing policy."
+            )
         return values
-    """
 
 
 class AssetsSummary(DandiBaseModel):
@@ -951,6 +948,7 @@ class CommonModel(DandiBaseModel):
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
         nskey="dandi",
+        readOnly=True,
     )
     url: Optional[HttpUrl] = Field(
         None, readOnly=True, description="permalink to the item", nskey="schema"
