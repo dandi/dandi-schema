@@ -222,6 +222,7 @@ def test_datacite(dandi_id, schema):
         ),
         # additional contributor with 2 roles: Author and Software (doesn't exist in datacite)
         # the person should be in creators and contributors (with contributorType Other)
+        # Adding Orcid ID to the identifier to one of the contributors
         (
             {
                 "contributor": [
@@ -231,6 +232,7 @@ def test_datacite(dandi_id, schema):
                             RoleType("dcite:Author"),
                             RoleType("dcite:Software"),
                         ],
+                        "identifier": "0000-0001-0000-0000"
                     },
                     {
                         "name": "B_last, B_first",
@@ -239,10 +241,22 @@ def test_datacite(dandi_id, schema):
                 ],
             },
             {
-                "creators": (1, {"name": "A_last, A_first"}),
+                "creators": (1, {"name": "A_last, A_first",
+                                 'nameIdentifiers': [{
+                                     "nameIdentifier": "0000-0001-0000-0000",
+                                     "nameIdentifierScheme": "ORCID",
+                                     "schemeUri": "https://orcid.org/",
+                                 }],
+                                 }),
                 "contributors": (
                     2,
-                    {"name": "A_last, A_first", "contributorType": "Other"},
+                    {"name": "A_last, A_first", "contributorType": "Other",
+                     'nameIdentifiers': [{
+                         "nameIdentifier": "0000-0001-0000-0000",
+                         "nameIdentifierScheme": "ORCID",
+                         "schemeUri": "https://orcid.org/",
+                     }],
+                     },
                 ),
             },
         ),
