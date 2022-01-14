@@ -157,6 +157,27 @@ def test_asset_digest():
             for val in set([el["msg"] for el in exc.value.errors()])
         ]
     )
+    digest_model = {}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "Asset has no digest." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        )
+    assert any(
+        [
+            "Asset has no digest." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
 
 
 @pytest.mark.parametrize(

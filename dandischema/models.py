@@ -1133,8 +1133,6 @@ class BareAsset(CommonModel):
                     f"Digest must have an appropriate dandi-zarr-checksum value. "
                     f"Got {values[DigestType.dandi_zarr_checksum]}"
                 )
-            if values.get(DigestType.dandi_etag, None) is not None:
-                raise ValueError("Digest cannot have both etag and zarr checksums.")
             return values
         raise ValueError("Asset has no digest.")
 
@@ -1217,13 +1215,7 @@ class PublishedAsset(Asset, Publishable):
                     f"Digest must have an appropriate dandi-zarr-checksum value. "
                     f"Got {values[DigestType.dandi_zarr_checksum]}"
                 )
-            if (
-                values.get(DigestType.dandi_etag, None) is not None
-                or values.get(DigestType.sha2_256, None) is not None
-            ):
-                raise ValueError("Digest cannot have both etag and zarr checksums.")
             return values
-        raise ValueError("PublishedAsset has no required digests.")
 
 
 def get_schema_version():
