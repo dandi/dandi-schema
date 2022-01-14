@@ -1204,8 +1204,8 @@ class PublishedAsset(Asset, Publishable):
         if digest is not None:
             if not re.match(DandiETag.REGEX, digest):
                 raise ValueError("Digest is missing dandi-etag value")
-            digest = values[DigestType.sha2_256]
-            if len(digest) != 64:
+            digest = values.get(DigestType.sha2_256, None)
+            if digest is None or len(digest) != 64:
                 raise ValueError("Digest is missing sha2_256 value")
             if values.get(DigestType.dandi_zarr_checksum, None) is not None:
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
