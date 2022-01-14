@@ -1118,7 +1118,7 @@ class BareAsset(CommonModel):
     def digest_check(cls, values):
         digest = values.get(DigestType.dandi_etag, None)
         if digest is not None:
-            if not re.match(DandiETag.REGEX, digest):
+            if not re.fullmatch(DandiETag.REGEX, digest):
                 raise ValueError(
                     f"Digest must have an appropriate dandi-etag value. "
                     f"Got {values[DigestType.dandi_etag]}"
@@ -1202,7 +1202,7 @@ class PublishedAsset(Asset, Publishable):
     def digest_allhashes(cls, values):
         digest = values.get(DigestType.dandi_etag, None)
         if digest is not None:
-            if not re.match(DandiETag.REGEX, digest):
+            if not re.fullmatch(DandiETag.REGEX, digest):
                 raise ValueError("Digest is missing dandi-etag value")
             digest = values.get(DigestType.sha2_256, None)
             if digest is None or len(digest) != 64:
