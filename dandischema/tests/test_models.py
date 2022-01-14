@@ -54,9 +54,8 @@ def test_asset_digest():
             for val in set([el["msg"] for el in exc.value.errors()])
         ]
     )
-    digest_type = "dandi_etag"
     digest = 32 * "a"
-    digest_model = {models.DigestType[digest_type]: digest}
+    digest_model = {models.DigestType.dandi_etag: digest}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
@@ -68,11 +67,11 @@ def test_asset_digest():
         ]
     )
     digest = 32 * "a" + "-1"
-    digest_model = {models.DigestType[digest_type]: digest}
+    digest_model = {models.DigestType.dandi_etag: digest}
     models.BareAsset(
         contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
     )
-    digest_model = {models.DigestType[digest_type]: digest, "sha1": ""}
+    digest_model = {models.DigestType.dandi_etag: digest, "sha1": ""}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
@@ -84,33 +83,49 @@ def test_asset_digest():
         ]
     )
     digest_model = {
-        models.DigestType[digest_type]: digest,
+        models.DigestType.dandi_etag: digest,
         models.DigestType.sha2_256: 63 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
-    assert "Digest is missing sha2_256 value" in set(
-        [el["msg"] for el in exc.value.errors()]
+    assert any(
+        "Digest must have an appropriate sha2_256 value." in el["msg"]
+        for el in exc.value.errors()
     )
     digest_model = {
-        models.DigestType[digest_type]: digest,
+        models.DigestType.dandi_etag: digest,
         models.DigestType.sha2_256: 64 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
-    assert "Digest is missing sha2_256 value" not in set(
-        [el["msg"] for el in exc.value.errors()]
+    assert not any(
+        "Digest must have an appropriate dandi-etag value." in el["msg"]
+        for el in exc.value.errors()
     )
-    digest_type = "dandi_zarr_checksum"
+    digest_model = {
+        models.DigestType.dandi_etag: digest,
+    }
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert any(
+        "A non-zarr asset must have a sha2_256." in el["msg"]
+        for el in exc.value.errors()
+    )
+
     digest = 33 * "a"
-    digest_model = {models.DigestType[digest_type]: digest}
+    digest_model = {models.DigestType.dandi_zarr_checksum: digest}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
-            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
         )
     assert any(
         [
@@ -119,13 +134,19 @@ def test_asset_digest():
         ]
     )
     digest = 32 * "a"
-    digest_model = {models.DigestType[digest_type]: digest}
+    digest_model = {models.DigestType.dandi_zarr_checksum: digest}
     models.BareAsset(
-        contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+        contentSize=100,
+        encodingFormat="application/x-zarr",
+        digest=digest_model,
+        path="/",
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
-            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
         )
     assert all(
         [
@@ -134,12 +155,15 @@ def test_asset_digest():
         ]
     )
     digest_model = {
-        models.DigestType[digest_type]: digest,
+        models.DigestType.dandi_zarr_checksum: digest,
         models.DigestType.dandi_etag: digest + "-1",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
-            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
         )
     assert any(
         [
@@ -149,7 +173,10 @@ def test_asset_digest():
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
-            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
         )
     assert any(
         [
@@ -160,21 +187,27 @@ def test_asset_digest():
     digest_model = {}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
-            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
         )
     assert any(
         [
-            "Asset has no digest." in val
+            "A zarr asset must have a zarr checksum." in val
             for val in set([el["msg"] for el in exc.value.errors()])
         ]
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
-            contentSize=100, encodingFormat="zarr", digest=digest_model, path="/"
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
         )
     assert any(
         [
-            "Asset has no digest." in val
+            "A zarr asset must have a zarr checksum." in val
             for val in set([el["msg"] for el in exc.value.errors()])
         ]
     )

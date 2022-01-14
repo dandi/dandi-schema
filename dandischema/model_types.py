@@ -19,14 +19,17 @@ AccessTypeDict = {
             "rdfs:comment": "The dandiset is embargoed",
             "rdfs:label": "Embargoed",
         },
-        {
-            "@id": "dandi:RestrictedAccess",
-            "@type": "dandi:AccessType",
-            "rdfs:comment": "The dandiset is restricted",
-            "rdfs:label": "Restricted",
-        },
     ]
 }
+"""
+Uncomment and add to accesstype dict when restricted access is implemented
+{
+    "@id": "dandi:RestrictedAccess",
+    "@type": "dandi:AccessType",
+    "rdfs:comment": "The dandiset is restricted",
+    "rdfs:label": "Restricted",
+},
+"""
 
 DigestTypeDict = {
     "@graph": [
