@@ -21,6 +21,7 @@ from pydantic import (
 from pydantic.main import ModelMetaclass
 
 from .consts import DANDI_SCHEMA_VERSION
+from .digests.dandietag import DandiETag
 from .model_types import (
     AccessTypeDict,
     AgeReferenceTypeDict,
@@ -190,12 +191,12 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         def schema_extra(schema: Dict[str, Any], model) -> None:
             if schema["title"] == "PropertyValue":
                 schema["required"] = sorted(
-                    list(set(["value"]).union(schema.get("required", [])))
+                    set(["value"]).union(schema.get("required", []))
                 )
             schema["title"] = name2title(schema["title"])
             if schema["type"] == "object":
                 schema["required"] = sorted(
-                    list(set(schema.get("required", [])).union(["schemaKey"]))
+                    set(schema.get("required", [])).union(["schemaKey"])
                 )
             for prop, value in schema.get("properties", {}).items():
                 if schema["title"] == "Person":
@@ -1117,12 +1118,7 @@ class BareAsset(CommonModel):
     def digest_check(cls, values):
         digest = values.get(DigestType.dandi_etag, None)
         if digest is not None:
-            try:
-                if "-" not in digest or len(digest.split("-")[0]) != 32:
-                    raise ValueError
-            except KeyError:
-                raise ValueError("Digest is missing dandi-etag value.")
-            except ValueError:
+            if not re.match(DandiETag.REGEX, digest):
                 raise ValueError(
                     f"Digest must have an appropriate dandi-etag value. "
                     f"Got {values[DigestType.dandi_etag]}"
@@ -1132,12 +1128,7 @@ class BareAsset(CommonModel):
             return values
         digest = values.get(DigestType.dandi_zarr_checksum, None)
         if digest is not None:
-            try:
-                if len(digest) != 32:
-                    raise ValueError
-            except KeyError:
-                raise ValueError("Digest is missing dandi-zarr-checksum value.")
-            except ValueError:
+            if len(digest) != 32:
                 raise ValueError(
                     f"Digest must have an appropriate dandi-zarr-checksum value. "
                     f"Got {values[DigestType.dandi_zarr_checksum]}"
@@ -1211,25 +1202,17 @@ class PublishedAsset(Asset, Publishable):
     def digest_allhashes(cls, values):
         digest = values.get(DigestType.dandi_etag, None)
         if digest is not None:
-            try:
-                if "-" not in digest or len(digest.split("-")[0]) != 32:
-                    raise ValueError("Digest is missing dandi-etag value")
-                digest = values[DigestType.sha2_256]
-                if len(digest) != 64:
-                    raise ValueError("Digest is missing sha2_256 value")
-            except KeyError:
-                raise ValueError("Digest is missing dandi-etag or sha256 keys.")
+            if not re.match(DandiETag.REGEX, digest):
+                raise ValueError("Digest is missing dandi-etag value")
+            digest = values[DigestType.sha2_256]
+            if len(digest) != 64:
+                raise ValueError("Digest is missing sha2_256 value")
             if values.get(DigestType.dandi_zarr_checksum, None) is not None:
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
             return values
         digest = values.get(DigestType.dandi_zarr_checksum, None)
         if digest is not None:
-            try:
-                if len(digest) != 32:
-                    raise ValueError
-            except KeyError:
-                raise ValueError("Digest is missing dandi-zarr-checksum value.")
-            except ValueError:
+            if len(digest) != 32:
                 raise ValueError(
                     f"Digest must have an appropriate dandi-zarr-checksum value. "
                     f"Got {values[DigestType.dandi_zarr_checksum]}"
