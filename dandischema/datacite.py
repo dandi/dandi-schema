@@ -140,9 +140,9 @@ def to_datacite(
                 ]
             else:
                 contr_dict["affiliation"] = []
-            if getattr(contr_el, "orcidID"):
+            if getattr(contr_el, "identifier"):
                 orcid_dict = {
-                    "nameIdentifier": contr_el.orcidID,
+                    "nameIdentifier": contr_el.identifier,
                     "nameIdentifierScheme": "ORCID",
                     "schemeUri": "https://orcid.org/",
                 }
