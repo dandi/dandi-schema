@@ -190,13 +190,13 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model) -> None:
             if schema["title"] == "PropertyValue":
-                schema["required"] = list(
-                    set(["value"]).union(schema.get("required", []))
+                schema["required"] = sorted(
+                    list(set(["value"]).union(schema.get("required", [])))
                 )
             schema["title"] = name2title(schema["title"])
             if schema["type"] == "object":
-                schema["required"] = list(
-                    set(schema.get("required", [])).union(["schemaKey"])
+                schema["required"] = sorted(
+                    list(set(schema.get("required", [])).union(["schemaKey"]))
                 )
             for prop, value in schema.get("properties", {}).items():
                 if schema["title"] == "Person":

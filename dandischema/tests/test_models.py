@@ -514,4 +514,4 @@ def test_propertyvalue_json():
     reqprops = json.loads(PropertyValue.schema_json())["definitions"]["PropertyValue"][
         "required"
     ]
-    assert "value" in reqprops
+    assert "value" == reqprops[1]
