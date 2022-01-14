@@ -458,6 +458,21 @@ def test_schemakey_roundtrip():
     assert all([isinstance(val, Person) for val in klassobj.contributor])
 
 
+@pytest.mark.parametrize("name", ["Mitášová, Helena", "O'Brien, Claire"])
+def test_name_regex(name):
+    class TempKlass(DandiBaseModel):
+        contributor: Person
+
+    contributor = {
+        "name": name,
+        "roleName": [],
+        "schemaKey": "Person",
+        "affiliation": [],
+        "includeInCitation": True,
+    }
+    TempKlass(contributor=contributor)
+
+
 def test_resource():
     with pytest.raises(pydantic.ValidationError):
         Resource(relation=RelationType.IsCitedBy)
