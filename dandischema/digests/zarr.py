@@ -6,7 +6,6 @@ from typing import Dict, List, Optional
 
 import pydantic
 
-
 """Passed to the json() method of pydantic models for serialization."""
 ENCODING_KWARGS = {"separators": (",", ":")}
 
@@ -140,6 +139,8 @@ EMPTY_CHECKSUM = ZarrJSONChecksumSerializer().generate_listing(ZarrChecksums()).
 
 def get_checksum(files: Dict[str, str], directories: Dict[str, str]) -> str:
     """Calculate the checksum of a directory."""
+    if not files and not directories:
+        raise ValueError("Cannot compute a Zarr checksum for an empty directory")
     checksum_listing = ZarrJSONChecksumSerializer().generate_listing(
         files=[ZarrChecksum(md5=md5, path=path) for path, md5 in files.items()],
         directories=[

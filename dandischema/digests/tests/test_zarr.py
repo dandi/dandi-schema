@@ -200,7 +200,6 @@ def test_zarr_deserialize():
 @pytest.mark.parametrize(
     "files,directories,checksum",
     [
-        ({}, {}, "481a2f77ab786a0f45aafd5db0971caa"),
         (
             {"foo/bar": "a"},
             {},
@@ -235,3 +234,8 @@ def test_zarr_deserialize():
 )
 def test_zarr_get_checksum(files, directories, checksum):
     assert get_checksum(files=files, directories=directories) == checksum
+
+
+def test_zarr_get_checksum_empty():
+    with pytest.raises(ValueError):
+        get_checksum(files={}, directories={})
