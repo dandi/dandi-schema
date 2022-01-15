@@ -1206,7 +1206,7 @@ class PublishedAsset(Asset, Publishable):
             digest = v.get(DigestType.sha2_256)
             if not re.fullmatch(SHA256_PATTERN, digest):
                 raise ValueError(
-                    f"Digest must have an appropriate sha2_256 value. " f"Got {digest}"
+                    f"Digest must have an appropriate sha2_256 value. Got {digest}"
                 )
         return v
 
