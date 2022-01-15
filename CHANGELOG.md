@@ -1,3 +1,21 @@
+# 0.5.1 (Sat Jan 15 2022)
+
+#### 🐛 Bug Fix
+
+- Various edge case fixes [#112](https://github.com/dandi/dandischema/pull/112) ([@satra](https://github.com/satra))
+- get_checksum(): Error on empty input [#113](https://github.com/dandi/dandischema/pull/113) ([@jwodder](https://github.com/jwodder))
+- adding Orcid ID to the contributors [#111](https://github.com/dandi/dandischema/pull/111) ([@djarecka](https://github.com/djarecka) [@satra](https://github.com/satra))
+- Zarr checksum calculation [#109](https://github.com/dandi/dandischema/pull/109) ([@dchiquito](https://github.com/dchiquito))
+
+#### Authors: 4
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- Dorota Jarecka ([@djarecka](https://github.com/djarecka))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.5.0 (Tue Jan 11 2022)
 
 #### 🚀 Enhancement
