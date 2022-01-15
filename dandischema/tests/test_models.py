@@ -8,11 +8,13 @@ import pytest
 from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
+    AccessRequirements,
     AccessType,
     Affiliation,
     AgeReferenceType,
     Asset,
     BaseType,
+    CommonModel,
     DandiBaseModel,
     Dandiset,
     DigestType,
@@ -52,9 +54,8 @@ def test_asset_digest():
             for val in set([el["msg"] for el in exc.value.errors()])
         ]
     )
-    digest_type = "dandi_etag"
     digest = 32 * "a"
-    digest_model = {models.DigestType[digest_type]: digest}
+    digest_model = {models.DigestType.dandi_etag: digest}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
@@ -66,11 +67,11 @@ def test_asset_digest():
         ]
     )
     digest = 32 * "a" + "-1"
-    digest_model = {models.DigestType[digest_type]: digest}
+    digest_model = {models.DigestType.dandi_etag: digest}
     models.BareAsset(
         contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
     )
-    digest_model = {models.DigestType[digest_type]: digest, "sha1": ""}
+    digest_model = {models.DigestType.dandi_etag: digest, "sha1": ""}
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
@@ -82,26 +83,133 @@ def test_asset_digest():
         ]
     )
     digest_model = {
-        models.DigestType[digest_type]: digest,
+        models.DigestType.dandi_etag: digest,
         models.DigestType.sha2_256: 63 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
-    assert "Digest is missing sha2_256 value" in set(
-        [el["msg"] for el in exc.value.errors()]
+    assert any(
+        "Digest must have an appropriate sha2_256 value." in el["msg"]
+        for el in exc.value.errors()
     )
     digest_model = {
-        models.DigestType[digest_type]: digest,
+        models.DigestType.dandi_etag: digest,
         models.DigestType.sha2_256: 64 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
-    assert "Digest is missing sha2_256 value" not in set(
-        [el["msg"] for el in exc.value.errors()]
+    assert not any(
+        "Digest must have an appropriate dandi-etag value." in el["msg"]
+        for el in exc.value.errors()
+    )
+    digest_model = {
+        models.DigestType.dandi_etag: digest,
+    }
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        )
+    assert any(
+        "A non-zarr asset must have a sha2_256." in el["msg"]
+        for el in exc.value.errors()
+    )
+
+    digest = 33 * "a"
+    digest_model = {models.DigestType.dandi_zarr_checksum: digest}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
+        )
+    assert any(
+        [
+            "Digest must have an appropriate dandi-zarr-checksum value." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest = 32 * "a"
+    digest_model = {models.DigestType.dandi_zarr_checksum: digest}
+    models.BareAsset(
+        contentSize=100,
+        encodingFormat="application/x-zarr",
+        digest=digest_model,
+        path="/",
+    )
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
+        )
+    assert all(
+        [
+            "field required" in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest_model = {
+        models.DigestType.dandi_zarr_checksum: digest,
+        models.DigestType.dandi_etag: digest + "-1",
+    }
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
+        )
+    assert any(
+        [
+            "Digest cannot have both etag and zarr checksums." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
+        )
+    assert any(
+        [
+            "Digest cannot have both etag and zarr checksums." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    digest_model = {}
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.BareAsset(
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
+        )
+    assert any(
+        [
+            "A zarr asset must have a zarr checksum." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
+    )
+    with pytest.raises(pydantic.ValidationError) as exc:
+        models.PublishedAsset(
+            contentSize=100,
+            encodingFormat="application/x-zarr",
+            digest=digest_model,
+            path="/",
+        )
+    assert any(
+        [
+            "A zarr asset must have a zarr checksum." in val
+            for val in set([el["msg"] for el in exc.value.errors()])
+        ]
     )
 
 
@@ -112,7 +220,7 @@ def test_asset_digest():
             AccessType,
             {
                 "OpenAccess": "dandi:OpenAccess",
-                # "EmbargoedAccess": "dandi:EmbargoedAccess",
+                "EmbargoedAccess": "dandi:EmbargoedAccess",
                 # "RestrictedAccess": "dandi:RestrictedAccess",
             },
         ),
@@ -458,6 +566,21 @@ def test_schemakey_roundtrip():
     assert all([isinstance(val, Person) for val in klassobj.contributor])
 
 
+@pytest.mark.parametrize("name", ["Mitášová, Helena", "O'Brien, Claire"])
+def test_name_regex(name):
+    class TempKlass(DandiBaseModel):
+        contributor: Person
+
+    contributor = {
+        "name": name,
+        "roleName": [],
+        "schemaKey": "Person",
+        "affiliation": [],
+        "includeInCitation": True,
+    }
+    TempKlass(contributor=contributor)
+
+
 def test_resource():
     with pytest.raises(pydantic.ValidationError):
         Resource(relation=RelationType.IsCitedBy)
@@ -499,4 +622,16 @@ def test_propertyvalue_json():
     reqprops = json.loads(PropertyValue.schema_json())["definitions"]["PropertyValue"][
         "required"
     ]
-    assert "value" in reqprops
+    assert "value" == reqprops[1]
+
+
+def test_embargoedaccess():
+    with pytest.raises(pydantic.ValidationError):
+        CommonModel(access=[AccessRequirements(status=AccessType.EmbargoedAccess)])
+    CommonModel(
+        access=[
+            AccessRequirements(
+                status=AccessType.EmbargoedAccess, embargoedUntil="2022-12-31"
+            )
+        ]
+    )

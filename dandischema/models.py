@@ -21,6 +21,7 @@ from pydantic import (
 from pydantic.main import ModelMetaclass
 
 from .consts import DANDI_SCHEMA_VERSION
+from .digests.dandietag import DandiETag
 from .model_types import (
     AccessTypeDict,
     AgeReferenceTypeDict,
@@ -45,13 +46,15 @@ if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
 
 
-NAME_PATTERN = r"^([\w\s\-]+),\s+([\w\s\-\.]+)$"
+NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
 UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 DANDI_DOI_PATTERN = r"^10.(48324|80507)/dandi\.\d{6}/\d+\.\d+\.\d+"
 DANDI_PUBID_PATTERN = r"^DANDI:\d{6}/\d+\.\d+\.\d+"
+MD5_PATTERN = r"[0-9a-f]{32}"
+SHA256_PATTERN = r"[0-9a-f]{64}"
 
 
 def create_enum(data):
@@ -89,9 +92,6 @@ def split_name(name):
     return " ".join(labels)
 
 
-if len(AccessTypeDict["@graph"]) > 2:
-    AccessTypeDict["@graph"].pop()
-    AccessTypeDict["@graph"].pop()
 AccessType = create_enum(AccessTypeDict)
 AgeReferenceType = create_enum(AgeReferenceTypeDict)
 RoleType = create_enum(RoleTypeDict)
@@ -190,13 +190,11 @@ class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model) -> None:
             if schema["title"] == "PropertyValue":
-                schema["required"] = list(
-                    set(["value"]).union(schema.get("required", []))
-                )
+                schema["required"] = sorted({"value"}.union(schema.get("required", [])))
             schema["title"] = name2title(schema["title"])
             if schema["type"] == "object":
-                schema["required"] = list(
-                    set(schema.get("required", [])).union(["schemaKey"])
+                schema["required"] = sorted(
+                    {"schemaKey"}.union(schema.get("required", []))
                 )
             for prop, value in schema.get("properties", {}).items():
                 if schema["title"] == "Person":
@@ -606,17 +604,15 @@ class AccessRequirements(DandiBaseModel):
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
-    """
-    # TODO: Enable when embargoed access is supported.
     @root_validator
     def open_or_embargoed(cls, values):
         status, embargoed = values.get("status"), values.get("embargoedUntil")
         if status == AccessType.EmbargoedAccess and embargoed is None:
-            raise ValueError("An embargo date. For NIH supported awards, this "
-            "must comply with NIH policy. For other datasets, this will be at "
-            "most a year from the dandiset creation.")
+            raise ValueError(
+                "An embargo end date is required for NIH awards to be in "
+                "compliance with NIH resource sharing policy."
+            )
         return values
-    """
 
 
 class AssetsSummary(DandiBaseModel):
@@ -951,6 +947,7 @@ class CommonModel(DandiBaseModel):
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
         nskey="dandi",
+        readOnly=True,
     )
     url: Optional[HttpUrl] = Field(
         None, readOnly=True, description="permalink to the item", nskey="schema"
@@ -1116,19 +1113,30 @@ class BareAsset(CommonModel):
     }
 
     @validator("digest")
-    def digest_etag(cls, values):
-        try:
-            digest = values[DigestType.dandi_etag]
-            if "-" not in digest or len(digest.split("-")[0]) != 32:
-                raise ValueError
-        except KeyError:
-            raise ValueError("Digest is missing dandi-etag value.")
-        except ValueError:
-            raise ValueError(
-                f"Digest must have an appropriate dandi-etag value. "
-                f"Got {values[DigestType.dandi_etag]}"
-            )
-        return values
+    def digest_check(cls, v, values, **kwargs):
+        if values.get("encodingFormat") == "application/x-zarr":
+            if DigestType.dandi_zarr_checksum not in v:
+                raise ValueError("A zarr asset must have a zarr checksum.")
+            if v.get(DigestType.dandi_etag):
+                raise ValueError("Digest cannot have both etag and zarr checksums.")
+            digest = v.get(DigestType.dandi_zarr_checksum)
+            if not re.fullmatch(MD5_PATTERN, digest):
+                raise ValueError(
+                    f"Digest must have an appropriate dandi-zarr-checksum value. "
+                    f"Got {digest}"
+                )
+        else:
+            if DigestType.dandi_etag not in v:
+                raise ValueError("A non-zarr asset must have a dandi-etag.")
+            if v.get(DigestType.dandi_zarr_checksum):
+                raise ValueError("Digest cannot have both etag and zarr checksums.")
+            digest = v.get(DigestType.dandi_etag)
+            if not re.fullmatch(DandiETag.REGEX, digest):
+                raise ValueError(
+                    f"Digest must have an appropriate dandi-etag value. "
+                    f"Got {digest}"
+                )
+        return v
 
 
 class Asset(BareAsset):
@@ -1191,17 +1199,16 @@ class PublishedAsset(Asset, Publishable):
     schemaKey = "Asset"
 
     @validator("digest")
-    def digest_bothhashes(cls, values):
-        try:
-            digest = values[DigestType.dandi_etag]
-            if "-" not in digest or len(digest.split("-")[0]) != 32:
-                raise ValueError("Digest is missing dandi-etag value")
-            digest = values[DigestType.sha2_256]
-            if len(digest) != 64:
-                raise ValueError("Digest is missing sha2_256 value")
-        except KeyError:
-            raise ValueError("Digest is missing dandi-etag or sha256 keys.")
-        return values
+    def digest_sha256check(cls, v, values, **kwargs):
+        if values.get("encodingFormat") != "application/x-zarr":
+            if DigestType.sha2_256 not in v:
+                raise ValueError("A non-zarr asset must have a sha2_256.")
+            digest = v.get(DigestType.sha2_256)
+            if not re.fullmatch(SHA256_PATTERN, digest):
+                raise ValueError(
+                    f"Digest must have an appropriate sha2_256 value. Got {digest}"
+                )
+        return v
 
 
 def get_schema_version():
