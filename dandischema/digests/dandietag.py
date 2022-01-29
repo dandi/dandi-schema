@@ -40,6 +40,8 @@ class PartGenerator:
     MIN_PART_SIZE = mb(5)
     # 5GB is the maximum part size allowed by S3
     MAX_PART_SIZE = gb(5)
+    # 64MB is the default part size
+    DEFAULT_PART_SIZE = mb(64)
 
     @classmethod
     def for_file_size(cls, file_size: int) -> "PartGenerator":
@@ -47,7 +49,7 @@ class PartGenerator:
         if file_size == 0:
             return cls(0, 0, 0)
 
-        part_size = mb(64)
+        part_size = cls.DEFAULT_PART_SIZE
 
         if file_size > tb(5):
             raise ValueError("File is larger than the S3 maximum object size.")
