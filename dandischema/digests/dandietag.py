@@ -97,8 +97,8 @@ class DandiETag:
     REGEX = r"[0-9a-f]{32}-\d{1,5}"
     MAX_STR_LENGTH = 38
 
-    def __init__(self, file_size: int) -> None:
-        self._part_gen: PartGenerator = PartGenerator.for_file_size(file_size)
+    def __init__(self, file_size: int, part_gen=PartGenerator) -> None:
+        self._part_gen: PartGenerator = part_gen.for_file_size(file_size)
         self._md5_digests: List[Optional[bytes]] = [None] * len(self._part_gen)
         self._next_index: int = 0
         self._partial_blob: bytes = b""
