@@ -1,3 +1,16 @@
+# 0.5.2 (Mon Jan 31 2022)
+
+#### 🐛 Bug Fix
+
+- Specify part generator to DandiETag class [#117](https://github.com/dandi/dandischema/pull/117) ([@AlmightyYakob](https://github.com/AlmightyYakob))
+- Define `PartGenerator` default part size as class member [#116](https://github.com/dandi/dandischema/pull/116) ([@AlmightyYakob](https://github.com/AlmightyYakob))
+
+#### Authors: 1
+
+- Jacob Nesbitt ([@AlmightyYakob](https://github.com/AlmightyYakob))
+
+---
+
 # 0.5.1 (Sat Jan 15 2022)
 
 #### 🐛 Bug Fix
