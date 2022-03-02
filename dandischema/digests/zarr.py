@@ -127,8 +127,8 @@ class ZarrJSONChecksumSerializer:
                 files=sorted(files) if files is not None else [],
                 directories=sorted(directories) if directories is not None else [],
             )
-        size = sum([file.size for file in checksums.files]) + sum(
-            [directory.size for directory in checksums.directories]
+        size = sum(file.size for file in checksums.files) + sum(
+            directory.size for directory in checksums.directories
         )
         return ZarrChecksumListing(
             checksums=checksums,
