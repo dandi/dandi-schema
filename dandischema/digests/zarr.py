@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import total_ordering
 import hashlib
+import re
 from typing import Dict, List, Optional, Tuple
 
 import pydantic
@@ -10,15 +11,28 @@ import pydantic
 ENCODING_KWARGS = {"separators": (",", ":")}
 
 
+def generate_directory_digest(md5: str, file_count: int, size: int):
+    """Generate a directory digest from its constituent parts"""
+    return f"{md5}-{file_count}--{size}"
+
+
+def parse_directory_digest(digest: str):
+    """Parse a directory digest into its constituent parts"""
+    match = re.match("([0-9a-f]{32})-([0-9]+)--([0-9]+)", digest)
+    if match is None:
+        raise ValueError(f"Cannot parse directory digest {digest}")
+    return match.group(1), int(match.group(2)), int(match.group(3))
+
+
 @total_ordering
 class ZarrChecksum(pydantic.BaseModel):
     """
     A checksum for a single file/directory in a zarr file.
 
-    Every file and directory in a zarr archive has a name and a MD5 hash.
+    Every file and directory in a zarr archive has a name, digest, and size.
     """
 
-    md5: str
+    digest: str
     name: str
     size: int
 
@@ -85,19 +99,27 @@ class ZarrChecksumListing(pydantic.BaseModel):
     """
 
     checksums: ZarrChecksums
-    md5: str
+    digest: str
     size: int
 
 
 class ZarrJSONChecksumSerializer:
-    def aggregate_checksum(self, checksums: ZarrChecksums) -> str:
-        """Generate an aggregated checksum for a list of ZarrChecksums."""
+    def aggregate_digest(self, checksums: ZarrChecksums) -> str:
+        """Generate an aggregated digest for a list of ZarrChecksums."""
         # Use the most compact separators possible
         # content = json.dumps([asdict(zarr_md5) for zarr_md5 in checksums], separators=(',', ':'))0
         content = checksums.json(**ENCODING_KWARGS)
         h = hashlib.md5()
         h.update(content.encode("utf-8"))
-        return h.hexdigest()
+        md5 = h.hexdigest()
+        file_count = sum(
+            parse_directory_digest(checksum.digest)[1]
+            for checksum in checksums.directories
+        ) + len(checksums.files)
+        size = sum(file.size for file in checksums.files) + sum(
+            directory.size for directory in checksums.directories
+        )
+        return generate_directory_digest(md5, file_count, size)
 
     def serialize(self, zarr_checksum_listing: ZarrChecksumListing) -> str:
         """Serialize a ZarrChecksumListing into a string."""
@@ -127,20 +149,18 @@ class ZarrJSONChecksumSerializer:
                 files=sorted(files) if files is not None else [],
                 directories=sorted(directories) if directories is not None else [],
             )
-        size = sum(file.size for file in checksums.files) + sum(
-            directory.size for directory in checksums.directories
-        )
+        digest = self.aggregate_digest(checksums)
         return ZarrChecksumListing(
             checksums=checksums,
-            md5=self.aggregate_checksum(checksums),
-            size=size,
+            digest=digest,
+            size=parse_directory_digest(digest)[2],
         )
 
 
 # We do not store a checksum file for empty directories since an empty directory doesn't exist in
 # S3. However, an empty zarr file still needs to have a checksum, even if it has no checksum file.
 # For convenience, we define this constant as the "null" checksum.
-EMPTY_CHECKSUM = ZarrJSONChecksumSerializer().generate_listing(ZarrChecksums()).md5
+EMPTY_CHECKSUM = ZarrJSONChecksumSerializer().generate_listing(ZarrChecksums()).digest
 
 
 def get_checksum(
@@ -151,12 +171,12 @@ def get_checksum(
         raise ValueError("Cannot compute a Zarr checksum for an empty directory")
     checksum_listing = ZarrJSONChecksumSerializer().generate_listing(
         files=[
-            ZarrChecksum(md5=md5, name=name, size=size)
-            for name, (md5, size) in files.items()
+            ZarrChecksum(digest=digest, name=name, size=size)
+            for name, (digest, size) in files.items()
         ],
         directories=[
-            ZarrChecksum(md5=md5, name=name, size=size)
-            for name, (md5, size) in directories.items()
+            ZarrChecksum(digest=digest, name=name, size=size)
+            for name, (digest, size) in directories.items()
         ],
     )
-    return checksum_listing.md5
+    return checksum_listing.digest
