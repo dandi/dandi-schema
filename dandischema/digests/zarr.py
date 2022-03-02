@@ -15,15 +15,15 @@ class ZarrChecksum(pydantic.BaseModel):
     """
     A checksum for a single file/directory in a zarr file.
 
-    Every file and directory in a zarr archive has a path and a MD5 hash.
+    Every file and directory in a zarr archive has a name and a MD5 hash.
     """
 
     md5: str
-    path: str
+    name: str
 
     # To make ZarrChecksums sortable
     def __lt__(self, other: ZarrChecksum):
-        return self.path < other.path
+        return self.name < other.name
 
 
 class ZarrChecksums(pydantic.BaseModel):
@@ -43,7 +43,7 @@ class ZarrChecksums(pydantic.BaseModel):
     def _index(self, checksums: List[ZarrChecksum], checksum: ZarrChecksum):
         # O(n) performance, consider using the bisect module or an ordered dict for optimization
         for i in range(0, len(checksums)):
-            if checksums[i].path == checksum.path:
+            if checksums[i].name == checksum.name:
                 return i
         raise ValueError("Not found")
 
@@ -66,13 +66,13 @@ class ZarrChecksums(pydantic.BaseModel):
                 self.directories.append(new_checksum)
         self.directories = sorted(self.directories)
 
-    def remove_checksums(self, paths: List[str]):
-        """Remove a list of paths from the listing."""
+    def remove_checksums(self, names: List[str]):
+        """Remove a list of names from the listing."""
         self.files = sorted(
-            filter(lambda checksum: checksum.path not in paths, self.files)
+            filter(lambda checksum: checksum.name not in names, self.files)
         )
         self.directories = sorted(
-            filter(lambda checksum: checksum.path not in paths, self.directories)
+            filter(lambda checksum: checksum.name not in names, self.directories)
         )
 
 
@@ -142,9 +142,9 @@ def get_checksum(files: Dict[str, str], directories: Dict[str, str]) -> str:
     if not files and not directories:
         raise ValueError("Cannot compute a Zarr checksum for an empty directory")
     checksum_listing = ZarrJSONChecksumSerializer().generate_listing(
-        files=[ZarrChecksum(md5=md5, path=path) for path, md5 in files.items()],
+        files=[ZarrChecksum(md5=md5, name=name) for name, md5 in files.items()],
         directories=[
-            ZarrChecksum(md5=md5, path=path) for path, md5 in directories.items()
+            ZarrChecksum(md5=md5, name=name) for name, md5 in directories.items()
         ],
     )
     return checksum_listing.md5

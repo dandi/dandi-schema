@@ -13,8 +13,8 @@ from dandischema.digests.zarr import (
 
 def test_zarr_checksum_sort_order():
     # The a < b in the path should take precedence over z > y in the md5
-    a = ZarrChecksum(path="1/2/3/a/z", md5="z")
-    b = ZarrChecksum(path="1/2/3/b/z", md5="y")
+    a = ZarrChecksum(name="a", md5="z")
+    b = ZarrChecksum(name="b", md5="y")
     assert sorted([b, a]) == [a, b]
 
 
@@ -24,16 +24,16 @@ def test_zarr_checksum_sort_order():
 def test_zarr_checkums_is_empty():
     assert ZarrChecksums(directories=[], files=[]).is_empty
     assert not ZarrChecksums(
-        directories=[ZarrChecksum(md5="md5", path="path")], files=[]
+        directories=[ZarrChecksum(md5="md5", name="name")], files=[]
     ).is_empty
     assert not ZarrChecksums(
-        directories=[], files=[ZarrChecksum(md5="md5", path="path")]
+        directories=[], files=[ZarrChecksum(md5="md5", name="name")]
     ).is_empty
 
 
-a = ZarrChecksum(path="a", md5="a")
-b = ZarrChecksum(path="b", md5="b")
-c = ZarrChecksum(path="c", md5="c")
+a = ZarrChecksum(name="a", md5="a")
+b = ZarrChecksum(name="b", md5="b")
+c = ZarrChecksum(name="c", md5="c")
 
 
 @pytest.mark.parametrize(
@@ -113,19 +113,19 @@ def test_zarr_checkums_remove_checksums(
     [
         ([], [], "481a2f77ab786a0f45aafd5db0971caa"),
         (
-            [ZarrChecksum(path="foo/bar", md5="a")],
+            [ZarrChecksum(name="bar", md5="a")],
             [],
             "cdcfdfca3622e20df03219273872549e",
         ),
         (
             [],
-            [ZarrChecksum(path="foo/bar", md5="a")],
+            [ZarrChecksum(name="bar", md5="a")],
             "243aca82c6872222747183dd738b6fcb",
         ),
         (
             [
-                ZarrChecksum(path="foo/bar", md5="a"),
-                ZarrChecksum(path="foo/baz", md5="b"),
+                ZarrChecksum(name="bar", md5="a"),
+                ZarrChecksum(name="baz", md5="b"),
             ],
             [],
             "785295076ae9156b363e442ef6d485e0",
@@ -133,14 +133,14 @@ def test_zarr_checkums_remove_checksums(
         (
             [],
             [
-                ZarrChecksum(path="foo/bar", md5="a"),
-                ZarrChecksum(path="foo/baz", md5="b"),
+                ZarrChecksum(name="bar", md5="a"),
+                ZarrChecksum(name="baz", md5="b"),
             ],
             "ebca8bb8e716237e0f71657d1045930f",
         ),
         (
-            [ZarrChecksum(path="foo/baz", md5="a")],
-            [ZarrChecksum(path="foo/bar", md5="b")],
+            [ZarrChecksum(name="baz", md5="a")],
+            [ZarrChecksum(name="bar", md5="b")],
             "9c34644ba03b7e9f58ebd1caef4215ad",
         ),
     ],
@@ -160,8 +160,8 @@ def test_zarr_checksum_serializer_aggregate_checksum(
 def test_zarr_checksum_serializer_generate_listing():
     serializer = ZarrJSONChecksumSerializer()
     checksums = ZarrChecksums(
-        files=[ZarrChecksum(path="foo/bar", md5="a")],
-        directories=[ZarrChecksum(path="foo/baz", md5="b")],
+        files=[ZarrChecksum(name="bar", md5="a")],
+        directories=[ZarrChecksum(name="baz", md5="b")],
     )
     assert serializer.generate_listing(checksums) == ZarrChecksumListing(
         checksums=checksums, md5="23076057c0da63f8ab50d0a108db332c"
@@ -174,24 +174,24 @@ def test_zarr_serialize():
         serializer.serialize(
             ZarrChecksumListing(
                 checksums=ZarrChecksums(
-                    files=[ZarrChecksum(path="foo/bar", md5="a")],
-                    directories=[ZarrChecksum(path="bar/foo", md5="b")],
+                    files=[ZarrChecksum(name="bar", md5="a")],
+                    directories=[ZarrChecksum(name="foo", md5="b")],
                 ),
                 md5="c",
             )
         )
-        == '{"checksums":{"directories":[{"md5":"b","path":"bar/foo"}],"files":[{"md5":"a","path":"foo/bar"}]},"md5":"c"}'  # noqa: E501
+        == '{"checksums":{"directories":[{"md5":"b","name":"foo"}],"files":[{"md5":"a","name":"bar"}]},"md5":"c"}'  # noqa: E501
     )
 
 
 def test_zarr_deserialize():
     serializer = ZarrJSONChecksumSerializer()
     assert serializer.deserialize(
-        '{"checksums":{"directories":[{"md5":"b","path":"bar/foo"}],"files":[{"md5":"a","path":"foo/bar"}]},"md5":"c"}'  # noqa: E501
+        '{"checksums":{"directories":[{"md5":"b","name":"foo"}],"files":[{"md5":"a","name":"bar"}]},"md5":"c"}'  # noqa: E501
     ) == ZarrChecksumListing(
         checksums=ZarrChecksums(
-            files=[ZarrChecksum(path="foo/bar", md5="a")],
-            directories=[ZarrChecksum(path="bar/foo", md5="b")],
+            files=[ZarrChecksum(name="bar", md5="a")],
+            directories=[ZarrChecksum(name="foo", md5="b")],
         ),
         md5="c",
     )
@@ -201,33 +201,33 @@ def test_zarr_deserialize():
     "files,directories,checksum",
     [
         (
-            {"foo/bar": "a"},
+            {"bar": "a"},
             {},
             "cdcfdfca3622e20df03219273872549e",
         ),
         (
             {},
-            {"foo/bar": "a"},
+            {"bar": "a"},
             "243aca82c6872222747183dd738b6fcb",
         ),
         (
-            {"foo/bar": "a", "foo/baz": "b"},
+            {"bar": "a", "baz": "b"},
             {},
             "785295076ae9156b363e442ef6d485e0",
         ),
         (
             {},
-            {"foo/bar": "a", "foo/baz": "b"},
+            {"bar": "a", "baz": "b"},
             "ebca8bb8e716237e0f71657d1045930f",
         ),
         (
             {},
-            {"foo/baz": "b", "foo/bar": "a"},
+            {"baz": "b", "bar": "a"},
             "ebca8bb8e716237e0f71657d1045930f",
         ),
         (
-            {"foo/baz": "a"},
-            {"foo/bar": "b"},
+            {"baz": "a"},
+            {"bar": "b"},
             "9c34644ba03b7e9f58ebd1caef4215ad",
         ),
     ],
