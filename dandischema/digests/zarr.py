@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import total_ordering
 import hashlib
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import pydantic
 
@@ -20,6 +20,7 @@ class ZarrChecksum(pydantic.BaseModel):
 
     md5: str
     name: str
+    size: int
 
     # To make ZarrChecksums sortable
     def __lt__(self, other: ZarrChecksum):
@@ -85,6 +86,7 @@ class ZarrChecksumListing(pydantic.BaseModel):
 
     checksums: ZarrChecksums
     md5: str
+    size: int
 
 
 class ZarrJSONChecksumSerializer:
@@ -125,9 +127,13 @@ class ZarrJSONChecksumSerializer:
                 files=sorted(files) if files is not None else [],
                 directories=sorted(directories) if directories is not None else [],
             )
+        size = sum([file.size for file in checksums.files]) + sum(
+            [directory.size for directory in checksums.directories]
+        )
         return ZarrChecksumListing(
             checksums=checksums,
             md5=self.aggregate_checksum(checksums),
+            size=size,
         )
 
 
@@ -137,14 +143,20 @@ class ZarrJSONChecksumSerializer:
 EMPTY_CHECKSUM = ZarrJSONChecksumSerializer().generate_listing(ZarrChecksums()).md5
 
 
-def get_checksum(files: Dict[str, str], directories: Dict[str, str]) -> str:
+def get_checksum(
+    files: Dict[str, Tuple[str, int]], directories: Dict[str, Tuple[str, int]]
+) -> str:
     """Calculate the checksum of a directory."""
     if not files and not directories:
         raise ValueError("Cannot compute a Zarr checksum for an empty directory")
     checksum_listing = ZarrJSONChecksumSerializer().generate_listing(
-        files=[ZarrChecksum(md5=md5, name=name) for name, md5 in files.items()],
+        files=[
+            ZarrChecksum(md5=md5, name=name, size=size)
+            for name, (md5, size) in files.items()
+        ],
         directories=[
-            ZarrChecksum(md5=md5, name=name) for name, md5 in directories.items()
+            ZarrChecksum(md5=md5, name=name, size=size)
+            for name, (md5, size) in directories.items()
         ],
     )
     return checksum_listing.md5
