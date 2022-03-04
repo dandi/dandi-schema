@@ -42,8 +42,10 @@ else:
 # Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
 # localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
 # environment variable will use a less restrictive pydantic field that allows localhost.
+DANDI_ARCHIVE_PATTERN = r"https://dandiarchive.org"
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
+    DANDI_ARCHIVE_PATTERN = r"http://localhost(:\d+)?"
 
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
@@ -51,8 +53,12 @@ UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
-DANDI_DOI_PATTERN = r"^10.(48324|80507)/dandi\.\d{6}/\d+\.\d+\.\d+"
-DANDI_PUBID_PATTERN = r"^DANDI:\d{6}/\d+\.\d+\.\d+"
+VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
+DANDI_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
+DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
+PUBLISHED_VERSION_URL_PATTERN = (
+    rf"^{DANDI_ARCHIVE_PATTERN}/dandiset/{VERSION_PATTERN}$",
+)
 MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
 
@@ -1173,7 +1179,7 @@ class PublishedDandiset(Dandiset, Publishable):
     url: DANDIURL = Field(
         readOnly=True,
         description="Permalink to the Dandiset.",
-        regex=r"^https://dandiarchive.org/dandiset/\d{6}/\d+\.\d+\.\d+$",
+        regex=PUBLISHED_VERSION_URL_PATTERN,
         nskey="schema",
     )
 
