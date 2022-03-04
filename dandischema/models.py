@@ -45,7 +45,7 @@ else:
 DANDI_ARCHIVE_PATTERN = r"https://dandiarchive.org"
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
-    DANDI_ARCHIVE_PATTERN = r"(https://dandiarchive.org|http://localhost(:\d+)?)"
+    DANDI_ARCHIVE_PATTERN = r"https://dandiarchive.org|http://localhost(:\d+)?"
 
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
