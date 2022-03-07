@@ -1,3 +1,16 @@
+# 0.5.3 (Mon Mar 07 2022)
+
+#### 🐛 Bug Fix
+
+- Unify version pattern, allow local dandiset URLs [#121](https://github.com/dandi/dandischema/pull/121) ([@AlmightyYakob](https://github.com/AlmightyYakob) [@satra](https://github.com/satra))
+
+#### Authors: 2
+
+- Jacob Nesbitt ([@AlmightyYakob](https://github.com/AlmightyYakob))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.5.2 (Mon Jan 31 2022)
 
 #### 🐛 Bug Fix
