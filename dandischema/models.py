@@ -22,6 +22,7 @@ from pydantic.main import ModelMetaclass
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
+from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
 from .model_types import (
     AccessTypeDict,
     AgeReferenceTypeDict,
@@ -1124,10 +1125,16 @@ class BareAsset(CommonModel):
             if v.get(DigestType.dandi_etag):
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
             digest = v.get(DigestType.dandi_zarr_checksum)
-            if not re.fullmatch(MD5_PATTERN, digest):
+            if not re.fullmatch(ZARR_CHECKSUM_PATTERN, digest):
                 raise ValueError(
                     f"Digest must have an appropriate dandi-zarr-checksum value. "
                     f"Got {digest}"
+                )
+            _checksum, _file_count, zarr_size = parse_directory_digest(digest)
+            content_size = values.get("contentSize")
+            if content_size != zarr_size:
+                raise ValueError(
+                    f"contentSize {content_size} is not equal to the checksum size {zarr_size}."
                 )
         else:
             if DigestType.dandi_etag not in v:

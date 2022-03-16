@@ -9,6 +9,7 @@ import pydantic
 
 """Passed to the json() method of pydantic models for serialization."""
 ENCODING_KWARGS = {"separators": (",", ":")}
+ZARR_CHECKSUM_PATTERN = "([0-9a-f]{32})-([0-9]+)--([0-9]+)"
 
 
 def generate_directory_digest(md5: str, file_count: int, size: int):
@@ -18,7 +19,7 @@ def generate_directory_digest(md5: str, file_count: int, size: int):
 
 def parse_directory_digest(digest: str):
     """Parse a directory digest into its constituent parts"""
-    match = re.match("([0-9a-f]{32})-([0-9]+)--([0-9]+)", digest)
+    match = re.match(ZARR_CHECKSUM_PATTERN, digest)
     if match is None:
         raise ValueError(f"Cannot parse directory digest {digest}")
     return match.group(1), int(match.group(2)), int(match.group(3))
