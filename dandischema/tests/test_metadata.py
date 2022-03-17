@@ -41,6 +41,12 @@ def test_dandiset(schema_dir):
     _validate_dandiset_json(data_as_dict, schema_dir)
 
 
+def test_id(schema_dir):
+    with open(Path(schema_dir) / "context.json") as fp:
+        context = json.load(fp)
+    assert context["@context"]["hasMember"]["@type"] == "@id"
+
+
 @skipif_no_network
 def test_pydantic_validation(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:

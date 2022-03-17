@@ -78,7 +78,7 @@ def generate_context():
                     fields[name]["@container"] = "@set"
                 if name == "contributor":
                     fields[name]["@container"] = "@list"
-                if "enum" in str(field.type_) or name == "url":
+                if "enum" in str(field.type_) or name in ["url", "hasMember"]:
                     fields[name]["@type"] = "@id"
 
     for item in models.DigestType:
