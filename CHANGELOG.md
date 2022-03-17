@@ -1,3 +1,17 @@
+# 0.6.0 (Thu Mar 17 2022)
+
+#### 🚀 Enhancement
+
+- fix: add type of id to hasMember [#123](https://github.com/dandi/dandischema/pull/123) ([@satra](https://github.com/satra))
+- Update zarr checksums [#120](https://github.com/dandi/dandischema/pull/120) ([@dchiquito](https://github.com/dchiquito) [@satra](https://github.com/satra))
+
+#### Authors: 2
+
+- Daniel Chiquito ([@dchiquito](https://github.com/dchiquito))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.5.3 (Mon Mar 07 2022)
 
 #### 🐛 Bug Fix
