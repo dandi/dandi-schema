@@ -187,6 +187,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
             },
         ),
         (
@@ -195,7 +196,15 @@ def test_mismatch_key(schema_version, schema_key):
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             None,
-            {"contentSize", "encodingFormat", "id", "identifier", "path", "contentUrl"},
+            {
+                "contentSize",
+                "encodingFormat",
+                "id",
+                "identifier",
+                "path",
+                "contentUrl",
+                "wasDerivedFrom",
+            },
         ),
         (
             {"schemaKey": "Asset"},
@@ -210,6 +219,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
             },
         ),
         (
@@ -228,6 +238,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
             },
         ),
         (
@@ -246,6 +257,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
             },
         ),
         (
@@ -266,6 +278,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "identifier",
                 "path",
                 "contentUrl",
+                "wasDerivedFrom",
             },
         ),
     ],
