@@ -117,6 +117,7 @@ def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
             ],
             "schemaKey": "PublishActivity",
         },
+        "ethicsApproval": [{"schemaKey": "EthicsApproval", "identifier": "123456"}],
         "version": version,
         "doi": f"{prefix}/dandi.{dandi_id}/{version}",
     }
