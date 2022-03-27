@@ -1022,7 +1022,7 @@ class Dandiset(CommonModel):
     )
 
     ethicsApproval: List[EthicsApproval] = Field(
-        None, title="Ethics approvals", nskey="dandi"
+        title="Ethics approvals", nskey="dandi"
     )
 
     citation: str = Field(readOnly=True, nskey="schema")
@@ -1160,7 +1160,6 @@ class Asset(BareAsset):
     contentUrl: List[HttpUrl] = Field(readOnly=True, nskey="schema")
     wasDerivedFrom: List[BioSample] = Field(nskey="prov")
     wasAttributedTo: List[Participant] = Field(
-        None,
         description="Associated participant(s) or subject(s).",
         nskey="prov",
     )
