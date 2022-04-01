@@ -43,10 +43,14 @@ else:
 # Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
 # localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
 # environment variable will use a less restrictive pydantic field that allows localhost.
-DANDI_ARCHIVE_PATTERN = r"https://dandiarchive.org"
+# It is possible also to use DANDI_ALLOWED_LOCALHOST_URLS to point to some other deployment
+# other than dandiarchive.org
+DANDI_ARCHIVE_PATTERN = os.environ.get(
+    "DANDI_ALLOWED_LOCALHOST_URLS", r"https://dandiarchive.org"
+)
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
-    DANDI_ARCHIVE_PATTERN = r"(https://dandiarchive.org|http://localhost(:\d+)?)"
+    DANDI_ARCHIVE_PATTERN = rf"({DANDI_ARCHIVE_PATTERN}|http://localhost(:\d+)?)"
 
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
