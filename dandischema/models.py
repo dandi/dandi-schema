@@ -40,14 +40,16 @@ if sys.version_info < (3, 8):
 else:
     from typing import Literal
 
+# Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
+DANDI_WEB_APP_URL = os.environ.get("DJANGO_DANDI_WEB_APP_URL", None)
+# Ensure no trailing / for consistency
+DANDI_ARCHIVE_PATTERN = (
+    re.escape(DANDI_WEB_APP_URL.rstrip("/")) if DANDI_WEB_APP_URL else ".*"
+)
+
 # Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
 # localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
 # environment variable will use a less restrictive pydantic field that allows localhost.
-# It is possible also to use DANDI_ALLOWED_LOCALHOST_URLS to point to some other deployment
-# other than dandiarchive.org
-DANDI_ARCHIVE_PATTERN = os.environ.get(
-    "DANDI_ALLOWED_LOCALHOST_URLS", r"https://dandiarchive.org"
-)
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
     DANDI_ARCHIVE_PATTERN = rf"({DANDI_ARCHIVE_PATTERN}|http://localhost(:\d+)?)"
@@ -962,7 +964,7 @@ class CommonModel(DandiBaseModel):
         None, readOnly=True, description="permalink to the item", nskey="schema"
     )
     repository: HttpUrl = Field(
-        "https://dandiarchive.org/",
+        DANDI_WEB_APP_URL,
         readOnly=True,
         description="location of the item",
         nskey="dandi",
