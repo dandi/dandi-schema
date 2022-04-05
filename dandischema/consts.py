@@ -1,5 +1,5 @@
-DANDI_SCHEMA_VERSION = "0.6.2"
-ALLOWED_INPUT_SCHEMAS = ["0.4.4", "0.5.1", "0.5.2", "0.6.0", "0.6.1"]
+DANDI_SCHEMA_VERSION = "0.6.3"
+ALLOWED_INPUT_SCHEMAS = ["0.4.4", "0.5.1", "0.5.2", "0.6.0", "0.6.1", "0.6.2"]
 
 # ATM we allow only for a single target version which is current
 # migrate has a guard now for this since it cannot migrate to anything but current
