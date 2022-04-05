@@ -41,10 +41,10 @@ else:
     from typing import Literal
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
-DANDI_WEB_APP_URL = os.environ.get("DJANGO_DANDI_WEB_APP_URL", None)
+DANDI_INSTANCE_URL = os.environ.get("DJANGO_DANDI_WEB_APP_URL", None)
 # Ensure no trailing / for consistency
-DANDI_ARCHIVE_PATTERN = (
-    re.escape(DANDI_WEB_APP_URL.rstrip("/")) if DANDI_WEB_APP_URL else ".*"
+DANDI_INSTANCE_URL_PATTERN = (
+    re.escape(DANDI_INSTANCE_URL.rstrip("/")) if DANDI_INSTANCE_URL else ".*"
 )
 
 # Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
@@ -52,7 +52,9 @@ DANDI_ARCHIVE_PATTERN = (
 # environment variable will use a less restrictive pydantic field that allows localhost.
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     HttpUrl = AnyHttpUrl  # noqa: F811
-    DANDI_ARCHIVE_PATTERN = rf"({DANDI_ARCHIVE_PATTERN}|http://localhost(:\d+)?)"
+    DANDI_INSTANCE_URL_PATTERN = (
+        rf"({DANDI_INSTANCE_URL_PATTERN}|http://localhost(:\d+)?)"
+    )
 
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
@@ -63,7 +65,9 @@ ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
 DANDI_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
 DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
-PUBLISHED_VERSION_URL_PATTERN = rf"^{DANDI_ARCHIVE_PATTERN}/dandiset/{VERSION_PATTERN}$"
+PUBLISHED_VERSION_URL_PATTERN = (
+    rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
+)
 MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
 
@@ -964,7 +968,7 @@ class CommonModel(DandiBaseModel):
         None, readOnly=True, description="permalink to the item", nskey="schema"
     )
     repository: HttpUrl = Field(
-        DANDI_WEB_APP_URL,
+        DANDI_INSTANCE_URL,
         readOnly=True,
         description="location of the item",
         nskey="dandi",
