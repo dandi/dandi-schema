@@ -8,6 +8,7 @@ import pytest
 from .test_datacite import _basic_publishmeta
 from .. import models
 from ..models import (
+    DANDI_INSTANCE_URL_PATTERN,
     AccessRequirements,
     AccessType,
     Affiliation,
@@ -404,7 +405,7 @@ def test_dantimeta_1():
     error_msgs = [
         "field required",
         "A Dandiset containing no files or zero bytes is not publishable",
-        'string does not match regex "^https://dandiarchive.org/dandiset/'
+        f'string does not match regex "^{DANDI_INSTANCE_URL_PATTERN}/dandiset/'
         '\\d{6}/\\d+\\.\\d+\\.\\d+$"',
         'string does not match regex "^DANDI:\\d{6}/\\d+\\.\\d+\\.\\d+"',
     ]
