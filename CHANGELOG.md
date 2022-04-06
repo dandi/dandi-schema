@@ -1,3 +1,21 @@
+# 0.7.0 (Wed Apr 06 2022)
+
+#### 🚀 Enhancement
+
+- ENH/RF: do not enforce any DANDI instance by default, support DJANGO_DANDI_WEB_APP_URL env var to specify one [#128](https://github.com/dandi/dandischema/pull/128) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🧪 Tests
+
+- Directly base Docker image off of dandi-archive image [#126](https://github.com/dandi/dandischema/pull/126) ([@jwodder](https://github.com/jwodder))
+- Update dandi-archive Dockerfile to use Python 3.9 [#125](https://github.com/dandi/dandischema/pull/125) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 2
+
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.6.0 (Thu Mar 17 2022)
 
 #### 🚀 Enhancement
