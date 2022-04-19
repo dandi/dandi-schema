@@ -14,6 +14,7 @@ jobs:
     env:
       NO_ET: 1
       DANDI_ALLOW_LOCALHOST_URLS: 1
+      DJANGO_DANDI_WEB_APP_URL: https://dandiarchive.org/
     strategy:
       fail-fast: false
       matrix:
