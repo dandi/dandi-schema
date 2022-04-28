@@ -1,3 +1,20 @@
+# 0.7.1 (Thu Apr 28 2022)
+
+#### 🐛 Bug Fix
+
+- add 0.6.2 to validation schemas [#133](https://github.com/dandi/dandi-schema/pull/133) ([@satra](https://github.com/satra))
+
+#### 🧪 Tests
+
+- Set DJANGO_DANDI_WEB_APP_URL for dandi-cli integration tests [#132](https://github.com/dandi/dandi-schema/pull/132) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 2
+
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.7.0 (Wed Apr 06 2022)
 
 #### 🚀 Enhancement
