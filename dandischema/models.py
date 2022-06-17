@@ -806,8 +806,7 @@ class Participant(DandiBaseModel):
         nskey="dandi",
     )
     vendor: Optional[Organization] = Field(None, nskey="dandi")
-    age: Optional[PropertyValue] = Field(
-        None,
+    age: PropertyValue = Field(
         description="A representation of age using ISO 8601 duration. This "
         "should include a valueReference if anything other than "
         "date of birth is used.",
@@ -815,8 +814,7 @@ class Participant(DandiBaseModel):
         rangeIncludes="schema:Duration",
     )
 
-    sex: Optional[SexType] = Field(
-        None,
+    sex: SexType = Field(
         description="Identifier for sex of the participant or subject if "
         "available. (e.g. from OBI)",
         nskey="dandi",
@@ -826,8 +824,7 @@ class Participant(DandiBaseModel):
         description="Genotype descriptor of participant or subject if available",
         nskey="dandi",
     )
-    species: Optional[SpeciesType] = Field(
-        None,
+    species: SpeciesType = Field(
         description="An identifier indicating the taxonomic classification of "
         "the participant or subject.",
         nskey="dandi",
@@ -1034,6 +1031,10 @@ class Dandiset(CommonModel):
         nskey="schema",
     )
 
+    ethicsApproval: List[EthicsApproval] = Field(
+        title="Ethics approvals", nskey="dandi"
+    )
+
     citation: str = Field(readOnly=True, nskey="schema")
 
     # From assets
@@ -1167,6 +1168,11 @@ class Asset(BareAsset):
     id: str = Field(readOnly=True, description="Uniform resource identifier.")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
     contentUrl: List[HttpUrl] = Field(readOnly=True, nskey="schema")
+    wasDerivedFrom: List[BioSample] = Field(nskey="prov")
+    wasAttributedTo: List[Participant] = Field(
+        description="Associated participant(s) or subject(s).",
+        nskey="prov",
+    )
 
 
 class Publishable(DandiBaseModel):

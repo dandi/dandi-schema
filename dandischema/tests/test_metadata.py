@@ -38,6 +38,9 @@ def test_dandiset(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
+    data_as_dict["ethicsApproval"] = [
+        {"schemaKey": "EthicsApproval", "identifier": "123456"}
+    ]
     _validate_dandiset_json(data_as_dict, schema_dir)
 
 
@@ -52,8 +55,20 @@ def test_pydantic_validation(schema_dir):
     with (METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = "0.4.4"
+    data_as_dict["ethicsApproval"] = [
+        {
+            "schemaKey": "EthicsApproval",
+            "identifier": "123456",
+            "contactPoint": {
+                "schemaKey": "ContactPoint",
+                "email": "contact@example.org",
+            },
+        }
+    ]
     validate(data_as_dict, schema_key="Dandiset", json_validation=True)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
+    # contactPoint optional in current schema
+    del data_as_dict["ethicsApproval"][0]["contactPoint"]
     validate(data_as_dict, schema_key="Dandiset", json_validation=True)
     validate(data_as_dict["about"][0])
     with pytest.raises(ValueError):
@@ -103,6 +118,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "manifestLocation",
                 "name",
                 "version",
+                "ethicsApproval",
             },
         ),
         (
@@ -123,6 +139,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "publishedBy",
                 "url",
                 "version",
+                "ethicsApproval",
             },
         ),
         (
@@ -146,6 +163,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "publishedBy",
                 "url",
                 "version",
+                "ethicsApproval",
             },
         ),
         (
@@ -174,6 +192,7 @@ def test_mismatch_key(schema_version, schema_key):
                 "publishedBy",
                 "url",
                 "version",
+                "ethicsApproval",
             },
         ),
         (
@@ -187,6 +206,8 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
+                "wasAttributedTo",
             },
         ),
         (
@@ -195,7 +216,16 @@ def test_mismatch_key(schema_version, schema_key):
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             None,
-            {"contentSize", "encodingFormat", "id", "identifier", "path", "contentUrl"},
+            {
+                "contentSize",
+                "encodingFormat",
+                "id",
+                "identifier",
+                "path",
+                "contentUrl",
+                "wasDerivedFrom",
+                "wasAttributedTo",
+            },
         ),
         (
             {"schemaKey": "Asset"},
@@ -210,6 +240,8 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
+                "wasAttributedTo",
             },
         ),
         (
@@ -228,6 +260,8 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
+                "wasAttributedTo",
             },
         ),
         (
@@ -246,6 +280,8 @@ def test_mismatch_key(schema_version, schema_key):
                 "path",
                 "digest",
                 "contentUrl",
+                "wasDerivedFrom",
+                "wasAttributedTo",
             },
         ),
         (
@@ -266,6 +302,8 @@ def test_mismatch_key(schema_version, schema_key):
                 "identifier",
                 "path",
                 "contentUrl",
+                "wasDerivedFrom",
+                "wasAttributedTo",
             },
         ),
     ],
@@ -285,7 +323,7 @@ def test_requirements(obj, schema_key, missingfields):
             {"schemaKey": "Dandiset", "schemaVersion": "0.4.4"},
             None,
             {"field required"},
-            10,
+            11,
         ),
         (
             {
@@ -295,7 +333,7 @@ def test_requirements(obj, schema_key, missingfields):
             },
             None,
             {"field required"},
-            9,
+            10,
         ),
     ],
 )
