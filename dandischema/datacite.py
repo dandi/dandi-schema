@@ -67,7 +67,7 @@ def to_datacite(
 
     attributes = {}
     if publish:
-        attributes['event'] = 'publish'
+        attributes["event"] = "publish"
 
     attributes["identifiers"] = [
         # TODO: the first element is ignored, not sure how to fix it...
@@ -199,7 +199,9 @@ def to_datacite(
                         ident_id = rel_el.identifier.split("doi.org/")[1]
                     elif "biorxiv.org/" in rel_el.identifier:
                         ident_tp = "DOI"
-                        ident_id = rel_el.identifier.split("biorxiv.org/content/")[1].split("v")[0]
+                        ident_id = rel_el.identifier.split("biorxiv.org/content/")[
+                            1
+                        ].split("v")[0]
                     # if any other url is passed
                     elif rel_el.identifier.startswith("https://"):
                         ident_id = rel_el.identifier
