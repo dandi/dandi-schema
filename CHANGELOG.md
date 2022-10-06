@@ -259,7 +259,7 @@
 - Set DANDI_ALLOW_LOCALHOST_URLS when running dandi-cli tests [#66](https://github.com/dandi/dandischema/pull/66) ([@jwodder](https://github.com/jwodder))
 - RF(CI): run dandi-cli tests only against 3.8 (but all OSes) [#64](https://github.com/dandi/dandischema/pull/64) ([@yarikoptic](https://github.com/yarikoptic))
 - Run dandi-cli tests with dandi-api image built with local version of dandischema [#63](https://github.com/dandi/dandischema/pull/63) ([@jwodder](https://github.com/jwodder))
-- fix: change id to indentifier for software [#46](https://github.com/dandi/dandischema/pull/46) ([@satra](https://github.com/satra))
+- fix: change id to identifier for software [#46](https://github.com/dandi/dandischema/pull/46) ([@satra](https://github.com/satra))
 - Add workflow for testing dandischema against latest release of dandi-cli [#49](https://github.com/dandi/dandischema/pull/49) ([@jwodder](https://github.com/jwodder))
 
 #### Authors: 4

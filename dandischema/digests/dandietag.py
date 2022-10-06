@@ -10,15 +10,15 @@ from typing import Iterator, List, NamedTuple, Optional, Union
 
 
 def mb(bytes_size: int) -> int:
-    return bytes_size * 2 ** 20
+    return bytes_size * 2**20
 
 
 def gb(bytes_size: int) -> int:
-    return bytes_size * 2 ** 30
+    return bytes_size * 2**30
 
 
 def tb(bytes_size: int) -> int:
-    return bytes_size * 2 ** 40
+    return bytes_size * 2**40
 
 
 class Part(NamedTuple):

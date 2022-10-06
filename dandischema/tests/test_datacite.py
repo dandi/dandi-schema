@@ -128,7 +128,7 @@ def _basic_publishmeta(dandi_id, version="0.0.0", prefix="10.80507"):
 )
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
 def test_datacite(dandi_id, schema):
-    """ checking to_datacite for a specific datasets"""
+    """checking to_datacite for a specific datasets"""
 
     # reading metadata taken from exemplary dandisets and saved in json files
     with (
@@ -232,7 +232,7 @@ def test_datacite(dandi_id, schema):
                             RoleType("dcite:Author"),
                             RoleType("dcite:Software"),
                         ],
-                        "identifier": "0000-0001-0000-0000"
+                        "identifier": "0000-0001-0000-0000",
                     },
                     {
                         "name": "B_last, B_first",
@@ -241,22 +241,32 @@ def test_datacite(dandi_id, schema):
                 ],
             },
             {
-                "creators": (1, {"name": "A_last, A_first",
-                                 'nameIdentifiers': [{
-                                     "nameIdentifier": "0000-0001-0000-0000",
-                                     "nameIdentifierScheme": "ORCID",
-                                     "schemeUri": "https://orcid.org/",
-                                 }],
-                                 }),
+                "creators": (
+                    1,
+                    {
+                        "name": "A_last, A_first",
+                        "nameIdentifiers": [
+                            {
+                                "nameIdentifier": "0000-0001-0000-0000",
+                                "nameIdentifierScheme": "ORCID",
+                                "schemeUri": "https://orcid.org/",
+                            }
+                        ],
+                    },
+                ),
                 "contributors": (
                     2,
-                    {"name": "A_last, A_first", "contributorType": "Other",
-                     'nameIdentifiers': [{
-                         "nameIdentifier": "0000-0001-0000-0000",
-                         "nameIdentifierScheme": "ORCID",
-                         "schemeUri": "https://orcid.org/",
-                     }],
-                     },
+                    {
+                        "name": "A_last, A_first",
+                        "contributorType": "Other",
+                        "nameIdentifiers": [
+                            {
+                                "nameIdentifier": "0000-0001-0000-0000",
+                                "nameIdentifierScheme": "ORCID",
+                                "schemeUri": "https://orcid.org/",
+                            }
+                        ],
+                    },
                 ),
             },
         ),
