@@ -106,7 +106,7 @@ def publish_model_schemata(releasedir: str) -> Path:
 
 def _validate_obj_json(data, schema, missing_ok=False):
     validator = jsonschema.Draft7Validator(
-        schema, format_checker=jsonschema.draft7_format_checker
+        schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
     )
     error_list = []
     for error in sorted(validator.iter_errors(data), key=str):
