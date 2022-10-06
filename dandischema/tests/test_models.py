@@ -623,23 +623,23 @@ def test_schemakey_in_required() -> None:
 
 
 @pytest.mark.parametrize("value", [None, [], {}, (), ""])
-def test_propertyvalue(value):
+def test_propertyvalue(value: Any) -> None:
     with pytest.raises(pydantic.ValidationError):
         PropertyValue(value=value)
 
 
-def test_propertyvalue_valid():
+def test_propertyvalue_valid() -> None:
     PropertyValue(value=1)
 
 
-def test_propertyvalue_json():
+def test_propertyvalue_json() -> None:
     reqprops = json.loads(PropertyValue.schema_json())["definitions"]["PropertyValue"][
         "required"
     ]
     assert "value" == reqprops[1]
 
 
-def test_embargoedaccess():
+def test_embargoedaccess() -> None:
     with pytest.raises(pydantic.ValidationError):
         CommonModel(access=[AccessRequirements(status=AccessType.EmbargoedAccess)])
     CommonModel(

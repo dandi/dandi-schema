@@ -50,6 +50,7 @@ DANDI_INSTANCE_URL_PATTERN = (
 # Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
 # localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
 # environment variable will use a less restrictive pydantic field that allows localhost.
+UrlType: Type[AnyHttpUrl]
 if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
     UrlType = AnyHttpUrl
     DANDI_INSTANCE_URL_PATTERN = (
@@ -286,7 +287,7 @@ class PropertyValue(DandiBaseModel):
     )
 
     @validator("value", always=True)
-    def ensure_value(cls, val):
+    def ensure_value(cls, val: Union[Any, List[Any]]) -> Union[Any, List[Any]]:
         if not val:
             raise ValueError(
                 "The value field of a PropertyValue cannot be None or empty."
@@ -1145,7 +1146,7 @@ class BareAsset(CommonModel):
                 raise ValueError("A zarr asset must have a zarr checksum.")
             if v.get(DigestType.dandi_etag):
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
-            digest = v.get(DigestType.dandi_zarr_checksum)
+            digest = v[DigestType.dandi_zarr_checksum]
             if not re.fullmatch(ZARR_CHECKSUM_PATTERN, digest):
                 raise ValueError(
                     f"Digest must have an appropriate dandi-zarr-checksum value. "
@@ -1162,7 +1163,7 @@ class BareAsset(CommonModel):
                 raise ValueError("A non-zarr asset must have a dandi-etag.")
             if v.get(DigestType.dandi_zarr_checksum):
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
-            digest = v.get(DigestType.dandi_etag)
+            digest = v[DigestType.dandi_etag]
             if not re.fullmatch(DandiETag.REGEX, digest):
                 raise ValueError(
                     f"Digest must have an appropriate dandi-etag value. "
@@ -1237,7 +1238,7 @@ class PublishedAsset(Asset, Publishable):
         if values.get("encodingFormat") != "application/x-zarr":
             if DigestType.sha2_256 not in v:
                 raise ValueError("A non-zarr asset must have a sha2_256.")
-            digest = v.get(DigestType.sha2_256)
+            digest = v[DigestType.sha2_256]
             if not re.fullmatch(SHA256_PATTERN, digest):
                 raise ValueError(
                     f"Digest must have an appropriate sha2_256 value. Got {digest}"
