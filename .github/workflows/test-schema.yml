@@ -11,13 +11,13 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'release')
     steps:
       - name: Checkout this repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Need history for `git describe`
           path: dandischema
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
 
@@ -26,7 +26,7 @@ jobs:
         working-directory: dandischema
 
       - name: Checkout dandi/schema
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: dandi/schema
           path: schema
