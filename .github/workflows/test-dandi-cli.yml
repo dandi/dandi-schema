@@ -19,7 +19,7 @@ jobs:
       matrix:
         os:
           - windows-2019
-          - ubuntu-18.04
+          - ubuntu-latest
           - macos-latest
         python:
           # Use the only Python which is ATM also used by dandi-api
@@ -33,11 +33,11 @@ jobs:
         mode:
           - normal
         include:
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             python: 3.8
             mode: dandi-devel
             version: master
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             python: 3.8
             mode: dandi-devel
             version: release
