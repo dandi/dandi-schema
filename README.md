@@ -14,7 +14,7 @@ and assets. It uses [Pydantic](https://github.com/samuelcolvin/pydantic) to impl
 all the metadata classes. Schemas are generated on schema modifications and placed into
 [this repository](https://github.com/dandi/schema/tree/master/releases).
 
-Dandi-schema generates JSON schema definitions and also an associated `context.json`
+`dandi-schema` generates JSON schema definitions and also an associated `context.json`
 file for JSON-LD compliance of the metadata models.
 
 Important files in this repository include:
