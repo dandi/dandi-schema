@@ -12,7 +12,7 @@ Every `Dandiset` and associated asset has a metadata object that can be retrieve
 the DANDI API. This library helps create and validate DANDI schema-compliant metadata for `Dandisets`
 and assets. It uses [Pydantic](https://github.com/samuelcolvin/pydantic) to implement
 all the metadata classes. Schemas are generated on schema modifications and placed into
-[this repository](https://github.com/dandi/schema/tree/master/releases). 
+[this repository](https://github.com/dandi/schema/tree/master/releases).
 
 Dandi-schema generates JSON schema definitions and also an associated `context.json`
 file for JSON-LD compliance of the metadata models.
