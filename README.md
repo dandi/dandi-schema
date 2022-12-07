@@ -18,9 +18,9 @@ all the metadata classes. Schemas are generated on schema modifications and plac
 file for JSON-LD compliance of the metadata models.
 
 Important files in this repository include:
-- models.py - contains the models and any changes should be made there
+- models.py - contains the models
 - metadata.py - contains functions for validating, migrating, and aggregating metadata
-- datacite.py - converts the Dandiset metadata to a Datacite metadata structure
+- datacite.py - converts the `Dandiset` metadata to a Datacite metadata structure
 
 The generated JSON schemas can be used together with
 [VJSF](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/) to create a UI
@@ -30,7 +30,5 @@ for metadata modification. The DANDI Web app uses this to modify `Dandiset` meta
 
 * To learn how to interact with the DANDI archive,
 see [the handbook](https://www.dandiarchive.org/handbook/).
-
 * To file a feature request or bug report, go to https://github.com/dandi/helpdesk/issues/new/choose.
-
 * For all other issues, contact the DANDI team: help@dandiarchive.org.
