@@ -31,6 +31,7 @@ jobs:
         # Fetch all commits so that versioningit will return something
         # compatible with semantic-version
         fetch-depth: 0
+        submodules: true
 
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v4
