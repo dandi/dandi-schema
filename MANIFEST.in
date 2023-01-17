@@ -1,3 +1,5 @@
 include CHANGELOG.md tox.ini
 graft dandischema
+prune dandischema/schema
+recursive-include dandischema/schema/releases *.json
 global-exclude *.py[cod]
