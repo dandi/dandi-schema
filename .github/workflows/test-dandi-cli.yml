@@ -41,11 +41,6 @@ jobs:
             python: 3.8
             mode: dandi-devel
             version: release
-        exclude:
-          # Temporarily disabled due to h5py/hdf5 dependency issue
-          # See <https://github.com/dandi/dandi-cli/pull/315>
-          - os: windows-2019
-            python: 3.9
     steps:
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v4
