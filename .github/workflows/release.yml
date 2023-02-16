@@ -47,6 +47,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          submodules: true
           path: dandischema
           token: ${{ secrets.DANDI_GITHUB_TOKEN }}
 
@@ -73,34 +74,49 @@ jobs:
           fi
           echo "SCHEMA_VERSION=$SCHEMA_VERSION" >> "$GITHUB_ENV"
 
-      - name: Checkout dandi/schema
-        uses: actions/checkout@v3
-        with:
-          repository: dandi/schema
-          path: schema
-          token: ${{ secrets.DANDI_GITHUB_TOKEN }}
-
       - name: Test for unversioned changes
         run: |
           dirs="$(echo releases/*)"
           echo "Following directories will be checked for differences: $dirs"
-          python ../dandischema/tools/pubschemata.py releases
+          python ../../tools/pubschemata.py releases
           git status
           git add -A releases
           if ! git diff --cached --exit-code $dirs
           then echo "[ERROR] Existing schema files modified instead of creating a new version"
                exit 1
           fi
-        working-directory: schema
-
-      - name: Install build & twine
-        run: python -m pip install build twine
+        working-directory: dandischema/dandischema/schema
 
       - name: Download auto
         run: |
           auto_download_url="$(curl -fsSL https://api.github.com/repos/intuit/auto/releases/tags/$AUTO_VERSION | jq -r '.assets[] | select(.name == "auto-linux.gz") | .browser_download_url')"
           wget -O- "$auto_download_url" | gunzip > ~/auto
           chmod a+x ~/auto
+
+      - name: Commit schema changes
+        run: |
+          LIBRARY_VERSION="$(auto shipit --dry-run --quiet)"
+
+          git config --global user.email "team@dandiarchive.org"
+          git config --global user.name "DANDI Bot"
+
+          git add releases
+          if ! git diff --quiet --cached
+          then git commit -m "Publish model schema v$SCHEMA_VERSION as of dandischema v$LIBRARY_VERSION"
+               git push
+          else echo "No changes to commit"
+          fi
+        working-directory: dandischema/dandischema/schema
+
+      - name: Update schema submodule with new release
+        run: |
+          git submodule update
+          git add dandischema/schema
+          git commit -m "Update to include schema v$SCHEMA_VERSION"
+        working-directory: dandischema
+
+      - name: Install build & twine
+        run: python -m pip install build twine
 
       - name: Create release
         run: |
@@ -113,21 +129,10 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         working-directory: dandischema
 
-      - name: Commit schema changes and create new tag
+      - name: Add schema tag to release commit
         run: |
-          LIBRARY_VERSION="$(git -C ../dandischema describe --tags --exact-match)"
-
-          git config --global user.email "team@dandiarchive.org"
-          git config --global user.name "DANDI Bot"
-
-          git add releases
-          if ! git diff --quiet --cached
-          then git commit -m "Publish model schema v$SCHEMA_VERSION as of dandischema v$LIBRARY_VERSION"
-               git push
-               git -C ../dandischema tag -m "Schema v$SCHEMA_VERSION, released in dandischema v$LIBRARY_VERSION" schema-$SCHEMA_VERSION
-               git -C ../dandischema push --tags
-          else echo "No changes to commit"
-          fi
-        working-directory: schema
+          git tag -m "Update version to $SCHEMA_VERSION" schema-$SCHEMA_VERSION
+          git push --tags
+        working-directory: dandischema
 
 # vim:set sts=2:
