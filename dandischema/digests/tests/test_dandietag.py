@@ -116,7 +116,7 @@ def test_add_digest_reversed() -> None:
         assert not etagger.complete
         etagger._add_digest(p, d)
     assert etagger.complete
-    assert etagger.as_str() == ETAG
+    assert etagger.as_str() == ETAG  # type: ignore[unreachable]
 
 
 def test_add_digest_out_of_order() -> None:
@@ -128,7 +128,7 @@ def test_add_digest_out_of_order() -> None:
         assert not etagger.complete
         etagger._add_digest(p, d)
     assert etagger.complete
-    assert etagger.as_str() == ETAG
+    assert etagger.as_str() == ETAG  # type: ignore[unreachable]
 
 
 def test_etaghashlike() -> None:

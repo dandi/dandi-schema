@@ -71,7 +71,7 @@ def test_asset_digest() -> None:
         contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
     )
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100,
             encodingFormat="nwb",
             digest={models.DigestType.dandi_etag: digest, "sha1": ""},
@@ -88,7 +88,7 @@ def test_asset_digest() -> None:
         models.DigestType.sha2_256: 63 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
     assert any(
@@ -100,7 +100,7 @@ def test_asset_digest() -> None:
         models.DigestType.sha2_256: 64 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
     assert not any(
@@ -111,7 +111,7 @@ def test_asset_digest() -> None:
         models.DigestType.dandi_etag: digest,
     }
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
     assert any(
@@ -152,7 +152,7 @@ def test_asset_digest() -> None:
     digest = f"{32 * 'a'}-1--100"
     digest_model = {models.DigestType.dandi_zarr_checksum: digest}
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100,
             encodingFormat="application/x-zarr",
             digest=digest_model,
@@ -182,7 +182,7 @@ def test_asset_digest() -> None:
         ]
     )
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100,
             encodingFormat="application/x-zarr",
             digest=digest_model,
@@ -209,7 +209,7 @@ def test_asset_digest() -> None:
         ]
     )
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(
+        models.PublishedAsset(  # type: ignore[call-arg]
             contentSize=100,
             encodingFormat="application/x-zarr",
             digest=digest_model,

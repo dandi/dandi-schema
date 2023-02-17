@@ -42,8 +42,8 @@ def test_dandiset(schema_dir: Path) -> None:
     _validate_dandiset_json(data_as_dict, schema_dir)
 
 
-def test_id(schema_dir) -> None:
-    with open(Path(schema_dir) / "context.json") as fp:
+def test_id(schema_dir: Path) -> None:
+    with open(schema_dir / "context.json") as fp:
         context = json.load(fp)
     assert context["@context"]["hasMember"]["@type"] == "@id"
 

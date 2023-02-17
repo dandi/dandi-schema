@@ -156,7 +156,9 @@ class DandiBaseModelMetaclass(ModelMetaclass):
 
 
 class DandiBaseModel(BaseModel, metaclass=DandiBaseModelMetaclass):
-    id: Optional[str] = Field(description="Uniform resource identifier", readOnly=True)
+    id: Optional[str] = Field(
+        default=None, description="Uniform resource identifier", readOnly=True
+    )
 
     def json_dict(self) -> dict:
         """
