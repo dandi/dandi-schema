@@ -23,16 +23,6 @@ from pydantic.main import ModelMetaclass
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
 from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
-from .model_types import (
-    AccessTypeDict,
-    AgeReferenceTypeDict,
-    DigestTypeDict,
-    IdentifierTypeDict,
-    LicenseTypeDict,
-    ParticipantRelationTypeDict,
-    RelationTypeDict,
-    RoleTypeDict,
-)
 from .utils import name2title
 
 if sys.version_info < (3, 8):
@@ -75,50 +65,6 @@ MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
 
 
-def create_enum(data: dict) -> Type[Enum]:
-    """Convert a JSON-LD enumeration to an Enum"""
-    items = {}
-    klass = None
-    for idx, item in enumerate(data["@graph"]):
-        if item["@type"] == "rdfs:Class":
-            klass = item["@id"].replace("dandi:", "")
-            klass_doc = item["rdfs:comment"]
-        else:
-            key = item["@id"]
-            if ":" in item["@id"]:
-                key = item["@id"].split(":")[-1]
-            if key in items:
-                key = item["@id"].replace(":", "_")
-            items[key.replace("-", "_").replace(".", "")] = item["@id"]
-    if klass is None or len(items) == 0:
-        raise ValueError(f"Could not generate a klass or items from {data}")
-    newklass = Enum(klass, items)
-    newklass.__doc__ = klass_doc
-    return newklass
-
-
-def split_name(name: str) -> str:
-    space_added = []
-    for c in name:
-        if c.upper() == c:
-            space_added.append(" ")
-        space_added.append(c)
-    labels = "".join(space_added).split()
-    labels[0] = labels[0].capitalize()
-    for idx in range(1, len(labels)):
-        labels[idx] = labels[idx].lower()
-    return " ".join(labels)
-
-
-AccessType = create_enum(AccessTypeDict)
-AgeReferenceType = create_enum(AgeReferenceTypeDict)
-RoleType = create_enum(RoleTypeDict)
-RelationType = create_enum(RelationTypeDict)
-ParticipantRelationType = create_enum(ParticipantRelationTypeDict)
-LicenseType = create_enum(LicenseTypeDict)
-IdentifierType = create_enum(IdentifierTypeDict)
-DigestType = create_enum(DigestTypeDict)
-
 M = TypeVar("M", bound=BaseModel)
 
 
@@ -137,6 +83,290 @@ def _sanitize(o: Any) -> Any:
     elif isinstance(o, Enum):
         return o.value
     return o
+
+
+class AccessType(Enum):
+    """An enumeration of access status options"""
+
+    #: The dandiset is openly accessible
+    OpenAccess = "dandi:OpenAccess"
+
+    #: The dandiset is embargoed
+    EmbargoedAccess = "dandi:EmbargoedAccess"
+
+    """
+    Uncomment when restricted access is implemented:
+        #: The dandiset is restricted
+        RestrictedAccess = "dandi:RestrictedAccess"
+    """
+
+
+class DigestType(Enum):
+    """An enumeration of checksum types"""
+
+    #: MD5 checksum
+    md5 = "dandi:md5"
+
+    #: SHA1 checksum
+    sha1 = "dandi:sha1"
+
+    #: SHA2-256 checksum
+    sha2_256 = "dandi:sha2-256"
+
+    #: SHA3-256 checksum
+    sha3_256 = "dandi:sha3-256"
+
+    #: BLAKE2B-256 checksum
+    blake2b_256 = "dandi:blake2b-256"
+
+    #: BLAKE3-256 checksum
+    blake3 = "dandi:blake3"
+
+    #: S3-style ETag
+    dandi_etag = "dandi:dandi-etag"
+
+    #: DANDI Zarr checksum
+    dandi_zarr_checksum = "dandi:dandi-zarr-checksum"
+
+
+class IdentifierType(Enum):
+    """An enumeration of identifiers"""
+
+    doi = "dandi:doi"
+    orcid = "dandi:orcid"
+    ror = "dandi:ror"
+    dandi = "dandi:dandi"
+    rrid = "dandi:rrid"
+
+
+class LicenseType(Enum):
+    """An enumeration of supported licenses"""
+
+    CC0_10 = "spdx:CC0-1.0"
+    CC_BY_40 = "spdx:CC-BY-4.0"
+
+
+class RelationType(Enum):
+    """An enumeration of resource relations"""
+
+    #: Indicates that B includes A in a citation
+    IsCitedBy = "dcite:IsCitedBy"
+
+    #: Indicates that A includes B in a citation
+    Cites = "dcite:Cites"
+
+    #: Indicates that A is a supplement to B
+    IsSupplementTo = "dcite:IsSupplementTo"
+
+    #: Indicates that B is a supplement to A
+    IsSupplementedBy = "dcite:IsSupplementedBy"
+
+    #: Indicates A is continued by the work B
+    IsContinuedBy = "dcite:IsContinuedBy"
+
+    #: Indicates A is a continuation of the work B
+    Continues = "dcite:Continues"
+
+    #: Indicates A describes B
+    Describes = "dcite:Describes"
+
+    #: Indicates A is described by B
+    IsDescribedBy = "dcite:IsDescribedBy"
+
+    #: Indicates resource A has additional metadata B
+    HasMetadata = "dcite:HasMetadata"
+
+    #: Indicates additional metadata A for a resource B
+    IsMetadataFor = "dcite:IsMetadataFor"
+
+    #: Indicates A has a version (B)
+    HasVersion = "dcite:HasVersion"
+
+    #: Indicates A is a version of B
+    IsVersionOf = "dcite:IsVersionOf"
+
+    #: Indicates A is a new edition of B
+    IsNewVersionOf = "dcite:IsNewVersionOf"
+
+    #: Indicates A is a previous edition of B
+    IsPreviousVersionOf = "dcite:IsPreviousVersionOf"
+
+    #: Indicates A is a portion of B
+    IsPartOf = "dcite:IsPartOf"
+
+    #: Indicates A includes the part B
+    HasPart = "dcite:HasPart"
+
+    #: Indicates A is used as a source of information by B
+    IsReferencedBy = "dcite:IsReferencedBy"
+
+    #: Indicates B is used as a source of information for A
+    References = "dcite:References"
+
+    #: Indicates B is documentation about/explaining A
+    IsDocumentedBy = "dcite:IsDocumentedBy"
+
+    #: Indicates A is documentation about B
+    Documents = "dcite:Documents"
+
+    #: Indicates B is used to compile or create A
+    IsCompiledBy = "dcite:IsCompiledBy"
+
+    #: Indicates B is the result of a compile or creation event using A
+    Compiles = "dcite:Compiles"
+
+    #: Indicates A is a variant or different form of B
+    IsVariantFormOf = "dcite:IsVariantFormOf"
+
+    #: Indicates A is the original form of B
+    IsOriginalFormOf = "dcite:IsOriginalFormOf"
+
+    #: Indicates that A is identical to B
+    IsIdenticalTo = "dcite:IsIdenticalTo"
+
+    #: Indicates that A is reviewed by B
+    IsReviewedBy = "dcite:IsReviewedBy"
+
+    #: Indicates that A is a review of B
+    Reviews = "dcite:Reviews"
+
+    #: Indicates B is a source upon which A is based
+    IsDerivedFrom = "dcite:IsDerivedFrom"
+
+    #: Indicates A is a source upon which B is based
+    IsSourceOf = "dcite:IsSourceOf"
+
+    #: Indicates A is required by B
+    IsRequiredBy = "dcite:IsRequiredBy"
+
+    #: Indicates A requires B
+    Requires = "dcite:Requires"
+
+    #: Indicates A replaces B
+    Obsoletes = "dcite:Obsoletes"
+
+    #: Indicates A is replaced by B
+    IsObsoletedBy = "dcite:IsObsoletedBy"
+
+    #: Indicates A is published in B
+    IsPublishedIn = "dcite:IsPublishedIn"
+
+
+class ParticipantRelationType(Enum):
+    """An enumeration of participant relations"""
+
+    #: Indicates that A is a child of B
+    isChildOf = "dandi:isChildOf"
+
+    #: Indicates that A is a parent of B
+    isParentOf = "dandi:isParentOf"
+
+    #: Indicates that A is a sibling of B
+    isSiblingOf = "dandi:isSiblingOf"
+
+    #: Indicates that A is a monozygotic twin of B
+    isMonozygoticTwinOf = "dandi:isMonozygoticTwinOf"
+
+    #: Indicates that A is a dizygotic twin of B
+    isDizygoticTwinOf = "dandi:isDizygoticTwinOf"
+
+
+class RoleType(Enum):
+    """An enumeration of roles"""
+
+    #: Author
+    Author = "dcite:Author"
+
+    #: Conceptualization
+    Conceptualization = "dcite:Conceptualization"
+
+    #: Contact Person
+    ContactPerson = "dcite:ContactPerson"
+
+    #: Data Collector
+    DataCollector = "dcite:DataCollector"
+
+    #: Data Curator
+    DataCurator = "dcite:DataCurator"
+
+    #: Data Manager
+    DataManager = "dcite:DataManager"
+
+    #: Formal Analysis
+    FormalAnalysis = "dcite:FormalAnalysis"
+
+    #: Funding Acquisition
+    FundingAcquisition = "dcite:FundingAcquisition"
+
+    #: Investigation
+    Investigation = "dcite:Investigation"
+
+    #: Maintainer
+    Maintainer = "dcite:Maintainer"
+
+    #: Methodology
+    Methodology = "dcite:Methodology"
+
+    #: Producer
+    Producer = "dcite:Producer"
+
+    #: Project Leader
+    ProjectLeader = "dcite:ProjectLeader"
+
+    #: Project Manager
+    ProjectManager = "dcite:ProjectManager"
+
+    #: Project Member
+    ProjectMember = "dcite:ProjectMember"
+
+    #: Project Administration
+    ProjectAdministration = "dcite:ProjectAdministration"
+
+    #: Researcher
+    Researcher = "dcite:Researcher"
+
+    #: Resources
+    Resources = "dcite:Resources"
+
+    #: Software
+    Software = "dcite:Software"
+
+    #: Supervision
+    Supervision = "dcite:Supervision"
+
+    #: Validation
+    Validation = "dcite:Validation"
+
+    #: Visualization
+    Visualization = "dcite:Visualization"
+
+    #: Funder
+    Funder = "dcite:Funder"
+
+    #: Sponsor
+    Sponsor = "dcite:Sponsor"
+
+    #: Participant in a study
+    StudyParticipant = "dcite:StudyParticipant"
+
+    #: Affiliated with an entity
+    Affiliation = "dcite:Affiliation"
+
+    #: Approved ethics protocol
+    EthicsApproval = "dcite:EthicsApproval"
+
+    #: Other
+    Other = "dcite:Other"
+
+
+class AgeReferenceType(Enum):
+    """An enumeration of age reference"""
+
+    #: Age since Birth
+    BirthReference = "dandi:BirthReference"
+
+    #: Age of a pregnancy (https://en.wikipedia.org/wiki/Gestational_age)
+    GestationalReference = "dandi:GestationalReference"
 
 
 class HandleKeyEnumEncoder(json.JSONEncoder):
