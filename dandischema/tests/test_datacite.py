@@ -346,7 +346,6 @@ def test_dandimeta_datacite(
 
 
 def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
-
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]

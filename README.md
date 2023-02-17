@@ -1,6 +1,6 @@
 # DANDI Schema
 
-`dandi-schema` is a Python library for maintaining and managing DANDI metadata schemata. 
+`dandi-schema` is a Python library for maintaining and managing DANDI metadata schemata.
 
 ## Installation
 

@@ -668,7 +668,6 @@ class AssetsSummary(DandiBaseModel):
 
 
 class Equipment(DandiBaseModel):
-
     identifier: Optional[Identifier] = Field(None, nskey="schema")
     name: str = Field(
         title="Title",
@@ -1224,7 +1223,6 @@ class PublishedDandiset(Dandiset, Publishable):
 
 
 class PublishedAsset(Asset, Publishable):
-
     id: str = Field(
         description="Uniform resource identifier.",
         regex=ASSET_UUID_PATTERN,
