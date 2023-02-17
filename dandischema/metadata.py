@@ -104,7 +104,7 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     return vdir
 
 
-def _validate_obj_json(data: Any, schema: Any, missing_ok: bool = False) -> None:
+def _validate_obj_json(data: dict, schema: dict, missing_ok: bool = False) -> None:
     validator = jsonschema.Draft7Validator(
         schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
     )
