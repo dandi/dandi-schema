@@ -14,7 +14,7 @@ from pydantic import (
     ByteSize,
     EmailStr,
     Field,
-    HttpUrl,
+    parse_obj_as,
     root_validator,
     validator,
 )
@@ -31,24 +31,14 @@ else:
     from typing import Literal
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
-DANDI_INSTANCE_URL = os.environ.get("DJANGO_DANDI_WEB_APP_URL", None)
-# Ensure no trailing / for consistency
-DANDI_INSTANCE_URL_PATTERN = (
-    re.escape(DANDI_INSTANCE_URL.rstrip("/")) if DANDI_INSTANCE_URL else ".*"
-)
-
-# Local or test deployments of dandi-api will insert URLs into the schema that refer to the domain
-# localhost, which is not a valid TLD. To make the metadata valid in those contexts, setting this
-# environment variable will use a less restrictive pydantic field that allows localhost.
-UrlType: Type[AnyHttpUrl]
-if "DANDI_ALLOW_LOCALHOST_URLS" in os.environ:
-    UrlType = AnyHttpUrl
-    DANDI_INSTANCE_URL_PATTERN = (
-        rf"({DANDI_INSTANCE_URL_PATTERN}|http://localhost(:\d+)?)"
-    )
+try:
+    DANDI_INSTANCE_URL = os.environ["DJANGO_DANDI_WEB_APP_URL"]
+except KeyError:
+    DANDI_INSTANCE_URL = "http://localhost/"
+    DANDI_INSTANCE_URL_PATTERN = ".*"
 else:
-    UrlType = HttpUrl
-
+    # Ensure no trailing / for consistency
+    DANDI_INSTANCE_URL_PATTERN = re.escape(DANDI_INSTANCE_URL.rstrip("/"))
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
 UUID_PATTERN = (
@@ -510,7 +500,7 @@ class PropertyValue(DandiBaseModel):
     valueReference: Optional["PropertyValue"] = Field(
         None, nskey="schema"
     )  # Note: recursive (circular or not)
-    propertyID: Optional[Union[IdentifierType, UrlType]] = Field(
+    propertyID: Optional[Union[IdentifierType, AnyHttpUrl]] = Field(
         None,
         description="A commonly used identifier for"
         "the characteristic represented by the property. "
@@ -536,13 +526,12 @@ ORCID = str
 RORID = str
 DANDI = str
 RRID = str
-DANDIURL = str
 
 
 class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
-    identifier: Optional[Union[UrlType, str]] = Field(
+    identifier: Optional[Union[AnyHttpUrl, str]] = Field(
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
@@ -637,7 +626,7 @@ class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(
         None, description="Email address of contact.", nskey="schema"
     )
-    url: Optional[UrlType] = Field(
+    url: Optional[AnyHttpUrl] = Field(
         None,
         description="A Web page to find information on how to contact.",
         nskey="schema",
@@ -656,7 +645,7 @@ class Contributor(DandiBaseModel):
     )
     name: Optional[str] = Field(None, nskey="schema")
     email: Optional[EmailStr] = Field(None, nskey="schema")
-    url: Optional[UrlType] = Field(None, nskey="schema")
+    url: Optional[AnyHttpUrl] = Field(None, nskey="schema")
     roleName: Optional[List[RoleType]] = Field(
         None,
         title="Role",
@@ -755,7 +744,7 @@ class Software(DandiBaseModel):
     )
     name: str = Field(nskey="schema")
     version: str = Field(nskey="schema")
-    url: Optional[UrlType] = Field(
+    url: Optional[AnyHttpUrl] = Field(
         None, description="Web page for the software.", nskey="schema"
     )
 
@@ -773,7 +762,7 @@ class Agent(DandiBaseModel):
         nskey="schema",
     )
     name: str = Field(nskey="schema")
-    url: Optional[UrlType] = Field(None, nskey="schema")
+    url: Optional[AnyHttpUrl] = Field(None, nskey="schema")
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -801,7 +790,7 @@ class EthicsApproval(DandiBaseModel):
 class Resource(DandiBaseModel):
     identifier: Optional[Identifier] = Field(None, nskey="schema")
     name: Optional[str] = Field(None, title="A title of the resource", nskey="schema")
-    url: Optional[UrlType] = Field(None, title="URL of the resource", nskey="schema")
+    url: Optional[AnyHttpUrl] = Field(None, title="URL of the resource", nskey="schema")
     repository: Optional[str] = Field(
         None,
         title="Name of the repository",
@@ -1004,7 +993,7 @@ class RelatedParticipant(DandiBaseModel):
     name: Optional[str] = Field(
         None, title="Name of the participant or subject", nskey="schema"
     )
-    url: Optional[UrlType] = Field(
+    url: Optional[AnyHttpUrl] = Field(
         None, title="URL of the related participant or subject", nskey="schema"
     )
     relation: ParticipantRelationType = Field(
@@ -1176,7 +1165,7 @@ class CommonModel(DandiBaseModel):
         "applicable to datasets.",
         nskey="schema",
     )
-    protocol: Optional[List[UrlType]] = Field(
+    protocol: Optional[List[AnyHttpUrl]] = Field(
         None,
         description="A list of persistent URLs describing the protocol (e.g. "
         "protocols.io, or other DOIs).",
@@ -1203,11 +1192,13 @@ class CommonModel(DandiBaseModel):
         nskey="dandi",
         readOnly=True,
     )
-    url: Optional[UrlType] = Field(
+    url: Optional[AnyHttpUrl] = Field(
         None, readOnly=True, description="permalink to the item", nskey="schema"
     )
-    repository: UrlType = Field(
-        DANDI_INSTANCE_URL,
+    repository: AnyHttpUrl = Field(
+        # mypy doesn't like using a string as the default for an AnyHttpUrl
+        # attribute, so we have to convert it to an AnyHttpUrl:
+        parse_obj_as(AnyHttpUrl, DANDI_INSTANCE_URL),
         readOnly=True,
         description="location of the item",
         nskey="dandi",
@@ -1281,7 +1272,9 @@ class Dandiset(CommonModel):
     assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
 
     # From server (requested by users even for drafts)
-    manifestLocation: List[UrlType] = Field(readOnly=True, min_items=1, nskey="dandi")
+    manifestLocation: List[AnyHttpUrl] = Field(
+        readOnly=True, min_items=1, nskey="dandi"
+    )
 
     version: str = Field(readOnly=True, nskey="schema")
 
@@ -1306,7 +1299,7 @@ class BareAsset(CommonModel):
     """
 
     contentSize: ByteSize = Field(nskey="schema")
-    encodingFormat: Union[UrlType, str] = Field(
+    encodingFormat: Union[AnyHttpUrl, str] = Field(
         title="File encoding format", nskey="schema"
     )
     digest: Dict[DigestType, str] = Field(
@@ -1333,9 +1326,9 @@ class BareAsset(CommonModel):
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
     # need to come up with things for neurophys
     # TODO: waiting on input <https://github.com/dandi/dandi-cli/pull/226>
-    dataType: Optional[UrlType] = Field(None, nskey="dandi")
+    dataType: Optional[AnyHttpUrl] = Field(None, nskey="dandi")
 
-    sameAs: Optional[List[UrlType]] = Field(None, nskey="schema")
+    sameAs: Optional[List[AnyHttpUrl]] = Field(None, nskey="schema")
 
     # TODO
     approach: Optional[List[ApproachType]] = Field(None, readOnly=True, nskey="dandi")
@@ -1409,11 +1402,11 @@ class Asset(BareAsset):
     # all of the following are set by server
     id: str = Field(readOnly=True, description="Uniform resource identifier.")
     identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[UrlType] = Field(readOnly=True, nskey="schema")
+    contentUrl: List[AnyHttpUrl] = Field(readOnly=True, nskey="schema")
 
 
 class Publishable(DandiBaseModel):
-    publishedBy: Union[UrlType, PublishActivity] = Field(
+    publishedBy: Union[AnyHttpUrl, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
         readOnly=True,
         nskey="dandi",
@@ -1434,10 +1427,9 @@ class PublishedDandiset(Dandiset, Publishable):
         regex=DANDI_DOI_PATTERN,
         nskey="dandi",
     )
-    url: DANDIURL = Field(
+    url: AnyHttpUrl = Field(
         readOnly=True,
         description="Permalink to the Dandiset.",
-        regex=PUBLISHED_VERSION_URL_PATTERN,
         nskey="schema",
     )
 
@@ -1450,6 +1442,14 @@ class PublishedDandiset(Dandiset, Publishable):
                 "A Dandiset containing no files or zero bytes is not publishable"
             )
         return values
+
+    @validator("url")
+    def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
+        if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
+            raise ValueError(
+                f'string does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
+            )
+        return url
 
 
 class PublishedAsset(Asset, Publishable):
