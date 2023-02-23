@@ -5,7 +5,7 @@ import json
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast
+from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union, cast
 
 from pydantic import (
     UUID4,
@@ -1248,7 +1248,7 @@ class CommonModel(DandiBaseModel):
     )
     relatedResource: Optional[List[Resource]] = Field(None, nskey="dandi")
 
-    wasGeneratedBy: Optional[List[Activity]] = Field(None, nskey="prov")
+    wasGeneratedBy: Optional[Sequence[Activity]] = Field(None, nskey="prov")
     schemaKey: str = Field("CommonModel", readOnly=True)
 
 
@@ -1322,7 +1322,7 @@ class Dandiset(CommonModel):
 
     version: str = Field(readOnly=True, nskey="schema")
 
-    wasGeneratedBy: Optional[List[Project]] = Field(
+    wasGeneratedBy: Optional[Sequence[Project]] = Field(
         None,
         title="Associated projects",
         description="Project(s) that generated this Dandiset.",

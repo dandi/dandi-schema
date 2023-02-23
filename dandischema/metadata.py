@@ -199,7 +199,7 @@ def validate(
             if not missing_ok or el["msg"] != "field required":
                 messages.append(el)
         if messages:
-            raise PydanticValidationError(messages)
+            raise PydanticValidationError(messages)  # type: ignore[arg-type]
 
 
 def migrate(
