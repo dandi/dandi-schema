@@ -367,7 +367,7 @@ class DandiBaseModel(BaseModel):
     id: Optional[str] = Field(
         default=None, description="Uniform resource identifier", readOnly=True
     )
-    schemaKey: Literal["DandiBaseModel"] = Field("DandiBaseModel", readOnly=True)
+    schemaKey: str = Field("DandiBaseModel", readOnly=True)
 
     def json_dict(self) -> dict:
         """
@@ -531,7 +531,7 @@ class BaseType(DandiBaseModel):
     name: Optional[str] = Field(
         None, description="The name of the item.", max_length=150, nskey="schema"
     )
-    schemaKey: Literal["BaseType"] = Field("BaseType", readOnly=True)
+    schemaKey: str = Field("BaseType", readOnly=True)
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
     class Config:
@@ -680,7 +680,9 @@ class Contributor(DandiBaseModel):
         description="Identifier associated with a sponsored or gift award.",
         nskey="dandi",
     )
-    schemaKey: Literal["Contributor"] = Field("Contributor", readOnly=True)
+    schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
+        "Contributor", readOnly=True
+    )
 
 
 class Organization(Contributor):
@@ -956,7 +958,9 @@ class Activity(DandiBaseModel):
     used: Optional[List[Equipment]] = Field(
         None, description="A listing of equipment used for the activity.", nskey="prov"
     )
-    schemaKey: Literal["Activity"] = Field("Activity", readOnly=True)
+    schemaKey: Literal["Activity", "Project", "Session", "PublishActivity"] = Field(
+        "Activity", readOnly=True
+    )
 
     _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
 
@@ -1245,7 +1249,7 @@ class CommonModel(DandiBaseModel):
     relatedResource: Optional[List[Resource]] = Field(None, nskey="dandi")
 
     wasGeneratedBy: Optional[List[Activity]] = Field(None, nskey="prov")
-    schemaKey: Literal["CommonModel"] = Field("CommonModel", readOnly=True)
+    schemaKey: str = Field("CommonModel", readOnly=True)
 
 
 class Dandiset(CommonModel):
@@ -1454,7 +1458,9 @@ class Publishable(DandiBaseModel):
         nskey="dandi",
     )
     datePublished: datetime = Field(readOnly=True, nskey="schema")
-    schemaKey: Literal["Publishable"] = Field("Publishable", readOnly=True)
+    schemaKey: Literal["Publishable", "Dandiset", "Asset"] = Field(
+        "Publishable", readOnly=True
+    )
 
 
 class PublishedDandiset(Dandiset, Publishable):
