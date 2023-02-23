@@ -1,7 +1,8 @@
 import enum
 from enum import Enum
 import json
-from typing import Any, Dict, List, Literal, Optional, Type, Union
+import sys
+from typing import Any, Dict, List, Optional, Type, Union
 
 import pydantic
 from pydantic import Field, ValidationError
@@ -32,6 +33,11 @@ from ..models import (
     Resource,
     RoleType,
 )
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
 
 
 def test_dandiset() -> None:
