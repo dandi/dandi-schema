@@ -30,10 +30,11 @@ else:
     from typing import Literal
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
+DANDI_INSTANCE_URL: Optional[str]
 try:
     DANDI_INSTANCE_URL = os.environ["DJANGO_DANDI_WEB_APP_URL"]
 except KeyError:
-    DANDI_INSTANCE_URL = "http://localhost/"
+    DANDI_INSTANCE_URL = None
     DANDI_INSTANCE_URL_PATTERN = ".*"
 else:
     # Ensure no trailing / for consistency
@@ -1238,10 +1239,12 @@ class CommonModel(DandiBaseModel):
     url: Optional[AnyHttpUrl] = Field(
         None, readOnly=True, description="permalink to the item", nskey="schema"
     )
-    repository: AnyHttpUrl = Field(
+    repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        parse_obj_as(AnyHttpUrl, DANDI_INSTANCE_URL),
+        parse_obj_as(AnyHttpUrl, DANDI_INSTANCE_URL)
+        if DANDI_INSTANCE_URL is not None
+        else None,
         readOnly=True,
         description="location of the item",
         nskey="dandi",
