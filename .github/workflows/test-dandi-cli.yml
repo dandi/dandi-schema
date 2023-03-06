@@ -68,11 +68,11 @@ jobs:
 
       - name: Install master branch of dandi
         if: ${{ matrix.version == 'master' }}
-        run: pip install "dandi[test] @ git+https://github.com/dandi/dandi-cli.git"
+        run: pip install "dandi[test,extras] @ git+https://github.com/dandi/dandi-cli.git"
 
       - name: Install latest release of dandi
         if: ${{ matrix.version == 'release' }}
-        run: pip install "dandi[test]"
+        run: pip install "dandi[test,extras]"
 
       - name: Set DANDI_DEVEL=1
         if: matrix.mode == 'dandi-devel'
