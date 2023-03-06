@@ -1,7 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, TypeVar, cast
+from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast
 
 import jsonschema
 import pydantic
@@ -25,7 +25,7 @@ schema_map = {
 }
 
 
-def generate_context():
+def generate_context() -> dict:
     import pydantic
 
     field_preamble = {
@@ -53,7 +53,7 @@ def generate_context():
         "PATO": "http://purl.obolibrary.org/obo/PATO_",
         "spdx": "http://spdx.org/licenses/",
     }
-    fields = {}
+    fields: Dict[str, Any] = {}
     for val in dir(models):
         klass = getattr(models, val)
         if not isinstance(klass, pydantic.main.ModelMetaclass):
@@ -90,7 +90,7 @@ def generate_context():
     return {"@context": field_preamble}
 
 
-def publish_model_schemata(releasedir: str) -> Path:
+def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     version = models.get_schema_version()
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
@@ -104,7 +104,7 @@ def publish_model_schemata(releasedir: str) -> Path:
     return vdir
 
 
-def _validate_obj_json(data, schema, missing_ok=False):
+def _validate_obj_json(data: dict, schema: dict, missing_ok: bool = False) -> None:
     validator = jsonschema.Draft7Validator(
         schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
     )
@@ -117,21 +117,25 @@ def _validate_obj_json(data, schema, missing_ok=False):
         raise JsonschemaValidationError(error_list)
 
 
-def _validate_dandiset_json(data: dict, schema_dir: str) -> None:
+def _validate_dandiset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
     _validate_obj_json(data, schema)
 
 
-def _validate_asset_json(data: dict, schema_dir: str) -> None:
+def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
     _validate_obj_json(data, schema)
 
 
 def validate(
-    obj, schema_version=None, schema_key=None, missing_ok=False, json_validation=False
-):
+    obj: dict,
+    schema_version: Optional[str] = None,
+    schema_key: Optional[str] = None,
+    missing_ok: bool = False,
+    json_validation: bool = False,
+) -> None:
     """Validate object using pydantic
 
     Parameters
@@ -195,11 +199,13 @@ def validate(
             if not missing_ok or el["msg"] != "field required":
                 messages.append(el)
         if messages:
-            raise PydanticValidationError(messages)
+            raise PydanticValidationError(messages)  # type: ignore[arg-type]
 
 
 def migrate(
-    obj: dict, to_version: str = DANDI_SCHEMA_VERSION, skip_validation=False
+    obj: dict,
+    to_version: Optional[str] = DANDI_SCHEMA_VERSION,
+    skip_validation: bool = False,
 ) -> dict:
     """Migrate dandiset metadata object to new schema"""
     obj = deepcopy(obj)
@@ -234,7 +240,7 @@ def migrate(
                 val["schemaKey"] = "AccessRequirements"
         for resource in obj.get("relatedResource", []):
             resource["schemaKey"] = "Resource"
-        if "schemaKey" not in obj.get("assetsSummary"):
+        if "schemaKey" not in obj["assetsSummary"]:
             obj["assetsSummary"]["schemaKey"] = "AssetsSummary"
         if "schemaKey" not in obj:
             obj["schemaKey"] = "Dandiset"
@@ -246,7 +252,7 @@ _stats_var_type = TypeVar("_stats_var_type", int, list)
 _stats_type = Dict[str, _stats_var_type]
 
 
-def _get_samples(value, stats, hierarchy):
+def _get_samples(value: dict, stats: _stats_type, hierarchy: Any) -> _stats_type:
     if "sampleType" in value:
         sampletype = value["sampleType"]["name"]
         obj = value["identifier"].replace("_", "-")

@@ -11,7 +11,7 @@ from dandischema.digests.zarr import (
 )
 
 
-def test_zarr_checksum_sort_order():
+def test_zarr_checksum_sort_order() -> None:
     # The a < b in the path should take precedence over z > y in the checksum
     a = ZarrChecksum(name="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", digest="z", size=1)
     b = ZarrChecksum(name="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", digest="y", size=1)
@@ -21,7 +21,7 @@ def test_zarr_checksum_sort_order():
 # ZarrChecksums tests
 
 
-def test_zarr_checkums_is_empty():
+def test_zarr_checkums_is_empty() -> None:
     assert ZarrChecksums(directories=[], files=[]).is_empty
     assert not ZarrChecksums(
         directories=[ZarrChecksum(digest="checksum", name="name", size=1)], files=[]
@@ -56,7 +56,11 @@ c = ZarrChecksum(name="c", digest="c", size=1)
         ([b], [c, a], [a, b, c]),
     ],
 )
-def test_zarr_checkums_add_file_checksums(initial, new_checksums, expected):
+def test_zarr_checkums_add_file_checksums(
+    initial: list[ZarrChecksum],
+    new_checksums: list[ZarrChecksum],
+    expected: list[ZarrChecksum],
+) -> None:
     checksums = ZarrChecksums(directories=[], files=initial)
     checksums.add_file_checksums(new_checksums)
     assert checksums.files == expected
@@ -75,7 +79,11 @@ def test_zarr_checkums_add_file_checksums(initial, new_checksums, expected):
         ([b], [c, a], [a, b, c]),
     ],
 )
-def test_zarr_checkums_add_directory_checksums(initial, new_checksums, expected):
+def test_zarr_checkums_add_directory_checksums(
+    initial: list[ZarrChecksum],
+    new_checksums: list[ZarrChecksum],
+    expected: list[ZarrChecksum],
+) -> None:
     checksums = ZarrChecksums(directories=initial, files=[])
     checksums.add_directory_checksums(new_checksums)
     assert checksums.directories == expected
@@ -101,12 +109,12 @@ def test_zarr_checkums_add_directory_checksums(initial, new_checksums, expected)
     ],
 )
 def test_zarr_checkums_remove_checksums(
-    initial_files,
-    initial_directories,
-    removed_checksums,
-    expected_files,
-    expected_directories,
-):
+    initial_files: list[ZarrChecksum],
+    initial_directories: list[ZarrChecksum],
+    removed_checksums: list[str],
+    expected_files: list[ZarrChecksum],
+    expected_directories: list[ZarrChecksum],
+) -> None:
     checksums = ZarrChecksums(files=initial_files, directories=initial_directories)
     checksums.remove_checksums(removed_checksums)
     assert checksums.files == expected_files
@@ -178,8 +186,10 @@ def test_zarr_checkums_remove_checksums(
     ],
 )
 def test_zarr_checksum_serializer_aggregate_digest(
-    file_checksums, directory_checksums, digest
-):
+    file_checksums: list[ZarrChecksum],
+    directory_checksums: list[ZarrChecksum],
+    digest: str,
+) -> None:
     serializer = ZarrJSONChecksumSerializer()
     assert (
         serializer.aggregate_digest(
@@ -189,7 +199,7 @@ def test_zarr_checksum_serializer_aggregate_digest(
     )
 
 
-def test_zarr_checksum_serializer_generate_listing():
+def test_zarr_checksum_serializer_generate_listing() -> None:
     serializer = ZarrJSONChecksumSerializer()
     checksums = ZarrChecksums(
         files=[
@@ -208,7 +218,7 @@ def test_zarr_checksum_serializer_generate_listing():
     )
 
 
-def test_zarr_serialize():
+def test_zarr_serialize() -> None:
     serializer = ZarrJSONChecksumSerializer()
     assert (
         serializer.serialize(
@@ -237,7 +247,7 @@ def test_zarr_serialize():
     )
 
 
-def test_zarr_deserialize():
+def test_zarr_deserialize() -> None:
     serializer = ZarrJSONChecksumSerializer()
     assert serializer.deserialize(
         '{"checksums":{"directories":[{"digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-1--2","name":"foo","size":2}],"files":[{"digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","name":"bar","size":1}]},"digest":"cccccccccccccccccccccccccccccccc-2--3","size":3}'  # noqa: E501
@@ -303,10 +313,14 @@ def test_zarr_deserialize():
         ),
     ],
 )
-def test_zarr_get_checksum(files, directories, checksum):
+def test_zarr_get_checksum(
+    files: dict[str, tuple[str, int]],
+    directories: dict[str, tuple[str, int]],
+    checksum: str,
+) -> None:
     assert get_checksum(files=files, directories=directories) == checksum
 
 
-def test_zarr_get_checksum_empty():
+def test_zarr_get_checksum_empty() -> None:
     with pytest.raises(ValueError):
         get_checksum(files={}, directories={})

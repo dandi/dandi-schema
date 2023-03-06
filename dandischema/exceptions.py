@@ -8,22 +8,14 @@ class ValidationError(ValueError):
 
 
 class JsonschemaValidationError(ValidationError):
-    """Validation errors were detected by jsonschema.
+    """Validation errors were detected by jsonschema"""
 
-    All errors are contained in the .args[0] of the exception instance.
-    """
-
-    @property
-    def errors(self) -> List[jsonschema.exceptions.ValidationError]:
-        return self.args[0]
+    def __init__(self, errors: List[jsonschema.exceptions.ValidationError]) -> None:
+        self.errors = errors
 
 
 class PydanticValidationError(ValidationError):
-    """Validation errors were detected by pydantic.
+    """Validation errors were detected by pydantic"""
 
-    All errors are contained in the .args[0] of the exception instance.
-    """
-
-    @property
-    def errors(self) -> List[Dict[str, Any]]:
-        return self.args[0]
+    def __init__(self, errors: List[Dict[str, Any]]) -> None:
+        self.errors = errors

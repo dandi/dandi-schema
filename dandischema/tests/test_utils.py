@@ -19,7 +19,7 @@ from ..utils import _ensure_newline, name2title, version2tuple
         ("ContactPoint", "Contact Point"),
     ],
 )
-def test_name2title(name, title):
+def test_name2title(name: str, title: str) -> None:
     assert name2title(name) == title
 
 
@@ -33,7 +33,7 @@ def test_name2title(name, title):
         ("0.1.2-rc1", True),
     ],
 )
-def test_version(ver, error):
+def test_version(ver: str, error: bool) -> None:
     if error:
         with pytest.raises(ValueError):
             version2tuple(ver)
@@ -41,7 +41,7 @@ def test_version(ver, error):
         assert len(version2tuple(ver)) == 3
 
 
-def test_newline():
+def test_newline() -> None:
     obj = "\n"
     assert _ensure_newline(obj).endswith("\n")
     obj = ""

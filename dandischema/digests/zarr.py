@@ -12,12 +12,12 @@ ENCODING_KWARGS = {"separators": (",", ":")}
 ZARR_CHECKSUM_PATTERN = "([0-9a-f]{32})-([0-9]+)--([0-9]+)"
 
 
-def generate_directory_digest(md5: str, file_count: int, size: int):
+def generate_directory_digest(md5: str, file_count: int, size: int) -> str:
     """Generate a directory digest from its constituent parts"""
     return f"{md5}-{file_count}--{size}"
 
 
-def parse_directory_digest(digest: str):
+def parse_directory_digest(digest: str) -> tuple[str, int, int]:
     """Parse a directory digest into its constituent parts"""
     match = re.match(ZARR_CHECKSUM_PATTERN, digest)
     if match is None:
@@ -38,7 +38,7 @@ class ZarrChecksum(pydantic.BaseModel):
     size: int
 
     # To make ZarrChecksums sortable
-    def __lt__(self, other: ZarrChecksum):
+    def __lt__(self, other: ZarrChecksum) -> bool:
         return self.name < other.name
 
 
@@ -53,17 +53,17 @@ class ZarrChecksums(pydantic.BaseModel):
     files: List[ZarrChecksum] = pydantic.Field(default_factory=list)
 
     @property
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return self.files == [] and self.directories == []
 
-    def _index(self, checksums: List[ZarrChecksum], checksum: ZarrChecksum):
+    def _index(self, checksums: List[ZarrChecksum], checksum: ZarrChecksum) -> int:
         # O(n) performance, consider using the bisect module or an ordered dict for optimization
         for i in range(0, len(checksums)):
             if checksums[i].name == checksum.name:
                 return i
         raise ValueError("Not found")
 
-    def add_file_checksums(self, checksums: List[ZarrChecksum]):
+    def add_file_checksums(self, checksums: List[ZarrChecksum]) -> None:
         for new_checksum in checksums:
             try:
                 self.files[self._index(self.files, new_checksum)] = new_checksum
@@ -71,7 +71,7 @@ class ZarrChecksums(pydantic.BaseModel):
                 self.files.append(new_checksum)
         self.files = sorted(self.files)
 
-    def add_directory_checksums(self, checksums: List[ZarrChecksum]):
+    def add_directory_checksums(self, checksums: List[ZarrChecksum]) -> None:
         """Add a list of directory checksums to the listing."""
         for new_checksum in checksums:
             try:
@@ -82,7 +82,7 @@ class ZarrChecksums(pydantic.BaseModel):
                 self.directories.append(new_checksum)
         self.directories = sorted(self.directories)
 
-    def remove_checksums(self, names: List[str]):
+    def remove_checksums(self, names: List[str]) -> None:
         """Remove a list of names from the listing."""
         self.files = sorted(
             filter(lambda checksum: checksum.name not in names, self.files)
@@ -109,7 +109,7 @@ class ZarrJSONChecksumSerializer:
         """Generate an aggregated digest for a list of ZarrChecksums."""
         # Use the most compact separators possible
         # content = json.dumps([asdict(zarr_md5) for zarr_md5 in checksums], separators=(',', ':'))0
-        content = checksums.json(**ENCODING_KWARGS)
+        content = checksums.json(**ENCODING_KWARGS)  # type: ignore[arg-type]
         h = hashlib.md5()
         h.update(content.encode("utf-8"))
         md5 = h.hexdigest()
@@ -125,7 +125,7 @@ class ZarrJSONChecksumSerializer:
     def serialize(self, zarr_checksum_listing: ZarrChecksumListing) -> str:
         """Serialize a ZarrChecksumListing into a string."""
         # return json.dumps(asdict(zarr_checksum_listing))
-        return zarr_checksum_listing.json(**ENCODING_KWARGS)
+        return zarr_checksum_listing.json(**ENCODING_KWARGS)  # type: ignore[arg-type]
 
     def deserialize(self, json_str: str) -> ZarrChecksumListing:
         """Deserialize a string into a ZarrChecksumListing."""

@@ -14,6 +14,7 @@ jobs:
     env:
       NO_ET: 1
       DANDI_ALLOW_LOCALHOST_URLS: 1
+      DANDI_TESTS_PULL_DOCKER_COMPOSE: 0
     strategy:
       fail-fast: false
       matrix:
