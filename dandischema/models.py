@@ -395,7 +395,7 @@ class DandiBaseModel(BaseModel):
         return val
 
     @classmethod
-    def unvalidated(__pydantic_cls__: Type[BaseModel], **data: Any) -> BaseModel:
+    def unvalidated(__pydantic_cls__: Type[M], **data: Any) -> M:
         """Allow model to be returned without validation"""
         for name, field in __pydantic_cls__.__fields__.items():
             try:
