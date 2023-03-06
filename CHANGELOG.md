@@ -1,3 +1,44 @@
+# 0.8.0 (Mon Mar 06 2023)
+
+#### 🚀 Enhancement
+
+- Fully type-annotate and type-check everything [#100](https://github.com/dandi/dandi-schema/pull/100) ([@jwodder](https://github.com/jwodder) [@yarikoptic](https://github.com/yarikoptic))
+
+#### 🐛 Bug Fix
+
+- Use GitHub for Flake8 pre-commit hook [#154](https://github.com/dandi/dandi-schema/pull/154) ([@danlamanna](https://github.com/danlamanna))
+- Properly include "data packages" in project [#138](https://github.com/dandi/dandi-schema/pull/138) ([@jwodder](https://github.com/jwodder))
+
+#### 🏠 Internal
+
+- Autoupdate .pre-commit-config.yaml [#161](https://github.com/dandi/dandi-schema/pull/161) ([@jwodder](https://github.com/jwodder))
+- Configure Dependabot to update GitHub Actions action versions [#149](https://github.com/dandi/dandi-schema/pull/149) ([@jwodder](https://github.com/jwodder) [@satra](https://github.com/satra))
+- Update GitHub Actions to use ubuntu-latest [#150](https://github.com/dandi/dandi-schema/pull/150) ([@jwodder](https://github.com/jwodder))
+- Update GitHub Actions action versions [#148](https://github.com/dandi/dandi-schema/pull/148) ([@jwodder](https://github.com/jwodder))
+- Set action step outputs via $GITHUB_OUTPUT [#147](https://github.com/dandi/dandi-schema/pull/147) ([@jwodder](https://github.com/jwodder))
+- Update pre-commit hooks and rerun [#145](https://github.com/dandi/dandi-schema/pull/145) ([@jwodder](https://github.com/jwodder))
+- Update how jsonschema format checkers are retrieved [#146](https://github.com/dandi/dandi-schema/pull/146) ([@jwodder](https://github.com/jwodder))
+
+#### 📝 Documentation
+
+- dandi-schema readme edit [#152](https://github.com/dandi/dandi-schema/pull/152) ([@melster1010](https://github.com/melster1010))
+
+#### 🧪 Tests
+
+- Install dandi's `extras` extra when testing [#162](https://github.com/dandi/dandi-schema/pull/162) ([@jwodder](https://github.com/jwodder))
+- Test against Python 3.11 [#151](https://github.com/dandi/dandi-schema/pull/151) ([@jwodder](https://github.com/jwodder))
+- Revert "Set DJANGO_DANDI_WEB_APP_URL for dandi-cli integration tests" [#137](https://github.com/dandi/dandi-schema/pull/137) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 5
+
+- Dan LaManna ([@danlamanna](https://github.com/danlamanna))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Mary Elise Dedicke ([@melster1010](https://github.com/melster1010))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.7.1 (Thu Apr 28 2022)
 
 #### 🐛 Bug Fix
