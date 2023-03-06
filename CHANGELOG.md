@@ -1,3 +1,15 @@
+# 0.8.1 (Mon Mar 06 2023)
+
+#### 🐛 Bug Fix
+
+- Fix type annotation of `unvalidated()` [#163](https://github.com/dandi/dandi-schema/pull/163) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 1
+
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+
+---
+
 # 0.8.0 (Mon Mar 06 2023)
 
 #### 🚀 Enhancement
