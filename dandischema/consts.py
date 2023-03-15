@@ -7,14 +7,7 @@ ALLOWED_INPUT_SCHEMAS = ["0.4.4", "0.5.1", "0.5.2", "0.6.0", "0.6.1", "0.6.2", "
 ALLOWED_TARGET_SCHEMAS = [DANDI_SCHEMA_VERSION]
 # This allows multiple schemas for validation, whereas target schemas focus on
 # migration.
-ALLOWED_VALIDATION_SCHEMAS = ALLOWED_TARGET_SCHEMAS + [
-    "0.4.4",
-    "0.5.1",
-    "0.5.2",
-    "0.6.0",
-    "0.6.1",
-    "0.6.2",
-]
+ALLOWED_VALIDATION_SCHEMAS = ALLOWED_TARGET_SCHEMAS + ALLOWED_INPUT_SCHEMAS
 
 if DANDI_SCHEMA_VERSION not in ALLOWED_INPUT_SCHEMAS:
     ALLOWED_INPUT_SCHEMAS.append(DANDI_SCHEMA_VERSION)
