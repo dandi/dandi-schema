@@ -1,3 +1,15 @@
+# 0.8.2 (Thu Mar 16 2023)
+
+#### 🐛 Bug Fix
+
+- fix: add 0.6.3 to validation [#165](https://github.com/dandi/dandi-schema/pull/165) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.8.1 (Mon Mar 06 2023)
 
 #### 🐛 Bug Fix
