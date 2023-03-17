@@ -115,6 +115,10 @@ def to_datacite(
             dict_fund = {"funderName": contr_el.name}
             if contr_el.identifier:
                 dict_fund["funderIdentifier"] = contr_el.identifier
+                funderidtype = "Other"
+                if "ror.org" in contr_el.identifier:
+                    funderidtype = "ROR"
+                dict_fund["funderIdentifierType"] = funderidtype
             if contr_el.awardNumber:
                 dict_fund["awardNumber"] = contr_el.awardNumber
             attributes.setdefault("fundingReferences", []).append(dict_fund)
