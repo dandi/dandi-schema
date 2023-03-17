@@ -223,6 +223,29 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                 "fundingReferences": (1, {"funderName": "B_last, B_first"}),
             },
         ),
+        # Add a sponsor with an identifier
+        (
+            {
+                "contributor": [
+                    {
+                        "name": "A_last, A_first",
+                        "roleName": [RoleType("dcite:ContactPerson")],
+                    },
+                    {
+                        "name": "B_last, B_first",
+                        "identifier": "0000-0001-0000-0000",
+                        "roleName": [RoleType("dcite:Sponsor")],
+                    },
+                ],
+            },
+            {
+                "creators": (1, {"name": "A_last, A_first"}),
+                "fundingReferences": (1, {"funderName": "B_last, B_first", 
+                                          "funderIdentifier": "0000-0001-0000-0000",
+                                          "funderIdentifierType": "Other",
+                                         }),
+            },
+        ),
         # additional contributor with 2 roles: Author and Software (doesn't exist in datacite)
         # the person should be in creators and contributors (with contributorType Other)
         # Adding Orcid ID to the identifier to one of the contributors
