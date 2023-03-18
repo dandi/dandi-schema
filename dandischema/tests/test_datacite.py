@@ -240,10 +240,14 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
             },
             {
                 "creators": (1, {"name": "A_last, A_first"}),
-                "fundingReferences": (1, {"funderName": "B_last, B_first", 
-                                          "funderIdentifier": "0000-0001-0000-0000",
-                                          "funderIdentifierType": "Other",
-                                         }),
+                "fundingReferences": (
+                    1,
+                    {
+                        "funderName": "B_last, B_first",
+                        "funderIdentifier": "0000-0001-0000-0000",
+                        "funderIdentifierType": "Other",
+                    },
+                ),
             },
         ),
         # additional contributor with 2 roles: Author and Software (doesn't exist in datacite)
