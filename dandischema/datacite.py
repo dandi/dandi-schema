@@ -126,7 +126,10 @@ def to_datacite(
                 dict_fund["awardNumber"] = contr_el.awardNumber
             attributes.setdefault("fundingReferences", []).append(dict_fund)
             # if no more roles, it shouldn't be added to creators or contributors
-            contr_el.roleName.remove(RoleType("dcite:Sponsor"))
+            if RoleType("dcite:Sponsor") in contr_el.roleName:
+                contr_el.roleName.remove(RoleType("dcite:Sponsor"))
+            if RoleType("dcite:Funder") in contr_el.roleName:
+                contr_el.roleName.remove(RoleType("dcite:Funder"))
             if not contr_el.roleName:
                 continue
 
