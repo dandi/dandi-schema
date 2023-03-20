@@ -110,7 +110,7 @@ def to_datacite(
     contributors = []
     creators = []
     for contr_el in meta.contributor:
-        if contr_el.roleName and RoleType("dcite:Sponsor") in contr_el.roleName:
+        if contr_el.roleName and (RoleType("dcite:Sponsor") in contr_el.roleName or RoleType("dcite:Funder") in contr_el.roleName):
             # no info about "funderIdentifierType", "awardUri", "awardTitle"
             dict_fund = {"funderName": contr_el.name}
             if contr_el.identifier:
@@ -119,7 +119,11 @@ def to_datacite(
                 dict_fund["awardNumber"] = contr_el.awardNumber
             attributes.setdefault("fundingReferences", []).append(dict_fund)
             # if no more roles, it shouldn't be added to creators or contributors
-            contr_el.roleName.remove(RoleType("dcite:Sponsor"))
+            if RoleType("dcite:Sponsor") in contr_el.roleName:
+                contr_el.roleName.remove(RoleType("dcite:Sponsor"))
+            if RoleType("dcite:Funder") in contr_el.roleName:
+                contr_el.roleName.remove(RoleType("dcite:Funder"))
+
             if not contr_el.roleName:
                 continue
 
