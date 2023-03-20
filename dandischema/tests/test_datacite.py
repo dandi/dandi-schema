@@ -225,22 +225,22 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
         ),
         # additional contributor with dandi:Funder, fundingReferences should be also created (as for Sponsor)
         (
-                {
-                    "contributor": [
-                        {
-                            "name": "A_last, A_first",
-                            "roleName": [RoleType("dcite:ContactPerson")],
-                        },
-                        {
-                            "name": "B_last, B_first",
-                            "roleName": [RoleType("dcite:Funder")],
-                        },
-                    ],
-                },
-                {
-                    "creators": (1, {"name": "A_last, A_first"}),
-                    "fundingReferences": (1, {"funderName": "B_last, B_first"}),
-                },
+            {
+                "contributor": [
+                    {
+                        "name": "A_last, A_first",
+                        "roleName": [RoleType("dcite:ContactPerson")],
+                    },
+                    {
+                        "name": "B_last, B_first",
+                        "roleName": [RoleType("dcite:Funder")],
+                    },
+                ],
+            },
+            {
+                "creators": (1, {"name": "A_last, A_first"}),
+                "fundingReferences": (1, {"funderName": "B_last, B_first"}),
+            },
         ),
         # additional contributor with 2 roles: Author and Software (doesn't exist in datacite)
         # the person should be in creators and contributors (with contributorType Other)
