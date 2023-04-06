@@ -2,7 +2,13 @@ from typing import Dict, List, Optional, Union
 
 import pytest
 
-from ..utils import _ensure_newline, name2title, strip_top_level_optional, version2tuple
+from ..utils import (
+    _ensure_newline,
+    name2title,
+    sanitize_value,
+    strip_top_level_optional,
+    version2tuple,
+)
 
 
 @pytest.mark.parametrize(
@@ -72,3 +78,13 @@ def test_newline() -> None:
 )
 def test_strip_top_level_optional(input_: type, expected_output: type) -> None:
     assert strip_top_level_optional(input_) == expected_output
+
+
+def test_sanitize_value() -> None:
+    # . is not sanitized in extension but elsewhere
+    assert sanitize_value("_.ext", "extension") == "-.ext"
+    assert sanitize_value("_.ext", "unrelated") == "--ext"
+    assert sanitize_value("_.ext") == "--ext"
+    assert sanitize_value("A;B") == "A-B"
+    assert sanitize_value("A\\/B") == "A--B"
+    assert sanitize_value("A\"'B") == "A--B"
