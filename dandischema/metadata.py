@@ -315,7 +315,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     # once in some incorrectly named datasets
     found: Dict[str, str] = {}
     for part in Path(assetmeta["path"]).name.split(".")[0].split("_"):
-        if found.get("subject") and part.startswith("sub-"):
+        if not found.get("subject") and part.startswith("sub-"):
             found["subject"] = subject = part.split("sub-", 1)[1]
             if subject not in stats["subjects"]:
                 stats["subjects"].append(subject)
