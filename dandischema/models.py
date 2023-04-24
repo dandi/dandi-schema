@@ -1215,8 +1215,8 @@ class CommonModel(DandiBaseModel):
         "protocols.io, or other DOIs).",
         nskey="dandi",
     )
-    ethicsApproval: Optional[List[EthicsApproval]] = Field(
-        None, title="Ethics approvals", nskey="dandi"
+    ethicsApproval: List[EthicsApproval] = Field(
+        title="Ethics approvals", nskey="dandi"
     )
     keywords: Optional[List[str]] = Field(
         None,
