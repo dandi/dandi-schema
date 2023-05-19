@@ -153,7 +153,6 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
     datacite = to_datacite(meta=meta, validate=True)
 
 
-
 @skipif_no_network
 @pytest.mark.parametrize(
     "additional_meta, datacite_checks",
@@ -314,7 +313,9 @@ def test_dandimeta_datacite(
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix, version=version))
+    metadata_basic.update(
+        _basic_publishmeta(dandi_id=dandi_id_noprefix, version=version)
+    )
     metadata_basic.update(additional_meta)
 
     # creating and validating datacite objects
@@ -348,7 +349,9 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix, version=version))
+    metadata_basic.update(
+        _basic_publishmeta(dandi_id=dandi_id_noprefix, version=version)
+    )
 
     # creating and validating datacite objects
     datacite = to_datacite(metadata_basic, publish=True)
