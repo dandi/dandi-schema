@@ -1,3 +1,20 @@
+# 0.8.3 (Mon Apr 17 2023)
+
+#### 🏠 Internal
+
+- [pre-commit.ci] pre-commit autoupdate [#170](https://github.com/dandi/dandi-schema/pull/170) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🔩 Dependency Updates
+
+- Restrict pydantic requirement to < 2.0 [#177](https://github.com/dandi/dandi-schema/pull/177) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 2
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+
+---
+
 # 0.8.2 (Thu Mar 16 2023)
 
 #### 🐛 Bug Fix
