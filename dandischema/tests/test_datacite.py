@@ -14,7 +14,7 @@ from ..datacite import _get_datacite_schema, to_datacite
 from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
 
 
-def datacite_post(datacite: dict, doi: str) -> None:
+def _datacite_post(datacite: dict, doi: str) -> None:
     """Post the datacite object and check the status of the request"""
 
     # removing doi in case it exists
@@ -53,9 +53,9 @@ def schema() -> Any:
 
 @pytest.fixture(scope="function")
 def metadata_basic() -> Dict[str, Any]:
-    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id_noprefix = "000002"
     dandi_id = f"DANDI:{dandi_id_noprefix}"
-    version = "0.0.0"
+    version = f"0.0.{random.randrange(0, 9999)}"
     # meta data without doi, datePublished and publishedBy
     meta_dict = {
         "identifier": dandi_id,
@@ -152,8 +152,6 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     datacite = to_datacite(meta=meta, validate=True)
 
-    # trying to post datacite
-    datacite_post(datacite, meta.doi)
 
 
 @skipif_no_network
@@ -315,12 +313,12 @@ def test_dandimeta_datacite(
 
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
-
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    version = metadata_basic["version"]
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix, version=version))
     metadata_basic.update(additional_meta)
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic)
+    datacite = to_datacite(metadata_basic, publish=True)
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema)
     validator.validate(datacite["data"]["attributes"])
@@ -342,20 +340,20 @@ def test_dandimeta_datacite(
                 assert attr[key] == el_flds
 
     # trying to poste datacite
-    datacite_post(datacite, metadata_basic["doi"])
+    _datacite_post(datacite, metadata_basic["doi"])
 
 
 def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
+    """checking to_datacite function with publish=True"""
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix, version=version))
 
     # creating and validating datacite objects
     datacite = to_datacite(metadata_basic, publish=True)
 
     assert datacite == {
-        # 'data': {}
         "data": {
             "id": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
             "type": "dois",
