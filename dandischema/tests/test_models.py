@@ -4,8 +4,6 @@ import json
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
-import pydantic
-from pydantic import Field, ValidationError
 import pytest
 
 from .test_datacite import _basic_publishmeta
@@ -33,6 +31,11 @@ from ..models import (
     Resource,
     RoleType,
 )
+
+try:
+    import pydantic.v1 as pydantic
+except ImportError:
+    import pydantic
 
 if sys.version_info < (3, 8):
     from typing_extensions import Literal
@@ -405,7 +408,7 @@ def test_dantimeta_1() -> None:
 
     # should work for Dandiset but PublishedDandiset should raise an error
     Dandiset(**meta_dict)
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(pydantic.ValidationError) as exc:
         PublishedDandiset(**meta_dict)
 
     error_msgs = [
@@ -557,7 +560,7 @@ def test_properties_mismatch() -> None:
 def test_schemakey_roundtrip() -> None:
     class TempKlass(DandiBaseModel):
         contributor: Optional[List[Union[Organization, Person]]]
-        schemaKey: Literal["TempKlass"] = Field("TempKlass", readOnly=True)
+        schemaKey: Literal["TempKlass"] = pydantic.Field("TempKlass", readOnly=True)
 
     contributor = [
         {
@@ -591,7 +594,7 @@ def test_schemakey_roundtrip() -> None:
 def test_name_regex(name: str) -> None:
     class TempKlass(DandiBaseModel):
         contributor: Person
-        schemaKey: Literal["TempKlass"] = Field("TempKlass", readOnly=True)
+        schemaKey: Literal["TempKlass"] = pydantic.Field("TempKlass", readOnly=True)
 
     contributor = {
         "name": name,

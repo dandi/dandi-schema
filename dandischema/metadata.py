@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast
 
 import jsonschema
-import pydantic
 import requests
 
 from .consts import (
@@ -17,6 +16,11 @@ from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
 from .utils import _ensure_newline, version2tuple
 
+try:
+    import pydantic.v1 as pydantic
+except ImportError:
+    import pydantic
+
 schema_map = {
     "Dandiset": "dandiset.json",
     "PublishedDandiset": "published-dandiset.json",
@@ -26,8 +30,6 @@ schema_map = {
 
 
 def generate_context() -> dict:
-    import pydantic
-
     field_preamble = {
         "@version": 1.1,
         "dandi": "http://schema.dandiarchive.org/",

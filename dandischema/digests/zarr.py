@@ -5,7 +5,10 @@ import hashlib
 import re
 from typing import Dict, List, Optional, Tuple
 
-import pydantic
+try:
+    import pydantic.v1 as pydantic
+except ImportError:
+    import pydantic
 
 """Passed to the json() method of pydantic models for serialization."""
 ENCODING_KWARGS = {"separators": (",", ":")}

@@ -7,17 +7,30 @@ import re
 import sys
 from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union, cast
 
-from pydantic import (
-    UUID4,
-    AnyHttpUrl,
-    BaseModel,
-    ByteSize,
-    EmailStr,
-    Field,
-    parse_obj_as,
-    root_validator,
-    validator,
-)
+try:
+    from pydantic.v1 import (
+        UUID4,
+        AnyHttpUrl,
+        BaseModel,
+        ByteSize,
+        EmailStr,
+        Field,
+        parse_obj_as,
+        root_validator,
+        validator,
+    )
+except ImportError:
+    from pydantic import (
+        UUID4,
+        AnyHttpUrl,
+        BaseModel,
+        ByteSize,
+        EmailStr,
+        Field,
+        parse_obj_as,
+        root_validator,
+        validator,
+    )
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
