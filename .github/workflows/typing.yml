@@ -7,6 +7,12 @@ on:
 jobs:
   typing:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        testenv:
+          - typing
+          - devtyping
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -24,4 +30,4 @@ jobs:
           python -m pip install --upgrade tox
 
       - name: Run type checker
-        run: tox -e typing
+        run: tox -e ${{ matrix.testenv }}
