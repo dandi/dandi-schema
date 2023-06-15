@@ -322,7 +322,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
                 stats["tissuesample"].append(sample)
 
     stats["dataStandard"] = stats.get("dataStandard", [])
-    if "nwb" in assetmeta["encodingFormat"]:
+    if "nwb" in assetmeta.get("encodingFormat", ""):
         if models.nwb_standard not in stats["dataStandard"]:
             stats["dataStandard"].append(models.nwb_standard)
     # TODO: RF assumption that any .json implies BIDS
