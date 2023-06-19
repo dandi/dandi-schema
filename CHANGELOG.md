@@ -1,3 +1,22 @@
+# 0.8.4 (Fri Jun 16 2023)
+
+#### 🐛 Bug Fix
+
+- added funderidtype and support for funder and sponsor roles to datacite metadata [#167](https://github.com/dandi/dandi-schema/pull/167) ([@satra](https://github.com/satra) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]) [@djarecka](https://github.com/djarecka))
+
+#### 🧪 Tests
+
+- Add mypy to test extra_requires since needed for type hints testing [#174](https://github.com/dandi/dandi-schema/pull/174) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 4
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Dorota Jarecka ([@djarecka](https://github.com/djarecka))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.8.3 (Mon Apr 17 2023)
 
 #### 🏠 Internal
