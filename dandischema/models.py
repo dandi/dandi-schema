@@ -797,13 +797,13 @@ class Agent(DandiBaseModel):
 class EthicsApproval(DandiBaseModel):
     """Information about ethics committee approval for project"""
 
-    identifier: Identifier = Field(
+    identifier: Optional[Identifier] = Field(
+        None,
         nskey="schema",
         title="Approved protocol identifier",
         description="Approved Protocol identifier, often a number or alphanumeric string.",
     )
-    contactPoint: Optional[ContactPoint] = Field(
-        None,
+    contactPoint: ContactPoint = Field(
         description="Information about the ethics approval committee.",
         nskey="schema",
     )
