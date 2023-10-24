@@ -1659,7 +1659,7 @@ class PublishedDandiset(Dandiset, Publishable):
     )
     releaseNotes: Optional[str] = Field(
         None,
-        description="User notes for describing the release",
+        description="The description of the release",
         nskey="schema",
     )
 
