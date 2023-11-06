@@ -14,17 +14,23 @@ and assets. It uses [Pydantic](https://github.com/samuelcolvin/pydantic) to impl
 all the metadata classes. Schemas are generated on schema modifications and placed into
 [this repository](https://github.com/dandi/schema/tree/master/releases).
 
-`dandi-schema` generates JSON schema definitions and also an associated `context.json`
+`dandi-schema` also generates JSON schema definitions and an associated `context.json`
 file for JSON-LD compliance of the metadata models.
 
 Important files in this repository include:
-- models.py - contains the models
-- metadata.py - contains functions for validating, migrating, and aggregating metadata
-- datacite.py - converts the `Dandiset` metadata to a Datacite metadata structure
+- [models.py](./dandischema/models.py) - contains the models
+- [metadata.py](./dandischema/metadata.py) - contains functions for validating, migrating, and aggregating metadata
+- [datacite.py](./dandischema/datacite.py) - converts the `Dandiset` metadata to a Datacite metadata structure
 
 The generated JSON schemas can be used together with
 [VJSF](https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/) to create a UI
-for metadata modification. The DANDI Web app uses this to modify `Dandiset` metadata.
+for `Dandiset` metadata modification as used for Dandiset metadata modification on https://dandiarchive.org.
+
+Also Pydantic models are used by [DANDI Client/Library](https://github.com/dandi/dandi-cli) to validate
+metadata while submitting data to the archive, and later by the [DANDI Archive](https://github.com/dandi/dandi-archive) itself to ensure
+that all metadata conforms the model before Dandiset is allowed to be published and gain a DOI.
+Such DOI generation is done via Datacite service, and `dandi-schema` library produces Datacite metadata records
+out of the Pydantic models.
 
 ## Resources
 
