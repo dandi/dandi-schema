@@ -156,6 +156,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
     datacite_post(datacite, meta.doi)
 
 
+@pytest.mark.flaky(reruns=5, reruns_delay=5, only_rerun="HTTPError")
 @skipif_no_network
 @pytest.mark.parametrize(
     "additional_meta, datacite_checks",
