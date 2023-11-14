@@ -14,6 +14,7 @@ from pydantic import (
     ByteSize,
     EmailStr,
     Field,
+    field_validator,
     parse_obj_as,
     root_validator,
     validator,
@@ -380,6 +381,10 @@ class DandiBaseModel(BaseModel):
             dict, json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
         )
 
+    # TODO[pydantic]: We couldn't refactor the `validator`,
+    #  please replace it by `field_validator` manually.
+    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
+    #  for more information.
     @validator("schemaKey", always=True)
     @classmethod
     def ensure_schemakey(cls, val: str) -> str:
@@ -421,6 +426,10 @@ class DandiBaseModel(BaseModel):
             .replace(__pydantic_cls__.__name__, "dict")
         )
 
+    # TODO[pydantic]: We couldn't refactor this class,
+    #  please create the `model_config` manually.
+    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config
+    #  for more information.
     class Config:
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
@@ -499,6 +508,10 @@ class PropertyValue(DandiBaseModel):
     )
     schemaKey: Literal["PropertyValue"] = Field("PropertyValue", readOnly=True)
 
+    # TODO[pydantic]: We couldn't refactor the `validator`,
+    #  please replace it by `field_validator` manually.
+    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
+    #  for more information.
     @validator("value", always=True)
     def ensure_value(cls, val: Union[Any, List[Any]]) -> Union[Any, List[Any]]:
         if not val:
@@ -526,7 +539,7 @@ class BaseType(DandiBaseModel):
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
-        regex=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
+        pattern=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
         nskey="schema",
     )
     name: Optional[str] = Field(
@@ -535,6 +548,10 @@ class BaseType(DandiBaseModel):
     schemaKey: str = Field("BaseType", readOnly=True)
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
+    # TODO[pydantic]: We couldn't refactor this class,
+    #  please create the `model_config` manually.
+    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config
+    #  for more information.
     class Config:
         @staticmethod
         def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
@@ -691,7 +708,7 @@ class Organization(Contributor):
         None,
         title="A ror.org identifier",
         description="Use an ror.org identifier for institutions.",
-        regex=r"^https://ror.org/[a-z0-9]+$",
+        pattern=r"^https://ror.org/[a-z0-9]+$",
         nskey="schema",
     )
 
@@ -720,7 +737,7 @@ class Affiliation(DandiBaseModel):
         None,
         title="A ror.org identifier",
         description="Use an ror.org identifier for institutions.",
-        regex=r"^https://ror.org/[a-z0-9]+$",
+        pattern=r"^https://ror.org/[a-z0-9]+$",
         nskey="schema",
     )
     name: str = Field(nskey="schema", description="Name of organization")
@@ -737,12 +754,12 @@ class Person(Contributor):
         None,
         title="An ORCID identifier",
         description="An ORCID (orcid.org) identifier for an individual.",
-        regex=r"^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$",
+        pattern=r"^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$",
         nskey="schema",
     )
     name: str = Field(
         description="Use the format: familyname, given names ...",
-        regex=NAME_PATTERN,
+        pattern=NAME_PATTERN,
         nskey="schema",
         examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )
@@ -759,7 +776,7 @@ class Person(Contributor):
 class Software(DandiBaseModel):
     identifier: Optional[RRID] = Field(
         None,
-        regex=r"^RRID\:.*",
+        pattern=r"^RRID\:.*",
         title="Research resource identifier",
         description="RRID of the software from scicrunch.org.",
         nskey="schema",
@@ -898,16 +915,16 @@ class AssetsSummary(DandiBaseModel):
     numberOfSamples: Optional[int] = Field(None, readOnly=True)  # more of NWB
     numberOfCells: Optional[int] = Field(None, readOnly=True)
 
-    dataStandard: Optional[List[StandardsType]] = Field(readOnly=True)
+    dataStandard: Optional[List[StandardsType]] = Field(None, readOnly=True)
     # Web UI: icons per each modality?
-    approach: Optional[List[ApproachType]] = Field(readOnly=True)
+    approach: Optional[List[ApproachType]] = Field(None, readOnly=True)
     # Web UI: could be an icon with number, which if hovered on  show a list?
     measurementTechnique: Optional[List[MeasurementTechniqueType]] = Field(
-        readOnly=True, nskey="schema"
+        None, readOnly=True, nskey="schema"
     )
     variableMeasured: Optional[List[str]] = Field(None, readOnly=True, nskey="schema")
 
-    species: Optional[List[SpeciesType]] = Field(readOnly=True)
+    species: Optional[List[SpeciesType]] = Field(None, readOnly=True)
     schemaKey: Literal["AssetsSummary"] = Field("AssetsSummary", readOnly=True)
 
     _ldmeta = {
@@ -1258,7 +1275,8 @@ class CommonModel(DandiBaseModel):
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
 
-    @validator("contributor")
+    @field_validator("contributor")
+    @classmethod
     def contributor_musthave_contact(
         cls, values: List[Union[Person, Organization]]
     ) -> List[Union[Person, Organization]]:
@@ -1272,7 +1290,7 @@ class Dandiset(CommonModel):
 
     id: str = Field(
         description="Uniform resource identifier",
-        regex=r"^(dandi|DANDI):\d{6}(/(draft|\d+\.\d+\.\d+))$",
+        pattern=r"^(dandi|DANDI):\d{6}(/(draft|\d+\.\d+\.\d+))$",
         readOnly=True,
     )
 
@@ -1280,7 +1298,7 @@ class Dandiset(CommonModel):
         readOnly=True,
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
-        regex=r"^DANDI\:\d{6}$",
+        pattern=r"^DANDI\:\d{6}$",
         nskey="schema",
     )
     name: str = Field(
@@ -1296,7 +1314,7 @@ class Dandiset(CommonModel):
         title="Dandiset contributors",
         description="People or Organizations that have contributed to this Dandiset.",
         nskey="schema",
-        min_items=1,
+        min_length=1,
     )
     dateCreated: Optional[datetime] = Field(
         None, nskey="schema", title="Dandiset creation date and time.", readOnly=True
@@ -1306,7 +1324,7 @@ class Dandiset(CommonModel):
     )
 
     license: List[LicenseType] = Field(
-        min_items=1,
+        min_length=1,
         description="Licenses associated with the item. DANDI only supports a "
         "subset of Creative Commons Licenses (creativecommons.org) "
         "applicable to datasets.",
@@ -1320,7 +1338,7 @@ class Dandiset(CommonModel):
 
     # From server (requested by users even for drafts)
     manifestLocation: List[AnyHttpUrl] = Field(
-        readOnly=True, min_items=1, nskey="dandi"
+        readOnly=True, min_length=1, nskey="dandi"
     )
 
     version: str = Field(readOnly=True, nskey="schema")
@@ -1369,7 +1387,7 @@ class BareAsset(CommonModel):
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
         nskey="dandi",
-        max_items=1,
+        max_length=1,
     )
 
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
@@ -1410,6 +1428,10 @@ class BareAsset(CommonModel):
         "nskey": "dandi",
     }
 
+    # TODO[pydantic]: We couldn't refactor the `validator`,
+    #  please replace it by `field_validator` manually.
+    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
+    #  for more information.
     @validator("digest")
     def digest_check(
         cls, v: Dict[DigestType, str], values: Dict[str, Any], **kwargs: Any
@@ -1469,14 +1491,14 @@ class Publishable(DandiBaseModel):
 class PublishedDandiset(Dandiset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
-        regex=DANDI_PUBID_PATTERN,
+        pattern=DANDI_PUBID_PATTERN,
         readOnly=True,
     )
 
     doi: str = Field(
         title="DOI",
         readOnly=True,
-        regex=DANDI_DOI_PATTERN,
+        pattern=DANDI_DOI_PATTERN,
         nskey="dandi",
     )
     url: AnyHttpUrl = Field(
@@ -1487,7 +1509,8 @@ class PublishedDandiset(Dandiset, Publishable):
 
     schemaKey: Literal["Dandiset"] = Field("Dandiset", readOnly=True)
 
-    @validator("assetsSummary")
+    @field_validator("assetsSummary")
+    @classmethod
     def check_filesbytes(cls, values: AssetsSummary) -> AssetsSummary:
         if values.numberOfBytes == 0 or values.numberOfFiles == 0:
             raise ValueError(
@@ -1495,7 +1518,8 @@ class PublishedDandiset(Dandiset, Publishable):
             )
         return values
 
-    @validator("url")
+    @field_validator("url")
+    @classmethod
     def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
         if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
             raise ValueError(
@@ -1507,12 +1531,16 @@ class PublishedDandiset(Dandiset, Publishable):
 class PublishedAsset(Asset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
-        regex=ASSET_UUID_PATTERN,
+        pattern=ASSET_UUID_PATTERN,
         readOnly=True,
     )
 
     schemaKey: Literal["Asset"] = Field("Asset", readOnly=True)
 
+    # TODO[pydantic]: We couldn't refactor the `validator`,
+    #  please replace it by `field_validator` manually.
+    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
+    #  for more information.
     @validator("digest")
     def digest_sha256check(
         cls, v: Dict[DigestType, str], values: Dict[str, Any], **kwargs: Any

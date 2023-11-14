@@ -556,7 +556,7 @@ def test_properties_mismatch() -> None:
 
 def test_schemakey_roundtrip() -> None:
     class TempKlass(DandiBaseModel):
-        contributor: Optional[List[Union[Organization, Person]]]
+        contributor: Optional[List[Union[Organization, Person]]] = None
         schemaKey: Literal["TempKlass"] = Field("TempKlass", readOnly=True)
 
     contributor = [
