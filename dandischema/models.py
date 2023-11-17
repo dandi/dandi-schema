@@ -61,7 +61,7 @@ M = TypeVar("M", bound=BaseModel)
 
 def diff_models(model1: M, model2: M) -> None:
     """Perform a field-wise diff"""
-    for field in model1.__fields__:
+    for field in model1.model_fields:
         if getattr(model1, field) != getattr(model2, field):
             print(f"{field} is different")
 
@@ -402,21 +402,26 @@ class DandiBaseModel(BaseModel):
     @classmethod
     def unvalidated(__pydantic_cls__: Type[M], **data: Any) -> M:
         """Allow model to be returned without validation"""
-        for name, field in __pydantic_cls__.__fields__.items():
+        for name, field in __pydantic_cls__.model_fields.items():
             try:
                 data[name]
             except KeyError:
-                # if field.required:
-                #    value = None
-                if field.default_factory is not None:
-                    value = field.default_factory()
-                elif field.default is None:
-                    # deepcopy is quite slow on None
-                    value = None
+                if not field.required:
+                    if field.default_factory is not None:
+                        value = field.default_factory()
+                    elif field.default is None:
+                        # deepcopy is quite slow on None
+                        value = None
+                    else:
+                        value = deepcopy(field.default)
+                    data[name] = value
                 else:
-                    value = deepcopy(field.default)
-                data[name] = value
-        return __pydantic_cls__.construct(**data)
+                    # TODO: Find out what is the intended way to handle this case.
+                    #  When the field is not required, no default can be trusted.
+                    raise NotImplementedError(
+                        f"Field {name} is required but not provided"
+                    )
+        return __pydantic_cls__.model_construct(**data)
 
     @classmethod
     def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]) -> str:
