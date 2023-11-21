@@ -1,4 +1,3 @@
-from copy import deepcopy
 from datetime import date, datetime
 from enum import Enum
 import os
@@ -374,33 +373,9 @@ class DandiBaseModel(BaseModel):
         return val
 
     @classmethod
-    def unvalidated(__pydantic_cls__: Type[M], **data: Any) -> M:
-        """Allow model to be returned without validation"""
-        for name, field in __pydantic_cls__.model_fields.items():
-            try:
-                data[name]
-            except KeyError:
-                if not field.required:
-                    if field.default_factory is not None:
-                        value = field.default_factory()
-                    elif field.default is None:
-                        # deepcopy is quite slow on None
-                        value = None
-                    else:
-                        value = deepcopy(field.default)
-                    data[name] = value
-                else:
-                    # TODO: Find out what is the intended way to handle this case.
-                    #  When the field is not required, no default can be trusted.
-                    raise NotImplementedError(
-                        f"Field {name} is required but not provided"
-                    )
-        return __pydantic_cls__.model_construct(**data)
-
-    @classmethod
     def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]) -> str:
         return (
-            __pydantic_cls__.unvalidated()
+            __pydantic_cls__.model_construct()
             .__repr__()
             .replace(__pydantic_cls__.__name__, "dict")
         )
