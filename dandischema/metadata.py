@@ -346,4 +346,4 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
-    return models.AssetsSummary(**stats).json_dict()
+    return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)

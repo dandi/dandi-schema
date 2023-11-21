@@ -1,11 +1,10 @@
 from copy import deepcopy
 from datetime import date, datetime
 from enum import Enum
-import json
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union, cast
+from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union
 
 from pydantic import (
     UUID4,
@@ -64,16 +63,6 @@ def diff_models(model1: M, model2: M) -> None:
     for field in model1.model_fields:
         if getattr(model1, field) != getattr(model2, field):
             print(f"{field} is different")
-
-
-def _sanitize(o: Any) -> Any:
-    if isinstance(o, dict):
-        return {_sanitize(k): _sanitize(v) for k, v in o.items()}
-    elif isinstance(o, (set, tuple, list)):
-        return type(o)(_sanitize(x) for x in o)
-    elif isinstance(o, Enum):
-        return o.value
-    return o
 
 
 class AccessType(Enum):
@@ -360,26 +349,11 @@ class AgeReferenceType(Enum):
     GestationalReference = "dandi:GestationalReference"
 
 
-class HandleKeyEnumEncoder(json.JSONEncoder):
-    def encode(self, o: Any) -> Any:
-        return super().encode(_sanitize(o))
-
-
 class DandiBaseModel(BaseModel):
     id: Optional[str] = Field(
         default=None, description="Uniform resource identifier", readOnly=True
     )
     schemaKey: str = Field("DandiBaseModel", readOnly=True)
-
-    def json_dict(self) -> dict:
-        """
-        Recursively convert the instance to a `dict` of JSONable values,
-        including converting enum values to strings.  `None` fields
-        are omitted.
-        """
-        return cast(
-            dict, json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
-        )
 
     # TODO[pydantic]: We couldn't refactor the `validator`,
     #  please replace it by `field_validator` manually.
@@ -650,13 +624,13 @@ class StandardsType(BaseType):
 nwb_standard = StandardsType(
     name="Neurodata Without Borders (NWB)",
     identifier="RRID:SCR_015242",
-).json_dict()
+).model_dump(mode="json", exclude_none=True)
 
 
 bids_standard = StandardsType(
     name="Brain Imaging Data Structure (BIDS)",
     identifier="RRID:SCR_016124",
-).json_dict()
+).model_dump(mode="json", exclude_none=True)
 
 
 class ContactPoint(DandiBaseModel):
