@@ -387,6 +387,19 @@ class DandiBaseModel(BaseModel):
         return val
 
     @classmethod
+    def unvalidated(__pydantic_cls__: Type[M], **data: Any) -> M:
+        """Allow model to be returned without validation"""
+
+        warn(
+            "`DandiBaseModel.unvalidated()` is deprecated. "
+            "Use `pydantic.BaseModel.model_construct()` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return __pydantic_cls__.model_construct(**data)
+
+    @classmethod
     def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]) -> str:
         return (
             __pydantic_cls__.model_construct()
