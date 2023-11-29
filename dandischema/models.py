@@ -4,6 +4,7 @@ import os
 import re
 import sys
 from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union
+from warnings import warn
 
 from pydantic import (
     UUID4,
@@ -52,7 +53,6 @@ PUBLISHED_VERSION_URL_PATTERN = (
 )
 MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
-
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -354,6 +354,20 @@ class DandiBaseModel(BaseModel):
     )
     schemaKey: str = Field("DandiBaseModel", readOnly=True)
 
+    def json_dict(self) -> dict:
+        """
+        Recursively convert the instance to a `dict` of JSONable values,
+        including converting enum values to strings.  `None` fields
+        are omitted.
+        """
+        warn(
+            "`DandiBaseModel.json_dict()` is deprecated. Use "
+            "`pydantic.BaseModel.model_dump(mode='json', exclude_none=True)` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.model_dump(mode="json", exclude_none=True)
+
     # TODO[pydantic]: We couldn't refactor the `validator`,
     #  please replace it by `field_validator` manually.
     #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
@@ -600,7 +614,6 @@ nwb_standard = StandardsType(
     name="Neurodata Without Borders (NWB)",
     identifier="RRID:SCR_015242",
 ).model_dump(mode="json", exclude_none=True)
-
 
 bids_standard = StandardsType(
     name="Brain Imaging Data Structure (BIDS)",
