@@ -13,8 +13,8 @@ from pydantic import (
     ByteSize,
     EmailStr,
     Field,
+    TypeAdapter,
     field_validator,
-    parse_obj_as,
     root_validator,
     validator,
 )
@@ -1239,7 +1239,7 @@ class CommonModel(DandiBaseModel):
     repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        parse_obj_as(AnyHttpUrl, DANDI_INSTANCE_URL)
+        TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
         if DANDI_INSTANCE_URL is not None
         else None,
         readOnly=True,
