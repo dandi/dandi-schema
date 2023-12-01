@@ -132,7 +132,7 @@ class ZarrJSONChecksumSerializer:
         # listing = ZarrChecksumListing(**json.loads(json_str))
         # listing.checksums = [ZarrChecksum(**checksum) for checksum in listing.checksums]
         # return listing
-        return ZarrChecksumListing.parse_raw(json_str)
+        return ZarrChecksumListing.model_validate_json(json_str)
 
     def generate_listing(
         self,
