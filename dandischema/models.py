@@ -504,7 +504,10 @@ class PropertyValue(DandiBaseModel):
     _ldmeta = {"nskey": "schema"}
 
 
-PropertyValue.update_forward_refs()
+# This is mostly not needed at all since self-referencing models
+# are automatically resolved by Pydantic in a pretty consistent way even in Pydantic V1
+# https://docs.pydantic.dev/1.10/usage/postponed_annotations/#self-referencing-models
+PropertyValue.model_rebuild()
 
 Identifier = str
 ORCID = str
@@ -1165,7 +1168,10 @@ class BioSample(DandiBaseModel):
     }
 
 
-BioSample.update_forward_refs()
+# This is mostly not needed at all since self-referencing models
+# are automatically resolved by Pydantic in a pretty consistent way even in Pydantic V1
+# https://docs.pydantic.dev/1.10/usage/postponed_annotations/#self-referencing-models
+BioSample.model_rebuild()
 
 
 class CommonModel(DandiBaseModel):
