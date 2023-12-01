@@ -507,6 +507,8 @@ class PropertyValue(DandiBaseModel):
 # This is mostly not needed at all since self-referencing models
 # are automatically resolved by Pydantic in a pretty consistent way even in Pydantic V1
 # https://docs.pydantic.dev/1.10/usage/postponed_annotations/#self-referencing-models
+# and continue to be so in Pydantic V2
+# https://docs.pydantic.dev/latest/concepts/postponed_annotations/#self-referencing-or-recursive-models
 PropertyValue.model_rebuild()
 
 Identifier = str
@@ -1171,6 +1173,8 @@ class BioSample(DandiBaseModel):
 # This is mostly not needed at all since self-referencing models
 # are automatically resolved by Pydantic in a pretty consistent way even in Pydantic V1
 # https://docs.pydantic.dev/1.10/usage/postponed_annotations/#self-referencing-models
+# and continue to be so in Pydantic V2
+# https://docs.pydantic.dev/latest/concepts/postponed_annotations/#self-referencing-or-recursive-models
 BioSample.model_rebuild()
 
 
