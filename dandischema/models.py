@@ -471,7 +471,10 @@ class PropertyValue(DandiBaseModel):
     minValue: Optional[float] = Field(None, nskey="schema")
     unitText: Optional[str] = Field(None, nskey="schema")
     value: Union[Any, List[Any]] = Field(
-        None, nskey="schema", description="The value associated with this property."
+        None,
+        validate_default=True,
+        nskey="schema",
+        description="The value associated with this property.",
     )
     valueReference: Optional["PropertyValue"] = Field(
         None, nskey="schema"
@@ -487,11 +490,8 @@ class PropertyValue(DandiBaseModel):
         "PropertyValue", validate_default=True, readOnly=True
     )
 
-    # TODO[pydantic]: We couldn't refactor the `validator`,
-    #  please replace it by `field_validator` manually.
-    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
-    #  for more information.
-    @validator("value", always=True)
+    @field_validator("value")
+    @classmethod
     def ensure_value(cls, val: Union[Any, List[Any]]) -> Union[Any, List[Any]]:
         if not val:
             raise ValueError(
