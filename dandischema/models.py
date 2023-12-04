@@ -14,6 +14,7 @@ from pydantic import (
     EmailStr,
     Field,
     TypeAdapter,
+    ValidationInfo,
     field_validator,
     root_validator,
     validator,
@@ -1466,14 +1467,12 @@ class BareAsset(CommonModel):
         "nskey": "dandi",
     }
 
-    # TODO[pydantic]: We couldn't refactor the `validator`,
-    #  please replace it by `field_validator` manually.
-    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
-    #  for more information.
-    @validator("digest")
+    @field_validator("digest")
+    @classmethod
     def digest_check(
-        cls, v: Dict[DigestType, str], values: Dict[str, Any], **kwargs: Any
+        cls, v: Dict[DigestType, str], info: ValidationInfo
     ) -> Dict[DigestType, str]:
+        values = info.data
         if values.get("encodingFormat") == "application/x-zarr":
             if DigestType.dandi_zarr_checksum not in v:
                 raise ValueError("A zarr asset must have a zarr checksum.")
