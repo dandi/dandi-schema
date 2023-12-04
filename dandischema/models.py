@@ -17,7 +17,6 @@ from pydantic import (
     ValidationInfo,
     field_validator,
     model_validator,
-    root_validator,
 )
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -910,15 +909,15 @@ class AccessRequirements(DandiBaseModel):
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
-    @root_validator
-    def open_or_embargoed(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        status, embargoed = values.get("status"), values.get("embargoedUntil")
+    @model_validator(mode="after")
+    def open_or_embargoed(self) -> "AccessRequirements":
+        status, embargoed = self.status, self.embargoedUntil
         if status == AccessType.EmbargoedAccess and embargoed is None:
             raise ValueError(
                 "An embargo end date is required for NIH awards to be in "
                 "compliance with NIH resource sharing policy."
             )
-        return values
+        return self
 
 
 class AssetsSummary(DandiBaseModel):
