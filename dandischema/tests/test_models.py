@@ -558,7 +558,7 @@ def test_schemakey_roundtrip() -> None:
     class TempKlass(DandiBaseModel):
         contributor: Optional[List[Union[Organization, Person]]] = None
         schemaKey: Literal["TempKlass"] = Field(
-            "TempKlass", validate_default=True, readOnly=True
+            "TempKlass", validate_default=True, json_schema_extra={"readOnly": True}
         )
 
     contributor = [
@@ -594,7 +594,7 @@ def test_name_regex(name: str) -> None:
     class TempKlass(DandiBaseModel):
         contributor: Person
         schemaKey: Literal["TempKlass"] = Field(
-            "TempKlass", validate_default=True, readOnly=True
+            "TempKlass", validate_default=True, json_schema_extra={"readOnly": True}
         )
 
     contributor = {
