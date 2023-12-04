@@ -16,6 +16,7 @@ from pydantic import (
     TypeAdapter,
     ValidationInfo,
     field_validator,
+    model_validator,
     root_validator,
 )
 
@@ -869,12 +870,12 @@ class Resource(DandiBaseModel):
         "nskey": "dandi",
     }
 
-    @root_validator
-    def identifier_or_url(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        identifier, url = values.get("identifier"), values.get("url")
+    @model_validator(mode="after")
+    def identifier_or_url(self) -> "Resource":
+        identifier, url = self.identifier, self.url
         if identifier is None and url is None:
             raise ValueError("Both identifier and url cannot be None")
-        return values
+        return self
 
 
 class AccessRequirements(DandiBaseModel):
