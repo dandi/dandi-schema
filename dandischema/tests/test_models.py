@@ -557,7 +557,9 @@ def test_properties_mismatch() -> None:
 def test_schemakey_roundtrip() -> None:
     class TempKlass(DandiBaseModel):
         contributor: Optional[List[Union[Organization, Person]]] = None
-        schemaKey: Literal["TempKlass"] = Field("TempKlass", readOnly=True)
+        schemaKey: Literal["TempKlass"] = Field(
+            "TempKlass", validate_default=True, readOnly=True
+        )
 
     contributor = [
         {
@@ -591,7 +593,9 @@ def test_schemakey_roundtrip() -> None:
 def test_name_regex(name: str) -> None:
     class TempKlass(DandiBaseModel):
         contributor: Person
-        schemaKey: Literal["TempKlass"] = Field("TempKlass", readOnly=True)
+        schemaKey: Literal["TempKlass"] = Field(
+            "TempKlass", validate_default=True, readOnly=True
+        )
 
     contributor = {
         "name": name,
