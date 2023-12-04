@@ -471,7 +471,7 @@ class PropertyValue(DandiBaseModel):
     minValue: Optional[float] = Field(None, nskey="schema")
     unitText: Optional[str] = Field(None, nskey="schema")
     value: Union[Any, List[Any]] = Field(
-        nskey="schema", description="The value associated with this property."
+        None, nskey="schema", description="The value associated with this property."
     )
     valueReference: Optional["PropertyValue"] = Field(
         None, nskey="schema"
