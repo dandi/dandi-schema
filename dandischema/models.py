@@ -17,7 +17,6 @@ from pydantic import (
     ValidationInfo,
     field_validator,
     root_validator,
-    validator,
 )
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -1576,14 +1575,12 @@ class PublishedAsset(Asset, Publishable):
 
     schemaKey: Literal["Asset"] = Field("Asset", validate_default=True, readOnly=True)
 
-    # TODO[pydantic]: We couldn't refactor the `validator`,
-    #  please replace it by `field_validator` manually.
-    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators
-    #  for more information.
-    @validator("digest")
+    @field_validator("digest")
+    @classmethod
     def digest_sha256check(
-        cls, v: Dict[DigestType, str], values: Dict[str, Any], **kwargs: Any
+        cls, v: Dict[DigestType, str], info: ValidationInfo
     ) -> Dict[DigestType, str]:
+        values = info.data
         if values.get("encodingFormat") != "application/x-zarr":
             if DigestType.sha2_256 not in v:
                 raise ValueError("A non-zarr asset must have a sha2_256.")
