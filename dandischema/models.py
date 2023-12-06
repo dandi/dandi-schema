@@ -11,6 +11,7 @@ from pydantic import (
     AnyHttpUrl,
     BaseModel,
     ByteSize,
+    ConfigDict,
     EmailStr,
     Field,
     TypeAdapter,
@@ -407,67 +408,65 @@ class DandiBaseModel(BaseModel):
             .replace(__pydantic_cls__.__name__, "dict")
         )
 
-    # TODO[pydantic]: We couldn't refactor this class,
-    #  please create the `model_config` manually.
-    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config
-    #  for more information.
-    class Config:
-        @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
-            if schema["title"] == "PropertyValue":
-                schema["required"] = sorted({"value"}.union(schema.get("required", [])))
-            schema["title"] = name2title(schema["title"])
-            if schema["type"] == "object":
-                schema["required"] = sorted(
-                    {"schemaKey"}.union(schema.get("required", []))
-                )
-            for prop, value in schema.get("properties", {}).items():
-                if schema["title"] == "Person":
-                    if prop == "name":
-                        # JSON schema doesn't support validating unicode
-                        # characters using the \w pattern, but Python does. So
-                        # we are dropping the regex pattern for the schema.
-                        del value["pattern"]
-                if value.get("title") is None or value["title"] == prop.title():
-                    value["title"] = name2title(prop)
-                if re.match("\\^https?://", value.get("pattern", "")):
-                    value["format"] = "uri"
-                if value.get("format", None) == "uri":
-                    value["maxLength"] = 1000
-                allOf = value.get("allOf")
-                anyOf = value.get("anyOf")
-                items = value.get("items")
-                if allOf is not None:
-                    if len(allOf) == 1 and "$ref" in allOf[0]:
-                        value["$ref"] = allOf[0]["$ref"]
-                        del value["allOf"]
-                    elif len(allOf) > 1:
-                        value["oneOf"] = value["allOf"]
-                        value["type"] = "object"
-                        del value["allOf"]
-                if anyOf is not None:
-                    if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
-                        value["type"] = "object"
-                if items is not None:
-                    anyOf = items.get("anyOf")
-                    if (
-                        anyOf is not None
-                        and len(anyOf) > 1
-                        and any(["$ref" in val for val in anyOf])
-                    ):
-                        value["items"]["type"] = "object"
-                # In pydantic 1.8+ all Literals are mapped on to enum
-                # This presently breaks the schema editor UI. Revert
-                # to const when generating the schema.
-                # Note: this no longer happens with custom metaclass
-                if prop == "schemaKey":
-                    if "enum" in value and len(value["enum"]) == 1:
-                        value["const"] = value["enum"][0]
-                        del value["enum"]
-                    else:
-                        value["const"] = value["default"]
-                    if "readOnly" in value:
-                        del value["readOnly"]
+    @staticmethod
+    def post_process_json_schema(schema: Dict[str, Any]) -> None:
+        """
+        Post-process the generated JSON-schema for the containing model by Pydantic
+        """
+        if schema["title"] == "PropertyValue":
+            schema["required"] = sorted({"value"}.union(schema.get("required", [])))
+        schema["title"] = name2title(schema["title"])
+        if schema["type"] == "object":
+            schema["required"] = sorted({"schemaKey"}.union(schema.get("required", [])))
+        for prop, value in schema.get("properties", {}).items():
+            if schema["title"] == "Person":
+                if prop == "name":
+                    # JSON schema doesn't support validating unicode
+                    # characters using the \w pattern, but Python does. So
+                    # we are dropping the regex pattern for the schema.
+                    del value["pattern"]
+            if value.get("title") is None or value["title"] == prop.title():
+                value["title"] = name2title(prop)
+            if re.match("\\^https?://", value.get("pattern", "")):
+                value["format"] = "uri"
+            if value.get("format", None) == "uri":
+                value["maxLength"] = 1000
+            allOf = value.get("allOf")
+            anyOf = value.get("anyOf")
+            items = value.get("items")
+            if allOf is not None:
+                if len(allOf) == 1 and "$ref" in allOf[0]:
+                    value["$ref"] = allOf[0]["$ref"]
+                    del value["allOf"]
+                elif len(allOf) > 1:
+                    value["oneOf"] = value["allOf"]
+                    value["type"] = "object"
+                    del value["allOf"]
+            if anyOf is not None:
+                if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
+                    value["type"] = "object"
+            if items is not None:
+                anyOf = items.get("anyOf")
+                if (
+                    anyOf is not None
+                    and len(anyOf) > 1
+                    and any(["$ref" in val for val in anyOf])
+                ):
+                    value["items"]["type"] = "object"
+            # In pydantic 1.8+ all Literals are mapped on to enum
+            # This presently breaks the schema editor UI. Revert
+            # to const when generating the schema.
+            # Note: this no longer happens with custom metaclass
+            if prop == "schemaKey":
+                if "enum" in value and len(value["enum"]) == 1:
+                    value["const"] = value["enum"][0]
+                    del value["enum"]
+                else:
+                    value["const"] = value["default"]
+                if "readOnly" in value:
+                    del value["readOnly"]
+
+    model_config = ConfigDict(json_schema_extra=post_process_json_schema)
 
 
 class PropertyValue(DandiBaseModel):
@@ -541,23 +540,24 @@ class BaseType(DandiBaseModel):
     )
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
-    # TODO[pydantic]: We couldn't refactor this class,
-    #  please create the `model_config` manually.
-    #  Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config
-    #  for more information.
-    class Config:
-        @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
-            DandiBaseModel.Config.schema_extra(schema=schema, model=model)
-            for prop, value in schema.get("properties", {}).items():
-                # This check removes the anyOf field from the identifier property
-                # in the schema generation. This relates to a UI issue where two
-                # basic properties, in this case "string", is dropped from the UI.
-                if prop == "identifier":
-                    for option in value.pop("anyOf", []):
-                        if option.get("format", "") == "uri":
-                            value.update(**option)
-                            value["maxLength"] = 1000
+    @staticmethod
+    def post_process_json_schema(schema: Dict[str, Any]) -> None:
+        """
+        Post-process the generated JSON-schema for the containing model by Pydantic
+        """
+        DandiBaseModel.post_process_json_schema(schema)
+
+        for prop, value in schema.get("properties", {}).items():
+            # This check removes the anyOf field from the identifier property
+            # in the schema generation. This relates to a UI issue where two
+            # basic properties, in this case "string", is dropped from the UI.
+            if prop == "identifier":
+                for option in value.pop("anyOf", []):
+                    if option.get("format", "") == "uri":
+                        value.update(**option)
+                        value["maxLength"] = 1000
+
+    model_config = ConfigDict(json_schema_extra=post_process_json_schema)
 
 
 class AssayType(BaseType):
