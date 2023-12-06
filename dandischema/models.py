@@ -1362,7 +1362,7 @@ class CommonModel(DandiBaseModel):
     )
     acknowledgement: Optional[str] = Field(
         None,
-        descriptions="Any acknowledgments not covered by contributors or external resources.",
+        description="Any acknowledgments not covered by contributors or external resources.",
         json_schema_extra={"nskey": "dandi"},
     )
 
