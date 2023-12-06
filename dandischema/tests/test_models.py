@@ -41,11 +41,11 @@ else:
 
 
 def test_dandiset() -> None:
-    assert Dandiset.unvalidated()
+    assert Dandiset.model_construct()
 
 
 def test_asset() -> None:
-    assert Asset.unvalidated()
+    assert Asset.model_construct()
 
 
 def test_asset_digest() -> None:
