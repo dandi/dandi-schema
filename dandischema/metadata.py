@@ -96,7 +96,9 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     vdir.mkdir(exist_ok=True, parents=True)
     for class_, filename in schema_map.items():
         (vdir / filename).write_text(
-            _ensure_newline(getattr(models, class_).schema_json(indent=2))
+            _ensure_newline(
+                json.dumps(getattr(models, class_).model_json_schema(), indent=2)
+            )
         )
     (vdir / "context.json").write_text(
         _ensure_newline(json.dumps(generate_context(), indent=2))
@@ -177,7 +179,7 @@ def validate(
     if json_validation:
         if schema_version == DANDI_SCHEMA_VERSION:
             klass = getattr(models, schema_key)
-            schema = klass.schema()
+            schema = klass.model_json_schema()
         else:
             if schema_key not in schema_map:
                 raise ValueError(
