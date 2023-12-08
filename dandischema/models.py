@@ -4,8 +4,18 @@ from enum import Enum
 import json
 import os
 import re
-import sys
-from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union, cast
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from pydantic import (
     UUID4,
@@ -23,11 +33,6 @@ from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
 from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
 from .utils import name2title
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Literal
-else:
-    from typing import Literal
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]
