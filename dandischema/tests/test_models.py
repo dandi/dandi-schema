@@ -521,8 +521,11 @@ def test_duplicate_classes() -> None:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)
         for name, field in klass.model_fields.items():
-            if "nskey" in field.field_info.extra:
-                qname = field.field_info.extra["nskey"] + ":" + name
+            if (
+                field.json_schema_extra is not None
+                and "nskey" in field.json_schema_extra
+            ):
+                qname = field.json_schema_extra["nskey"] + ":" + name
             else:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)
