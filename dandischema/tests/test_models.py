@@ -1,7 +1,6 @@
 import enum
 from enum import Enum
 from inspect import isclass
-import json
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -623,7 +622,7 @@ def test_resource() -> None:
 
 
 def test_basetype() -> None:
-    props = json.loads(json.dumps(BaseType.model_json_schema()))["properties"]
+    props = BaseType.model_json_schema()["properties"]
     identifier = props["identifier"]
     assert "anyOf" not in identifier
     assert identifier.get("maxLength") == 1000
@@ -632,15 +631,13 @@ def test_basetype() -> None:
 
 
 def test_https_regex() -> None:
-    props = json.loads(json.dumps(Affiliation.model_json_schema()))["properties"][
-        "identifier"
-    ]
+    props = Affiliation.model_json_schema()["properties"]["identifier"]
     assert props["format"] == "uri"
     assert props.get("maxLength") == 1000
 
 
 def test_schemakey_in_required() -> None:
-    props = json.loads(json.dumps(Affiliation.model_json_schema()))["required"]
+    props = Affiliation.model_json_schema()["required"]
     assert "schemaKey" in props
 
 
@@ -655,9 +652,7 @@ def test_propertyvalue_valid() -> None:
 
 
 def test_propertyvalue_json() -> None:
-    reqprops = json.loads(json.dumps(PropertyValue.model_json_schema()))["$defs"][
-        "PropertyValue"
-    ]["required"]
+    reqprops = PropertyValue.model_json_schema()["$defs"]["PropertyValue"]["required"]
     assert "value" == reqprops[1]
 
 
