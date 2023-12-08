@@ -543,7 +543,7 @@ def test_properties_mismatch() -> None:
             continue
         if not hasattr(klass, "_ldmeta") or "nskey" not in klass._ldmeta.default:
             errors.append(f"{klass} does not have nskey")
-        for name, field in klass.__fields__.items():
+        for name, field in klass.model_fields.items():
             nskey = field.field_info.extra.get("nskey", "dandi")
             if name not in prop_names:
                 prop_names[name] = nskey
