@@ -1,7 +1,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast
+from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_origin
 
 import jsonschema
 import pydantic
@@ -79,7 +79,7 @@ def generate_context() -> dict:
                     }
                 else:
                     fields[name] = {"@id": "dandi:" + name}
-                if typing.get_origin(field.annotation) is list:
+                if get_origin(field.annotation) is list:
                     fields[name]["@container"] = "@set"
                 if name == "contributor":
                     fields[name]["@container"] = "@list"
