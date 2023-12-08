@@ -38,8 +38,6 @@ class ByteSizeJsonSchema(ByteSize):
           used for `pydantic.ByteSize` in Pydantic V1.
     """
 
-    # Note: Pydantic V2 no longer provide a JSON schema for `pydantic.ByteSize`
-    #
     @classmethod
     def __get_pydantic_json_schema__(
         cls,
