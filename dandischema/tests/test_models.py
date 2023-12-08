@@ -445,7 +445,7 @@ def test_schemakey() -> None:
         if val in ["BaseModel"]:
             continue
         klass = getattr(models, val)
-        if isinstance(klass, pydantic.main.ModelMetaclass):
+        if isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
             assert "schemaKey" in klass.__fields__
             if val in typemap:
                 assert typemap[val] == klass.__fields__["schemaKey"].default
@@ -506,7 +506,7 @@ def test_duplicate_classes() -> None:
     modelnames.remove("DandiBaseModel")
     for val in ["CommonModel", "BaseType"] + modelnames:
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic.main.ModelMetaclass):
+        if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
             continue
         if isinstance(klass, enum.EnumMeta):
             enumval: Any
@@ -539,7 +539,7 @@ def test_properties_mismatch() -> None:
     modelnames.remove("Publishable")
     for val in modelnames:
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic.main.ModelMetaclass):
+        if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
             continue
         if not hasattr(klass, "_ldmeta") or "nskey" not in klass._ldmeta:
             errors.append(f"{klass} does not have nskey")
