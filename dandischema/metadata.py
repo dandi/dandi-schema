@@ -56,7 +56,7 @@ def generate_context() -> dict:
     fields: Dict[str, Any] = {}
     for val in dir(models):
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic.main.ModelMetaclass):
+        if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
             continue
         if hasattr(klass, "_ldmeta"):
             if "nskey" in klass._ldmeta:
