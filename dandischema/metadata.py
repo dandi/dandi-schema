@@ -70,15 +70,20 @@ def generate_context() -> dict:
             elif name == "digest":
                 fields[name] = "@nest"
             elif name not in fields:
-                if "nskey" in field.field_info.extra:
-                    fields[name] = {"@id": field.field_info.extra["nskey"] + ":" + name}
+                if (
+                    field.json_schema_extra is not None
+                    and "nskey" in field.json_schema_extra
+                ):
+                    fields[name] = {
+                        "@id": field.json_schema_extra["nskey"] + ":" + name
+                    }
                 else:
                     fields[name] = {"@id": "dandi:" + name}
-                if "List" in str(field.outer_type_):
+                if "List" in str(field.annotation):
                     fields[name]["@container"] = "@set"
                 if name == "contributor":
                     fields[name]["@container"] = "@list"
-                if "enum" in str(field.type_) or name in ["url", "hasMember"]:
+                if "enum" in str(field.annotation) or name in ["url", "hasMember"]:
                     fields[name]["@type"] = "@id"
 
     for item in models.DigestType:
