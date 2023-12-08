@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import total_ordering
 import hashlib
+import json
 import re
 from typing import Dict, List, Optional, Tuple
 
@@ -109,7 +110,7 @@ class ZarrJSONChecksumSerializer:
         """Generate an aggregated digest for a list of ZarrChecksums."""
         # Use the most compact separators possible
         # content = json.dumps([asdict(zarr_md5) for zarr_md5 in checksums], separators=(',', ':'))0
-        content = checksums.model_dump_json()
+        content = json.dumps(checksums.model_dump(mode="json"), **ENCODING_KWARGS)
         h = hashlib.md5()
         h.update(content.encode("utf-8"))
         md5 = h.hexdigest()
@@ -125,7 +126,9 @@ class ZarrJSONChecksumSerializer:
     def serialize(self, zarr_checksum_listing: ZarrChecksumListing) -> str:
         """Serialize a ZarrChecksumListing into a string."""
         # return json.dumps(asdict(zarr_checksum_listing))
-        return zarr_checksum_listing.model_dump_json()
+        return json.dumps(
+            zarr_checksum_listing.model_dump(mode="json"), **ENCODING_KWARGS
+        )
 
     def deserialize(self, json_str: str) -> ZarrChecksumListing:
         """Deserialize a string into a ZarrChecksumListing."""
