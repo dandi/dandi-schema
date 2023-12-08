@@ -79,7 +79,7 @@ def generate_context() -> dict:
                     }
                 else:
                     fields[name] = {"@id": "dandi:" + name}
-                if "List" in str(field.annotation):
+                if typing.get_origin(field.annotation) is list:
                     fields[name]["@container"] = "@set"
                 if name == "contributor":
                     fields[name]["@container"] = "@list"
