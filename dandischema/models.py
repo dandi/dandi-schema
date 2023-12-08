@@ -14,16 +14,40 @@ from pydantic import (
     ConfigDict,
     EmailStr,
     Field,
+    GetJsonSchemaHandler,
     TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,
 )
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema, core_schema
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
 from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
 from .utils import name2title
+
+
+class ByteSizeJsonSchema(ByteSize):
+    """
+    A subclass of `pydantic.ByteSize` that comes with a JSON schema
+
+    Note: Pydantic V2 doesn't provide a JSON schema for `pydantic.ByteSize`.
+          This subclass provides a JSON schema that is the same JSON schema
+          used for `pydantic.ByteSize` in Pydantic V1.
+    """
+
+    # Note: Pydantic V2 no longer provide a JSON schema for `pydantic.ByteSize`
+    #
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls,
+        __core_schema: CoreSchema,
+        __handler: GetJsonSchemaHandler,
+    ) -> JsonSchemaValue:
+        return __handler(core_schema.int_schema())
+
 
 if sys.version_info < (3, 8):
     from typing_extensions import Literal
