@@ -59,10 +59,10 @@ def generate_context() -> dict:
         if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
             continue
         if hasattr(klass, "_ldmeta"):
-            if "nskey" in klass._ldmeta:
+            if "nskey" in klass._ldmeta.default:
                 name = klass.__name__
-                fields[name] = f'{klass._ldmeta["nskey"]}:{name}'
-        for name, field in klass.__fields__.items():
+                fields[name] = f'{klass._ldmeta.default["nskey"]}:{name}'
+        for name, field in klass.model_fields.items():
             if name == "id":
                 fields[name] = "@id"
             elif name == "schemaKey":

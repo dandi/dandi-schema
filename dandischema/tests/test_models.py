@@ -541,7 +541,7 @@ def test_properties_mismatch() -> None:
         klass = getattr(models, val)
         if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
             continue
-        if not hasattr(klass, "_ldmeta") or "nskey" not in klass._ldmeta:
+        if not hasattr(klass, "_ldmeta") or "nskey" not in klass._ldmeta.default:
             errors.append(f"{klass} does not have nskey")
         for name, field in klass.__fields__.items():
             nskey = field.field_info.extra.get("nskey", "dandi")
