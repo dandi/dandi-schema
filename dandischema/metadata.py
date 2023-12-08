@@ -1,4 +1,5 @@
 from copy import deepcopy
+from inspect import isclass
 import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_origin
@@ -56,7 +57,7 @@ def generate_context() -> dict:
     fields: Dict[str, Any] = {}
     for val in dir(models):
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
+        if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
         if hasattr(klass, "_ldmeta"):
             if "nskey" in klass._ldmeta.default:

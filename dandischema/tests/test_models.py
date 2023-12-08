@@ -1,5 +1,6 @@
 import enum
 from enum import Enum
+from inspect import isclass
 import json
 import sys
 from typing import Any, Dict, List, Optional, Type, Union
@@ -445,7 +446,7 @@ def test_schemakey() -> None:
         if val in ["BaseModel"]:
             continue
         klass = getattr(models, val)
-        if isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
+        if isclass(klass) and issubclass(klass, pydantic.BaseModel):
             assert "schemaKey" in klass.model_fields
             if val in typemap:
                 assert typemap[val] == klass.model_fields["schemaKey"].default
@@ -506,7 +507,7 @@ def test_duplicate_classes() -> None:
     modelnames.remove("DandiBaseModel")
     for val in ["CommonModel", "BaseType"] + modelnames:
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
+        if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
         if isinstance(klass, enum.EnumMeta):
             enumval: Any
@@ -542,7 +543,7 @@ def test_properties_mismatch() -> None:
     modelnames.remove("Publishable")
     for val in modelnames:
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
+        if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
         if not hasattr(klass, "_ldmeta") or "nskey" not in klass._ldmeta.default:
             errors.append(f"{klass} does not have nskey")
