@@ -446,11 +446,11 @@ def test_schemakey() -> None:
             continue
         klass = getattr(models, val)
         if isinstance(klass, pydantic._internal._model_construction.ModelMetaclass):
-            assert "schemaKey" in klass.__fields__
+            assert "schemaKey" in klass.model_fields
             if val in typemap:
-                assert typemap[val] == klass.__fields__["schemaKey"].default
+                assert typemap[val] == klass.model_fields["schemaKey"].default
             else:
-                assert val == klass.__fields__["schemaKey"].default
+                assert val == klass.model_fields["schemaKey"].default
 
 
 def test_duplicate_classes() -> None:
@@ -520,7 +520,7 @@ def test_duplicate_classes() -> None:
             else:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)
-        for name, field in klass.__fields__.items():
+        for name, field in klass.model_fields.items():
             if "nskey" in field.field_info.extra:
                 qname = field.field_info.extra["nskey"] + ":" + name
             else:
