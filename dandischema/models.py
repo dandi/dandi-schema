@@ -41,10 +41,10 @@ class ByteSizeJsonSchema(ByteSize):
     @classmethod
     def __get_pydantic_json_schema__(
         cls,
-        __core_schema: CoreSchema,
-        __handler: GetJsonSchemaHandler,
+        _core_schema: CoreSchema,
+        handler: GetJsonSchemaHandler,
     ) -> JsonSchemaValue:
-        return __handler(core_schema.int_schema())
+        return handler(core_schema.int_schema())
 
 
 if sys.version_info < (3, 8):
