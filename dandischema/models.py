@@ -1524,7 +1524,7 @@ class BareAsset(CommonModel):
     Derived from C2M2 (Level 0 and 1) and schema.org
     """
 
-    contentSize: ByteSize = Field(json_schema_extra={"nskey": "schema"})
+    contentSize: ByteSizeJsonSchema = Field(json_schema_extra={"nskey": "schema"})
     encodingFormat: Union[AnyHttpUrl, str] = Field(
         title="File encoding format", json_schema_extra={"nskey": "schema"}
     )
