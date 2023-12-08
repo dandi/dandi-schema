@@ -514,9 +514,9 @@ def test_duplicate_classes() -> None:
                 qname = enumval.value
                 check_qname(qname, klass)
         if hasattr(klass, "_ldmeta"):
-            if "nskey" in klass._ldmeta:
+            if "nskey" in klass._ldmeta.default:
                 name = klass.__name__
-                qname = f'{klass._ldmeta["nskey"]}:{name}'
+                qname = f'{klass._ldmeta.default["nskey"]}:{name}'
             else:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)
