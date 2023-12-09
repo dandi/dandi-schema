@@ -2,8 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 import os
 import re
-import sys
-from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar, Union
+from typing import Any, Dict, List, Literal, Optional, Sequence, Type, TypeVar, Union
 from warnings import warn
 
 from pydantic import (
@@ -46,11 +45,6 @@ class ByteSizeJsonSchema(ByteSize):
     ) -> JsonSchemaValue:
         return handler(core_schema.int_schema())
 
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Literal
-else:
-    from typing import Literal
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]

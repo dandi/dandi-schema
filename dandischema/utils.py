@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 from typing import Iterator, List
 
@@ -43,13 +45,12 @@ def split_camel_case(s: str) -> Iterator[str]:
         yield s[last_start:]
 
 
-def version2tuple(ver: str) -> tuple:
+def version2tuple(ver: str) -> tuple[int, int, int]:
     """Convert version to numeric tuple"""
-    import re
-
-    if re.match(r"\d+\.\d+\.\d+$", ver) is None:
+    if m := re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", ver, flags=re.ASCII):
+        return (int(m[1]), int(m[2]), int(m[3]))
+    else:
         raise ValueError(r"Version must be well formed: \d+\.\d+\.\d+")
-    return tuple([int(val) for val in ver.split(".")])
 
 
 def _ensure_newline(obj: str) -> str:
