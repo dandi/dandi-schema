@@ -10,7 +10,6 @@ from pydantic import (
     AnyHttpUrl,
     BaseModel,
     ByteSize,
-    ConfigDict,
     EmailStr,
     Field,
     GetJsonSchemaHandler,
@@ -424,15 +423,15 @@ class DandiBaseModel(BaseModel):
             .replace(__pydantic_cls__.__name__, "dict")
         )
 
-    @staticmethod
-    def post_process_json_schema(
-        schema: Dict[str, Any], model: Type["DandiBaseModel"]
-    ) -> None:
-        """
-        Post-process the generated JSON-schema for the containing model by Pydantic
-        """
-        if "title" not in schema:
-            schema["title"] = model.__name__
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls,
+        core_schema_: CoreSchema,
+        handler: GetJsonSchemaHandler,
+    ) -> JsonSchemaValue:
+        schema = handler(core_schema_)
+        schema = handler.resolve_ref_schema(schema)
+
         if schema["title"] == "PropertyValue":
             schema["required"] = sorted({"value"}.union(schema.get("required", [])))
         schema["title"] = name2title(schema["title"])
@@ -486,12 +485,7 @@ class DandiBaseModel(BaseModel):
                 if "readOnly" in value:
                     del value["readOnly"]
 
-    # Note: The annotated type for the `json_schema_extra` param of `ConfigDict` is
-    #       a callable with one parameter. However, in reality, the callable
-    #       can take two parameters, as it was the case for `schema_extra` in
-    #       the `Config` class of Pydantic V1.
-    #       https://docs.pydantic.dev/1.10/usage/schema/#schema-customization
-    model_config = ConfigDict(json_schema_extra=post_process_json_schema)
+        return schema
 
 
 class PropertyValue(DandiBaseModel):
@@ -565,14 +559,13 @@ class BaseType(DandiBaseModel):
     )
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
-    @staticmethod
-    def post_process_json_schema(
-        schema: Dict[str, Any], model: Type["BaseType"]
-    ) -> None:
-        """
-        Post-process the generated JSON-schema for the containing model by Pydantic
-        """
-        DandiBaseModel.post_process_json_schema(schema, model)
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls,
+        core_schema_: CoreSchema,
+        handler: GetJsonSchemaHandler,
+    ) -> JsonSchemaValue:
+        schema = super().__get_pydantic_json_schema__(core_schema_, handler)
 
         for prop, value in schema.get("properties", {}).items():
             # This check removes the anyOf field from the identifier property
@@ -584,12 +577,7 @@ class BaseType(DandiBaseModel):
                         value.update(**option)
                         value["maxLength"] = 1000
 
-    # Note: The annotated type for the `json_schema_extra` param of `ConfigDict` is
-    #       a callable with one parameter. However, in reality, the callable
-    #       can take two parameters, as it was the case for `schema_extra` in
-    #       the `Config` class of Pydantic V1.
-    #       https://docs.pydantic.dev/1.10/usage/schema/#schema-customization
-    model_config = ConfigDict(json_schema_extra=post_process_json_schema)
+        return schema
 
 
 class AssayType(BaseType):
