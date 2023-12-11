@@ -12,6 +12,7 @@ from pydantic import (
     ByteSize,
     EmailStr,
     Field,
+    GetCoreSchemaHandler,
     GetJsonSchemaHandler,
     TypeAdapter,
     ValidationInfo,
@@ -20,6 +21,7 @@ from pydantic import (
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
+from typing_extensions import Annotated
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
@@ -27,14 +29,21 @@ from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
 from .utils import name2title
 
 
-class ByteSizeJsonSchema(ByteSize):
+class _ByteSizeJsonSchemaAnnotation:
     """
-    A subclass of `pydantic.ByteSize` that comes with a JSON schema
+    An annotation for `pydantic.ByteSize` that provides a JSON schema
 
     Note: Pydantic V2 doesn't provide a JSON schema for `pydantic.ByteSize`.
           This subclass provides a JSON schema that is the same JSON schema
           used for `pydantic.ByteSize` in Pydantic V1.
     """
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source: Type[ByteSize], handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
+        assert source is ByteSize
+        return handler(source)
 
     @classmethod
     def __get_pydantic_json_schema__(
@@ -44,6 +53,8 @@ class ByteSizeJsonSchema(ByteSize):
     ) -> JsonSchemaValue:
         return handler(core_schema.int_schema())
 
+
+ByteSizeJsonSchema = Annotated[ByteSize, _ByteSizeJsonSchemaAnnotation()]
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]
