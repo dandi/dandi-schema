@@ -1,7 +1,8 @@
+from collections import namedtuple
 import enum
 from enum import Enum
 from inspect import isclass
-from typing import Any, Dict, List, Literal, Optional, Type, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
 
 import pydantic
 from pydantic import Field, ValidationError
@@ -402,14 +403,38 @@ def test_dantimeta_1() -> None:
     with pytest.raises(ValidationError) as exc:
         PublishedDandiset(**meta_dict)
 
-    error_msgs = [
-        "field required",
-        "A Dandiset containing no files or zero bytes is not publishable",
-        f'string does not match regex "^{DANDI_INSTANCE_URL_PATTERN}/dandiset/'
-        '\\d{6}/\\d+\\.\\d+\\.\\d+$"',
-        'string does not match regex "^DANDI:\\d{6}/\\d+\\.\\d+\\.\\d+"',
-    ]
-    assert all([el["msg"] in error_msgs for el in exc.value.errors()])
+    ErrDetail = namedtuple("ErrDetail", ["type", "msg"])
+
+    # Expected errors keyed by location of the respective error
+    # Note: Pydantic generated error messages are not provided for they are not in our
+    #       control, and the error type should be indicative enough.
+    expected_errors: Dict[Tuple[str], ErrDetail] = {
+        ("id",): ErrDetail(type="string_pattern_mismatch", msg=None),
+        ("publishedBy",): ErrDetail(type="missing", msg=None),
+        ("datePublished",): ErrDetail(type="missing", msg=None),
+        ("url",): ErrDetail(
+            type="value_error",
+            msg="Value error, string does not match regex "
+            f'"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/'
+            '\\d{6}/\\d+\\.\\d+\\.\\d+$"',
+        ),
+        ("assetsSummary",): ErrDetail(
+            type="value_error",
+            msg="Value error, "
+            "A Dandiset containing no files or zero bytes is not publishable",
+        ),
+        ("doi",): ErrDetail(type="missing", msg=None),
+    }
+
+    assert len(exc.value.errors()) == 6
+    for err in exc.value.errors():
+        err_loc = err["loc"]
+        assert err_loc in expected_errors
+
+        assert err["type"] == expected_errors[err_loc].type
+        if expected_errors[err_loc].msg is not None:
+            assert err["msg"] == expected_errors[err_loc].msg
+
     assert set([el["loc"][0] for el in exc.value.errors()]) == {
         "assetsSummary",
         "datePublished",
