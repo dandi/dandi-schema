@@ -16,7 +16,7 @@ from .consts import (
 )
 from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
-from .utils import _ensure_newline, version2tuple
+from .utils import TransitionalGenerateJsonSchema, _ensure_newline, version2tuple
 
 schema_map = {
     "Dandiset": "dandiset.json",
@@ -103,7 +103,12 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     for class_, filename in schema_map.items():
         (vdir / filename).write_text(
             _ensure_newline(
-                json.dumps(getattr(models, class_).model_json_schema(), indent=2)
+                json.dumps(
+                    getattr(models, class_).model_json_schema(
+                        schema_generator=TransitionalGenerateJsonSchema
+                    ),
+                    indent=2,
+                )
             )
         )
     (vdir / "context.json").write_text(
@@ -185,7 +190,9 @@ def validate(
     if json_validation:
         if schema_version == DANDI_SCHEMA_VERSION:
             klass = getattr(models, schema_key)
-            schema = klass.model_json_schema()
+            schema = klass.model_json_schema(
+                schema_generator=TransitionalGenerateJsonSchema
+            )
         else:
             if schema_key not in schema_map:
                 raise ValueError(
