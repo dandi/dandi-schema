@@ -211,7 +211,7 @@ def validate(
     except pydantic.ValidationError as exc:
         messages = []
         for el in exc.errors():
-            if not missing_ok or el["msg"] != "field required":
+            if not missing_ok or el["type"] != "missing":
                 messages.append(el)
         if messages:
             raise PydanticValidationError(messages)  # type: ignore[arg-type]
