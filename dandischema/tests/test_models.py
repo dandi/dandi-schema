@@ -48,12 +48,14 @@ def test_asset_digest() -> None:
         models.BareAsset(
             contentSize=100, encodingFormat="nwb", digest={"sha1": ""}, path="/"
         )
-    assert any(
-        [
-            "value is not a valid enumeration member" in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
-    )
+
+    # Assert validation failed at the `digest` attribute because the provided dictionary
+    # key is not one of the DigestType enum values.
+    assert len(exc.value.errors()) == 1
+    err = exc.value.errors()[0]
+    assert err["type"] == "enum"
+    assert err["loc"] == ("digest", "sha1", "[key]")
+
     digest = 32 * "a"
     digest_model = {models.DigestType.dandi_etag: digest}
     with pytest.raises(pydantic.ValidationError) as exc:
@@ -78,12 +80,14 @@ def test_asset_digest() -> None:
             digest={models.DigestType.dandi_etag: digest, "sha1": ""},
             path="/",
         )
+
+    # Assert validation failed at the `digest` attribute because the provided dictionary
+    # key is not one of the DigestType enum values.
     assert any(
-        [
-            "value is not a valid enumeration member" in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        err["type"] == "enum" and err["loc"] == ("digest", "sha1", "[key]")
+        for err in exc.value.errors()
     )
+
     digest_model = {
         models.DigestType.dandi_etag: digest,
         models.DigestType.sha2_256: 63 * "a",
@@ -159,12 +163,7 @@ def test_asset_digest() -> None:
             digest=digest_model,
             path="/",
         )
-    assert all(
-        [
-            "field required" in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
-    )
+    assert all(err["type"] == "missing" for err in exc.value.errors())
     digest_model = {
         models.DigestType.dandi_zarr_checksum: digest,
         models.DigestType.dandi_etag: digest + "-1",
