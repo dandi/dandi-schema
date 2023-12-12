@@ -287,7 +287,7 @@ def test_requirements(
         (
             {"schemaKey": "Dandiset", "schemaVersion": "0.4.4"},
             None,
-            {"field required"},
+            {"Field required"},
             10,
         ),
         (
@@ -297,7 +297,7 @@ def test_requirements(
                 "schemaVersion": "0.4.4",
             },
             None,
-            {"field required"},
+            {"Field required"},
             9,
         ),
     ],
