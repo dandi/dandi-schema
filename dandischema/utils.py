@@ -3,6 +3,9 @@ from __future__ import annotations
 import re
 from typing import Iterator, List
 
+from pydantic.json_schema import GenerateJsonSchema, JsonSchemaValue
+from pydantic_core import core_schema
+
 TITLE_CASE_LOWER = {
     "a",
     "an",
@@ -57,3 +60,25 @@ def _ensure_newline(obj: str) -> str:
     if not obj.endswith("\n"):
         return obj + "\n"
     return obj
+
+
+class TransitionalGenerateJsonSchema(GenerateJsonSchema):
+    """
+    A transitional `GenerateJsonSchema` subclass that overrides the default behavior
+    of the JSON schema generation in Pydantic V2 so that some aspects of the JSON
+    schema generation process are the same as the behavior in Pydantic V1.
+    """
+
+    def nullable_schema(self, schema: core_schema.NullableSchema) -> JsonSchemaValue:
+        # Override the default behavior for handling a schema that allows null values
+        # With this override, `Optional` fields will not be indicated
+        # as accepting null values in the JSON schema. This behavior is the one
+        # exhibited in Pydantic V1.
+
+        null_schema = {"type": "null"}
+        inner_json_schema = self.generate_inner(schema["schema"])
+
+        if inner_json_schema == null_schema:
+            return null_schema
+        else:
+            return inner_json_schema
