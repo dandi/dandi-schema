@@ -219,7 +219,7 @@ def to_datacite(
                     else:
                         continue
             elif rel_el.url is not None:
-                ident_id = rel_el.url
+                ident_id = str(rel_el.url)
                 ident_tp = "URL"
             rel_dict = {
                 "relatedIdentifier": ident_id.lower(),
