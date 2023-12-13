@@ -408,7 +408,7 @@ def test_dantimeta_1() -> None:
     # Expected errors keyed by location of the respective error
     # Note: Pydantic generated error messages are not provided for they are not in our
     #       control, and the error type should be indicative enough.
-    expected_errors: Dict[Tuple[str], ErrDetail] = {
+    expected_errors: Dict[Tuple[Union[int, str], ...], ErrDetail] = {
         ("id",): ErrDetail(type="string_pattern_mismatch", msg=None),
         ("publishedBy",): ErrDetail(type="missing", msg=None),
         ("datePublished",): ErrDetail(type="missing", msg=None),
