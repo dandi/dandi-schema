@@ -37,11 +37,11 @@ from ..utils import TransitionalGenerateJsonSchema
 
 
 def test_dandiset() -> None:
-    assert Dandiset.model_construct()
+    assert Dandiset.model_construct()  # type: ignore[call-arg]
 
 
 def test_asset() -> None:
-    assert Asset.model_construct()
+    assert Asset.model_construct()  # type: ignore[call-arg]
 
 
 def test_asset_digest() -> None:
