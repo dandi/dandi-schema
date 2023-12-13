@@ -72,7 +72,7 @@ def generate_context() -> dict:
                 fields[name] = "@nest"
             elif name not in fields:
                 if (
-                    field.json_schema_extra is not None
+                    isinstance(field.json_schema_extra, dict)
                     and "nskey" in field.json_schema_extra
                 ):
                     fields[name] = {

@@ -541,7 +541,7 @@ def test_duplicate_classes() -> None:
             check_qname(qname, klass)
         for name, field in klass.model_fields.items():
             if (
-                field.json_schema_extra is not None
+                isinstance(field.json_schema_extra, dict)
                 and "nskey" in field.json_schema_extra
             ):
                 qname = field.json_schema_extra["nskey"] + ":" + name
