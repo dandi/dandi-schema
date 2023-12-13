@@ -1,5 +1,4 @@
 from collections import namedtuple
-import enum
 from enum import Enum
 from inspect import isclass
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
@@ -527,11 +526,6 @@ def test_duplicate_classes() -> None:
         klass = getattr(models, val)
         if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
-        if isinstance(klass, enum.EnumMeta):
-            enumval: Any
-            for enumval in klass:
-                qname = enumval.value
-                check_qname(qname, klass)
         if hasattr(klass, "_ldmeta"):
             if "nskey" in klass._ldmeta.default:
                 name = klass.__name__
