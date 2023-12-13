@@ -110,7 +110,10 @@ class ZarrJSONChecksumSerializer:
         """Generate an aggregated digest for a list of ZarrChecksums."""
         # Use the most compact separators possible
         # content = json.dumps([asdict(zarr_md5) for zarr_md5 in checksums], separators=(',', ':'))0
-        content = json.dumps(checksums.model_dump(mode="json"), **ENCODING_KWARGS)
+        content = json.dumps(
+            checksums.model_dump(mode="json"),
+            **ENCODING_KWARGS,  # type: ignore[arg-type]
+        )
         h = hashlib.md5()
         h.update(content.encode("utf-8"))
         md5 = h.hexdigest()
@@ -127,7 +130,8 @@ class ZarrJSONChecksumSerializer:
         """Serialize a ZarrChecksumListing into a string."""
         # return json.dumps(asdict(zarr_checksum_listing))
         return json.dumps(
-            zarr_checksum_listing.model_dump(mode="json"), **ENCODING_KWARGS
+            zarr_checksum_listing.model_dump(mode="json"),
+            **ENCODING_KWARGS,  # type: ignore[arg-type]
         )
 
     def deserialize(self, json_str: str) -> ZarrChecksumListing:
