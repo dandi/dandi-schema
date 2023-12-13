@@ -2,7 +2,7 @@ from collections import namedtuple
 import enum
 from enum import Enum
 from inspect import isclass
-from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
 
 import pydantic
 from pydantic import Field, ValidationError
@@ -544,7 +544,7 @@ def test_duplicate_classes() -> None:
                 isinstance(field.json_schema_extra, dict)
                 and "nskey" in field.json_schema_extra
             ):
-                qname = field.json_schema_extra["nskey"] + ":" + name
+                qname = cast(str, field.json_schema_extra["nskey"]) + ":" + name
             else:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)

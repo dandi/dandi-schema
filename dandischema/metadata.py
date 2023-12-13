@@ -76,7 +76,7 @@ def generate_context() -> dict:
                     and "nskey" in field.json_schema_extra
                 ):
                     fields[name] = {
-                        "@id": field.json_schema_extra["nskey"] + ":" + name
+                        "@id": cast(str, field.json_schema_extra["nskey"]) + ":" + name
                     }
                 else:
                     fields[name] = {"@id": "dandi:" + name}
