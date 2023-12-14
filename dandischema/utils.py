@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Iterator, List
+from typing import Any, Iterator, List, Union, get_args, get_origin
 
 from pydantic.json_schema import GenerateJsonSchema, JsonSchemaValue
 from pydantic_core import core_schema
@@ -82,3 +82,31 @@ class TransitionalGenerateJsonSchema(GenerateJsonSchema):
             return null_schema
         else:
             return inner_json_schema
+
+
+def strip_top_level_optional(type_: Any) -> Any:
+    """
+    When given a generic type, this function returns a type that is the given type without
+    the top-level `Optional`. If the given type is not an `Optional`, then the given
+    type is returned.
+
+    :param type_: The type to strip the top-level `Optional` from
+    :return: The given type without the top-level `Optional`
+
+    Note: This function considers a top-level `Optional` being a `Union` of two types,
+          with one of these types being the `NoneType`.
+    """
+    origin = get_origin(type_)
+    args = get_args(type_)
+    if origin is Union and len(args) == 2 and type(None) in args:
+        # `type_` is an Optional
+        for arg in args:
+            if arg is not type(None):
+                return arg
+        else:
+            # The execution should never reach this point for
+            # the args for a Union are always distinct
+            raise ValueError("Optional type does not have a non-None type")
+    else:
+        # `type_` is not an Optional
+        return type_
