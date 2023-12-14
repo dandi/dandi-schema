@@ -1,8 +1,19 @@
 from copy import deepcopy
+from enum import Enum
 from inspect import isclass
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_origin
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+)
 
 import jsonschema
 import pydantic
@@ -16,7 +27,12 @@ from .consts import (
 )
 from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
-from .utils import TransitionalGenerateJsonSchema, _ensure_newline, version2tuple
+from .utils import (
+    TransitionalGenerateJsonSchema,
+    _ensure_newline,
+    strip_top_level_optional,
+    version2tuple,
+)
 
 schema_map = {
     "Dandiset": "dandiset.json",
@@ -80,11 +96,30 @@ def generate_context() -> dict:
                     }
                 else:
                     fields[name] = {"@id": "dandi:" + name}
-                if get_origin(field.annotation) is list:
+
+                # The annotation without the top-level optional
+                stripped_annotation = strip_top_level_optional(field.annotation)
+
+                if get_origin(stripped_annotation) is list:
                     fields[name]["@container"] = "@set"
+
+                    # Handle the case where the type of the element of a list is
+                    # an Enum type
+                    type_args = get_args(stripped_annotation)
+                    if (
+                        len(type_args) == 1
+                        and isclass(type_args[0])
+                        and issubclass(type_args[0], Enum)
+                    ):
+                        fields[name]["@type"] = "@id"
+
                 if name == "contributor":
                     fields[name]["@container"] = "@list"
-                if "enum" in str(field.annotation) or name in ["url", "hasMember"]:
+                if (
+                    isclass(stripped_annotation)
+                    and issubclass(stripped_annotation, Enum)
+                    or name in ["url", "hasMember"]
+                ):
                     fields[name]["@type"] = "@id"
 
     for item in models.DigestType:
