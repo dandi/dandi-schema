@@ -1,6 +1,8 @@
+from typing import Dict, List, Optional, Union
+
 import pytest
 
-from ..utils import _ensure_newline, name2title, version2tuple
+from ..utils import _ensure_newline, name2title, strip_top_level_optional, version2tuple
 
 
 @pytest.mark.parametrize(
@@ -46,3 +48,27 @@ def test_newline() -> None:
     assert _ensure_newline(obj).endswith("\n")
     obj = ""
     assert _ensure_newline(obj).endswith("\n")
+
+
+@pytest.mark.parametrize(
+    "input_, expected_output",
+    [
+        (Union[str, int, None], Union[str, int, None]),
+        (Optional[Union[str, int]], Optional[Union[str, int]]),
+        (Union[int], Union[int]),
+        (Union[None], Union[None]),
+        (Union[str, int, None, None], Union[str, int, None, None]),
+        (Union[None, int, str], Union[None, int, str]),
+        (Union[None, int, None, str], Union[None, int, None, str]),
+        (Optional[str], str),
+        (Optional[Optional[str]], str),
+        (Optional[List[Optional[str]]], List[Optional[str]]),
+        (Union[None, int], int),
+        (Union[None, int, None], int),
+        (Union[None, Dict[str, int]], Dict[str, int]),
+        (int, int),
+        (float, float),
+    ],
+)
+def test_strip_top_level_optional(input_: type, expected_output: type) -> None:
+    assert strip_top_level_optional(input_) == expected_output
