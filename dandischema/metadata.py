@@ -3,17 +3,7 @@ from enum import Enum
 from inspect import isclass
 import json
 from pathlib import Path
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    Optional,
-    TypeVar,
-    Union,
-    cast,
-    get_args,
-    get_origin,
-)
+from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_args
 
 import jsonschema
 import pydantic
@@ -100,7 +90,10 @@ def generate_context() -> dict:
                 # The annotation without the top-level optional
                 stripped_annotation = strip_top_level_optional(field.annotation)
 
-                if get_origin(stripped_annotation) is list:
+                # Using stringification to detect present of list in annotation is not
+                # ideal, but it works for now. A better solution should be used in the
+                # future.
+                if "list" in str(stripped_annotation).lower():
                     fields[name]["@container"] = "@set"
 
                     # Handle the case where the type of the element of a list is
