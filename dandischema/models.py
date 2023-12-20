@@ -871,7 +871,7 @@ class AccessRequirements(DandiBaseModel):
     embargoedUntil: Optional[date] = Field(
         None,
         title="Embargo end date",
-        description="Date on which embargo ends.",
+        description="Date on which embargo ends or ended.",
         readOnly=True,
         nskey="dandi",
         rangeIncludes="schema:Date",
