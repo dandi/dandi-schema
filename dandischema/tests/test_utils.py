@@ -1,6 +1,6 @@
 import pytest
 
-from ..utils import _ensure_newline, name2title, version2tuple
+from ..utils import _ensure_newline, name2title, sanitize_value, version2tuple
 
 
 @pytest.mark.parametrize(
@@ -46,3 +46,13 @@ def test_newline() -> None:
     assert _ensure_newline(obj).endswith("\n")
     obj = ""
     assert _ensure_newline(obj).endswith("\n")
+
+
+def test_sanitize_value() -> None:
+    # . is not sanitized in extension but elsewhere
+    assert sanitize_value("_.ext", "extension") == "-.ext"
+    assert sanitize_value("_.ext", "unrelated") == "--ext"
+    assert sanitize_value("_.ext") == "--ext"
+    assert sanitize_value("A;B") == "A-B"
+    assert sanitize_value("A\\/B") == "A--B"
+    assert sanitize_value("A\"'B") == "A--B"
