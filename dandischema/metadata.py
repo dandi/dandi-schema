@@ -288,6 +288,8 @@ def migrate(
         if "schemaKey" not in obj:
             obj["schemaKey"] = "Dandiset"
         obj["schemaVersion"] = to_version
+    if version2tuple(schema_version) < version2tuple("0.7.0"):
+        pass  # TODO: do necessary changes so that old metadata (before 0.7.0) looks like new (0.7.0)
     return obj
 
 
