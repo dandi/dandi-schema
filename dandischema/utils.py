@@ -75,13 +75,7 @@ class TransitionalGenerateJsonSchema(GenerateJsonSchema):
         # as accepting null values in the JSON schema. This behavior is the one
         # exhibited in Pydantic V1.
 
-        null_schema = {"type": "null"}
-        inner_json_schema = self.generate_inner(schema["schema"])
-
-        if inner_json_schema == null_schema:
-            return null_schema
-        else:
-            return inner_json_schema
+        return self.generate_inner(schema["schema"])
 
 
 def strip_top_level_optional(type_: Any) -> Any:
