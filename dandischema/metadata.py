@@ -148,7 +148,7 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
 def _validate_obj_json(data: dict, schema: dict, missing_ok: bool = False) -> None:
     validator: Union[jsonschema.Draft202012Validator, jsonschema.Draft7Validator]
 
-    if version2tuple(data["schemaVersion"]) >= version2tuple("0.7.0"):
+    if version2tuple(data["schemaVersion"]) >= version2tuple("0.6.5"):
         # schema version 0.7.0 and above is produced with Pydantic V2
         # which is compliant with JSON Schema Draft 2020-12
         validator = jsonschema.Draft202012Validator(
