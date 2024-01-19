@@ -146,9 +146,17 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
 
 
 def _validate_obj_json(data: dict, schema: dict, missing_ok: bool = False) -> None:
-    validator = jsonschema.Draft7Validator(
-        schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
-    )
+    if version2tuple(data["schemaVersion"]) >= version2tuple("0.7.0"):
+        # schema version 0.7.0 and above is produced with Pydantic V2
+        # which is compliant with JSON Schema Draft 2020-12
+        validator = jsonschema.Draft202012Validator(
+            schema, format_checker=jsonschema.Draft202012Validator.FORMAT_CHECKER
+        )
+    else:
+        validator = jsonschema.Draft7Validator(
+            schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
+        )
+
     error_list = []
     for error in sorted(validator.iter_errors(data), key=str):
         if missing_ok and "is a required property" in error.message:
