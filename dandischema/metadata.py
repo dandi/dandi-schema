@@ -1,5 +1,6 @@
 from copy import deepcopy
 from enum import Enum
+from functools import lru_cache
 from inspect import isclass
 import json
 from pathlib import Path
@@ -180,6 +181,14 @@ def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     _validate_obj_json(data, schema)
 
 
+@lru_cache
+def _get_schema(schema_version: str, schema_name: str) -> Any:
+    return requests.get(
+        "https://raw.githubusercontent.com/dandi/schema/"
+        f"master/releases/{schema_version}/{schema_name}"
+    ).json()
+
+
 def validate(
     obj: dict,
     schema_version: Optional[str] = None,
@@ -237,11 +246,7 @@ def validate(
                     "Only dandisets and assets can be validated "
                     "using json schema for older versions"
                 )
-            schema_filename = schema_map[schema_key]
-            schema = requests.get(
-                f"https://raw.githubusercontent.com/dandi/schema/"
-                f"master/releases/{schema_version}/{schema_filename}"
-            ).json()
+            schema = _get_schema(schema_version, schema_map[schema_key])
         _validate_obj_json(obj, schema, missing_ok)
     klass = getattr(models, schema_key)
     try:
@@ -276,10 +281,7 @@ def migrate(
     if version2tuple(schema_version) > version2tuple(to_version):
         raise ValueError(f"Cannot migrate from {schema_version} to lower {to_version}.")
     if not (skip_validation):
-        schema = requests.get(
-            f"https://raw.githubusercontent.com/dandi/schema/"
-            f"master/releases/{schema_version}/dandiset.json"
-        ).json()
+        schema = _get_schema(schema_version, "dandiset.json")
         _validate_obj_json(obj, schema)
     if version2tuple(schema_version) < version2tuple("0.6.0"):
         for val in obj.get("about", []):
