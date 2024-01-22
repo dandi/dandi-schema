@@ -1,3 +1,51 @@
+# 0.9.0 (Mon Jan 22 2024)
+
+#### 🚀 Enhancement
+
+- Update to supporting Pydantic V2 [#203](https://github.com/dandi/dandi-schema/pull/203) ([@candleindark](https://github.com/candleindark) [@satra](https://github.com/satra) [@yarikoptic](https://github.com/yarikoptic) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🐛 Bug Fix
+
+- [pre-commit.ci] pre-commit autoupdate [#211](https://github.com/dandi/dandi-schema/pull/211) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- Give `version2tuple()` a better type annotation [#208](https://github.com/dandi/dandi-schema/pull/208) ([@jwodder](https://github.com/jwodder))
+- Add `__all__` to `__init__.py` [#195](https://github.com/dandi/dandi-schema/pull/195) ([@jwodder](https://github.com/jwodder))
+- Remove 3.7 [#193](https://github.com/dandi/dandi-schema/pull/193) ([@yarikoptic](https://github.com/yarikoptic))
+- [pre-commit.ci] pre-commit autoupdate [#192](https://github.com/dandi/dandi-schema/pull/192) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#188](https://github.com/dandi/dandi-schema/pull/188) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#186](https://github.com/dandi/dandi-schema/pull/186) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🏎 Performance
+
+- OPT: (memory) cache schema files upon first read from github [#213](https://github.com/dandi/dandi-schema/pull/213) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🏠 Internal
+
+- [pre-commit.ci] pre-commit autoupdate [#215](https://github.com/dandi/dandi-schema/pull/215) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#212](https://github.com/dandi/dandi-schema/pull/212) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [gh-actions](deps): Bump actions/setup-python from 4 to 5 [#210](https://github.com/dandi/dandi-schema/pull/210) ([@dependabot[bot]](https://github.com/dependabot[bot]) [@satra](https://github.com/satra))
+- Remove `typing_extensions` imports [#207](https://github.com/dandi/dandi-schema/pull/207) ([@jwodder](https://github.com/jwodder))
+- Unpin versioningit version [#196](https://github.com/dandi/dandi-schema/pull/196) ([@jwodder](https://github.com/jwodder))
+- [pre-commit.ci] pre-commit autoupdate [#200](https://github.com/dandi/dandi-schema/pull/200) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [gh-actions](deps): Bump actions/checkout from 3 to 4 [#191](https://github.com/dandi/dandi-schema/pull/191) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### 🧪 Tests
+
+- Rerun failing `test_dandimeta_datacite` tests [#199](https://github.com/dandi/dandi-schema/pull/199) ([@jwodder](https://github.com/jwodder))
+- mypy: Set `ignore_missing_imports = False` [#197](https://github.com/dandi/dandi-schema/pull/197) ([@jwodder](https://github.com/jwodder))
+- Test against Python 3.12 [#198](https://github.com/dandi/dandi-schema/pull/198) ([@jwodder](https://github.com/jwodder))
+- Update README.md - more about use of the library + a few hyperlinks to files and projects [#197](https://github.com/dandi/dandi-schema/pull/197) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 6
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.8.4 (Fri Jun 16 2023)
 
 #### 🐛 Bug Fix
