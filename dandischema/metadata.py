@@ -1,8 +1,10 @@
 from copy import deepcopy
+from enum import Enum
 from functools import lru_cache
+from inspect import isclass
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast
+from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_args
 
 import jsonschema
 import pydantic
@@ -16,7 +18,12 @@ from .consts import (
 )
 from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
-from .utils import _ensure_newline, version2tuple
+from .utils import (
+    TransitionalGenerateJsonSchema,
+    _ensure_newline,
+    strip_top_level_optional,
+    version2tuple,
+)
 
 schema_map = {
     "Dandiset": "dandiset.json",
@@ -57,13 +64,13 @@ def generate_context() -> dict:
     fields: Dict[str, Any] = {}
     for val in dir(models):
         klass = getattr(models, val)
-        if not isinstance(klass, pydantic.main.ModelMetaclass):
+        if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
         if hasattr(klass, "_ldmeta"):
-            if "nskey" in klass._ldmeta:
+            if "nskey" in klass._ldmeta.default:
                 name = klass.__name__
-                fields[name] = f'{klass._ldmeta["nskey"]}:{name}'
-        for name, field in klass.__fields__.items():
+                fields[name] = f'{klass._ldmeta.default["nskey"]}:{name}'
+        for name, field in klass.model_fields.items():
             if name == "id":
                 fields[name] = "@id"
             elif name == "schemaKey":
@@ -71,15 +78,42 @@ def generate_context() -> dict:
             elif name == "digest":
                 fields[name] = "@nest"
             elif name not in fields:
-                if "nskey" in field.field_info.extra:
-                    fields[name] = {"@id": field.field_info.extra["nskey"] + ":" + name}
+                if (
+                    isinstance(field.json_schema_extra, dict)
+                    and "nskey" in field.json_schema_extra
+                ):
+                    fields[name] = {
+                        "@id": cast(str, field.json_schema_extra["nskey"]) + ":" + name
+                    }
                 else:
                     fields[name] = {"@id": "dandi:" + name}
-                if "List" in str(field.outer_type_):
+
+                # The annotation without the top-level optional
+                stripped_annotation = strip_top_level_optional(field.annotation)
+
+                # Using stringification to detect present of list in annotation is not
+                # ideal, but it works for now. A better solution should be used in the
+                # future.
+                if "list" in str(stripped_annotation).lower():
                     fields[name]["@container"] = "@set"
+
+                    # Handle the case where the type of the element of a list is
+                    # an Enum type
+                    type_args = get_args(stripped_annotation)
+                    if (
+                        len(type_args) == 1
+                        and isclass(type_args[0])
+                        and issubclass(type_args[0], Enum)
+                    ):
+                        fields[name]["@type"] = "@id"
+
                 if name == "contributor":
                     fields[name]["@container"] = "@list"
-                if "enum" in str(field.type_) or name in ["url", "hasMember"]:
+                if (
+                    isclass(stripped_annotation)
+                    and issubclass(stripped_annotation, Enum)
+                    or name in ["url", "hasMember"]
+                ):
                     fields[name]["@type"] = "@id"
 
     for item in models.DigestType:
@@ -97,7 +131,14 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     vdir.mkdir(exist_ok=True, parents=True)
     for class_, filename in schema_map.items():
         (vdir / filename).write_text(
-            _ensure_newline(getattr(models, class_).schema_json(indent=2))
+            _ensure_newline(
+                json.dumps(
+                    getattr(models, class_).model_json_schema(
+                        schema_generator=TransitionalGenerateJsonSchema
+                    ),
+                    indent=2,
+                )
+            )
         )
     (vdir / "context.json").write_text(
         _ensure_newline(json.dumps(generate_context(), indent=2))
@@ -106,9 +147,19 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
 
 
 def _validate_obj_json(data: dict, schema: dict, missing_ok: bool = False) -> None:
-    validator = jsonschema.Draft7Validator(
-        schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
-    )
+    validator: Union[jsonschema.Draft202012Validator, jsonschema.Draft7Validator]
+
+    if version2tuple(data["schemaVersion"]) >= version2tuple("0.6.5"):
+        # schema version 0.7.0 and above is produced with Pydantic V2
+        # which is compliant with JSON Schema Draft 2020-12
+        validator = jsonschema.Draft202012Validator(
+            schema, format_checker=jsonschema.Draft202012Validator.FORMAT_CHECKER
+        )
+    else:
+        validator = jsonschema.Draft7Validator(
+            schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
+        )
+
     error_list = []
     for error in sorted(validator.iter_errors(data), key=str):
         if missing_ok and "is a required property" in error.message:
@@ -186,7 +237,9 @@ def validate(
     if json_validation:
         if schema_version == DANDI_SCHEMA_VERSION:
             klass = getattr(models, schema_key)
-            schema = klass.schema()
+            schema = klass.model_json_schema(
+                schema_generator=TransitionalGenerateJsonSchema
+            )
         else:
             if schema_key not in schema_map:
                 raise ValueError(
@@ -201,7 +254,7 @@ def validate(
     except pydantic.ValidationError as exc:
         messages = []
         for el in exc.errors():
-            if not missing_ok or el["msg"] != "field required":
+            if not missing_ok or el["type"] != "missing":
                 messages.append(el)
         if messages:
             raise PydanticValidationError(messages)  # type: ignore[arg-type]
@@ -348,4 +401,4 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
-    return models.AssetsSummary(**stats).json_dict()
+    return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)

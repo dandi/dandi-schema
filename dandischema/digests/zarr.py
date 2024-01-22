@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import total_ordering
 import hashlib
+import json
 import re
 from typing import Dict, List, Optional, Tuple
 
@@ -109,7 +110,10 @@ class ZarrJSONChecksumSerializer:
         """Generate an aggregated digest for a list of ZarrChecksums."""
         # Use the most compact separators possible
         # content = json.dumps([asdict(zarr_md5) for zarr_md5 in checksums], separators=(',', ':'))0
-        content = checksums.json(**ENCODING_KWARGS)  # type: ignore[arg-type]
+        content = json.dumps(
+            checksums.model_dump(mode="json"),
+            **ENCODING_KWARGS,  # type: ignore[arg-type]
+        )
         h = hashlib.md5()
         h.update(content.encode("utf-8"))
         md5 = h.hexdigest()
@@ -125,14 +129,17 @@ class ZarrJSONChecksumSerializer:
     def serialize(self, zarr_checksum_listing: ZarrChecksumListing) -> str:
         """Serialize a ZarrChecksumListing into a string."""
         # return json.dumps(asdict(zarr_checksum_listing))
-        return zarr_checksum_listing.json(**ENCODING_KWARGS)  # type: ignore[arg-type]
+        return json.dumps(
+            zarr_checksum_listing.model_dump(mode="json"),
+            **ENCODING_KWARGS,  # type: ignore[arg-type]
+        )
 
     def deserialize(self, json_str: str) -> ZarrChecksumListing:
         """Deserialize a string into a ZarrChecksumListing."""
         # listing = ZarrChecksumListing(**json.loads(json_str))
         # listing.checksums = [ZarrChecksum(**checksum) for checksum in listing.checksums]
         # return listing
-        return ZarrChecksumListing.parse_raw(json_str)
+        return ZarrChecksumListing.model_validate_json(json_str)
 
     def generate_listing(
         self,

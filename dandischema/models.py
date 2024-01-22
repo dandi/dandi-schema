@@ -1,37 +1,29 @@
-from copy import deepcopy
 from datetime import date, datetime
 from enum import Enum
-import json
 import os
 import re
-from typing import (
-    Any,
-    Dict,
-    List,
-    Literal,
-    Optional,
-    Sequence,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-)
+from typing import Any, Dict, List, Literal, Optional, Sequence, Type, TypeVar, Union
+from warnings import warn
 
 from pydantic import (
     UUID4,
     AnyHttpUrl,
     BaseModel,
-    ByteSize,
     EmailStr,
     Field,
-    parse_obj_as,
-    root_validator,
-    validator,
+    GetJsonSchemaHandler,
+    TypeAdapter,
+    ValidationInfo,
+    field_validator,
+    model_validator,
 )
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
 from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
+from .types import ByteSizeJsonSchema
 from .utils import name2title
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
@@ -59,25 +51,14 @@ PUBLISHED_VERSION_URL_PATTERN = (
 MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
 
-
 M = TypeVar("M", bound=BaseModel)
 
 
 def diff_models(model1: M, model2: M) -> None:
     """Perform a field-wise diff"""
-    for field in model1.__fields__:
+    for field in model1.model_fields:
         if getattr(model1, field) != getattr(model2, field):
             print(f"{field} is different")
-
-
-def _sanitize(o: Any) -> Any:
-    if isinstance(o, dict):
-        return {_sanitize(k): _sanitize(v) for k, v in o.items()}
-    elif isinstance(o, (set, tuple, list)):
-        return type(o)(_sanitize(x) for x in o)
-    elif isinstance(o, Enum):
-        return o.value
-    return o
 
 
 class AccessType(Enum):
@@ -364,16 +345,15 @@ class AgeReferenceType(Enum):
     GestationalReference = "dandi:GestationalReference"
 
 
-class HandleKeyEnumEncoder(json.JSONEncoder):
-    def encode(self, o: Any) -> Any:
-        return super().encode(_sanitize(o))
-
-
 class DandiBaseModel(BaseModel):
     id: Optional[str] = Field(
-        default=None, description="Uniform resource identifier", readOnly=True
+        default=None,
+        description="Uniform resource identifier",
+        json_schema_extra={"readOnly": True},
     )
-    schemaKey: str = Field("DandiBaseModel", readOnly=True)
+    schemaKey: str = Field(
+        "DandiBaseModel", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     def json_dict(self) -> dict:
         """
@@ -381,11 +361,15 @@ class DandiBaseModel(BaseModel):
         including converting enum values to strings.  `None` fields
         are omitted.
         """
-        return cast(
-            dict, json.loads(self.json(exclude_none=True, cls=HandleKeyEnumEncoder))
+        warn(
+            "`DandiBaseModel.json_dict()` is deprecated. Use "
+            "`pydantic.BaseModel.model_dump(mode='json', exclude_none=True)` instead.",
+            DeprecationWarning,
+            stacklevel=2,
         )
+        return self.model_dump(mode="json", exclude_none=True)
 
-    @validator("schemaKey", always=True)
+    @field_validator("schemaKey")
     @classmethod
     def ensure_schemakey(cls, val: str) -> str:
         tempval = val
@@ -402,109 +386,115 @@ class DandiBaseModel(BaseModel):
     @classmethod
     def unvalidated(__pydantic_cls__: Type[M], **data: Any) -> M:
         """Allow model to be returned without validation"""
-        for name, field in __pydantic_cls__.__fields__.items():
-            try:
-                data[name]
-            except KeyError:
-                # if field.required:
-                #    value = None
-                if field.default_factory is not None:
-                    value = field.default_factory()
-                elif field.default is None:
-                    # deepcopy is quite slow on None
-                    value = None
-                else:
-                    value = deepcopy(field.default)
-                data[name] = value
-        return __pydantic_cls__.construct(**data)
+
+        warn(
+            "`DandiBaseModel.unvalidated()` is deprecated. "
+            "Use `pydantic.BaseModel.model_construct()` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return __pydantic_cls__.model_construct(**data)
 
     @classmethod
     def to_dictrepr(__pydantic_cls__: Type["DandiBaseModel"]) -> str:
         return (
-            __pydantic_cls__.unvalidated()
+            __pydantic_cls__.model_construct()
             .__repr__()
             .replace(__pydantic_cls__.__name__, "dict")
         )
 
-    class Config:
-        @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
-            if schema["title"] == "PropertyValue":
-                schema["required"] = sorted({"value"}.union(schema.get("required", [])))
-            schema["title"] = name2title(schema["title"])
-            if schema["type"] == "object":
-                schema["required"] = sorted(
-                    {"schemaKey"}.union(schema.get("required", []))
-                )
-            for prop, value in schema.get("properties", {}).items():
-                if schema["title"] == "Person":
-                    if prop == "name":
-                        # JSON schema doesn't support validating unicode
-                        # characters using the \w pattern, but Python does. So
-                        # we are dropping the regex pattern for the schema.
-                        del value["pattern"]
-                if value.get("title") is None or value["title"] == prop.title():
-                    value["title"] = name2title(prop)
-                if re.match("\\^https?://", value.get("pattern", "")):
-                    value["format"] = "uri"
-                if value.get("format", None) == "uri":
-                    value["maxLength"] = 1000
-                allOf = value.get("allOf")
-                anyOf = value.get("anyOf")
-                items = value.get("items")
-                if allOf is not None:
-                    if len(allOf) == 1 and "$ref" in allOf[0]:
-                        value["$ref"] = allOf[0]["$ref"]
-                        del value["allOf"]
-                    elif len(allOf) > 1:
-                        value["oneOf"] = value["allOf"]
-                        value["type"] = "object"
-                        del value["allOf"]
-                if anyOf is not None:
-                    if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
-                        value["type"] = "object"
-                if items is not None:
-                    anyOf = items.get("anyOf")
-                    if (
-                        anyOf is not None
-                        and len(anyOf) > 1
-                        and any(["$ref" in val for val in anyOf])
-                    ):
-                        value["items"]["type"] = "object"
-                # In pydantic 1.8+ all Literals are mapped on to enum
-                # This presently breaks the schema editor UI. Revert
-                # to const when generating the schema.
-                # Note: this no longer happens with custom metaclass
-                if prop == "schemaKey":
-                    if "enum" in value and len(value["enum"]) == 1:
-                        value["const"] = value["enum"][0]
-                        del value["enum"]
-                    else:
-                        value["const"] = value["default"]
-                    if "readOnly" in value:
-                        del value["readOnly"]
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls,
+        core_schema_: CoreSchema,
+        handler: GetJsonSchemaHandler,
+    ) -> JsonSchemaValue:
+        schema = handler(core_schema_)
+        schema = handler.resolve_ref_schema(schema)
+
+        if schema["title"] == "PropertyValue":
+            schema["required"] = sorted({"value"}.union(schema.get("required", [])))
+        schema["title"] = name2title(schema["title"])
+        if schema["type"] == "object":
+            schema["required"] = sorted({"schemaKey"}.union(schema.get("required", [])))
+        for prop, value in schema.get("properties", {}).items():
+            if schema["title"] == "Person":
+                if prop == "name":
+                    # JSON schema doesn't support validating unicode
+                    # characters using the \w pattern, but Python does. So
+                    # we are dropping the regex pattern for the schema.
+                    del value["pattern"]
+            if value.get("title") is None or value["title"] == prop.title():
+                value["title"] = name2title(prop)
+            if re.match("\\^https?://", value.get("pattern", "")):
+                value["format"] = "uri"
+            if value.get("format", None) == "uri":
+                value["maxLength"] = 1000
+            allOf = value.get("allOf")
+            anyOf = value.get("anyOf")
+            items = value.get("items")
+            if allOf is not None:
+                if len(allOf) == 1 and "$ref" in allOf[0]:
+                    value["$ref"] = allOf[0]["$ref"]
+                    del value["allOf"]
+                elif len(allOf) > 1:
+                    value["oneOf"] = value["allOf"]
+                    value["type"] = "object"
+                    del value["allOf"]
+            if anyOf is not None:
+                if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
+                    value["type"] = "object"
+            if items is not None:
+                anyOf = items.get("anyOf")
+                if (
+                    anyOf is not None
+                    and len(anyOf) > 1
+                    and any(["$ref" in val for val in anyOf])
+                ):
+                    value["items"]["type"] = "object"
+            # In pydantic 1.8+ all Literals are mapped on to enum
+            # This presently breaks the schema editor UI. Revert
+            # to const when generating the schema.
+            # Note: this no longer happens with custom metaclass
+            if prop == "schemaKey":
+                if "enum" in value and len(value["enum"]) == 1:
+                    value["const"] = value["enum"][0]
+                    del value["enum"]
+                else:
+                    value["const"] = value["default"]
+                if "readOnly" in value:
+                    del value["readOnly"]
+
+        return schema
 
 
 class PropertyValue(DandiBaseModel):
-    maxValue: Optional[float] = Field(None, nskey="schema")
-    minValue: Optional[float] = Field(None, nskey="schema")
-    unitText: Optional[str] = Field(None, nskey="schema")
+    maxValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
+    minValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
+    unitText: Optional[str] = Field(None, json_schema_extra={"nskey": "schema"})
     value: Union[Any, List[Any]] = Field(
-        nskey="schema", description="The value associated with this property."
+        None,
+        validate_default=True,
+        json_schema_extra={"nskey": "schema"},
+        description="The value associated with this property.",
     )
     valueReference: Optional["PropertyValue"] = Field(
-        None, nskey="schema"
+        None, json_schema_extra={"nskey": "schema"}
     )  # Note: recursive (circular or not)
     propertyID: Optional[Union[IdentifierType, AnyHttpUrl]] = Field(
         None,
         description="A commonly used identifier for"
         "the characteristic represented by the property. "
         "For example, a known prefix like DOI or a full URL.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["PropertyValue"] = Field("PropertyValue", readOnly=True)
+    schemaKey: Literal["PropertyValue"] = Field(
+        "PropertyValue", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
-    @validator("value", always=True)
+    @field_validator("value")
+    @classmethod
     def ensure_value(cls, val: Union[Any, List[Any]]) -> Union[Any, List[Any]]:
         if not val:
             raise ValueError(
@@ -515,7 +505,12 @@ class PropertyValue(DandiBaseModel):
     _ldmeta = {"nskey": "schema"}
 
 
-PropertyValue.update_forward_refs()
+# This is mostly not needed at all since self-referencing models
+# are automatically resolved by Pydantic in a pretty consistent way even in Pydantic V1
+# https://docs.pydantic.dev/1.10/usage/postponed_annotations/#self-referencing-models
+# and continue to be so in Pydantic V2
+# https://docs.pydantic.dev/latest/concepts/postponed_annotations/#self-referencing-or-recursive-models
+PropertyValue.model_rebuild()
 
 Identifier = str
 ORCID = str
@@ -531,64 +526,87 @@ class BaseType(DandiBaseModel):
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
-        regex=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
-        nskey="schema",
+        pattern=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
+        json_schema_extra={"nskey": "schema"},
     )
     name: Optional[str] = Field(
-        None, description="The name of the item.", max_length=150, nskey="schema"
+        None,
+        description="The name of the item.",
+        max_length=150,
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: str = Field("BaseType", readOnly=True)
+    schemaKey: str = Field(
+        "BaseType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
     _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
 
-    class Config:
-        @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type["BaseType"]) -> None:
-            DandiBaseModel.Config.schema_extra(schema=schema, model=model)
-            for prop, value in schema.get("properties", {}).items():
-                # This check removes the anyOf field from the identifier property
-                # in the schema generation. This relates to a UI issue where two
-                # basic properties, in this case "string", is dropped from the UI.
-                if prop == "identifier":
-                    for option in value.pop("anyOf", []):
-                        if option.get("format", "") == "uri":
-                            value.update(**option)
-                            value["maxLength"] = 1000
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls,
+        core_schema_: CoreSchema,
+        handler: GetJsonSchemaHandler,
+    ) -> JsonSchemaValue:
+        schema = super().__get_pydantic_json_schema__(core_schema_, handler)
+
+        for prop, value in schema.get("properties", {}).items():
+            # This check removes the anyOf field from the identifier property
+            # in the schema generation. This relates to a UI issue where two
+            # basic properties, in this case "string", is dropped from the UI.
+            if prop == "identifier":
+                for option in value.pop("anyOf", []):
+                    if option.get("format", "") == "uri":
+                        value.update(**option)
+                        value["maxLength"] = 1000
+
+        return schema
 
 
 class AssayType(BaseType):
     """OBI based identifier for the assay(s) used"""
 
-    schemaKey: Literal["AssayType"] = Field("AssayType", readOnly=True)
+    schemaKey: Literal["AssayType"] = Field(
+        "AssayType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class SampleType(BaseType):
     """OBI based identifier for the sample type used"""
 
-    schemaKey: Literal["SampleType"] = Field("SampleType", readOnly=True)
+    schemaKey: Literal["SampleType"] = Field(
+        "SampleType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class Anatomy(BaseType):
     """UBERON or other identifier for anatomical part studied"""
 
-    schemaKey: Literal["Anatomy"] = Field("Anatomy", readOnly=True)
+    schemaKey: Literal["Anatomy"] = Field(
+        "Anatomy", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class StrainType(BaseType):
     """Identifier for the strain of the sample"""
 
-    schemaKey: Literal["StrainType"] = Field("StrainType", readOnly=True)
+    schemaKey: Literal["StrainType"] = Field(
+        "StrainType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class SexType(BaseType):
     """Identifier for the sex of the sample"""
 
-    schemaKey: Literal["SexType"] = Field("SexType", readOnly=True)
+    schemaKey: Literal["SexType"] = Field(
+        "SexType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class SpeciesType(BaseType):
     """Identifier for species of the sample"""
 
-    schemaKey: Literal["SpeciesType"] = Field("SpeciesType", readOnly=True)
+    schemaKey: Literal["SpeciesType"] = Field(
+        "SpeciesType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class Disorder(BaseType):
@@ -598,60 +616,72 @@ class Disorder(BaseType):
         None,
         title="Dates of diagnosis",
         description="Dates of diagnosis",
-        nskey="dandi",
-        rangeIncludes="schema:Date",
+        json_schema_extra={"nskey": "dandi", "rangeIncludes": "schema:Date"},
     )
-    schemaKey: Literal["Disorder"] = Field("Disorder", readOnly=True)
+    schemaKey: Literal["Disorder"] = Field(
+        "Disorder", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class GenericType(BaseType):
     """An object to capture any type for about"""
 
-    schemaKey: Literal["GenericType"] = Field("GenericType", readOnly=True)
+    schemaKey: Literal["GenericType"] = Field(
+        "GenericType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class ApproachType(BaseType):
     """Identifier for approach used"""
 
-    schemaKey: Literal["ApproachType"] = Field("ApproachType", readOnly=True)
+    schemaKey: Literal["ApproachType"] = Field(
+        "ApproachType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class MeasurementTechniqueType(BaseType):
     """Identifier for measurement technique used"""
 
     schemaKey: Literal["MeasurementTechniqueType"] = Field(
-        "MeasurementTechniqueType", readOnly=True
+        "MeasurementTechniqueType",
+        validate_default=True,
+        json_schema_extra={"readOnly": True},
     )
 
 
 class StandardsType(BaseType):
     """Identifier for data standard used"""
 
-    schemaKey: Literal["StandardsType"] = Field("StandardsType", readOnly=True)
+    schemaKey: Literal["StandardsType"] = Field(
+        "StandardsType", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 nwb_standard = StandardsType(
     name="Neurodata Without Borders (NWB)",
     identifier="RRID:SCR_015242",
-).json_dict()
-
+).model_dump(mode="json", exclude_none=True)
 
 bids_standard = StandardsType(
     name="Brain Imaging Data Structure (BIDS)",
     identifier="RRID:SCR_016124",
-).json_dict()
+).model_dump(mode="json", exclude_none=True)
 
 
 class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(
-        None, description="Email address of contact.", nskey="schema"
+        None,
+        description="Email address of contact.",
+        json_schema_extra={"nskey": "schema"},
     )
     url: Optional[AnyHttpUrl] = Field(
         None,
         description="A Web page to find information on how to contact.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["ContactPoint"] = Field("ContactPoint", readOnly=True)
+    schemaKey: Literal["ContactPoint"] = Field(
+        "ContactPoint", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {"nskey": "schema"}
 
@@ -662,32 +692,32 @@ class Contributor(DandiBaseModel):
         title="A common identifier",
         description="Use a common identifier such as ORCID (orcid.org) for "
         "people or ROR (ror.org) for institutions.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    name: Optional[str] = Field(None, nskey="schema")
-    email: Optional[EmailStr] = Field(None, nskey="schema")
-    url: Optional[AnyHttpUrl] = Field(None, nskey="schema")
+    name: Optional[str] = Field(None, json_schema_extra={"nskey": "schema"})
+    email: Optional[EmailStr] = Field(None, json_schema_extra={"nskey": "schema"})
+    url: Optional[AnyHttpUrl] = Field(None, json_schema_extra={"nskey": "schema"})
     roleName: Optional[List[RoleType]] = Field(
         None,
         title="Role",
         description="Role(s) of the contributor. Multiple roles can be selected.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     includeInCitation: bool = Field(
         True,
         title="Include contributor in citation",
         description="A flag to indicate whether a contributor should be included "
         "when generating a citation for the item.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     awardNumber: Optional[Identifier] = Field(
         None,
         title="Identifier for an award",
         description="Identifier associated with a sponsored or gift award.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
-        "Contributor", readOnly=True
+        "Contributor", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
 
@@ -696,8 +726,8 @@ class Organization(Contributor):
         None,
         title="A ror.org identifier",
         description="Use an ror.org identifier for institutions.",
-        regex=r"^https://ror.org/[a-z0-9]+$",
-        nskey="schema",
+        pattern=r"^https://ror.org/[a-z0-9]+$",
+        json_schema_extra={"nskey": "schema"},
     )
 
     includeInCitation: bool = Field(
@@ -705,15 +735,17 @@ class Organization(Contributor):
         title="Include contributor in citation",
         description="A flag to indicate whether a contributor should be included "
         "when generating a citation for the item",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     contactPoint: Optional[List[ContactPoint]] = Field(
         None,
         title="Organization contact information",
         description="Contact for the organization",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Organization"] = Field("Organization", readOnly=True)
+    schemaKey: Literal["Organization"] = Field(
+        "Organization", validate_default=True, json_schema_extra={"readOnly": True}
+    )
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
         "nskey": "dandi",
@@ -725,11 +757,15 @@ class Affiliation(DandiBaseModel):
         None,
         title="A ror.org identifier",
         description="Use an ror.org identifier for institutions.",
-        regex=r"^https://ror.org/[a-z0-9]+$",
-        nskey="schema",
+        pattern=r"^https://ror.org/[a-z0-9]+$",
+        json_schema_extra={"nskey": "schema"},
     )
-    name: str = Field(nskey="schema", description="Name of organization")
-    schemaKey: Literal["Affiliation"] = Field("Affiliation", readOnly=True)
+    name: str = Field(
+        json_schema_extra={"nskey": "schema"}, description="Name of organization"
+    )
+    schemaKey: Literal["Affiliation"] = Field(
+        "Affiliation", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
@@ -742,21 +778,23 @@ class Person(Contributor):
         None,
         title="An ORCID identifier",
         description="An ORCID (orcid.org) identifier for an individual.",
-        regex=r"^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$",
-        nskey="schema",
+        pattern=r"^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$",
+        json_schema_extra={"nskey": "schema"},
     )
     name: str = Field(
         description="Use the format: familyname, given names ...",
-        regex=NAME_PATTERN,
-        nskey="schema",
+        pattern=NAME_PATTERN,
+        json_schema_extra={"nskey": "schema"},
         examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )
     affiliation: Optional[List[Affiliation]] = Field(
         None,
         description="An organization that this person is affiliated with.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Person"] = Field("Person", readOnly=True)
+    schemaKey: Literal["Person"] = Field(
+        "Person", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Person", "prov:Person"], "nskey": "dandi"}
 
@@ -764,17 +802,21 @@ class Person(Contributor):
 class Software(DandiBaseModel):
     identifier: Optional[RRID] = Field(
         None,
-        regex=r"^RRID\:.*",
+        pattern=r"^RRID\:.*",
         title="Research resource identifier",
         description="RRID of the software from scicrunch.org.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    name: str = Field(nskey="schema")
-    version: str = Field(nskey="schema")
+    name: str = Field(json_schema_extra={"nskey": "schema"})
+    version: str = Field(json_schema_extra={"nskey": "schema"})
     url: Optional[AnyHttpUrl] = Field(
-        None, description="Web page for the software.", nskey="schema"
+        None,
+        description="Web page for the software.",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Software"] = Field("Software", readOnly=True)
+    schemaKey: Literal["Software"] = Field(
+        "Software", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:SoftwareApplication", "prov:Software"],
@@ -787,11 +829,15 @@ class Agent(DandiBaseModel):
         None,
         title="Identifier",
         description="Identifier for an agent.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    name: str = Field(nskey="schema")
-    url: Optional[AnyHttpUrl] = Field(None, nskey="schema")
-    schemaKey: Literal["Agent"] = Field("Agent", readOnly=True)
+    name: str = Field(
+        json_schema_extra={"nskey": "schema"},
+    )
+    url: Optional[AnyHttpUrl] = Field(None, json_schema_extra={"nskey": "schema"})
+    schemaKey: Literal["Agent"] = Field(
+        "Agent", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -803,37 +849,47 @@ class EthicsApproval(DandiBaseModel):
     """Information about ethics committee approval for project"""
 
     identifier: Identifier = Field(
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
         title="Approved protocol identifier",
         description="Approved Protocol identifier, often a number or alphanumeric string.",
     )
     contactPoint: Optional[ContactPoint] = Field(
         None,
         description="Information about the ethics approval committee.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["EthicsApproval"] = Field("EthicsApproval", readOnly=True)
+    schemaKey: Literal["EthicsApproval"] = Field(
+        "EthicsApproval", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
 
 class Resource(DandiBaseModel):
-    identifier: Optional[Identifier] = Field(None, nskey="schema")
-    name: Optional[str] = Field(None, title="A title of the resource", nskey="schema")
-    url: Optional[AnyHttpUrl] = Field(None, title="URL of the resource", nskey="schema")
+    identifier: Optional[Identifier] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
+    name: Optional[str] = Field(
+        None, title="A title of the resource", json_schema_extra={"nskey": "schema"}
+    )
+    url: Optional[AnyHttpUrl] = Field(
+        None, title="URL of the resource", json_schema_extra={"nskey": "schema"}
+    )
     repository: Optional[str] = Field(
         None,
         title="Name of the repository",
         description="Name of the repository in which the resource is housed.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     relation: RelationType = Field(
         title="Resource relation",
         description="Indicates how the resource is related to the dataset. "
         "This relation should satisfy: dandiset <relation> resource.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
-    schemaKey: Literal["Resource"] = Field("Resource", readOnly=True)
+    schemaKey: Literal["Resource"] = Field(
+        "Resource", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -842,12 +898,12 @@ class Resource(DandiBaseModel):
         "nskey": "dandi",
     }
 
-    @root_validator
-    def identifier_or_url(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        identifier, url = values.get("identifier"), values.get("url")
+    @model_validator(mode="after")
+    def identifier_or_url(self) -> "Resource":
+        identifier, url = self.identifier, self.url
         if identifier is None and url is None:
             raise ValueError("Both identifier and url cannot be None")
-        return values
+        return self
 
 
 class AccessRequirements(DandiBaseModel):
@@ -856,64 +912,84 @@ class AccessRequirements(DandiBaseModel):
     status: AccessType = Field(
         title="Access status",
         description="The access status of the item.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     contactPoint: Optional[ContactPoint] = Field(
         None,
         description="Who or where to look for information about access.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: Optional[str] = Field(
         None,
         description="Information about access requirements when embargoed or restricted",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     embargoedUntil: Optional[date] = Field(
         None,
         title="Embargo end date",
         description="Date on which embargo ends.",
-        readOnly=True,
-        nskey="dandi",
-        rangeIncludes="schema:Date",
+        json_schema_extra={
+            "readOnly": True,
+            "nskey": "dandi",
+            "rangeIncludes": "schema:Date",
+        },
     )
     schemaKey: Literal["AccessRequirements"] = Field(
-        "AccessRequirements", readOnly=True
+        "AccessRequirements",
+        validate_default=True,
+        json_schema_extra={"readOnly": True},
     )
 
     _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
 
-    @root_validator
-    def open_or_embargoed(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        status, embargoed = values.get("status"), values.get("embargoedUntil")
+    @model_validator(mode="after")
+    def open_or_embargoed(self) -> "AccessRequirements":
+        status, embargoed = self.status, self.embargoedUntil
         if status == AccessType.EmbargoedAccess and embargoed is None:
             raise ValueError(
                 "An embargo end date is required for NIH awards to be in "
                 "compliance with NIH resource sharing policy."
             )
-        return values
+        return self
 
 
 class AssetsSummary(DandiBaseModel):
     """Summary over assets contained in a dandiset (published or not)"""
 
     # stats which are not stats
-    numberOfBytes: int = Field(readOnly=True, sameas="schema:contentSize")
-    numberOfFiles: int = Field(readOnly=True)  # universe
-    numberOfSubjects: Optional[int] = Field(None, readOnly=True)  # NWB + BIDS
-    numberOfSamples: Optional[int] = Field(None, readOnly=True)  # more of NWB
-    numberOfCells: Optional[int] = Field(None, readOnly=True)
+    numberOfBytes: int = Field(
+        json_schema_extra={"readOnly": True, "sameas": "schema:contentSize"}
+    )
+    numberOfFiles: int = Field(json_schema_extra={"readOnly": True})  # universe
+    numberOfSubjects: Optional[int] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )  # NWB + BIDS
+    numberOfSamples: Optional[int] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )  # more of NWB
+    numberOfCells: Optional[int] = Field(None, json_schema_extra={"readOnly": True})
 
-    dataStandard: Optional[List[StandardsType]] = Field(readOnly=True)
+    dataStandard: Optional[List[StandardsType]] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )
     # Web UI: icons per each modality?
-    approach: Optional[List[ApproachType]] = Field(readOnly=True)
+    approach: Optional[List[ApproachType]] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )
     # Web UI: could be an icon with number, which if hovered on  show a list?
     measurementTechnique: Optional[List[MeasurementTechniqueType]] = Field(
-        readOnly=True, nskey="schema"
+        None, json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
-    variableMeasured: Optional[List[str]] = Field(None, readOnly=True, nskey="schema")
+    variableMeasured: Optional[List[str]] = Field(
+        None, json_schema_extra={"readOnly": True, "nskey": "schema"}
+    )
 
-    species: Optional[List[SpeciesType]] = Field(readOnly=True)
-    schemaKey: Literal["AssetsSummary"] = Field("AssetsSummary", readOnly=True)
+    species: Optional[List[SpeciesType]] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )
+    schemaKey: Literal["AssetsSummary"] = Field(
+        "AssetsSummary", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -922,17 +998,23 @@ class AssetsSummary(DandiBaseModel):
 
 
 class Equipment(DandiBaseModel):
-    identifier: Optional[Identifier] = Field(None, nskey="schema")
+    identifier: Optional[Identifier] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
     name: str = Field(
         title="Title",
         description="A name for the equipment.",
         max_length=150,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: Optional[str] = Field(
-        None, description="The description of the equipment.", nskey="schema"
+        None,
+        description="The description of the equipment.",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Equipment"] = Field("Equipment", readOnly=True)
+    schemaKey: Literal["Equipment"] = Field(
+        "Equipment", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -943,29 +1025,35 @@ class Equipment(DandiBaseModel):
 class Activity(DandiBaseModel):
     """Information about the Project activity"""
 
-    identifier: Optional[Identifier] = Field(None, nskey="schema")
+    identifier: Optional[Identifier] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
     name: str = Field(
         title="Title",
         description="The name of the activity.",
         max_length=150,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: Optional[str] = Field(
-        None, description="The description of the activity.", nskey="schema"
+        None,
+        description="The description of the activity.",
+        json_schema_extra={"nskey": "schema"},
     )
-    startDate: Optional[datetime] = Field(None, nskey="schema")
-    endDate: Optional[datetime] = Field(None, nskey="schema")
+    startDate: Optional[datetime] = Field(None, json_schema_extra={"nskey": "schema"})
+    endDate: Optional[datetime] = Field(None, json_schema_extra={"nskey": "schema"})
 
-    # isPartOf: Optional["Activity"] = Field(None, nskey="schema")
-    # hasPart: Optional["Activity"] = Field(None, nskey="schema")
+    # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
+    # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     wasAssociatedWith: Optional[
         List[Union[Person, Organization, Software, Agent]]
-    ] = Field(None, nskey="prov")
+    ] = Field(None, json_schema_extra={"nskey": "prov"})
     used: Optional[List[Equipment]] = Field(
-        None, description="A listing of equipment used for the activity.", nskey="prov"
+        None,
+        description="A listing of equipment used for the activity.",
+        json_schema_extra={"nskey": "prov"},
     )
     schemaKey: Literal["Activity", "Project", "Session", "PublishActivity"] = Field(
-        "Activity", readOnly=True
+        "Activity", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
     _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
@@ -976,12 +1064,16 @@ class Project(Activity):
         title="Name of project",
         description="The name of the project that generated this Dandiset or asset.",
         max_length=150,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: Optional[str] = Field(
-        None, description="A brief description of the project.", nskey="schema"
+        None,
+        description="A brief description of the project.",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Project"] = Field("Project", readOnly=True)
+    schemaKey: Literal["Project"] = Field(
+        "Project", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class Session(Activity):
@@ -989,34 +1081,46 @@ class Session(Activity):
         title="Name of session",
         description="The name of the logical session associated with the asset.",
         max_length=150,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: Optional[str] = Field(
-        None, description="A brief description of the session.", nskey="schema"
+        None,
+        description="A brief description of the session.",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Session"] = Field("Session", readOnly=True)
+    schemaKey: Literal["Session"] = Field(
+        "Session", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class PublishActivity(Activity):
-    schemaKey: Literal["PublishActivity"] = Field("PublishActivity", readOnly=True)
+    schemaKey: Literal["PublishActivity"] = Field(
+        "PublishActivity", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class Locus(DandiBaseModel):
     identifier: Union[Identifier, List[Identifier]] = Field(
-        description="Identifier for genotyping locus.", nskey="schema"
+        description="Identifier for genotyping locus.",
+        json_schema_extra={"nskey": "schema"},
     )
     locusType: Optional[str] = Field(None)
-    schemaKey: Literal["Locus"] = Field("Locus", readOnly=True)
+    schemaKey: Literal["Locus"] = Field(
+        "Locus", validate_default=True, json_schema_extra={"readOnly": True}
+    )
     _ldmeta = {"nskey": "dandi"}
 
 
 class Allele(DandiBaseModel):
     identifier: Union[Identifier, List[Identifier]] = Field(
-        description="Identifier for genotyping allele.", nskey="schema"
+        description="Identifier for genotyping allele.",
+        json_schema_extra={"nskey": "schema"},
     )
     alleleSymbol: Optional[str] = Field(None)
     alleleType: Optional[str] = Field(None)
-    schemaKey: Literal["Allele"] = Field("Allele", readOnly=True)
+    schemaKey: Literal["Allele"] = Field(
+        "Allele", validate_default=True, json_schema_extra={"readOnly": True}
+    )
     _ldmeta = {"nskey": "dandi"}
 
 
@@ -1026,29 +1130,39 @@ class GenotypeInfo(DandiBaseModel):
     wasGeneratedBy: Optional[List["Session"]] = Field(
         None,
         description="Information about session activity used to determine genotype.",
-        nskey="prov",
+        json_schema_extra={"nskey": "prov"},
     )
-    schemaKey: Literal["GenotypeInfo"] = Field("GenotypeInfo", readOnly=True)
+    schemaKey: Literal["GenotypeInfo"] = Field(
+        "GenotypeInfo", validate_default=True, json_schema_extra={"readOnly": True}
+    )
     _ldmeta = {"nskey": "dandi"}
 
 
 class RelatedParticipant(DandiBaseModel):
-    identifier: Optional[Identifier] = Field(None, nskey="schema")
+    identifier: Optional[Identifier] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
     name: Optional[str] = Field(
-        None, title="Name of the participant or subject", nskey="schema"
+        None,
+        title="Name of the participant or subject",
+        json_schema_extra={"nskey": "schema"},
     )
     url: Optional[AnyHttpUrl] = Field(
-        None, title="URL of the related participant or subject", nskey="schema"
+        None,
+        title="URL of the related participant or subject",
+        json_schema_extra={"nskey": "schema"},
     )
     relation: ParticipantRelationType = Field(
         title="Participant or subject relation",
         description="Indicates how the current participant or subject is related "
         "to the other participant or subject. This relation should "
         "satisfy: Participant/Subject <relation> relatedParticipant/Subject.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     schemaKey: Literal["RelatedParticipant"] = Field(
-        "RelatedParticipant", readOnly=True
+        "RelatedParticipant",
+        validate_default=True,
+        json_schema_extra={"readOnly": True},
     )
 
     _ldmeta = {
@@ -1067,65 +1181,68 @@ class Participant(DandiBaseModel):
     when the Participant or Subject engaged in the production of data being described.
     """
 
-    identifier: Identifier = Field(nskey="schema")
-    altName: Optional[List[Identifier]] = Field(None, nskey="dandi")
+    identifier: Identifier = Field(json_schema_extra={"nskey": "schema"})
+    altName: Optional[List[Identifier]] = Field(
+        None, json_schema_extra={"nskey": "dandi"}
+    )
 
     strain: Optional[StrainType] = Field(
         None,
         description="Identifier for the strain of the participant or subject.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     cellLine: Optional[Identifier] = Field(
         None,
         description="Cell line associated with the participant or subject.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
-    vendor: Optional[Organization] = Field(None, nskey="dandi")
+    vendor: Optional[Organization] = Field(None, json_schema_extra={"nskey": "dandi"})
     age: Optional[PropertyValue] = Field(
         None,
         description="A representation of age using ISO 8601 duration. This "
         "should include a valueReference if anything other than "
         "date of birth is used.",
-        nskey="dandi",
-        rangeIncludes="schema:Duration",
+        json_schema_extra={"nskey": "dandi", "rangeIncludes": "schema:Duration"},
     )
 
     sex: Optional[SexType] = Field(
         None,
         description="Identifier for sex of the participant or subject if "
         "available. (e.g. from OBI)",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     genotype: Optional[Union[List[GenotypeInfo], Identifier]] = Field(
         None,
         description="Genotype descriptor of participant or subject if available",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     species: Optional[SpeciesType] = Field(
         None,
         description="An identifier indicating the taxonomic classification of "
         "the participant or subject.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     disorder: Optional[List[Disorder]] = Field(
         None,
         description="Any current diagnosed disease or disorder associated with "
         "the participant or subject.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
 
     relatedParticipant: Optional[List[RelatedParticipant]] = Field(
         None,
         description="Information about related participants or subjects in a "
         "study or across studies.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     sameAs: Optional[List[Identifier]] = Field(
         None,
         description="An identifier to link participants or subjects across datasets.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Participant"] = Field("Participant", readOnly=True)
+    schemaKey: Literal["Participant"] = Field(
+        "Participant", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
@@ -1137,34 +1254,42 @@ class Participant(DandiBaseModel):
 class BioSample(DandiBaseModel):
     """Description of the sample that was studied"""
 
-    identifier: Identifier = Field(nskey="schema")
+    identifier: Identifier = Field(json_schema_extra={"nskey": "schema"})
     sampleType: SampleType = Field(
         description="Identifier for the sample characteristics (e.g., from OBI, Encode).",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     assayType: Optional[List[AssayType]] = Field(
-        None, description="Identifier for the assay(s) used (e.g., OBI).", nskey="dandi"
+        None,
+        description="Identifier for the assay(s) used (e.g., OBI).",
+        json_schema_extra={"nskey": "dandi"},
     )
     anatomy: Optional[List[Anatomy]] = Field(
         None,
         description="Identifier for what organ the sample belongs "
         "to. Use the most specific descriptor from sources such as UBERON.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
 
     wasDerivedFrom: Optional[List["BioSample"]] = Field(
         None,
         description="Describes the hierarchy of sample derivation or aggregation.",
-        nskey="prov",
+        json_schema_extra={"nskey": "prov"},
     )
     wasAttributedTo: Optional[List[Participant]] = Field(
         None,
         description="Participant(s) or Subject(s) associated with this sample.",
-        nskey="prov",
+        json_schema_extra={"nskey": "prov"},
     )
-    sameAs: Optional[List[Identifier]] = Field(None, nskey="schema")
-    hasMember: Optional[List[Identifier]] = Field(None, nskey="prov")
-    schemaKey: Literal["BioSample"] = Field("BioSample", readOnly=True)
+    sameAs: Optional[List[Identifier]] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
+    hasMember: Optional[List[Identifier]] = Field(
+        None, json_schema_extra={"nskey": "prov"}
+    )
+    schemaKey: Literal["BioSample"] = Field(
+        "BioSample", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Thing", "prov:Entity"],
@@ -1173,97 +1298,112 @@ class BioSample(DandiBaseModel):
     }
 
 
-BioSample.update_forward_refs()
+# This is mostly not needed at all since self-referencing models
+# are automatically resolved by Pydantic in a pretty consistent way even in Pydantic V1
+# https://docs.pydantic.dev/1.10/usage/postponed_annotations/#self-referencing-models
+# and continue to be so in Pydantic V2
+# https://docs.pydantic.dev/latest/concepts/postponed_annotations/#self-referencing-or-recursive-models
+BioSample.model_rebuild()
 
 
 class CommonModel(DandiBaseModel):
     schemaVersion: str = Field(
-        default=DANDI_SCHEMA_VERSION, readOnly=True, nskey="schema"
+        default=DANDI_SCHEMA_VERSION,
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     name: Optional[str] = Field(
         None,
         title="Title",
         description="The name of the item.",
         max_length=150,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: Optional[str] = Field(
-        None, description="A description of the item.", nskey="schema"
+        None,
+        description="A description of the item.",
+        json_schema_extra={"nskey": "schema"},
     )
     contributor: Optional[List[Union[Person, Organization]]] = Field(
         None,
         title="Contributors",
         description="Contributors to this item: persons or organizations.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     about: Optional[List[Union[Disorder, Anatomy, GenericType]]] = Field(
         None,
         title="Subject matter of the dataset",
         description="The subject matter of the content, such as disorders, brain anatomy.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     studyTarget: Optional[List[str]] = Field(
         None,
         description="Objectives or specific questions of the study.",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     license: Optional[List[LicenseType]] = Field(
         None,
         description="Licenses associated with the item. DANDI only supports a "
         "subset of Creative Commons Licenses (creativecommons.org) "
         "applicable to datasets.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     protocol: Optional[List[AnyHttpUrl]] = Field(
         None,
         description="A list of persistent URLs describing the protocol (e.g. "
         "protocols.io, or other DOIs).",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi"},
     )
     ethicsApproval: Optional[List[EthicsApproval]] = Field(
-        None, title="Ethics approvals", nskey="dandi"
+        None, title="Ethics approvals", json_schema_extra={"nskey": "dandi"}
     )
     keywords: Optional[List[str]] = Field(
         None,
         description="Keywords used to describe this content.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     acknowledgement: Optional[str] = Field(
         None,
-        descriptions="Any acknowledgments not covered by contributors or external resources.",
-        nskey="dandi",
+        description="Any acknowledgments not covered by contributors or external resources.",
+        json_schema_extra={"nskey": "dandi"},
     )
 
     # Linking to this dandiset or the larger thing
     access: List[AccessRequirements] = Field(
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
-        nskey="dandi",
-        readOnly=True,
+        json_schema_extra={"nskey": "dandi", "readOnly": True},
     )
     url: Optional[AnyHttpUrl] = Field(
-        None, readOnly=True, description="permalink to the item", nskey="schema"
+        None,
+        description="permalink to the item",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        parse_obj_as(AnyHttpUrl, DANDI_INSTANCE_URL)
+        TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
         if DANDI_INSTANCE_URL is not None
         else None,
-        readOnly=True,
         description="location of the item",
-        nskey="dandi",
+        json_schema_extra={"nskey": "dandi", "readOnly": True},
     )
-    relatedResource: Optional[List[Resource]] = Field(None, nskey="dandi")
+    relatedResource: Optional[List[Resource]] = Field(
+        None, json_schema_extra={"nskey": "dandi"}
+    )
 
-    wasGeneratedBy: Optional[Sequence[Activity]] = Field(None, nskey="prov")
-    schemaKey: str = Field("CommonModel", readOnly=True)
+    wasGeneratedBy: Optional[Sequence[Activity]] = Field(
+        None, json_schema_extra={"nskey": "prov"}
+    )
+    schemaKey: str = Field(
+        "CommonModel", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
 
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
 
-    @validator("contributor")
+    @field_validator("contributor")
+    @classmethod
     def contributor_musthave_contact(
         cls, values: List[Union[Person, Organization]]
     ) -> List[Union[Person, Organization]]:
@@ -1277,67 +1417,76 @@ class Dandiset(CommonModel):
 
     id: str = Field(
         description="Uniform resource identifier",
-        regex=r"^(dandi|DANDI):\d{6}(/(draft|\d+\.\d+\.\d+))$",
-        readOnly=True,
+        pattern=r"^(dandi|DANDI):\d{6}(/(draft|\d+\.\d+\.\d+))$",
+        json_schema_extra={"readOnly": True},
     )
 
     identifier: DANDI = Field(
-        readOnly=True,
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
-        regex=r"^DANDI\:\d{6}$",
-        nskey="schema",
+        pattern=r"^DANDI\:\d{6}$",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     name: str = Field(
         title="Dandiset title",
         description="A title associated with the Dandiset.",
         max_length=150,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
     description: str = Field(
-        description="A description of the Dandiset", max_length=3000, nskey="schema"
+        description="A description of the Dandiset",
+        max_length=3000,
+        json_schema_extra={"nskey": "schema"},
     )
     contributor: List[Union[Person, Organization]] = Field(
         title="Dandiset contributors",
         description="People or Organizations that have contributed to this Dandiset.",
-        nskey="schema",
-        min_items=1,
+        json_schema_extra={"nskey": "schema"},
+        min_length=1,
     )
     dateCreated: Optional[datetime] = Field(
-        None, nskey="schema", title="Dandiset creation date and time.", readOnly=True
+        None,
+        json_schema_extra={"nskey": "schema", "readOnly": True},
+        title="Dandiset creation date and time.",
     )
     dateModified: Optional[datetime] = Field(
-        None, nskey="schema", title="Last modification date and time.", readOnly=True
+        None,
+        json_schema_extra={"nskey": "schema", "readOnly": True},
+        title="Last modification date and time.",
     )
 
     license: List[LicenseType] = Field(
-        min_items=1,
+        min_length=1,
         description="Licenses associated with the item. DANDI only supports a "
         "subset of Creative Commons Licenses (creativecommons.org) "
         "applicable to datasets.",
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
     )
 
-    citation: str = Field(readOnly=True, nskey="schema")
+    citation: str = Field(json_schema_extra={"readOnly": True, "nskey": "schema"})
 
     # From assets
-    assetsSummary: AssetsSummary = Field(readOnly=True, nskey="dandi")
+    assetsSummary: AssetsSummary = Field(
+        json_schema_extra={"nskey": "dandi", "readOnly": True}
+    )
 
     # From server (requested by users even for drafts)
     manifestLocation: List[AnyHttpUrl] = Field(
-        readOnly=True, min_items=1, nskey="dandi"
+        min_length=1, json_schema_extra={"nskey": "dandi", "readOnly": True}
     )
 
-    version: str = Field(readOnly=True, nskey="schema")
+    version: str = Field(json_schema_extra={"nskey": "schema", "readOnly": True})
 
     wasGeneratedBy: Optional[Sequence[Project]] = Field(
         None,
         title="Associated projects",
         description="Project(s) that generated this Dandiset.",
-        nskey="prov",
+        json_schema_extra={"nskey": "prov"},
     )
 
-    schemaKey: Literal["Dandiset"] = Field("Dandiset", readOnly=True)
+    schemaKey: Literal["Dandiset"] = Field(
+        "Dandiset", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Dataset", "prov:Entity"],
@@ -1352,62 +1501,73 @@ class BareAsset(CommonModel):
     Derived from C2M2 (Level 0 and 1) and schema.org
     """
 
-    contentSize: ByteSize = Field(nskey="schema")
+    contentSize: ByteSizeJsonSchema = Field(json_schema_extra={"nskey": "schema"})
     encodingFormat: Union[AnyHttpUrl, str] = Field(
-        title="File encoding format", nskey="schema"
+        title="File encoding format", json_schema_extra={"nskey": "schema"}
     )
     digest: Dict[DigestType, str] = Field(
-        title="A map of dandi digests to their values", nskey="dandi"
+        title="A map of dandi digests to their values",
+        json_schema_extra={"nskey": "dandi"},
     )
-    path: str = Field(nskey="dandi")
+    path: str = Field(json_schema_extra={"nskey": "dandi"})
 
     dateModified: Optional[datetime] = Field(
         None,
-        nskey="schema",
+        json_schema_extra={"nskey": "schema"},
         title="Asset (file or metadata) modification date and time",
     )
     blobDateModified: Optional[datetime] = Field(
-        None, nskey="dandi", title="Asset file modification date and time."
+        None,
+        json_schema_extra={"nskey": "dandi"},
+        title="Asset file modification date and time.",
     )
     # overload to restrict with max_items=1
     access: List[AccessRequirements] = Field(
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
-        nskey="dandi",
-        max_items=1,
+        json_schema_extra={"nskey": "dandi"},
+        max_length=1,
     )
 
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
     # need to come up with things for neurophys
     # TODO: waiting on input <https://github.com/dandi/dandi-cli/pull/226>
-    dataType: Optional[AnyHttpUrl] = Field(None, nskey="dandi")
+    dataType: Optional[AnyHttpUrl] = Field(None, json_schema_extra={"nskey": "dandi"})
 
-    sameAs: Optional[List[AnyHttpUrl]] = Field(None, nskey="schema")
+    sameAs: Optional[List[AnyHttpUrl]] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
 
     # TODO
-    approach: Optional[List[ApproachType]] = Field(None, readOnly=True, nskey="dandi")
+    approach: Optional[List[ApproachType]] = Field(
+        None, json_schema_extra={"readOnly": True, "nskey": "dandi"}
+    )
     measurementTechnique: Optional[List[MeasurementTechniqueType]] = Field(
-        None, readOnly=True, nskey="schema"
+        None, json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
     variableMeasured: Optional[List[PropertyValue]] = Field(
-        None, readOnly=True, nskey="schema"
+        None, json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
 
-    wasDerivedFrom: Optional[List[BioSample]] = Field(None, nskey="prov")
+    wasDerivedFrom: Optional[List[BioSample]] = Field(
+        None, json_schema_extra={"nskey": "prov"}
+    )
     wasAttributedTo: Optional[List[Participant]] = Field(
         None,
         description="Associated participant(s) or subject(s).",
-        nskey="prov",
+        json_schema_extra={"nskey": "prov"},
     )
     wasGeneratedBy: Optional[List[Union[Session, Project, Activity]]] = Field(
         None,
         title="Name of the session, project or activity.",
         description="Describe the session, project or activity that generated this asset.",
-        nskey="prov",
+        json_schema_extra={"nskey": "prov"},
     )
 
     # Bare asset is to be just Asset.
-    schemaKey: Literal["Asset"] = Field("Asset", readOnly=True)
+    schemaKey: Literal["Asset"] = Field(
+        "Asset", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
@@ -1415,10 +1575,12 @@ class BareAsset(CommonModel):
         "nskey": "dandi",
     }
 
-    @validator("digest")
+    @field_validator("digest")
+    @classmethod
     def digest_check(
-        cls, v: Dict[DigestType, str], values: Dict[str, Any], **kwargs: Any
+        cls, v: Dict[DigestType, str], info: ValidationInfo
     ) -> Dict[DigestType, str]:
+        values = info.data
         if values.get("encodingFormat") == "application/x-zarr":
             if DigestType.dandi_zarr_checksum not in v:
                 raise ValueError("A zarr asset must have a zarr checksum.")
@@ -1454,45 +1616,51 @@ class Asset(BareAsset):
     """Metadata used to describe an asset on the server."""
 
     # all of the following are set by server
-    id: str = Field(readOnly=True, description="Uniform resource identifier.")
-    identifier: UUID4 = Field(readOnly=True, nskey="schema")
-    contentUrl: List[AnyHttpUrl] = Field(readOnly=True, nskey="schema")
+    id: str = Field(
+        json_schema_extra={"readOnly": True}, description="Uniform resource identifier."
+    )
+    identifier: UUID4 = Field(json_schema_extra={"readOnly": True, "nskey": "schema"})
+    contentUrl: List[AnyHttpUrl] = Field(
+        json_schema_extra={"readOnly": True, "nskey": "schema"}
+    )
 
 
 class Publishable(DandiBaseModel):
     publishedBy: Union[AnyHttpUrl, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
-        readOnly=True,
-        nskey="dandi",
+        json_schema_extra={"readOnly": True, "nskey": "dandi"},
     )
-    datePublished: datetime = Field(readOnly=True, nskey="schema")
+    datePublished: datetime = Field(
+        json_schema_extra={"readOnly": True, "nskey": "schema"}
+    )
     schemaKey: Literal["Publishable", "Dandiset", "Asset"] = Field(
-        "Publishable", readOnly=True
+        "Publishable", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
 
 class PublishedDandiset(Dandiset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
-        regex=DANDI_PUBID_PATTERN,
-        readOnly=True,
+        pattern=DANDI_PUBID_PATTERN,
+        json_schema_extra={"readOnly": True},
     )
 
     doi: str = Field(
         title="DOI",
-        readOnly=True,
-        regex=DANDI_DOI_PATTERN,
-        nskey="dandi",
+        pattern=DANDI_DOI_PATTERN,
+        json_schema_extra={"readOnly": True, "nskey": "dandi"},
     )
     url: AnyHttpUrl = Field(
-        readOnly=True,
         description="Permalink to the Dandiset.",
-        nskey="schema",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
 
-    schemaKey: Literal["Dandiset"] = Field("Dandiset", readOnly=True)
+    schemaKey: Literal["Dandiset"] = Field(
+        "Dandiset", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
-    @validator("assetsSummary")
+    @field_validator("assetsSummary")
+    @classmethod
     def check_filesbytes(cls, values: AssetsSummary) -> AssetsSummary:
         if values.numberOfBytes == 0 or values.numberOfFiles == 0:
             raise ValueError(
@@ -1500,7 +1668,8 @@ class PublishedDandiset(Dandiset, Publishable):
             )
         return values
 
-    @validator("url")
+    @field_validator("url")
+    @classmethod
     def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
         if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
             raise ValueError(
@@ -1512,16 +1681,20 @@ class PublishedDandiset(Dandiset, Publishable):
 class PublishedAsset(Asset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
-        regex=ASSET_UUID_PATTERN,
-        readOnly=True,
+        pattern=ASSET_UUID_PATTERN,
+        json_schema_extra={"readOnly": True},
     )
 
-    schemaKey: Literal["Asset"] = Field("Asset", readOnly=True)
+    schemaKey: Literal["Asset"] = Field(
+        "Asset", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
-    @validator("digest")
+    @field_validator("digest")
+    @classmethod
     def digest_sha256check(
-        cls, v: Dict[DigestType, str], values: Dict[str, Any], **kwargs: Any
+        cls, v: Dict[DigestType, str], info: ValidationInfo
     ) -> Dict[DigestType, str]:
+        values = info.data
         if values.get("encodingFormat") != "application/x-zarr":
             if DigestType.sha2_256 not in v:
                 raise ValueError("A non-zarr asset must have a sha2_256.")
