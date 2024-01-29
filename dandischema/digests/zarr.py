@@ -76,9 +76,9 @@ class ZarrChecksums(pydantic.BaseModel):
         """Add a list of directory checksums to the listing."""
         for new_checksum in checksums:
             try:
-                self.directories[
-                    self._index(self.directories, new_checksum)
-                ] = new_checksum
+                self.directories[self._index(self.directories, new_checksum)] = (
+                    new_checksum
+                )
             except ValueError:
                 self.directories.append(new_checksum)
         self.directories = sorted(self.directories)
