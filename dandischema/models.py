@@ -77,6 +77,16 @@ class AccessType(Enum):
     """
 
 
+class ContentType(Enum):
+    """An enumeration of types of content asset can have"""
+
+    #: Asset contains a regular file - a data blob
+    Blob = "dandi:Blob"
+
+    #: Asset contains a zarr (currently a folder)
+    Zarr = "dandi:Zarr"
+
+
 class DigestType(Enum):
     """An enumeration of checksum types"""
 
@@ -1516,10 +1526,15 @@ class BareAsset(CommonModel):
         json_schema_extra={"nskey": "schema"},
         title="Asset (file or metadata) modification date and time",
     )
-    blobDateModified: Optional[datetime] = Field(
+    contentType: ContentType = Field(
         None,
         json_schema_extra={"nskey": "dandi"},
-        title="Asset file modification date and time.",
+        title="Type of the content asset contains.",
+    )
+    contentDateModified: Optional[datetime] = Field(
+        None,
+        json_schema_extra={"nskey": "dandi"},
+        title="Asset content modification date and time.",
     )
     # overload to restrict with max_items=1
     access: List[AccessRequirements] = Field(
