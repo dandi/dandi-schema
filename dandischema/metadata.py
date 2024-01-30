@@ -300,6 +300,18 @@ def migrate(
         if "schemaKey" not in obj:
             obj["schemaKey"] = "Dandiset"
         obj["schemaVersion"] = to_version
+    if version2tuple(schema_version) < version2tuple("0.7.0"):
+        if "blobDateModified" in obj:
+            obj["contentDateModified"] = obj.pop("blobDateModified")
+        # we need to deduce what type of content we have
+        obj["contentType"] = (
+            models.ContentType.Zarr
+            if (
+                obj.get("encodingFormat") == "application/x-zarr"
+                or obj.get("path", "").endswith(".zarr")
+            )
+            else models.ContentType.Blob
+        )
     return obj
 
 
