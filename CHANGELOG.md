@@ -1,3 +1,19 @@
+# 0.9.1 (Tue Jan 30 2024)
+
+#### 🐛 Bug Fix
+
+- Allow dictionary representation of `Dandiset` to have extra attributes [#218](https://github.com/dandi/dandi-schema/pull/218) ([@candleindark](https://github.com/candleindark))
+
+#### 🧪 Tests
+
+- Remove unneeded mark to fixture [#221](https://github.com/dandi/dandi-schema/pull/221) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 1
+
+- Isaac To ([@candleindark](https://github.com/candleindark))
+
+---
+
 # 0.9.0 (Mon Jan 22 2024)
 
 #### 🚀 Enhancement
