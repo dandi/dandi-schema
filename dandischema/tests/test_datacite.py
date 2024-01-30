@@ -45,7 +45,6 @@ def _clean_doi(doi: str) -> None:
     )
 
 
-@skipif_no_network
 @pytest.fixture(scope="module")
 def schema() -> Any:
     return _get_datacite_schema()
