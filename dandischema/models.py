@@ -9,6 +9,7 @@ from pydantic import (
     UUID4,
     AnyHttpUrl,
     BaseModel,
+    ConfigDict,
     EmailStr,
     Field,
     GetJsonSchemaHandler,
@@ -1401,6 +1402,8 @@ class CommonModel(DandiBaseModel):
 
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
+
+    model_config = ConfigDict(extra="allow")
 
     @field_validator("contributor")
     @classmethod
