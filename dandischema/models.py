@@ -1660,7 +1660,7 @@ class PublishedDandiset(Dandiset, Publishable):
     releaseNotes: Optional[str] = Field(
         None,
         description="The description of the release",
-        nskey="schema",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
 
     schemaKey: Literal["Dandiset"] = Field(
