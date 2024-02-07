@@ -30,8 +30,10 @@ jobs:
           # - '3.10'
           # - '3.11'
         version:
-          - master
-          - release
+          # TEMP: we know those would fail since dandi-cli is not yet pydantic 2.0 compatible
+          # - master
+          # - release
+          - pydantic2
         mode:
           - normal
         include:
@@ -74,6 +76,10 @@ jobs:
       - name: Install latest release of dandi
         if: ${{ matrix.version == 'release' }}
         run: pip install "dandi[test,extras]"
+
+      - name: Install dev dandi https://github.com/dandi/dandi-cli/tree/gh-1352 from https://github.com/dandi/dandi-cli/pull/1381
+        if: ${{ matrix.dandi-version == 'pydantic2' }}
+        run: pip install "dandi[test,extras] @ git+https://github.com/dandi/dandi-cli@gh-1352"
 
       - name: Set DANDI_DEVEL=1
         if: matrix.mode == 'dandi-devel'
