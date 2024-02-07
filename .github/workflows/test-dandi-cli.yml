@@ -78,7 +78,7 @@ jobs:
         run: pip install "dandi[test,extras]"
 
       - name: Install dev dandi https://github.com/dandi/dandi-cli/tree/gh-1352 from https://github.com/dandi/dandi-cli/pull/1381
-        if: ${{ matrix.dandi-version == 'pydantic2' }}
+        if: ${{ matrix.version == 'pydantic2' }}
         run: pip install "dandi[test,extras] @ git+https://github.com/dandi/dandi-cli@gh-1352"
 
       - name: Set DANDI_DEVEL=1
