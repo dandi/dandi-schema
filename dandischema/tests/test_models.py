@@ -574,13 +574,14 @@ def test_properties_mismatch() -> None:
     assert errors == []
 
 
-def test_schemakey_roundtrip() -> None:
-    class TempKlass(DandiBaseModel):
-        contributor: Optional[List[Union[Organization, Person]]] = None
-        schemaKey: Literal["TempKlass"] = Field(
-            "TempKlass", validate_default=True, json_schema_extra={"readOnly": True}
-        )
+class TempKlass1(DandiBaseModel):
+    contributor: Optional[List[Union[Organization, Person]]] = None
+    schemaKey: Literal["TempKlass1"] = Field(
+        "TempKlass1", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
+
+def test_schemakey_roundtrip() -> None:
     contributor = [
         {
             "name": "first",
@@ -598,25 +599,26 @@ def test_schemakey_roundtrip() -> None:
         },
     ]
     with pytest.raises(pydantic.ValidationError):
-        TempKlass(contributor=contributor)
+        TempKlass1(contributor=contributor)
     contributor[0]["name"] = ", "
     with pytest.raises(pydantic.ValidationError):
-        TempKlass(contributor=contributor)
+        TempKlass1(contributor=contributor)
     contributor[0]["name"] = "last, first"
-    klassobj = TempKlass(contributor=contributor)
+    klassobj = TempKlass1(contributor=contributor)
     assert klassobj.contributor is not None and all(
         [isinstance(val, Person) for val in klassobj.contributor]
     )
 
 
+class TempKlass2(DandiBaseModel):
+    contributor: Person
+    schemaKey: Literal["TempKlass2"] = Field(
+        "TempKlass2", validate_default=True, json_schema_extra={"readOnly": True}
+    )
+
+
 @pytest.mark.parametrize("name", ["Mitášová, Helena", "O'Brien, Claire"])
 def test_name_regex(name: str) -> None:
-    class TempKlass(DandiBaseModel):
-        contributor: Person
-        schemaKey: Literal["TempKlass"] = Field(
-            "TempKlass", validate_default=True, json_schema_extra={"readOnly": True}
-        )
-
     contributor = {
         "name": name,
         "roleName": [],
@@ -624,7 +626,7 @@ def test_name_regex(name: str) -> None:
         "affiliation": [],
         "includeInCitation": True,
     }
-    TempKlass(contributor=contributor)
+    TempKlass2(contributor=contributor)
 
 
 def test_resource() -> None:
