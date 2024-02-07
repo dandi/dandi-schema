@@ -1045,9 +1045,9 @@ class Activity(DandiBaseModel):
 
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
-    wasAssociatedWith: Optional[
-        List[Union[Person, Organization, Software, Agent]]
-    ] = Field(None, json_schema_extra={"nskey": "prov"})
+    wasAssociatedWith: Optional[List[Union[Person, Organization, Software, Agent]]] = (
+        Field(None, json_schema_extra={"nskey": "prov"})
+    )
     used: Optional[List[Equipment]] = Field(
         None,
         description="A listing of equipment used for the activity.",
@@ -1382,9 +1382,11 @@ class CommonModel(DandiBaseModel):
     repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
-        if DANDI_INSTANCE_URL is not None
-        else None,
+        (
+            TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
+            if DANDI_INSTANCE_URL is not None
+            else None
+        ),
         description="location of the item",
         json_schema_extra={"nskey": "dandi", "readOnly": True},
     )
