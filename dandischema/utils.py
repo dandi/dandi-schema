@@ -77,6 +77,32 @@ class TransitionalGenerateJsonSchema(GenerateJsonSchema):
 
         return self.generate_inner(schema["schema"])
 
+    def literal_schema(self, schema: core_schema.LiteralSchema) -> JsonSchemaValue:
+        # Override the default behavior for handling a core schema that represents a
+        # `Literal`. With this override, `Literal` types of a single value will also
+        # have a JSON schema that has a `"type"` key with the value of the type of the
+        # single value. This behavior is the one exhibited in Pydantic V1.
+
+        json_schema = super().literal_schema(schema)
+
+        if "const" in json_schema:
+            t = type(json_schema["const"])
+
+            if t is type(None):
+                json_schema["type"] = "null"
+            elif t is str:
+                json_schema["type"] = "string"
+            elif t is int:
+                json_schema["type"] = "integer"
+            elif t is float:
+                json_schema["type"] = "number"
+            elif t is bool:
+                json_schema["type"] = "boolean"
+            elif t is list:
+                json_schema["type"] = "array"
+
+        return json_schema
+
 
 def strip_top_level_optional(type_: Any) -> Any:
     """
