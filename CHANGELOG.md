@@ -1,3 +1,29 @@
+# 0.10.0 (Mon Feb 12 2024)
+
+#### 🚀 Enhancement
+
+- Remove Zarr checksum code [#217](https://github.com/dandi/dandi-schema/pull/217) ([@jwodder](https://github.com/jwodder))
+
+#### 🐛 Bug Fix
+
+- [pre-commit.ci] pre-commit autoupdate [#219](https://github.com/dandi/dandi-schema/pull/219) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🏠 Internal
+
+- [gh-actions](deps): Bump codecov/codecov-action from 3 to 4 [#222](https://github.com/dandi/dandi-schema/pull/222) ([@dependabot[bot]](https://github.com/dependabot[bot]) [@jwodder](https://github.com/jwodder))
+
+#### 🧪 Tests
+
+- Move `TempKlass`es outside of test functions [#224](https://github.com/dandi/dandi-schema/pull/224) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 3
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+
+---
+
 # 0.9.1 (Tue Jan 30 2024)
 
 #### 🐛 Bug Fix

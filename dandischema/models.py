@@ -20,10 +20,10 @@ from pydantic import (
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
+from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
-from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
 from .types import ByteSizeJsonSchema
 from .utils import name2title
 
@@ -1045,9 +1045,9 @@ class Activity(DandiBaseModel):
 
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
-    wasAssociatedWith: Optional[
-        List[Union[Person, Organization, Software, Agent]]
-    ] = Field(None, json_schema_extra={"nskey": "prov"})
+    wasAssociatedWith: Optional[List[Union[Person, Organization, Software, Agent]]] = (
+        Field(None, json_schema_extra={"nskey": "prov"})
+    )
     used: Optional[List[Equipment]] = Field(
         None,
         description="A listing of equipment used for the activity.",
@@ -1382,9 +1382,11 @@ class CommonModel(DandiBaseModel):
     repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
-        if DANDI_INSTANCE_URL is not None
-        else None,
+        (
+            TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
+            if DANDI_INSTANCE_URL is not None
+            else None
+        ),
         description="location of the item",
         json_schema_extra={"nskey": "dandi", "readOnly": True},
     )
@@ -1590,12 +1592,14 @@ class BareAsset(CommonModel):
             if v.get(DigestType.dandi_etag):
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
             digest = v[DigestType.dandi_zarr_checksum]
-            if not re.fullmatch(ZARR_CHECKSUM_PATTERN, digest):
+            try:
+                chksum = ZarrDirectoryDigest.parse(digest)
+            except InvalidZarrChecksum:
                 raise ValueError(
-                    f"Digest must have an appropriate dandi-zarr-checksum value. "
-                    f"Got {digest}"
+                    "Digest must have an appropriate dandi-zarr-checksum value."
+                    f"  Got {digest}"
                 )
-            _checksum, _file_count, zarr_size = parse_directory_digest(digest)
+            zarr_size = chksum.size
             content_size = values.get("contentSize")
             if content_size != zarr_size:
                 raise ValueError(
