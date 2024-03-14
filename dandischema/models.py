@@ -118,6 +118,7 @@ class IdentifierType(Enum):
 
 class LicenseType(Enum):
     """An enumeration of supported licenses"""
+
     # DANDI-specific -- supported within https://spdx.org/licenses/
     CC0_10 = "spdx:CC0-1.0"
     CC_BY_40 = "spdx:CC-BY-4.0"
@@ -1048,9 +1049,9 @@ class Activity(DandiBaseModel):
 
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
-    wasAssociatedWith: Optional[List[Union[Person, Organization, Software, Agent]]] = (
-        Field(None, json_schema_extra={"nskey": "prov"})
-    )
+    wasAssociatedWith: Optional[
+        List[Union[Person, Organization, Software, Agent]]
+    ] = Field(None, json_schema_extra={"nskey": "prov"})
     used: Optional[List[Equipment]] = Field(
         None,
         description="A listing of equipment used for the activity.",
