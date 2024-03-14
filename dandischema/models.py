@@ -118,9 +118,12 @@ class IdentifierType(Enum):
 
 class LicenseType(Enum):
     """An enumeration of supported licenses"""
-
+    # DANDI-specific -- supported within https://spdx.org/licenses/
     CC0_10 = "spdx:CC0-1.0"
     CC_BY_40 = "spdx:CC-BY-4.0"
+    # LINC Brain, other specific
+    UNLICENSED = "unlicensed"
+    PRIVATE = "private"
 
 
 class RelationType(Enum):

@@ -321,6 +321,8 @@ def test_asset_digest() -> None:
             {
                 "CC0_10": "spdx:CC0-1.0",
                 "CC_BY_40": "spdx:CC-BY-4.0",
+                "PRIVATE": "private",
+                "UNLICENSED": "unlicensed",
             },
         ),
         (
