@@ -986,6 +986,7 @@ class Resource(DandiBaseModel):
         json_schema_extra={"nskey": "dandi"},
     )
     resourceType: Optional[ResourceType] = Field(
+        default=None,
         title="Resource type",
         description="The type of resource.",
         json_schema_extra={"nskey": "dandi"},
