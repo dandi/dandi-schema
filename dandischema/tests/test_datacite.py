@@ -11,7 +11,13 @@ import requests
 
 from .utils import skipif_no_network
 from ..datacite import _get_datacite_schema, to_datacite
-from ..models import LicenseType, PublishedDandiset, RelationType, RoleType, ResourceType
+from ..models import (
+    LicenseType,
+    PublishedDandiset,
+    RelationType,
+    ResourceType,
+    RoleType,
+)
 
 
 def datacite_post(datacite: dict, doi: str) -> None:
