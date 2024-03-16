@@ -11,7 +11,7 @@ import requests
 
 from .utils import skipif_no_network
 from ..datacite import _get_datacite_schema, to_datacite
-from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
+from ..models import LicenseType, PublishedDandiset, RelationType, RoleType, ResourceType
 
 
 def datacite_post(datacite: dict, doi: str) -> None:
@@ -337,6 +337,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "identifier": "doi:10.123/123",
                         "relation": RelationType("dcite:IsDocumentedBy"),
+                        "resourceType": ResourceType("dcite:JournalArticle"),
                     },
                 ],
             },
