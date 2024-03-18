@@ -8,7 +8,7 @@ on:
 
 env:
   # Pin to v10.28.0, which (as of 2021-05-25) is the latest version with assets
-  AUTO_VERSION: v10.28.0
+  AUTO_VERSION: v11.0.5
 
 jobs:
   release-check:
