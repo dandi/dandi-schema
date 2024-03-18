@@ -336,6 +336,130 @@ class RoleType(Enum):
     Other = "dcite:Other"
 
 
+class ResourceType(Enum):
+    """An enumeration of resource types"""
+
+    #: Audiovisual: A series of visual representations imparting an impression of motion
+    # when shown in succession. May or may not include sound.
+    Audiovisual = "dcite:Audiovisual"
+
+    #: Book: A medium for recording information in the form of writing or images,
+    # typically composed of many pages bound together and protected by a cover.
+    Book = "dcite:Book"
+
+    #: BookChapter: One of the main divisions of a book.
+    BookChapter = "dcite:BookChapter"
+
+    #: Collection: An aggregation of resources, which may encompass collections of one
+    # resourceType as well as those of mixed types. A collection is described as a
+    # group; its parts may also be separately described.
+    Collection = "dcite:Collection"
+
+    #: ComputationalNotebook: A virtual notebook environment used for literate
+    # programming.
+    ComputationalNotebook = "dcite:ComputationalNotebook"
+
+    #: ConferencePaper: Article that is written with the goal of being accepted to a
+    # conference.
+    ConferencePaper = "dcite:ConferencePaper"
+
+    #: ConferenceProceeding: Collection of academic papers published in the context of
+    # an academic conference.
+    ConferenceProceeding = "dcite:ConferenceProceeding"
+
+    #: DataPaper: A factual and objective publication with a focused intent to identify
+    # and describe specific data, sets of data, or data collections to facilitate
+    # discoverability.
+    DataPaper = "dcite:DataPaper"
+
+    #: Dataset: Data encoded in a defined structure.
+    Dataset = "dcite:Dataset"
+
+    #: Dissertation: A written essay, treatise, or thesis, especially one written by a
+    # candidate for the degree of Doctor of Philosophy.
+    Dissertation = "dcite:Dissertation"
+
+    #: Event: A non-persistent, time-based occurrence.
+    Event = "dcite:Event"
+
+    #: Image: A visual representation other than text.
+    Image = "dcite:Image"
+
+    #: Instrument: A device, tool or apparatus used to obtain, measure and/or analyze
+    # data.
+    Instrument = "dcite:Instrument"
+
+    #: InteractiveResource: A resource requiring interaction from the user to be
+    # understood, executed, or experienced.
+    InteractiveResource = "dcite:InteractiveResource"
+
+    #: Journal: A scholarly publication consisting of articles that is published
+    # regularly throughout the year.
+    Journal = "dcite:Journal"
+
+    #: JournalArticle: A written composition on a topic of interest, which forms a
+    # separate part of a journal.
+    JournalArticle = "dcite:JournalArticle"
+
+    #: Model: An abstract, conceptual, graphical, mathematical or visualization model
+    # that represents empirical objects, phenomena, or physical processes.
+    Model = "dcite:Model"
+
+    #: OutputManagementPlan: A formal document that outlines how research outputs are to
+    # be handled both during a research project and after the project is completed.
+    OutputManagementPlan = "dcite:OutputManagementPlan"
+
+    #: PeerReview: Evaluation of scientific, academic, or professional work by others
+    # working in the same field.
+    PeerReview = "dcite:PeerReview"
+
+    #: PhysicalObject: A physical object or substance.
+    PhysicalObject = "dcite:PhysicalObject"
+
+    #: Preprint: A version of a scholarly or scientific paper that precedes formal peer
+    # review and publication in a peer-reviewed scholarly or scientific journal.
+    Preprint = "dcite:Preprint"
+
+    #: Report: A document that presents information in an organized format for a
+    # specific audience and purpose.
+    Report = "dcite:Report"
+
+    #: Service: An organized system of apparatus, appliances, staff, etc., for supplying
+    # some function(s) required by end users.
+    Service = "dcite:Service"
+
+    #: Software: A computer program other than a computational notebook, in either
+    # source code (text) or compiled form. Use this type for general software components
+    # supporting scholarly research. Use the “ComputationalNotebook” value for virtual
+    # notebooks.
+    Software = "dcite:Software"
+
+    #: Sound: A resource primarily intended to be heard.
+    Sound = "dcite:Sound"
+
+    #: Standard: Something established by authority, custom, or general consent as a
+    # model, example, or point of reference.
+    Standard = "dcite:Standard"
+
+    #: StudyRegistration: A detailed, time-stamped description of a research plan, often
+    # openly shared in a registry or published in a journal before the study is
+    # conducted to lend accountability and transparency in the hypothesis generating and
+    # testing process.
+    StudyRegistration = "dcite:StudyRegistration"
+
+    #: Text: A resource consisting primarily of words for reading that is not covered by
+    # any other textual resource type in this list.
+    Text = "dcite:Text"
+
+    #: Workflow: A structured series of steps which can be executed to produce a final
+    # outcome, allowing users a means to specify and enact their work in a more
+    # reproducible manner.
+    Workflow = "dcite:Workflow"
+
+    #: Other: A resource that does not fit into any of the other categories.
+    Other = "dcite:Other"
+
+
 class AgeReferenceType(Enum):
     """An enumeration of age reference"""
 
@@ -888,6 +1012,13 @@ class Resource(DandiBaseModel):
         "This relation should satisfy: dandiset <relation> resource.",
         json_schema_extra={"nskey": "dandi"},
     )
+    resourceType: Optional[ResourceType] = Field(
+        default=None,
+        title="Resource type",
+        description="The type of resource.",
+        json_schema_extra={"nskey": "dandi"},
+    )
+
     schemaKey: Literal["Resource"] = Field(
         "Resource", validate_default=True, json_schema_extra={"readOnly": True}
     )
