@@ -1,3 +1,19 @@
+# 0.10.1 (Mon Mar 18 2024)
+
+#### 🐛 Bug Fix
+
+- Update auto version number [#233](https://github.com/dandi/dandi-schema/pull/233) ([@satra](https://github.com/satra))
+- Add ResourceType enum and associate with Resource model [#232](https://github.com/dandi/dandi-schema/pull/232) ([@bendichter](https://github.com/bendichter) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#229](https://github.com/dandi/dandi-schema/pull/229) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### Authors: 3
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Ben Dichter ([@bendichter](https://github.com/bendichter))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
 # 0.10.0 (Mon Feb 12 2024)
 
 #### 🚀 Enhancement
