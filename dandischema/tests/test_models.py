@@ -378,6 +378,7 @@ def test_dantimeta_1() -> None:
         "contributor": [
             {
                 "name": "last name, first name",
+                "email": "someone@dandiarchive.org",
                 "roleName": [RoleType("dcite:ContactPerson")],
             }
         ],
@@ -592,6 +593,7 @@ def test_schemakey_roundtrip() -> None:
         },
         {
             "name": "last2, first2",
+            "email": "nospam@dandiarchive.org",
             "roleName": ["dcite:ContactPerson"],
             "schemaKey": "Person",
             "affiliation": [],
