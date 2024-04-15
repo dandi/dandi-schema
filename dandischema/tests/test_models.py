@@ -694,13 +694,13 @@ def test_embargoedaccess() -> None:
     )
 
 
-_NON_CONTACT_PERSON_ROLES_ARGS = [
+_NON_CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
     [],
     [RoleType.Author, RoleType.DataCurator],
     [RoleType.Funder],
 ]
 
-_CONTACT_PERSON_ROLES_ARGS = [
+_CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
     role_lst + [RoleType.ContactPerson] for role_lst in _NON_CONTACT_PERSON_ROLES_ARGS
 ]
 
