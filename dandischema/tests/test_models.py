@@ -706,12 +706,6 @@ _CONTACT_PERSON_ROLES_ARGS = [
 
 
 class TestContributor:
-    @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
-    def test_contact_person_with_email(self, roles: List[RoleType]) -> None:
-        """
-        Test creating a `Contributor` instance as a contact person with an email
-        """
-        Contributor(email="nemo@dandiarchive.org", roleName=roles)
 
     @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
     def test_contact_person_without_email(self, roles: List[RoleType]) -> None:
@@ -723,10 +717,12 @@ class TestContributor:
         ):
             Contributor(roleName=roles)
 
-    @pytest.mark.parametrize("roles", _NON_CONTACT_PERSON_ROLES_ARGS)
-    def test_non_contact_person_with_email(self, roles: List[RoleType]) -> None:
+    @pytest.mark.parametrize(
+        "roles", _NON_CONTACT_PERSON_ROLES_ARGS + _CONTACT_PERSON_ROLES_ARGS
+    )
+    def test_with_email(self, roles: List[RoleType]) -> None:
         """
-        Test creating a `Contributor` instance as a non-contact person with an email
+        Test creating a `Contributor` instance with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
 
