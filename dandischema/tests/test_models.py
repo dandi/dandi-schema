@@ -694,32 +694,26 @@ def test_embargoedaccess() -> None:
     )
 
 
-def _non_contact_person_roles_args() -> List[List[RoleType]]:
-    """
-    Return a list of role lists that each do not contain the role of a contact person
-    """
-    return [[], [RoleType.Author, RoleType.DataCurator], [RoleType.Funder]]
+_NON_CONTACT_PERSON_ROLES_ARGS = [
+    [],
+    [RoleType.Author, RoleType.DataCurator],
+    [RoleType.Funder],
+]
 
-
-def _contact_person_roles_args() -> List[List[RoleType]]:
-    """
-    Return a list of role lists that each contains the role of a contact person
-    """
-    return [
-        role_lst + [RoleType.ContactPerson]
-        for role_lst in _non_contact_person_roles_args()
-    ]
+_CONTACT_PERSON_ROLES_ARGS = [
+    role_lst + [RoleType.ContactPerson] for role_lst in _NON_CONTACT_PERSON_ROLES_ARGS
+]
 
 
 class TestContributor:
-    @pytest.mark.parametrize("roles", _contact_person_roles_args())
+    @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
     def test_contact_person_with_email(self, roles: List[RoleType]) -> None:
         """
         Test creating a `Contributor` instance as a contact person with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
 
-    @pytest.mark.parametrize("roles", _contact_person_roles_args())
+    @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
     def test_contact_person_without_email(self, roles: List[RoleType]) -> None:
         """
         Test creating a `Contributor` instance as a contact person without an email
@@ -729,14 +723,14 @@ class TestContributor:
         ):
             Contributor(roleName=roles)
 
-    @pytest.mark.parametrize("roles", _non_contact_person_roles_args())
+    @pytest.mark.parametrize("roles", _NON_CONTACT_PERSON_ROLES_ARGS)
     def test_non_contact_person_with_email(self, roles: List[RoleType]) -> None:
         """
         Test creating a `Contributor` instance as a non-contact person with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
 
-    @pytest.mark.parametrize("roles", _non_contact_person_roles_args())
+    @pytest.mark.parametrize("roles", _NON_CONTACT_PERSON_ROLES_ARGS)
     def test_non_contact_person_without_email(self, roles: List[RoleType]) -> None:
         """
         Test creating a `Contributor` instance as a non-contact person without an email
