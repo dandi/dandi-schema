@@ -156,6 +156,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
                     {
                         "schemaKey": "Person",
                         "name": "Last, first",
+                        "email": "nobody@example.com",
                         "roleName": ["dcite:ContactPerson"],
                     }
                 ],

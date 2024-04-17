@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import date, datetime
 from enum import Enum
 import os
@@ -844,6 +846,16 @@ class Contributor(DandiBaseModel):
     schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
         "Contributor", validate_default=True, json_schema_extra={"readOnly": True}
     )
+
+    @model_validator(mode="after")
+    def ensure_contact_person_has_email(self) -> Contributor:
+        role_names = self.roleName
+
+        if role_names is not None and RoleType.ContactPerson in role_names:
+            if self.email is None:
+                raise ValueError("Contact person must have an email address.")
+
+        return self
 
 
 class Organization(Contributor):

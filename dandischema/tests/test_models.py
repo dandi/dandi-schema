@@ -18,6 +18,7 @@ from ..models import (
     Asset,
     BaseType,
     CommonModel,
+    Contributor,
     DandiBaseModel,
     Dandiset,
     DigestType,
@@ -378,6 +379,7 @@ def test_dantimeta_1() -> None:
         "contributor": [
             {
                 "name": "last name, first name",
+                "email": "someone@dandiarchive.org",
                 "roleName": [RoleType("dcite:ContactPerson")],
             }
         ],
@@ -592,6 +594,7 @@ def test_schemakey_roundtrip() -> None:
         },
         {
             "name": "last2, first2",
+            "email": "nospam@dandiarchive.org",
             "roleName": ["dcite:ContactPerson"],
             "schemaKey": "Person",
             "affiliation": [],
@@ -689,3 +692,43 @@ def test_embargoedaccess() -> None:
             )
         ]
     )
+
+
+_NON_CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
+    [],
+    [RoleType.Author, RoleType.DataCurator],
+    [RoleType.Funder],
+]
+
+_CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
+    role_lst + [RoleType.ContactPerson] for role_lst in _NON_CONTACT_PERSON_ROLES_ARGS
+]
+
+
+class TestContributor:
+
+    @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
+    def test_contact_person_without_email(self, roles: List[RoleType]) -> None:
+        """
+        Test creating a `Contributor` instance as a contact person without an email
+        """
+        with pytest.raises(
+            pydantic.ValidationError, match="Contact person must have an email address"
+        ):
+            Contributor(roleName=roles)
+
+    @pytest.mark.parametrize("roles", _NON_CONTACT_PERSON_ROLES_ARGS)
+    def test_non_contact_person_without_email(self, roles: List[RoleType]) -> None:
+        """
+        Test creating a `Contributor` instance as a non-contact person without an email
+        """
+        Contributor(roleName=roles)
+
+    @pytest.mark.parametrize(
+        "roles", _NON_CONTACT_PERSON_ROLES_ARGS + _CONTACT_PERSON_ROLES_ARGS
+    )
+    def test_with_email(self, roles: List[RoleType]) -> None:
+        """
+        Test creating a `Contributor` instance with an email
+        """
+        Contributor(email="nemo@dandiarchive.org", roleName=roles)

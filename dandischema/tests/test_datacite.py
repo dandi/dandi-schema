@@ -70,6 +70,7 @@ def metadata_basic() -> Dict[str, Any]:
         "contributor": [
             {
                 "name": "A_last, A_first",
+                "email": "nemo@example.com",
                 "roleName": [RoleType("dcite:ContactPerson")],
             }
         ],
