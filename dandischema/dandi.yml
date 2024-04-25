@@ -1,0 +1,1046 @@
+name: test-schema
+id: http://example.org/test-schema
+default_prefix: http://example.org/test-schema/
+enums:
+  AccessType:
+    name: AccessType
+    permissible_values:
+      EmbargoedAccess:
+        text: EmbargoedAccess
+        description: dandi:EmbargoedAccess
+      OpenAccess:
+        text: OpenAccess
+        description: dandi:OpenAccess
+  AgeReferenceType:
+    name: AgeReferenceType
+    permissible_values:
+      BirthReference:
+        text: BirthReference
+        description: dandi:BirthReference
+      GestationalReference:
+        text: GestationalReference
+        description: dandi:GestationalReference
+  DigestType:
+    name: DigestType
+    permissible_values:
+      blake2b_256:
+        text: blake2b_256
+        description: dandi:blake2b-256
+      blake3:
+        text: blake3
+        description: dandi:blake3
+      dandi_etag:
+        text: dandi_etag
+        description: dandi:dandi-etag
+      dandi_zarr_checksum:
+        text: dandi_zarr_checksum
+        description: dandi:dandi-zarr-checksum
+      md5:
+        text: md5
+        description: dandi:md5
+      sha1:
+        text: sha1
+        description: dandi:sha1
+      sha2_256:
+        text: sha2_256
+        description: dandi:sha2-256
+      sha3_256:
+        text: sha3_256
+        description: dandi:sha3-256
+  Enum:
+    name: Enum
+  IdentifierType:
+    name: IdentifierType
+    permissible_values:
+      dandi:
+        text: dandi
+        description: dandi:dandi
+      doi:
+        text: doi
+        description: dandi:doi
+      orcid:
+        text: orcid
+        description: dandi:orcid
+      ror:
+        text: ror
+        description: dandi:ror
+      rrid:
+        text: rrid
+        description: dandi:rrid
+  LicenseType:
+    name: LicenseType
+    permissible_values:
+      CC0_10:
+        text: CC0_10
+        description: spdx:CC0-1.0
+      CC_BY_40:
+        text: CC_BY_40
+        description: spdx:CC-BY-4.0
+  ParticipantRelationType:
+    name: ParticipantRelationType
+    permissible_values:
+      isChildOf:
+        text: isChildOf
+        description: dandi:isChildOf
+      isDizygoticTwinOf:
+        text: isDizygoticTwinOf
+        description: dandi:isDizygoticTwinOf
+      isMonozygoticTwinOf:
+        text: isMonozygoticTwinOf
+        description: dandi:isMonozygoticTwinOf
+      isParentOf:
+        text: isParentOf
+        description: dandi:isParentOf
+      isSiblingOf:
+        text: isSiblingOf
+        description: dandi:isSiblingOf
+  RelationType:
+    name: RelationType
+    permissible_values:
+      Cites:
+        text: Cites
+        description: dcite:Cites
+      Compiles:
+        text: Compiles
+        description: dcite:Compiles
+      Continues:
+        text: Continues
+        description: dcite:Continues
+      Describes:
+        text: Describes
+        description: dcite:Describes
+      Documents:
+        text: Documents
+        description: dcite:Documents
+      HasMetadata:
+        text: HasMetadata
+        description: dcite:HasMetadata
+      HasPart:
+        text: HasPart
+        description: dcite:HasPart
+      HasVersion:
+        text: HasVersion
+        description: dcite:HasVersion
+      IsCitedBy:
+        text: IsCitedBy
+        description: dcite:IsCitedBy
+      IsCompiledBy:
+        text: IsCompiledBy
+        description: dcite:IsCompiledBy
+      IsContinuedBy:
+        text: IsContinuedBy
+        description: dcite:IsContinuedBy
+      IsDerivedFrom:
+        text: IsDerivedFrom
+        description: dcite:IsDerivedFrom
+      IsDescribedBy:
+        text: IsDescribedBy
+        description: dcite:IsDescribedBy
+      IsDocumentedBy:
+        text: IsDocumentedBy
+        description: dcite:IsDocumentedBy
+      IsIdenticalTo:
+        text: IsIdenticalTo
+        description: dcite:IsIdenticalTo
+      IsMetadataFor:
+        text: IsMetadataFor
+        description: dcite:IsMetadataFor
+      IsNewVersionOf:
+        text: IsNewVersionOf
+        description: dcite:IsNewVersionOf
+      IsObsoletedBy:
+        text: IsObsoletedBy
+        description: dcite:IsObsoletedBy
+      IsOriginalFormOf:
+        text: IsOriginalFormOf
+        description: dcite:IsOriginalFormOf
+      IsPartOf:
+        text: IsPartOf
+        description: dcite:IsPartOf
+      IsPreviousVersionOf:
+        text: IsPreviousVersionOf
+        description: dcite:IsPreviousVersionOf
+      IsPublishedIn:
+        text: IsPublishedIn
+        description: dcite:IsPublishedIn
+      IsReferencedBy:
+        text: IsReferencedBy
+        description: dcite:IsReferencedBy
+      IsRequiredBy:
+        text: IsRequiredBy
+        description: dcite:IsRequiredBy
+      IsReviewedBy:
+        text: IsReviewedBy
+        description: dcite:IsReviewedBy
+      IsSourceOf:
+        text: IsSourceOf
+        description: dcite:IsSourceOf
+      IsSupplementTo:
+        text: IsSupplementTo
+        description: dcite:IsSupplementTo
+      IsSupplementedBy:
+        text: IsSupplementedBy
+        description: dcite:IsSupplementedBy
+      IsVariantFormOf:
+        text: IsVariantFormOf
+        description: dcite:IsVariantFormOf
+      IsVersionOf:
+        text: IsVersionOf
+        description: dcite:IsVersionOf
+      Obsoletes:
+        text: Obsoletes
+        description: dcite:Obsoletes
+      References:
+        text: References
+        description: dcite:References
+      Requires:
+        text: Requires
+        description: dcite:Requires
+      Reviews:
+        text: Reviews
+        description: dcite:Reviews
+  ResourceType:
+    name: ResourceType
+    permissible_values:
+      Audiovisual:
+        text: Audiovisual
+        description: dcite:Audiovisual
+      Book:
+        text: Book
+        description: dcite:Book
+      BookChapter:
+        text: BookChapter
+        description: dcite:BookChapter
+      Collection:
+        text: Collection
+        description: dcite:Collection
+      ComputationalNotebook:
+        text: ComputationalNotebook
+        description: dcite:ComputationalNotebook
+      ConferencePaper:
+        text: ConferencePaper
+        description: dcite:ConferencePaper
+      ConferenceProceeding:
+        text: ConferenceProceeding
+        description: dcite:ConferenceProceeding
+      DataPaper:
+        text: DataPaper
+        description: dcite:DataPaper
+      Dataset:
+        text: Dataset
+        description: dcite:Dataset
+      Dissertation:
+        text: Dissertation
+        description: dcite:Dissertation
+      Event:
+        text: Event
+        description: dcite:Event
+      Image:
+        text: Image
+        description: dcite:Image
+      Instrument:
+        text: Instrument
+        description: dcite:Instrument
+      InteractiveResource:
+        text: InteractiveResource
+        description: dcite:InteractiveResource
+      Journal:
+        text: Journal
+        description: dcite:Journal
+      JournalArticle:
+        text: JournalArticle
+        description: dcite:JournalArticle
+      Model:
+        text: Model
+        description: dcite:Model
+      Other:
+        text: Other
+        description: dcite:Other
+      OutputManagementPlan:
+        text: OutputManagementPlan
+        description: dcite:OutputManagementPlan
+      PeerReview:
+        text: PeerReview
+        description: dcite:PeerReview
+      PhysicalObject:
+        text: PhysicalObject
+        description: dcite:PhysicalObject
+      Preprint:
+        text: Preprint
+        description: dcite:Preprint
+      Report:
+        text: Report
+        description: dcite:Report
+      Service:
+        text: Service
+        description: dcite:Service
+      Software:
+        text: Software
+        description: dcite:Software
+      Sound:
+        text: Sound
+        description: dcite:Sound
+      Standard:
+        text: Standard
+        description: dcite:Standard
+      StudyRegistration:
+        text: StudyRegistration
+        description: dcite:StudyRegistration
+      Text:
+        text: Text
+        description: dcite:Text
+      Workflow:
+        text: Workflow
+        description: dcite:Workflow
+  RoleType:
+    name: RoleType
+    permissible_values:
+      Affiliation:
+        text: Affiliation
+        description: dcite:Affiliation
+      Author:
+        text: Author
+        description: dcite:Author
+      Conceptualization:
+        text: Conceptualization
+        description: dcite:Conceptualization
+      ContactPerson:
+        text: ContactPerson
+        description: dcite:ContactPerson
+      DataCollector:
+        text: DataCollector
+        description: dcite:DataCollector
+      DataCurator:
+        text: DataCurator
+        description: dcite:DataCurator
+      DataManager:
+        text: DataManager
+        description: dcite:DataManager
+      EthicsApproval:
+        text: EthicsApproval
+        description: dcite:EthicsApproval
+      FormalAnalysis:
+        text: FormalAnalysis
+        description: dcite:FormalAnalysis
+      Funder:
+        text: Funder
+        description: dcite:Funder
+      FundingAcquisition:
+        text: FundingAcquisition
+        description: dcite:FundingAcquisition
+      Investigation:
+        text: Investigation
+        description: dcite:Investigation
+      Maintainer:
+        text: Maintainer
+        description: dcite:Maintainer
+      Methodology:
+        text: Methodology
+        description: dcite:Methodology
+      Other:
+        text: Other
+        description: dcite:Other
+      Producer:
+        text: Producer
+        description: dcite:Producer
+      ProjectAdministration:
+        text: ProjectAdministration
+        description: dcite:ProjectAdministration
+      ProjectLeader:
+        text: ProjectLeader
+        description: dcite:ProjectLeader
+      ProjectManager:
+        text: ProjectManager
+        description: dcite:ProjectManager
+      ProjectMember:
+        text: ProjectMember
+        description: dcite:ProjectMember
+      Researcher:
+        text: Researcher
+        description: dcite:Researcher
+      Resources:
+        text: Resources
+        description: dcite:Resources
+      Software:
+        text: Software
+        description: dcite:Software
+      Sponsor:
+        text: Sponsor
+        description: dcite:Sponsor
+      StudyParticipant:
+        text: StudyParticipant
+        description: dcite:StudyParticipant
+      Supervision:
+        text: Supervision
+        description: dcite:Supervision
+      Validation:
+        text: Validation
+        description: dcite:Validation
+      Visualization:
+        text: Visualization
+        description: dcite:Visualization
+slots:
+  status:
+    name: status
+  contactPoint:
+    name: contactPoint
+  description:
+    name: description
+  embargoedUntil:
+    name: embargoedUntil
+  schemaKey:
+    name: schemaKey
+  identifier:
+    name: identifier
+  name:
+    name: name
+  startDate:
+    name: startDate
+  endDate:
+    name: endDate
+  wasAssociatedWith:
+    name: wasAssociatedWith
+  used:
+    name: used
+  url:
+    name: url
+  alleleSymbol:
+    name: alleleSymbol
+  alleleType:
+    name: alleleType
+  id:
+    name: id
+  contentUrl:
+    name: contentUrl
+  numberOfBytes:
+    name: numberOfBytes
+  numberOfFiles:
+    name: numberOfFiles
+  numberOfSubjects:
+    name: numberOfSubjects
+  numberOfSamples:
+    name: numberOfSamples
+  numberOfCells:
+    name: numberOfCells
+  dataStandard:
+    name: dataStandard
+  approach:
+    name: approach
+  measurementTechnique:
+    name: measurementTechnique
+  variableMeasured:
+    name: variableMeasured
+  species:
+    name: species
+  contentSize:
+    name: contentSize
+  encodingFormat:
+    name: encodingFormat
+  digest:
+    name: digest
+  path:
+    name: path
+  dateModified:
+    name: dateModified
+  blobDateModified:
+    name: blobDateModified
+  access:
+    name: access
+  dataType:
+    name: dataType
+  sameAs:
+    name: sameAs
+  wasDerivedFrom:
+    name: wasDerivedFrom
+  wasAttributedTo:
+    name: wasAttributedTo
+  wasGeneratedBy:
+    name: wasGeneratedBy
+  sampleType:
+    name: sampleType
+  assayType:
+    name: assayType
+  anatomy:
+    name: anatomy
+  hasMember:
+    name: hasMember
+  schemaVersion:
+    name: schemaVersion
+  contributor:
+    name: contributor
+  about:
+    name: about
+  studyTarget:
+    name: studyTarget
+  license:
+    name: license
+  protocol:
+    name: protocol
+  ethicsApproval:
+    name: ethicsApproval
+  keywords:
+    name: keywords
+  acknowledgement:
+    name: acknowledgement
+  repository:
+    name: repository
+  relatedResource:
+    name: relatedResource
+  email:
+    name: email
+  roleName:
+    name: roleName
+  includeInCitation:
+    name: includeInCitation
+  awardNumber:
+    name: awardNumber
+  dateCreated:
+    name: dateCreated
+  citation:
+    name: citation
+  assetsSummary:
+    name: assetsSummary
+  manifestLocation:
+    name: manifestLocation
+  version:
+    name: version
+  dxdate:
+    name: dxdate
+  locus:
+    name: locus
+  alleles:
+    name: alleles
+  locusType:
+    name: locusType
+  altName:
+    name: altName
+  strain:
+    name: strain
+  cellLine:
+    name: cellLine
+  vendor:
+    name: vendor
+  age:
+    name: age
+  sex:
+    name: sex
+  genotype:
+    name: genotype
+  disorder:
+    name: disorder
+  relatedParticipant:
+    name: relatedParticipant
+  affiliation:
+    name: affiliation
+  maxValue:
+    name: maxValue
+  minValue:
+    name: minValue
+  unitText:
+    name: unitText
+  value:
+    name: value
+  valueReference:
+    name: valueReference
+  propertyID:
+    name: propertyID
+  publishedBy:
+    name: publishedBy
+  datePublished:
+    name: datePublished
+  doi:
+    name: doi
+  relation:
+    name: relation
+  resourceType:
+    name: resourceType
+classes:
+  AccessRequirements:
+    name: AccessRequirements
+    description: Information about access options for the dataset
+    is_a: DandiBaseModel
+    slots:
+    - status
+    - contactPoint
+    - description
+    - embargoedUntil
+    - schemaKey
+    class_uri: schema:AccessRequirements
+  Activity:
+    name: Activity
+    description: Information about the Project activity
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - description
+    - startDate
+    - endDate
+    - wasAssociatedWith
+    - used
+    - schemaKey
+    class_uri: schema:Activity
+  Affiliation:
+    name: Affiliation
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - schemaKey
+    class_uri: schema:Affiliation
+  Agent:
+    name: Agent
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    - schemaKey
+    class_uri: schema:Agent
+  Allele:
+    name: Allele
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - alleleSymbol
+    - alleleType
+    - schemaKey
+    class_uri: schema:Allele
+  Anatomy:
+    name: Anatomy
+    description: UBERON or other identifier for anatomical part studied
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:Anatomy
+  ApproachType:
+    name: ApproachType
+    description: Identifier for approach used
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:ApproachType
+  AssayType:
+    name: AssayType
+    description: OBI based identifier for the assay(s) used
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:AssayType
+  Asset:
+    name: Asset
+    description: Metadata used to describe an asset on the server.
+    is_a: BareAsset
+    slots:
+    - id
+    - identifier
+    - contentUrl
+    class_uri: schema:Asset
+  AssetsSummary:
+    name: AssetsSummary
+    description: Summary over assets contained in a dandiset (published or not)
+    is_a: DandiBaseModel
+    slots:
+    - numberOfBytes
+    - numberOfFiles
+    - numberOfSubjects
+    - numberOfSamples
+    - numberOfCells
+    - dataStandard
+    - approach
+    - measurementTechnique
+    - variableMeasured
+    - species
+    - schemaKey
+    class_uri: schema:AssetsSummary
+  BareAsset:
+    name: BareAsset
+    description: "Metadata used to describe an asset anywhere (local or server).\n\
+      \n    Derived from C2M2 (Level 0 and 1) and schema.org"
+    is_a: CommonModel
+    slots:
+    - contentSize
+    - encodingFormat
+    - digest
+    - path
+    - dateModified
+    - blobDateModified
+    - access
+    - dataType
+    - sameAs
+    - approach
+    - measurementTechnique
+    - variableMeasured
+    - wasDerivedFrom
+    - wasAttributedTo
+    - wasGeneratedBy
+    - schemaKey
+    class_uri: schema:BareAsset
+  BaseModel:
+    name: BaseModel
+    description: "Usage docs: https://docs.pydantic.dev/2.6/concepts/models/\n\n \
+      \   A base class for creating Pydantic models.\n\n    Attributes:\n        __class_vars__:\
+      \ The names of classvars defined on the model.\n        __private_attributes__:\
+      \ Metadata about the private attributes of the model.\n        __signature__:\
+      \ The signature for instantiating the model.\n\n        __pydantic_complete__:\
+      \ Whether model building is completed, or if there are still undefined fields.\n\
+      \        __pydantic_core_schema__: The pydantic-core schema used to build the\
+      \ SchemaValidator and SchemaSerializer.\n        __pydantic_custom_init__: Whether\
+      \ the model has a custom `__init__` function.\n        __pydantic_decorators__:\
+      \ Metadata containing the decorators defined on the model.\n            This\
+      \ replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic\
+      \ V1.\n        __pydantic_generic_metadata__: Metadata for generic models; contains\
+      \ data used for a similar purpose to\n            __args__, __origin__, __parameters__\
+      \ in typing-module generics. May eventually be replaced by these.\n        __pydantic_parent_namespace__:\
+      \ Parent namespace of the model, used for automatic rebuilding of models.\n\
+      \        __pydantic_post_init__: The name of the post-init method for the model,\
+      \ if defined.\n        __pydantic_root_model__: Whether the model is a `RootModel`.\n\
+      \        __pydantic_serializer__: The pydantic-core SchemaSerializer used to\
+      \ dump instances of the model.\n        __pydantic_validator__: The pydantic-core\
+      \ SchemaValidator used to validate instances of the model.\n\n        __pydantic_extra__:\
+      \ An instance attribute with the values of extra fields from validation when\n\
+      \            `model_config['extra'] == 'allow'`.\n        __pydantic_fields_set__:\
+      \ An instance attribute with the names of fields explicitly set.\n        __pydantic_private__:\
+      \ Instance attribute with the values of private attributes set on the model\
+      \ instance."
+    is_a: object
+    class_uri: schema:BaseModel
+  BaseType:
+    name: BaseType
+    description: Base class for enumerated types
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - schemaKey
+    class_uri: schema:BaseType
+  BioSample:
+    name: BioSample
+    description: Description of the sample that was studied
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - sampleType
+    - assayType
+    - anatomy
+    - wasDerivedFrom
+    - wasAttributedTo
+    - sameAs
+    - hasMember
+    - schemaKey
+    class_uri: schema:BioSample
+  CommonModel:
+    name: CommonModel
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - schemaVersion
+    - name
+    - description
+    - contributor
+    - about
+    - studyTarget
+    - license
+    - protocol
+    - ethicsApproval
+    - keywords
+    - acknowledgement
+    - access
+    - url
+    - repository
+    - relatedResource
+    - wasGeneratedBy
+    - schemaKey
+    class_uri: schema:CommonModel
+  ContactPoint:
+    name: ContactPoint
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - email
+    - url
+    - schemaKey
+    class_uri: schema:ContactPoint
+  Contributor:
+    name: Contributor
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - email
+    - url
+    - roleName
+    - includeInCitation
+    - awardNumber
+    - schemaKey
+    class_uri: schema:Contributor
+  DandiBaseModel:
+    name: DandiBaseModel
+    description: No description
+    is_a: BaseModel
+    slots:
+    - id
+    - schemaKey
+    class_uri: schema:DandiBaseModel
+  Dandiset:
+    name: Dandiset
+    description: A body of structured information describing a DANDI dataset.
+    is_a: CommonModel
+    slots:
+    - id
+    - identifier
+    - name
+    - description
+    - contributor
+    - dateCreated
+    - dateModified
+    - license
+    - citation
+    - assetsSummary
+    - manifestLocation
+    - version
+    - wasGeneratedBy
+    - schemaKey
+    class_uri: schema:Dandiset
+  Disorder:
+    name: Disorder
+    description: Biolink, SNOMED, or other identifier for disorder studied
+    is_a: BaseType
+    slots:
+    - dxdate
+    - schemaKey
+    class_uri: schema:Disorder
+  Equipment:
+    name: Equipment
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - description
+    - schemaKey
+    class_uri: schema:Equipment
+  EthicsApproval:
+    name: EthicsApproval
+    description: Information about ethics committee approval for project
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - contactPoint
+    - schemaKey
+    class_uri: schema:EthicsApproval
+  GenericType:
+    name: GenericType
+    description: An object to capture any type for about
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:GenericType
+  GenotypeInfo:
+    name: GenotypeInfo
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - locus
+    - alleles
+    - wasGeneratedBy
+    - schemaKey
+    class_uri: schema:GenotypeInfo
+  Locus:
+    name: Locus
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - locusType
+    - schemaKey
+    class_uri: schema:Locus
+  MeasurementTechniqueType:
+    name: MeasurementTechniqueType
+    description: Identifier for measurement technique used
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:MeasurementTechniqueType
+  Organization:
+    name: Organization
+    description: No description
+    is_a: Contributor
+    slots:
+    - identifier
+    - includeInCitation
+    - contactPoint
+    - schemaKey
+    class_uri: schema:Organization
+  Participant:
+    name: Participant
+    description: "Description about the Participant or Subject studied.\n\n    The\
+      \ Participant or Subject can be any individual or synthesized Agent. The\n \
+      \   properties of the Participant or Subject refers to information at the timepoint\n\
+      \    when the Participant or Subject engaged in the production of data being\
+      \ described."
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - altName
+    - strain
+    - cellLine
+    - vendor
+    - age
+    - sex
+    - genotype
+    - species
+    - disorder
+    - relatedParticipant
+    - sameAs
+    - schemaKey
+    class_uri: schema:Participant
+  Person:
+    name: Person
+    description: No description
+    is_a: Contributor
+    slots:
+    - identifier
+    - name
+    - affiliation
+    - schemaKey
+    class_uri: schema:Person
+  Project:
+    name: Project
+    description: No description
+    is_a: Activity
+    slots:
+    - name
+    - description
+    - schemaKey
+    class_uri: schema:Project
+  PropertyValue:
+    name: PropertyValue
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - maxValue
+    - minValue
+    - unitText
+    - value
+    - valueReference
+    - propertyID
+    - schemaKey
+    class_uri: schema:PropertyValue
+  PublishActivity:
+    name: PublishActivity
+    description: No description
+    is_a: Activity
+    slots:
+    - schemaKey
+    class_uri: schema:PublishActivity
+  Publishable:
+    name: Publishable
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - publishedBy
+    - datePublished
+    - schemaKey
+    class_uri: schema:Publishable
+  PublishedAsset:
+    name: PublishedAsset
+    description: No description
+    is_a: Asset
+    slots:
+    - id
+    - schemaKey
+    class_uri: schema:PublishedAsset
+  PublishedDandiset:
+    name: PublishedDandiset
+    description: No description
+    is_a: Dandiset
+    slots:
+    - id
+    - doi
+    - url
+    - schemaKey
+    class_uri: schema:PublishedDandiset
+  RelatedParticipant:
+    name: RelatedParticipant
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    - relation
+    - schemaKey
+    class_uri: schema:RelatedParticipant
+  Resource:
+    name: Resource
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    - repository
+    - relation
+    - resourceType
+    - schemaKey
+    class_uri: schema:Resource
+  SampleType:
+    name: SampleType
+    description: OBI based identifier for the sample type used
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:SampleType
+  Session:
+    name: Session
+    description: No description
+    is_a: Activity
+    slots:
+    - name
+    - description
+    - schemaKey
+    class_uri: schema:Session
+  SexType:
+    name: SexType
+    description: Identifier for the sex of the sample
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:SexType
+  Software:
+    name: Software
+    description: No description
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - version
+    - url
+    - schemaKey
+    class_uri: schema:Software
+  SpeciesType:
+    name: SpeciesType
+    description: Identifier for species of the sample
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:SpeciesType
+  StandardsType:
+    name: StandardsType
+    description: Identifier for data standard used
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:StandardsType
+  StrainType:
+    name: StrainType
+    description: Identifier for the strain of the sample
+    is_a: BaseType
+    slots:
+    - schemaKey
+    class_uri: schema:StrainType
