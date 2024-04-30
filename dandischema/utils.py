@@ -3,8 +3,8 @@ from __future__ import annotations
 import re
 from typing import Any, Iterator, List, Union, get_args, get_origin
 
-from pydantic.json_schema import GenerateJsonSchema, JsonSchemaValue
-from pydantic_core import core_schema
+from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode, JsonSchemaValue
+from pydantic_core import CoreSchema, core_schema
 
 TITLE_CASE_LOWER = {
     "a",
@@ -68,6 +68,16 @@ class TransitionalGenerateJsonSchema(GenerateJsonSchema):
     of the JSON schema generation in Pydantic V2 so that some aspects of the JSON
     schema generation process are the same as the behavior in Pydantic V1.
     """
+
+    def generate(
+        self, schema: CoreSchema, mode: JsonSchemaMode = "validation"
+    ) -> JsonSchemaValue:
+        json_schema = super().generate(schema, mode)
+
+        # Set the `$schema` key with the schema dialect
+        json_schema["$schema"] = self.schema_dialect
+
+        return json_schema
 
     def nullable_schema(self, schema: core_schema.NullableSchema) -> JsonSchemaValue:
         # Override the default behavior for handling a schema that allows null values
