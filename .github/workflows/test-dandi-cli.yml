@@ -25,10 +25,10 @@ jobs:
         python:
           # Use the only Python which is ATM also used by dandi-api
           # - 3.7
-          - 3.8
+          # - 3.8
           # - 3.9
           # - '3.10'
-          # - '3.11'
+          - '3.11'
         version:
           - master
           - release
