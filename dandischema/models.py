@@ -1202,7 +1202,7 @@ class Activity(DandiBaseModel):
 
     _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
 
-    @field_validator('startDate', 'endDate', mode='before')
+    @field_validator("startDate", "endDate", mode="before")
     def parse_datetime(cls, value):
         if isinstance(value, str):
             try:
