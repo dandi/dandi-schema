@@ -1183,8 +1183,8 @@ class Activity(DandiBaseModel):
         description="The description of the activity.",
         json_schema_extra={"nskey": "schema"},
     )
-    startDate: Optional[datetime] = Field(None, json_schema_extra={"nskey": "schema"})
-    endDate: Optional[datetime] = Field(None, json_schema_extra={"nskey": "schema"})
+    startDate: Optional[Union[datetime, date]] = Field(None, json_schema_extra={"nskey": "schema"})
+    endDate: Optional[Union[datetime, date]] = Field(None, json_schema_extra={"nskey": "schema"})
 
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
@@ -1201,18 +1201,6 @@ class Activity(DandiBaseModel):
     )
 
     _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
-
-    @field_validator('startDate', 'endDate', mode='before')
-    def parse_datetime(cls, value: Any) -> Optional[datetime]:
-        if isinstance(value, str):
-            try:
-                # Handles use-cases from .NWB file formats
-                return datetime.fromisoformat(value)
-            except ValueError:
-                return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-        if isinstance(value, datetime):
-            return value
-        return None
 
 
 class Project(Activity):
