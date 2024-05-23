@@ -1183,8 +1183,12 @@ class Activity(DandiBaseModel):
         description="The description of the activity.",
         json_schema_extra={"nskey": "schema"},
     )
-    startDate: Optional[Union[datetime, date]] = Field(None, json_schema_extra={"nskey": "schema"})
-    endDate: Optional[Union[datetime, date]] = Field(None, json_schema_extra={"nskey": "schema"})
+    startDate: Optional[Union[datetime, date]] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
+    endDate: Optional[Union[datetime, date]] = Field(
+        None, json_schema_extra={"nskey": "schema"}
+    )
 
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
