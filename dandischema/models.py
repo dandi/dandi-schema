@@ -1203,14 +1203,16 @@ class Activity(DandiBaseModel):
     _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
 
     @field_validator('startDate', 'endDate', mode='before')
-    def parse_datetime(cls, value):
+    def parse_datetime(cls, value: Any) -> Optional[datetime]:
         if isinstance(value, str):
             try:
                 # Handles use-cases from .NWB file formats
                 return datetime.fromisoformat(value)
             except ValueError:
                 return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-        return value
+        if isinstance(value, datetime):
+            return value
+        return None
 
 
 class Project(Activity):
