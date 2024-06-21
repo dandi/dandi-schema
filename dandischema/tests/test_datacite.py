@@ -72,6 +72,7 @@ def metadata_basic() -> Dict[str, Any]:
                 "name": "A_last, A_first",
                 "email": "nemo@example.com",
                 "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
