@@ -196,6 +196,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
                         "schemaKey": "Person",
                     },
                     {
@@ -224,6 +225,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
                         "schemaKey": "Person",
                     },
                     {
@@ -245,6 +247,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
                         "schemaKey": "Person",
                     },
                     {
@@ -274,6 +277,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
                         "schemaKey": "Person",
                     },
                     {
@@ -314,6 +318,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
                         "schemaKey": "Person",
                     },
                 ],
