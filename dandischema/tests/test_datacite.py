@@ -196,12 +196,17 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:Author")],
+                        "schemaKey": "Person",
                     },
-                    {"name": "C_last, C_first"},
+                    {
+                        "name": "C_last, C_first",
+                        "schemaKey": "Person",
+                    },
                 ],
             },
             {
@@ -219,10 +224,12 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:Sponsor")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -238,11 +245,13 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "identifier": "0000-0001-0000-0000",
                         "roleName": [RoleType("dcite:Sponsor")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -265,11 +274,13 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "identifier": "0000-0001-0000-0000",
                         "roleName": [RoleType("dcite:Funder")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -298,10 +309,12 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                             RoleType("dcite:Software"),
                         ],
                         "identifier": "0000-0001-0000-0000",
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
