@@ -381,6 +381,7 @@ def test_dantimeta_1() -> None:
                 "name": "last name, first name",
                 "email": "someone@dandiarchive.org",
                 "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],

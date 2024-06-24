@@ -8,6 +8,7 @@
     {
       "schemaKey": "Person",
       "name": "Scala, Federico",
+      "email": "fscala@example.com",
       "roleName": [
         "dcite:DataCollector",
         "dcite:Author",
@@ -150,6 +151,7 @@
       "schemaKey": "Person",
       "identifier": "0000-0002-4305-6376",
       "name": "Tolias, Andreas Savas",
+      "email": "atolias@example.com",
       "roleName": [
         "dcite:Author",
         "dcite:ContactPerson"
