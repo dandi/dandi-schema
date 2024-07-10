@@ -1,3 +1,30 @@
+# 0.10.2 (Wed Jul 10 2024)
+
+#### 🐛 Bug Fix
+
+- Use discriminated unions to provide more helpful error messages [#245](https://github.com/dandi/dandi-schema/pull/245) ([@mvandenburgh](https://github.com/mvandenburgh))
+- Set the `$schema` key with the schema dialect [#236](https://github.com/dandi/dandi-schema/pull/236) ([@candleindark](https://github.com/candleindark))
+- Add validator to ensure a contact person has email provided [#235](https://github.com/dandi/dandi-schema/pull/235) ([@candleindark](https://github.com/candleindark))
+
+#### 🏠 Internal
+
+- [pre-commit.ci] pre-commit autoupdate [#241](https://github.com/dandi/dandi-schema/pull/241) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#237](https://github.com/dandi/dandi-schema/pull/237) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#234](https://github.com/dandi/dandi-schema/pull/234) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🧪 Tests
+
+- GitHub tests.yml CI: explicitly specify macos-12 and use python 3.11 to test against dandi-cli [#238](https://github.com/dandi/dandi-schema/pull/238) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 4
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- Mike VanDenburgh ([@mvandenburgh](https://github.com/mvandenburgh))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.10.1 (Mon Mar 18 2024)
 
 #### 🐛 Bug Fix
