@@ -15,6 +15,7 @@ from pydantic import (
     EmailStr,
     Field,
     GetJsonSchemaHandler,
+    StringConstraints,
     TypeAdapter,
     ValidationInfo,
     field_validator,
@@ -652,11 +653,20 @@ RRID = str
 class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
-    identifier: Optional[Union[AnyHttpUrl, str]] = Field(
+    identifier: Optional[
+        Annotated[
+            Union[
+                AnyHttpUrl,
+                Annotated[
+                    str, StringConstraints(pattern=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$")
+                ],
+            ],
+            Field(union_mode="left_to_right"),
+        ]
+    ] = Field(
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
-        pattern=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
         json_schema_extra={"nskey": "schema"},
     )
     name: Optional[str] = Field(
