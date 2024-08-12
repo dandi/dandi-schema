@@ -1,3 +1,15 @@
+# 0.10.3 (Mon Aug 12 2024)
+
+#### 🐛 Bug Fix
+
+- Move pattern specification for `BaseType.identifier` to the annotation for the `str` type [#247](https://github.com/dandi/dandi-schema/pull/247) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 1
+
+- Isaac To ([@candleindark](https://github.com/candleindark))
+
+---
+
 # 0.10.2 (Wed Jul 10 2024)
 
 #### 🐛 Bug Fix
