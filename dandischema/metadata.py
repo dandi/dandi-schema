@@ -21,6 +21,7 @@ from . import models
 from .utils import (
     TransitionalGenerateJsonSchema,
     _ensure_newline,
+    sanitize_value,
     strip_top_level_optional,
     version2tuple,
 )
@@ -310,7 +311,7 @@ _stats_type = Dict[str, _stats_var_type]
 def _get_samples(value: dict, stats: _stats_type, hierarchy: Any) -> _stats_type:
     if "sampleType" in value:
         sampletype = value["sampleType"]["name"]
-        obj = value["identifier"].replace("_", "-")
+        obj = sanitize_value(value["identifier"])
         if obj not in stats[sampletype]:
             stats[sampletype].append(obj)
     if "wasDerivedFrom" in value:
@@ -354,7 +355,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
                 if value["species"] not in stats["species"]:
                     stats["species"].append(value["species"])
             if value.get("identifier", None):
-                subject = value["identifier"].replace("_", "-")
+                subject = sanitize_value(value["identifier"])
                 if subject not in stats["subjects"]:
                     stats["subjects"].append(subject)
 

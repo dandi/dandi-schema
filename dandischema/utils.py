@@ -114,3 +114,25 @@ def strip_top_level_optional(type_: Any) -> Any:
     else:
         # `type_` is not an Optional
         return type_
+
+
+def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> str:
+    """Replace all "non-compliant" characters with -
+
+    Of particular importance is _ which we use, as in BIDS, to separate
+    _key-value entries.  It is not sanitizing to BIDS level of clarity though.
+    In BIDS only alphanumerics are allowed, and here we only replace some known
+    to be offending symbols with `sub`.
+
+    When `field` is not "extension", we also replace ".".
+
+    Based on dandi.organize._sanitize_value.
+
+    .. versionchanged:: 0.8.3
+
+            ``sanitize_value`` added
+    """
+    value = re.sub(r"[_*\\/<>:|\"'?%@;,\s]", sub, value)
+    if field != "extension":
+        value = value.replace(".", sub)
+    return value
