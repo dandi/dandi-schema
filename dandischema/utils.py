@@ -132,7 +132,7 @@ def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> 
 
             ``sanitize_value`` added
     """
-    value = re.sub(r"[_*\\/<>:|\"'?%@;]", sub, value)
+    value = re.sub(r"[_*\\/<>:|\"'?%@;,\s]", sub, value)
     if field != "extension":
         value = value.replace(".", sub)
     return value
