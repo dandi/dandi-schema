@@ -815,6 +815,12 @@ bids_standard = StandardsType(
     identifier="RRID:SCR_016124",
 ).model_dump(mode="json", exclude_none=True)
 
+ome_ngff_standard = StandardsType(
+    name="OME/NGFF Standard",
+    # Seems no dedicated RRID, only for OME itself?
+    # identifier="RRID:SCR_???",
+).model_dump(mode="json", exclude_none=True)
+
 
 class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(
