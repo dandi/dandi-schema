@@ -1,3 +1,24 @@
+# 0.10.4 (Thu Sep 05 2024)
+
+#### 🐛 Bug Fix
+
+- Properly handle failed requests to retrieve the schema [#251](https://github.com/dandi/dandi-schema/pull/251) ([@danlamanna](https://github.com/danlamanna))
+- ENH: adopt sanitize_value from dandi-cli and use for sanitization of identifier [#175](https://github.com/dandi/dandi-schema/pull/175) ([@yarikoptic](https://github.com/yarikoptic))
+- [pre-commit.ci] pre-commit autoupdate [#243](https://github.com/dandi/dandi-schema/pull/243) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🔩 Dependency Updates
+
+- Declare `typing_extensions` dependency [#248](https://github.com/dandi/dandi-schema/pull/248) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 4
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Dan LaManna ([@danlamanna](https://github.com/danlamanna))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.10.3 (Mon Aug 12 2024)
 
 #### 🐛 Bug Fix
