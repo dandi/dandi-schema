@@ -184,10 +184,12 @@ def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
 
 @lru_cache
 def _get_schema(schema_version: str, schema_name: str) -> Any:
-    return requests.get(
+    r = requests.get(
         "https://raw.githubusercontent.com/dandi/schema/"
         f"master/releases/{schema_version}/{schema_name}"
-    ).json()
+    )
+    r.raise_for_status()
+    return r.json()
 
 
 def validate(
