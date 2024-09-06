@@ -817,8 +817,7 @@ bids_standard = StandardsType(
 
 ome_ngff_standard = StandardsType(
     name="OME/NGFF Standard",
-    # Seems no dedicated RRID, only for OME itself?
-    # identifier="RRID:SCR_???",
+    identifier="DOI:10.25504/FAIRsharing.9af712",
 ).model_dump(mode="json", exclude_none=True)
 
 
