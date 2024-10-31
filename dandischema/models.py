@@ -1340,7 +1340,7 @@ class PublishActivity(Activity):
 
 
 class Locus(DandiBaseModel):
-    identifier: Union[Identifier, List[Identifier]] = Field(
+    identifier: Identifier = Field(
         description="Identifier for genotyping locus.",
         json_schema_extra={"nskey": "schema"},
     )
@@ -1352,7 +1352,7 @@ class Locus(DandiBaseModel):
 
 
 class Allele(DandiBaseModel):
-    identifier: Union[Identifier, List[Identifier]] = Field(
+    identifier: Identifier = Field(
         description="Identifier for genotyping allele.",
         json_schema_extra={"nskey": "schema"},
     )
