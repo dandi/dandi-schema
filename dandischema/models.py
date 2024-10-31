@@ -671,7 +671,7 @@ class PropertyValue(DandiBaseModel):
     maxValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
     minValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
     unitText: Optional[str] = Field(None, json_schema_extra={"nskey": "schema"})
-    value: Union[Any, List[Any]] = Field(
+    value: Any = Field(
         None,
         validate_default=True,
         json_schema_extra={"nskey": "schema"},
@@ -693,7 +693,7 @@ class PropertyValue(DandiBaseModel):
 
     @field_validator("value")
     @classmethod
-    def ensure_value(cls, val: Union[Any, List[Any]]) -> Union[Any, List[Any]]:
+    def ensure_value(cls, val: Any) -> Any:
         if not val:
             raise ValueError(
                 "The value field of a PropertyValue cannot be None or empty."
