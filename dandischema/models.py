@@ -1453,7 +1453,7 @@ class Participant(DandiBaseModel):
         "available. (e.g. from OBI)",
         json_schema_extra={"nskey": DANDI_NSKEY},
     )
-    genotype: Optional[Union[List[GenotypeInfo], Identifier]] = Field(
+    genotype: Optional[Union[GenotypeInfo, Identifier]] = Field(
         None,
         description="Genotype descriptor of participant or subject if available",
         json_schema_extra={"nskey": DANDI_NSKEY},
