@@ -422,7 +422,7 @@ def test_dandimeta_datacite(
             else:
                 assert attr[key] == el_flds
 
-    # trying to poste datacite
+    # trying to post to datacite
     datacite_post(datacite, metadata_basic["doi"])
 
 
@@ -433,7 +433,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic, publish=True)
+    datacite = to_datacite(metadata_basic, publish=True, validate=True)
 
     assert datacite == {
         # 'data': {}
@@ -505,6 +505,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     "resourceTypeGeneral": "Dataset",
                 },
                 "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+                "version": version,
             },
         }
     }

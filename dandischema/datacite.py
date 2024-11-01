@@ -83,6 +83,8 @@ def to_datacite(
     ]
 
     attributes["doi"] = meta.doi
+    if meta.version:
+        attributes["version"] = meta.version
     attributes["titles"] = [{"title": meta.name}]
     attributes["descriptions"] = [
         {"description": meta.description, "descriptionType": "Abstract"}
