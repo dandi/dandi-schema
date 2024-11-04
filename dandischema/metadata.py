@@ -381,7 +381,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
 
     stats["dataStandard"] = stats.get("dataStandard", [])
 
-    def add_if_missing(standard: str) -> None:
+    def add_if_missing(standard: dict) -> None:
         if standard not in stats["dataStandard"]:
             stats["dataStandard"].append(standard)
 

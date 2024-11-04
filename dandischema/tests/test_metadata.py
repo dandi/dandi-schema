@@ -565,7 +565,7 @@ def test_aggregation_bids() -> None:
             "contentSize": 38474544973,
             "dateModified": "2021-07-22T23:59:16.060551-04:00",
             "schemaVersion": "0.4.4",
-            "encodingFormat": "application/x-hdf5",
+            "encodingFormat": "application/x-zarr",
             "wasGeneratedBy": [
                 {
                     "id": "urn:uuid:aef77d59-7a7f-4320-9d4b-9b03f3e25e54",
@@ -611,7 +611,7 @@ def test_aggregation_bids() -> None:
             "contentSize": 61774316916,
             "dateModified": "2021-10-01T18:28:16.038990-04:00",
             "schemaVersion": "0.6.0",
-            "encodingFormat": "application/x-hdf5",
+            "encodingFormat": "application/x-zarr",
             "wasGeneratedBy": [
                 {
                     "id": "urn:uuid:8f69a248-0e6a-4fa1-8369-ae1cc63d59d8",
@@ -634,6 +634,7 @@ def test_aggregation_bids() -> None:
     ]
     summary = aggregate_assets_summary(data)
     assert summary["numberOfSamples"] == 2
-    assert any(
-        _.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"]
-    )
+    assert (
+        sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
+        == 1
+    )  # only a single entry so we do not duplicate them
