@@ -542,7 +542,7 @@ def test_aggregation_bids() -> None:
         {
             "id": "dandiasset:6668d37f-e842-4b73-8c20-082a1dd0d31a",
             "path": "sub-MITU01/ses-20210703h01m05s04/microscopy/sub-MITU01_"
-            "run-1_sample-163_stain-YO_chunk-5_spim.h5",
+            "run-1_sample-163_stain-YO_chunk-5_spim.ome.zarr",
             "access": [
                 {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
             ],
@@ -565,7 +565,7 @@ def test_aggregation_bids() -> None:
             "contentSize": 38474544973,
             "dateModified": "2021-07-22T23:59:16.060551-04:00",
             "schemaVersion": "0.4.4",
-            "encodingFormat": "application/x-hdf5",
+            "encodingFormat": "application/x-zarr",
             "wasGeneratedBy": [
                 {
                     "id": "urn:uuid:aef77d59-7a7f-4320-9d4b-9b03f3e25e54",
@@ -588,7 +588,7 @@ def test_aggregation_bids() -> None:
         {
             "id": "dandiasset:84dd580f-8d4a-43f8-bda3-6fb53fb5d3a2",
             "path": "sub-MITU01/ses-20210703h16m32s10/microscopy/sub-MITU01_"
-            "ses-20210703h16m32s10_run-1_sample-162_stain-LEC_chunk-5_spim.h5",
+            "ses-20210703h16m32s10_run-1_sample-162_stain-LEC_chunk-5_spim.ome.zarr",
             "access": [
                 {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
             ],
@@ -611,7 +611,7 @@ def test_aggregation_bids() -> None:
             "contentSize": 61774316916,
             "dateModified": "2021-10-01T18:28:16.038990-04:00",
             "schemaVersion": "0.6.0",
-            "encodingFormat": "application/x-hdf5",
+            "encodingFormat": "application/x-zarr",
             "wasGeneratedBy": [
                 {
                     "id": "urn:uuid:8f69a248-0e6a-4fa1-8369-ae1cc63d59d8",
@@ -634,3 +634,7 @@ def test_aggregation_bids() -> None:
     ]
     summary = aggregate_assets_summary(data)
     assert summary["numberOfSamples"] == 2
+    assert (
+        sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
+        == 1
+    )  # only a single entry so we do not duplicate them

@@ -380,13 +380,18 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
                 stats["tissuesample"].append(sample)
 
     stats["dataStandard"] = stats.get("dataStandard", [])
+
+    def add_if_missing(standard: dict) -> None:
+        if standard not in stats["dataStandard"]:
+            stats["dataStandard"].append(standard)
+
     if "nwb" in assetmeta["encodingFormat"]:
-        if models.nwb_standard not in stats["dataStandard"]:
-            stats["dataStandard"].append(models.nwb_standard)
+        add_if_missing(models.nwb_standard)
     # TODO: RF assumption that any .json implies BIDS
     if set(Path(assetmeta["path"]).suffixes).intersection((".json", ".nii")):
-        if models.bids_standard not in stats["dataStandard"]:
-            stats["dataStandard"].append(models.bids_standard)
+        add_if_missing(models.bids_standard)
+    if Path(assetmeta["path"]).suffixes == [".ome", ".zarr"]:
+        add_if_missing(models.ome_ngff_standard)
 
 
 # TODO?: move/bind such helpers as .from_metadata or alike within
