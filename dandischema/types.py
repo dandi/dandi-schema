@@ -1,12 +1,11 @@
 # This file is for defining types that extend existing types through the use of
 # `typing.Annotated`.
 
-from typing import Type
+from typing import Annotated, Type
 
 from pydantic import ByteSize, GetCoreSchemaHandler, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
-from typing_extensions import Annotated
 
 
 class _ByteSizeJsonSchemaAnnotation:
