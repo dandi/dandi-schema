@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 import os
 from pathlib import Path
@@ -9,15 +8,17 @@ from jsonschema import Draft7Validator
 import pytest
 import requests
 
-from .utils import skipif_no_network
-from ..datacite import _get_datacite_schema, to_datacite
-from ..models import (
+from dandischema.models import (
     LicenseType,
     PublishedDandiset,
     RelationType,
     ResourceType,
     RoleType,
 )
+import dandischema.tests
+from dandischema.tests.utils import _basic_publishmeta, skipif_no_network
+
+from .. import _get_datacite_schema, to_datacite
 
 
 def datacite_post(datacite: dict, doi: str) -> None:
@@ -101,37 +102,6 @@ def metadata_basic() -> Dict[str, Any]:
     return meta_dict
 
 
-def _basic_publishmeta(
-    dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
-) -> Dict[str, Any]:
-    """Return extra metadata required by PublishedDandiset
-
-    Returned fields are additional to fields required by Dandiset
-    """
-    publish_meta = {
-        "datePublished": str(datetime.now().year),
-        "publishedBy": {
-            "id": "urn:uuid:08fffc59-9f1b-44d6-8e02-6729d266d1b6",
-            "name": "DANDI publish",
-            "startDate": "2021-05-18T19:58:39.310338-04:00",
-            "endDate": "2021-05-18T19:58:39.310361-04:00",
-            "wasAssociatedWith": [
-                {
-                    "id": "urn:uuid:9267d2e1-4a37-463b-9b10-dad3c66d8eaa",
-                    "identifier": "RRID:SCR_017571",
-                    "name": "DANDI API",
-                    "version": "0.1.0",
-                    "schemaKey": "Software",
-                }
-            ],
-            "schemaKey": "PublishActivity",
-        },
-        "version": version,
-        "doi": f"{prefix}/dandi.{dandi_id}/{version}",
-    }
-    return publish_meta
-
-
 @skipif_no_network
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
@@ -142,7 +112,9 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     # reading metadata taken from exemplary dandisets and saved in json files
     with (
-        Path(__file__).with_name("data") / "metadata" / f"meta_{dandi_id}.json"
+        Path(dandischema.tests.__file__).with_name("data")
+        / "metadata"
+        / f"meta_{dandi_id}.json"
     ).open() as f:
         meta_js = json.load(f)
 
@@ -422,7 +394,7 @@ def test_dandimeta_datacite(
             else:
                 assert attr[key] == el_flds
 
-    # trying to poste datacite
+    # trying to post to datacite
     datacite_post(datacite, metadata_basic["doi"])
 
 
@@ -433,7 +405,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic, publish=True)
+    datacite = to_datacite(metadata_basic, publish=True, validate=True)
 
     assert datacite == {
         # 'data': {}
@@ -505,6 +477,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     "resourceTypeGeneral": "Dataset",
                 },
                 "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+                "version": version,
             },
         }
     }

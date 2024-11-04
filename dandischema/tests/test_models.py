@@ -7,7 +7,7 @@ import pydantic
 from pydantic import Field, ValidationError
 import pytest
 
-from .test_datacite import _basic_publishmeta
+from .utils import _basic_publishmeta
 from .. import models
 from ..models import (
     DANDI_INSTANCE_URL_PATTERN,
