@@ -9,15 +9,17 @@ from jsonschema import Draft7Validator
 import pytest
 import requests
 
-from .utils import skipif_no_network
-from ..datacite import _get_datacite_schema, to_datacite
-from ..models import (
+from dandischema.models import (
     LicenseType,
     PublishedDandiset,
     RelationType,
     ResourceType,
     RoleType,
 )
+import dandischema.tests
+from dandischema.tests.utils import skipif_no_network
+
+from .. import _get_datacite_schema, to_datacite
 
 
 def datacite_post(datacite: dict, doi: str) -> None:
@@ -142,7 +144,9 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     # reading metadata taken from exemplary dandisets and saved in json files
     with (
-        Path(__file__).with_name("data") / "metadata" / f"meta_{dandi_id}.json"
+        Path(dandischema.tests.__file__).with_name("data")
+        / "metadata"
+        / f"meta_{dandi_id}.json"
     ).open() as f:
         meta_js = json.load(f)
 
