@@ -542,7 +542,7 @@ def test_aggregation_bids() -> None:
         {
             "id": "dandiasset:6668d37f-e842-4b73-8c20-082a1dd0d31a",
             "path": "sub-MITU01/ses-20210703h01m05s04/microscopy/sub-MITU01_"
-            "run-1_sample-163_stain-YO_chunk-5_spim.h5",
+            "run-1_sample-163_stain-YO_chunk-5_spim.ome.zarr",
             "access": [
                 {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
             ],
@@ -588,7 +588,7 @@ def test_aggregation_bids() -> None:
         {
             "id": "dandiasset:84dd580f-8d4a-43f8-bda3-6fb53fb5d3a2",
             "path": "sub-MITU01/ses-20210703h16m32s10/microscopy/sub-MITU01_"
-            "ses-20210703h16m32s10_run-1_sample-162_stain-LEC_chunk-5_spim.h5",
+            "ses-20210703h16m32s10_run-1_sample-162_stain-LEC_chunk-5_spim.ome.zarr",
             "access": [
                 {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
             ],
@@ -634,3 +634,6 @@ def test_aggregation_bids() -> None:
     ]
     summary = aggregate_assets_summary(data)
     assert summary["numberOfSamples"] == 2
+    assert any(
+        _.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"]
+    )
