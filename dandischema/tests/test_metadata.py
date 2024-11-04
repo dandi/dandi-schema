@@ -631,9 +631,34 @@ def test_aggregation_bids() -> None:
             ],
             "blobDateModified": "2021-07-10T18:58:25-04:00",
         },
+        {
+            "@context": "https://raw.githubusercontent.com/dandi/shortened",
+            "schemaKey": "Asset",
+            "repository": "https://dandiarchive.org/",
+            "dateModified": "2021-10-05T13:08:07.855880-04:00",
+            "schemaVersion": "0.6.0",
+            "encodingFormat": "application/json",
+            "blobDateModified": "2021-10-04T15:58:52.266222-04:00",
+            "id": "dandiasset:34e30fa6-cf6a-4a32-90cb-b06f6f2f30a6",
+            "access": [
+                {"schemaKey": "AccessRequirements", "status": "dandi:OpenAccess"}
+            ],
+            "path": "dataset_description.json",
+            "identifier": "34e30fa6-cf6a-4a32-90cb-b06f6f2f30a6",
+            "contentUrl": [
+                "https://api.dandiarchive.org/api/assets/shortened",
+            ],
+            "contentSize": 3377,
+            "digest": {
+                "dandi:dandi-etag": "88c82d75b1119393b9ee49adc14714f3-1",
+            },
+        },
     ]
     summary = aggregate_assets_summary(data)
+    assert summary["numberOfFiles"] == 3
     assert summary["numberOfSamples"] == 2
+    assert summary["numberOfSubjects"] == 1
+    assert sum("BIDS" in _.get("name", "") for _ in summary["dataStandard"]) == 1
     assert (
         sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
         == 1
