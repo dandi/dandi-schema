@@ -245,9 +245,12 @@ def to_datacite(
 
 def _get_datacite_schema() -> Any:
     sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/"
-        "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"
-        "source/json/kernel-4.3/datacite_4.3_schema.json"
+        # "https://raw.githubusercontent.com/datacite/schema/"
+        # "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"
+        # "source/json/kernel-4.3/datacite_4.3_schema.json"
+        "https://raw.githubusercontent.com/inveniosoftware/datacite/"
+        "160250d6c7ebd39f24c93aa5dfdb4dea3169754b/"
+        "datacite/schemas/datacite-v4.5.json"
     )
     sr.raise_for_status()
     schema = sr.json()
