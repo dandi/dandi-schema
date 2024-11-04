@@ -178,7 +178,16 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     1,
                     {"description": "testing", "descriptionType": "Abstract"},
                 ),
-                "publisher": (None, "DANDI Archive"),
+                "publisher": (
+                    None,
+                    {
+                        "name": "DANDI Archive",
+                        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                        "publisherIdentifierScheme": "RRID",
+                        "schemeUri": "https://scicrunch.org/resolver/",
+                        "lang": "en",
+                    },
+                ),
                 "rightsList": (
                     1,
                     {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC_BY_40"},
@@ -451,7 +460,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "givenName": "A_first",
                         "name": "A_last, A_first",
                         "nameType": "Personal",
-                        "schemeURI": "orcid.org",
+                        "schemeUri": "orcid.org",
                     }
                 ],
                 "creators": [
@@ -462,7 +471,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "givenName": "A_first",
                         "name": "A_last, A_first",
                         "nameType": "Personal",
-                        "schemeURI": "orcid.org",
+                        "schemeUri": "orcid.org",
                     }
                 ],
                 "descriptions": [
@@ -490,12 +499,18 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     },
                 ],
                 "publicationYear": "1970",
-                "publisher": "DANDI Archive",
+                "publisher": {
+                    "name": "DANDI Archive",
+                    "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                    "publisherIdentifierScheme": "RRID",
+                    "schemeUri": "https://scicrunch.org/resolver/",
+                    "lang": "en",
+                },
                 "rightsList": [
                     {
                         "rightsIdentifier": "CC_BY_40",
                         "rightsIdentifierScheme": "SPDX",
-                        "schemeURI": "https://spdx.org/licenses/",
+                        "schemeUri": "https://spdx.org/licenses/",
                     }
                 ],
                 "schemaVersion": "http://datacite.org/schema/kernel-4",

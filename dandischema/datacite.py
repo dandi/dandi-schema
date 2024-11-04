@@ -90,7 +90,13 @@ def to_datacite(
     attributes["descriptions"] = [
         {"description": meta.description, "descriptionType": "Abstract"}
     ]
-    attributes["publisher"] = "DANDI Archive"
+    attributes["publisher"] = {
+        "name": "DANDI Archive",
+        "schemeUri": "https://scicrunch.org/resolver/",
+        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+        "publisherIdentifierScheme": "RRID",
+        "lang": "en",
+    }
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
@@ -102,7 +108,7 @@ def to_datacite(
     # assuming that all licenses are from SPDX?
     attributes["rightsList"] = [
         {
-            "schemeURI": "https://spdx.org/licenses/",
+            "schemeUri": "https://spdx.org/licenses/",
             "rightsIdentifierScheme": "SPDX",
             "rightsIdentifier": el.name,
         }
@@ -139,7 +145,7 @@ def to_datacite(
         contr_dict: Dict[str, Any] = {
             "name": contr_el.name,
             "contributorName": contr_el.name,
-            "schemeURI": "orcid.org",
+            "schemeUri": "orcid.org",
         }
         if isinstance(contr_el, Person):
             contr_dict["nameType"] = "Personal"
