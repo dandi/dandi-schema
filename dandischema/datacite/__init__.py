@@ -1,3 +1,9 @@
+"""
+Interfaces and data to interact with DataCite metadata
+"""
+
+# TODO: RF into submodules for some next "minor" taking care not to break
+
 from copy import deepcopy
 import re
 from typing import Any, Dict, Union
