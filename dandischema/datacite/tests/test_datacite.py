@@ -441,24 +441,24 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     {"description": "testing", "descriptionType": "Abstract"}
                 ],
                 "doi": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
-                "identifiers": [
+                "alternateIdentifiers": [
                     {
-                        "identifier": (
+                        "alternateIdentifier": (
                             f"https://doi.org/10.80507"
                             f"/dandi.{dandi_id_noprefix}/{version}"
                         ),
-                        "identifierType": "DOI",
+                        "alternateIdentifierType": "DOI",
                     },
                     {
-                        "identifier": f"https://identifiers.org/{dandi_id}/{version}",
-                        "identifierType": "URL",
+                        "alternateIdentifier": f"https://identifiers.org/{dandi_id}/{version}",
+                        "alternateIdentifierType": "URL",
                     },
                     {
-                        "identifier": (
+                        "alternateIdentifier": (
                             f"https://dandiarchive.org/dandiset"
                             f"/{dandi_id_noprefix}/{version}"
                         ),
-                        "identifierType": "URL",
+                        "alternateIdentifierType": "URL",
                     },
                 ],
                 "publicationYear": "1970",
