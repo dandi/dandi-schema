@@ -252,7 +252,7 @@ def to_datacite(
 
 
 @lru_cache()
-def _get_datacite_schema(version_id: str = "datacite-4.3-17-gaa5db56") -> dict:
+def _get_datacite_schema(version_id: str = "datacite-4.3-17-gaa5db56") -> Any:
     """Load datacite schema based on the version id provided."""
     schema_folder = Path(__file__).parent / "schema"
     return json.loads((schema_folder / f"{version_id}.json").read_text())
