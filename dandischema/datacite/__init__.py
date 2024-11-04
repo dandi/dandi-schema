@@ -5,13 +5,16 @@ Interfaces and data to interact with DataCite metadata
 # TODO: RF into submodules for some next "minor" taking care not to break
 
 from copy import deepcopy
+from functools import lru_cache
+import json
+from pathlib import Path
 import re
 from typing import Any, Dict, Union
 
 from jsonschema import Draft7Validator
 import requests
 
-from .models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
+from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -248,15 +251,11 @@ def to_datacite(
     return datacite_dict
 
 
-def _get_datacite_schema() -> Any:
-    sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/"
-        "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"
-        "source/json/kernel-4.3/datacite_4.3_schema.json"
-    )
-    sr.raise_for_status()
-    schema = sr.json()
-    return schema
+@lru_cache()
+def _get_datacite_schema(version_id: str = "datacite-4.3-17-gaa5db56") -> dict:
+    """Load datacite schema based on the version id provided."""
+    schema_folder = Path(__file__).parent / "schema"
+    return json.loads((schema_folder / f"{version_id}.json").read_text())
 
 
 def validate_datacite(datacite_dict: dict) -> None:
