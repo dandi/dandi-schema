@@ -4,7 +4,18 @@ from datetime import date, datetime
 from enum import Enum
 import os
 import re
-from typing import Any, Dict, List, Literal, Optional, Sequence, Type, TypeVar, Union
+from typing import (
+    Annotated,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+)
 from warnings import warn
 
 from pydantic import (
@@ -23,9 +34,6 @@ from pydantic import (
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
-from typing_extensions import (
-    Annotated,  # TODO: import from `typing` when Python 3.8 support is dropped
-)
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
 from .consts import DANDI_SCHEMA_VERSION
@@ -801,6 +809,11 @@ nwb_standard = StandardsType(
 bids_standard = StandardsType(
     name="Brain Imaging Data Structure (BIDS)",
     identifier="RRID:SCR_016124",
+).model_dump(mode="json", exclude_none=True)
+
+ome_ngff_standard = StandardsType(
+    name="OME/NGFF Standard",
+    identifier="DOI:10.25504/FAIRsharing.9af712",
 ).model_dump(mode="json", exclude_none=True)
 
 
