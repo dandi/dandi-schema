@@ -388,7 +388,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     if "nwb" in assetmeta["encodingFormat"]:
         add_if_missing(models.nwb_standard)
     # TODO: RF assumption that any .json implies BIDS
-    if set(Path(assetmeta["path"]).suffixes).intersection((".json", ".nii")):
+    if Path(assetmeta["path"]).name == "dataset_description.json":
         add_if_missing(models.bids_standard)
     if Path(assetmeta["path"]).suffixes == [".ome", ".zarr"]:
         add_if_missing(models.ome_ngff_standard)
