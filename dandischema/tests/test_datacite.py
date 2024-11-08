@@ -178,7 +178,16 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     1,
                     {"description": "testing", "descriptionType": "Abstract"},
                 ),
-                "publisher": (None, "DANDI Archive"),
+                "publisher": (
+                    None,
+                    {
+                        "name": "DANDI Archive",
+                        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                        "publisherIdentifierScheme": "RRID",
+                        "schemeUri": "https://scicrunch.org/resolver/",
+                        "lang": "en",
+                    },
+                ),
                 "rightsList": (
                     1,
                     {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC_BY_40"},
@@ -451,7 +460,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "givenName": "A_first",
                         "name": "A_last, A_first",
                         "nameType": "Personal",
-                        "schemeURI": "orcid.org",
+                        "schemeUri": "orcid.org",
                     }
                 ],
                 "creators": [
@@ -462,40 +471,46 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "givenName": "A_first",
                         "name": "A_last, A_first",
                         "nameType": "Personal",
-                        "schemeURI": "orcid.org",
+                        "schemeUri": "orcid.org",
                     }
                 ],
                 "descriptions": [
                     {"description": "testing", "descriptionType": "Abstract"}
                 ],
                 "doi": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
-                "identifiers": [
+                "alternateIdentifiers": [
                     {
-                        "identifier": (
+                        "alternateIdentifier": (
                             f"https://doi.org/10.80507"
                             f"/dandi.{dandi_id_noprefix}/{version}"
                         ),
-                        "identifierType": "DOI",
+                        "alternateIdentifierType": "DOI",
                     },
                     {
-                        "identifier": f"https://identifiers.org/{dandi_id}/{version}",
-                        "identifierType": "URL",
+                        "alternateIdentifier": f"https://identifiers.org/{dandi_id}/{version}",
+                        "alternateIdentifierType": "URL",
                     },
                     {
-                        "identifier": (
+                        "alternateIdentifier": (
                             f"https://dandiarchive.org/dandiset"
                             f"/{dandi_id_noprefix}/{version}"
                         ),
-                        "identifierType": "URL",
+                        "alternateIdentifierType": "URL",
                     },
                 ],
                 "publicationYear": "1970",
-                "publisher": "DANDI Archive",
+                "publisher": {
+                    "name": "DANDI Archive",
+                    "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                    "publisherIdentifierScheme": "RRID",
+                    "schemeUri": "https://scicrunch.org/resolver/",
+                    "lang": "en",
+                },
                 "rightsList": [
                     {
                         "rightsIdentifier": "CC_BY_40",
                         "rightsIdentifierScheme": "SPDX",
-                        "schemeURI": "https://spdx.org/licenses/",
+                        "schemeUri": "https://spdx.org/licenses/",
                     }
                 ],
                 "schemaVersion": "http://datacite.org/schema/kernel-4",
