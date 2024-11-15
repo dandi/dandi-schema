@@ -76,6 +76,20 @@ def diff_models(model1: M, model2: M) -> None:
             print(f"{field} is different")
 
 
+def get_dict_without_context(d: Any) -> Any:
+    """
+    If a given object is a dictionary, return a copy of it without the
+    `@context` key. Otherwise, return the input object as is.
+
+    :param d: The given object
+    :return: If the object is a dictionary, a copy of it without the `@context` key;
+             otherwise, the input object as is.
+    """
+    if isinstance(d, dict):
+        return {k: v for k, v in d.items() if k != "@context"}
+    return d
+
+
 class AccessType(Enum):
     """An enumeration of access status options"""
 
@@ -1683,6 +1697,10 @@ class Dandiset(CommonModel):
         "nskey": "dandi",
     }
 
+    # Model validator to remove the `"@context"` key from data instance before
+    # "base" validation is performed.
+    _remove_context_key = model_validator(mode="before")(get_dict_without_context)
+
 
 class BareAsset(CommonModel):
     """Metadata used to describe an asset anywhere (local or server).
@@ -1814,6 +1832,10 @@ class Asset(BareAsset):
     contentUrl: List[AnyHttpUrl] = Field(
         json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
+
+    # Model validator to remove the `"@context"` key from data instance before
+    # "base" validation is performed.
+    _remove_context_key = model_validator(mode="before")(get_dict_without_context)
 
 
 class Publishable(DandiBaseModel):
