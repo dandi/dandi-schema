@@ -32,7 +32,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic.json_schema import JsonSchemaValue
+from pydantic.json_schema import JsonDict, JsonSchemaValue, JsonValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
@@ -88,6 +88,33 @@ def get_dict_without_context(d: Any) -> Any:
     if isinstance(d, dict):
         return {k: v for k, v in d.items() if k != "@context"}
     return d
+
+
+def add_context(json_schema: JsonDict) -> None:
+    """
+    Add the `@context` key to the given JSON schema as a required key represented as a
+    dictionary.
+
+    :param json_schema: The dictionary representing the JSON schema
+
+    raises: ValueError if the `@context` key is already present in the given dictionary
+    """
+    context_key = "@context"
+    context_key_title = "@Context"
+    properties: JsonDict = json_schema.get("properties", {})
+    required: list[JsonValue] = json_schema.get("required", [])
+
+    if context_key in properties or context_key in required:
+        msg = f"The '{context_key}' key is already present in the given JSON schema."
+        raise ValueError(msg)
+
+    properties[context_key] = {
+        "format": "uri",
+        "minLength": 1,
+        "title": context_key_title,
+        "type": "string",
+    }
+    required.append(context_key)
 
 
 class AccessType(Enum):
@@ -1601,8 +1628,6 @@ class CommonModel(DandiBaseModel):
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
 
-    model_config = ConfigDict(extra="allow")
-
     @field_validator("contributor")
     @classmethod
     def contributor_musthave_contact(
@@ -1700,6 +1725,8 @@ class Dandiset(CommonModel):
     # Model validator to remove the `"@context"` key from data instance before
     # "base" validation is performed.
     _remove_context_key = model_validator(mode="before")(get_dict_without_context)
+
+    model_config = ConfigDict(extra="allow", json_schema_extra=add_context)
 
 
 class BareAsset(CommonModel):
@@ -1836,6 +1863,8 @@ class Asset(BareAsset):
     # Model validator to remove the `"@context"` key from data instance before
     # "base" validation is performed.
     _remove_context_key = model_validator(mode="before")(get_dict_without_context)
+
+    model_config = ConfigDict(json_schema_extra=add_context)
 
 
 class Publishable(DandiBaseModel):
