@@ -613,7 +613,7 @@ class PropertyValue(DandiBaseModel):
     maxValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
     minValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
     unitText: Optional[str] = Field(None, json_schema_extra={"nskey": "schema"})
-    value: Union[Any, List[Any]] = Field(
+    value: Any = Field(
         None,
         validate_default=True,
         json_schema_extra={"nskey": "schema"},
@@ -635,7 +635,7 @@ class PropertyValue(DandiBaseModel):
 
     @field_validator("value")
     @classmethod
-    def ensure_value(cls, val: Union[Any, List[Any]]) -> Union[Any, List[Any]]:
+    def ensure_value(cls, val: Any) -> Any:
         if not val:
             raise ValueError(
                 "The value field of a PropertyValue cannot be None or empty."
@@ -1276,7 +1276,7 @@ class PublishActivity(Activity):
 
 
 class Locus(DandiBaseModel):
-    identifier: Union[Identifier, List[Identifier]] = Field(
+    identifier: Identifier = Field(
         description="Identifier for genotyping locus.",
         json_schema_extra={"nskey": "schema"},
     )
@@ -1288,7 +1288,7 @@ class Locus(DandiBaseModel):
 
 
 class Allele(DandiBaseModel):
-    identifier: Union[Identifier, List[Identifier]] = Field(
+    identifier: Identifier = Field(
         description="Identifier for genotyping allele.",
         json_schema_extra={"nskey": "schema"},
     )
@@ -1387,7 +1387,7 @@ class Participant(DandiBaseModel):
         "available. (e.g. from OBI)",
         json_schema_extra={"nskey": "dandi"},
     )
-    genotype: Optional[Union[List[GenotypeInfo], Identifier]] = Field(
+    genotype: Optional[Union[GenotypeInfo, Identifier]] = Field(
         None,
         description="Genotype descriptor of participant or subject if available",
         json_schema_extra={"nskey": "dandi"},
