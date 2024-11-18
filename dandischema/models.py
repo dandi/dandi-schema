@@ -648,6 +648,8 @@ class DandiBaseModel(BaseModel):
 
         return schema
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class PropertyValue(DandiBaseModel):
     maxValue: Optional[float] = Field(None, json_schema_extra={"nskey": "schema"})
@@ -1726,7 +1728,7 @@ class Dandiset(CommonModel):
     # "base" validation is performed.
     _remove_context_key = model_validator(mode="before")(get_dict_without_context)
 
-    model_config = ConfigDict(extra="allow", json_schema_extra=add_context)
+    model_config = ConfigDict(json_schema_extra=add_context)
 
 
 class BareAsset(CommonModel):
