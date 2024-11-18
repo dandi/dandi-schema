@@ -567,6 +567,7 @@ class DandiBaseModel(BaseModel):
             if value.get("title") is None or value["title"] == prop.title():
                 value["title"] = name2title(prop)
             if re.match("\\^https?://", value.get("pattern", "")):
+                # triggers only for ROR in identifier
                 value["format"] = "uri"
             if value.get("format", None) == "uri":
                 value["maxLength"] = 1000
@@ -623,7 +624,7 @@ class PropertyValue(DandiBaseModel):
     )  # Note: recursive (circular or not)
     propertyID: Optional[Union[IdentifierType, AnyHttpUrl]] = Field(
         None,
-        description="A commonly used identifier for"
+        description="A commonly used identifier for "
         "the characteristic represented by the property. "
         "For example, a known prefix like DOI or a full URL.",
         json_schema_extra={"nskey": "schema"},
