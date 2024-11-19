@@ -116,6 +116,11 @@ def add_context(json_schema: dict) -> None:
     }
     required.append(context_key)
 
+    # Update the schema
+    # This is needed to handle the case in which the keys are newly created
+    json_schema["properties"] = properties
+    json_schema["required"] = required
+
 
 class AccessType(Enum):
     """An enumeration of access status options"""
