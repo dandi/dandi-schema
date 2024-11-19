@@ -15,6 +15,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 from warnings import warn
 
@@ -32,7 +33,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic.json_schema import JsonDict, JsonSchemaValue, JsonValue
+from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
@@ -90,19 +91,18 @@ def get_dict_without_context(d: Any) -> Any:
     return d
 
 
-def add_context(json_schema: JsonDict) -> None:
+def add_context(json_schema: dict) -> None:
     """
-    Add the `@context` key to the given JSON schema as a required key represented as a
-    dictionary.
+    Add the `@context` key to the given JSON schema as a required key
 
     :param json_schema: The dictionary representing the JSON schema
 
-    raises: ValueError if the `@context` key is already present in the given dictionary
+    raises: ValueError if the `@context` key is already present in the given schema
     """
     context_key = "@context"
     context_key_title = "@Context"
-    properties: JsonDict = json_schema.get("properties", {})
-    required: list[JsonValue] = json_schema.get("required", [])
+    properties = cast(dict, json_schema.get("properties", {}))
+    required = cast(list, json_schema.get("required", []))
 
     if context_key in properties or context_key in required:
         msg = f"The '{context_key}' key is already present in the given JSON schema."
