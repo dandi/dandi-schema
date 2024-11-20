@@ -311,7 +311,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                         "name": "A_last, A_first",
                         "nameIdentifiers": [
                             {
-                                "nameIdentifier": "0000-0001-0000-0000",
+                                "nameIdentifier": "https://orcid.org/0000-0001-0000-0000",
                                 "nameIdentifierScheme": "ORCID",
                                 "schemeUri": "https://orcid.org/",
                             }
@@ -325,7 +325,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                         "contributorType": "Other",
                         "nameIdentifiers": [
                             {
-                                "nameIdentifier": "0000-0001-0000-0000",
+                                "nameIdentifier": "https://orcid.org/0000-0001-0000-0000",
                                 "nameIdentifierScheme": "ORCID",
                                 "schemeUri": "https://orcid.org/",
                             }
