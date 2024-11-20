@@ -452,13 +452,6 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                 "doi": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
                 "alternateIdentifiers": [
                     {
-                        "alternateIdentifier": (
-                            f"https://doi.org/10.80507"
-                            f"/dandi.{dandi_id_noprefix}/{version}"
-                        ),
-                        "alternateIdentifierType": "DOI",
-                    },
-                    {
                         "alternateIdentifier": f"https://identifiers.org/{dandi_id}/{version}",
                         "alternateIdentifierType": "URL",
                     },

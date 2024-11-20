@@ -79,11 +79,6 @@ def to_datacite(
         attributes["event"] = "publish"
 
     attributes["alternateIdentifiers"] = [
-        # TODO: the first element is ignored, not sure how to fix it...
-        {
-            "alternateIdentifier": f"https://doi.org/{meta.doi}",
-            "alternateIdentifierType": "DOI",
-        },
         {
             "alternateIdentifier": f"https://identifiers.org/{meta.id}",
             "alternateIdentifierType": "URL",
