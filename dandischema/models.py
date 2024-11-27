@@ -114,7 +114,7 @@ def add_context(json_schema: dict) -> None:
         "title": context_key_title,
         "type": "string",
     }
-    required.append(context_key)
+    # required.append(context_key)
 
     # Update the schema
     # This is needed to handle the case in which the keys are newly created
