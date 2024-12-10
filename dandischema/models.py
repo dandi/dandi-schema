@@ -946,10 +946,10 @@ class Person(Contributor):
         json_schema_extra={"nskey": "schema"},
     )
     name: str = Field(
+        title="Lovelace, Augusta Ada",
         description="Use the format: familyname, given names ...",
         pattern=NAME_PATTERN,
         json_schema_extra={"nskey": "schema"},
-        examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )
     affiliation: Optional[List[Affiliation]] = Field(
         None,
