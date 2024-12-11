@@ -11,7 +11,7 @@ ALLOWED_INPUT_SCHEMAS = [
     "0.6.5",
     "0.6.6",
     "0.6.7",
-    "0.6.8"
+    "0.6.8",
 ]
 
 # ATM we allow only for a single target version which is current
