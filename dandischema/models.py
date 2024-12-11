@@ -946,7 +946,7 @@ class Person(Contributor):
         json_schema_extra={"nskey": "schema"},
     )
     name: str = Field(
-        title="Lovelace, Augusta Ada",
+        title="Use Last, First. Example: Lovelace, Augusta Ada",
         description="Use the format: familyname, given names ...",
         pattern=NAME_PATTERN,
         json_schema_extra={"nskey": "schema"},
