@@ -1,3 +1,36 @@
+# 0.11.0 (Tue Jan 07 2025)
+
+#### 🚀 Enhancement
+
+- Upgrade to datacite v4.5 serialization from inveniosoftware [#261](https://github.com/dandi/dandi-schema/pull/261) ([@yarikoptic](https://github.com/yarikoptic))
+- Add "version" to datacite record and bundle datacite json serializations [#260](https://github.com/dandi/dandi-schema/pull/260) ([@yarikoptic](https://github.com/yarikoptic))
+- Drop Python 3.8 support (remove typing_extensions from depends) [#262](https://github.com/dandi/dandi-schema/pull/262) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🐛 Bug Fix
+
+- Use `title` in place of `examples` [#271](https://github.com/dandi/dandi-schema/pull/271) ([@waxlamp](https://github.com/waxlamp) [@satra](https://github.com/satra) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- RF: detect BIDS based on having dataset_description.json [#263](https://github.com/dandi/dandi-schema/pull/263) ([@yarikoptic](https://github.com/yarikoptic))
+- Add support for detection and addition of ome/ngff "standard" into assets summary [#252](https://github.com/dandi/dandi-schema/pull/252) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🏠 Internal
+
+- [gh-actions](deps): Bump codecov/codecov-action from 4 to 5 [#267](https://github.com/dandi/dandi-schema/pull/267) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- [pre-commit.ci] pre-commit autoupdate (black 24.8.0 → 24.10.0; pre-commit-hooks: v4.6.0 → v5.0.0) [#253](https://github.com/dandi/dandi-schema/pull/253) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 📝 Documentation
+
+- doc: A comment on current identification of URI and missing space into a description string [#265](https://github.com/dandi/dandi-schema/pull/265) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 5
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Roni Choudhury ([@waxlamp](https://github.com/waxlamp))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.10.4 (Thu Sep 05 2024)
 
 #### 🐛 Bug Fix
