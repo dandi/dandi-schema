@@ -35,6 +35,6 @@ out of the Pydantic models.
 ## Resources
 
 * To learn how to interact with the DANDI archive,
-see [the handbook](https://www.dandiarchive.org/handbook/).
+see the [DANDI Docs](https://docs.dandiarchive.org).
 * To file a feature request or bug report, go to https://github.com/dandi/helpdesk/issues/new/choose.
 * For all other issues, contact the DANDI team: help@dandiarchive.org.
