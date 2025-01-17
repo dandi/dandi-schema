@@ -453,6 +453,7 @@ def test_dantimeta_1() -> None:
     meta_dict["version"] = "0.0.0"
     meta_dict.update(_basic_publishmeta(dandi_id="999999"))
     meta_dict["assetsSummary"].update(**{"numberOfBytes": 1, "numberOfFiles": 1})
+    meta_dict["releaseNotes"] = "Releasing during testing"
     PublishedDandiset(**meta_dict)
 
 
