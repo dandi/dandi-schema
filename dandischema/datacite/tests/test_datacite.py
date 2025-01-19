@@ -1,17 +1,17 @@
+from copy import deepcopy
 import json
 import os
 from pathlib import Path
 import random
 from typing import Any, Dict, Tuple
-from copy import deepcopy
 
 from jsonschema import Draft7Validator
 import pytest
 import requests
 
 from dandischema.models import (
-    LicenseType,
     Dandiset,
+    LicenseType,
     PublishedDandiset,
     RelationType,
     ResourceType,
@@ -62,7 +62,6 @@ def datacite_update(datacite: dict, doi: str) -> None:
     rg.raise_for_status()
 
 
-
 def _clean_doi(doi: str) -> None:
     """Remove doi. Status code is ignored"""
     rq = requests.delete(
@@ -72,7 +71,10 @@ def _clean_doi(doi: str) -> None:
     print("\n in _clean_doi", doi, rq.status_code)
     return rq.status_code
 
-@pytest.mark.skip(reason="to not produced too many dois, not sure if we want to keep it as a test")
+
+@pytest.mark.skip(
+    reason="to not produced too many dois, not sure if we want to keep it as a test"
+)
 def test_datacite_lifecycle() -> None:
     """testing the lifecycle of a public dandiset and doi (from draft to published)"""
 
@@ -81,16 +83,15 @@ def test_datacite_lifecycle() -> None:
     while not doi_available:
         dandi_id = f"000{random.randrange(500, 999)}"
         print(f"searching for available doi, trying dandi_id: {dandi_id}")
-        doi_root = f'10.80507/dandi.{dandi_id}'
+        doi_root = f"10.80507/dandi.{dandi_id}"
         if _clean_doi(doi_root) != 405:
             doi_available = True
             print(f"found available doi, dandi_id: {dandi_id}")
 
     dandi_id_prefix = f"DANDI:{dandi_id}"
     # creating the main/root doi and url
-    doi_root = f'10.80507/dandi.{dandi_id}'
+    doi_root = f"10.80507/dandi.{dandi_id}"
     url_root = f"https://dandiarchive.org/dandiset/{dandi_id}"
-
 
     # creating draft dandiset with minimal metadata
     version = "draft"
@@ -119,35 +120,35 @@ def test_datacite_lifecycle() -> None:
             "numberOfFiles": 1,
         },
     }
-    #in addition to minimal metadata, we need to add doi and url if we want to create draft doi
+    # in addition to minimal metadata, we need to add doi and url if we want to create draft doi
     meta_dict["doi"] = doi_root
     meta_dict["url"] = url_root
     # creating draft dandiset
     dset = Dandiset(**meta_dict)
 
-     # creating datacite object and posting the main doi entry (should be draft)
+    # creating datacite object and posting the main doi entry (should be draft)
     datacite = to_datacite(dset)
     datacite_post(datacite, doi_root, clean=False)
-
 
     # updating the draft but not enough to create PublishDandiset
     meta_dict["description"] = "testing lifecycle of a dataset and doi: new draft"
     # the dandi workflow should check if we cna create a datacite that can be validated and published
-    #try: datacite_new = to_datacite(meta_dict, validate=True, publish=True)
+    # try: datacite_new = to_datacite(meta_dict, validate=True, publish=True)
     # if the metadata is not enough to create a valid datacite, we should update the draft doi
     datacite_new = to_datacite(meta_dict)
     datacite_update(datacite_new, doi_root)
 
-
     # creating v1.0.0
     version = "1.0.0"
     # adding contributors and updating description
-    meta_dict["contributor"].append({
-                "name": "B_last, B_first",
-                "email": "nemo@example.com",
-                "roleName": [RoleType("dcite:DataCurator")],
-                "schemaKey": "Person",
-            })
+    meta_dict["contributor"].append(
+        {
+            "name": "B_last, B_first",
+            "email": "nemo@example.com",
+            "roleName": [RoleType("dcite:DataCurator")],
+            "schemaKey": "Person",
+        }
+    )
     meta_dict["description"] = "testing lifecycle of a dataset and doi: v1.0.0"
     # adding mandatory metadata for PublishDandiset
     publish_meta = {
@@ -172,7 +173,7 @@ def test_datacite_lifecycle() -> None:
     meta_dict.update(publish_meta)
     # updating the version, id etc.
     meta_dict["version"] = version
-    meta_dict["id"] =f"{dandi_id_prefix}/{version}"
+    meta_dict["id"] = f"{dandi_id_prefix}/{version}"
     meta_dict["doi"] = f"{doi_root}/{version}"
     meta_dict["url"] = f"https://dandiarchive.org/dandiset/{dandi_id}/{version}"
     # creating new published dandiset
@@ -188,13 +189,12 @@ def test_datacite_lifecycle() -> None:
     # updating the doi (should change from draft to findable)
     datacite_update(datacite, doi_root)
 
-
     # creating v2.0.0
     version = "2.0.0"
     # updating description
     meta_dict["description"] = "testing lifecycle of a dataset and doi: v2.0.0"
     meta_dict["version"] = version
-    meta_dict["id"] =f"{dandi_id_prefix}/{version}"
+    meta_dict["id"] = f"{dandi_id_prefix}/{version}"
     meta_dict["doi"] = f"{doi_root}/{version}"
     meta_dict["url"] = f"https://dandiarchive.org/dandiset/{dandi_id}/{version}"
     # creating new published dandiset
@@ -209,7 +209,6 @@ def test_datacite_lifecycle() -> None:
     datacite["data"]["attributes"]["url"] = url_root
     # updating the findable doi
     datacite_update(datacite, doi_root)
-
 
 
 @pytest.fixture(scope="module")
