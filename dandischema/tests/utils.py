@@ -28,7 +28,7 @@ def _basic_publishmeta(
                     "id": "urn:uuid:9267d2e1-4a37-463b-9b10-dad3c66d8eaa",
                     "identifier": "RRID:SCR_017571",
                     "name": "DANDI API",
-                    "version": "0.1.0",
+                    "version": version,
                     "schemaKey": "Software",
                 }
             ],
