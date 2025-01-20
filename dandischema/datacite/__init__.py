@@ -78,16 +78,14 @@ def to_datacite(
     if publish:
         attributes["event"] = "publish"
 
-    attributes["identifiers"] = [
-        # TODO: the first element is ignored, not sure how to fix it...
-        {"identifier": f"https://doi.org/{meta.doi}", "identifierType": "DOI"},
+    attributes["alternateIdentifiers"] = [
         {
-            "identifier": f"https://identifiers.org/{meta.id}",
-            "identifierType": "URL",
+            "alternateIdentifier": f"https://identifiers.org/{meta.id}",
+            "alternateIdentifierType": "URL",
         },
         {
-            "identifier": str(meta.url),
-            "identifierType": "URL",
+            "alternateIdentifier": str(meta.url),
+            "alternateIdentifierType": "URL",
         },
     ]
 
@@ -98,7 +96,13 @@ def to_datacite(
     attributes["descriptions"] = [
         {"description": meta.description, "descriptionType": "Abstract"}
     ]
-    attributes["publisher"] = "DANDI Archive"
+    attributes["publisher"] = {
+        "name": "DANDI Archive",
+        "schemeUri": "https://scicrunch.org/resolver/",
+        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+        "publisherIdentifierScheme": "RRID",
+        "lang": "en",
+    }
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
@@ -110,7 +114,7 @@ def to_datacite(
     # assuming that all licenses are from SPDX?
     attributes["rightsList"] = [
         {
-            "schemeURI": "https://spdx.org/licenses/",
+            "schemeUri": "https://spdx.org/licenses/",
             "rightsIdentifierScheme": "SPDX",
             "rightsIdentifier": el.name,
         }
@@ -147,7 +151,7 @@ def to_datacite(
         contr_dict: Dict[str, Any] = {
             "name": contr_el.name,
             "contributorName": contr_el.name,
-            "schemeURI": "orcid.org",
+            "schemeUri": "orcid.org",
         }
         if isinstance(contr_el, Person):
             contr_dict["nameType"] = "Personal"
@@ -163,7 +167,7 @@ def to_datacite(
                 contr_dict["affiliation"] = []
             if getattr(contr_el, "identifier"):
                 orcid_dict = {
-                    "nameIdentifier": contr_el.identifier,
+                    "nameIdentifier": f"https://orcid.org/{contr_el.identifier}",
                     "nameIdentifierScheme": "ORCID",
                     "schemeUri": "https://orcid.org/",
                 }
@@ -252,7 +256,7 @@ def to_datacite(
 
 
 @lru_cache()
-def _get_datacite_schema(version_id: str = "datacite-4.3-17-gaa5db56") -> Any:
+def _get_datacite_schema(version_id: str = "inveniosoftware-4.5-81-g160250d") -> Any:
     """Load datacite schema based on the version id provided."""
     schema_folder = Path(__file__).parent / "schema"
     return json.loads((schema_folder / f"{version_id}.json").read_text())
