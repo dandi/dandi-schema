@@ -93,7 +93,7 @@ def get_dict_without_context(d: Any) -> Any:
 
 def add_context(json_schema: dict) -> None:
     """
-    Add the `@context` key to the given JSON schema as a required key
+    Add the `@context` key to the given JSON schema
 
     :param json_schema: The dictionary representing the JSON schema
 
@@ -114,7 +114,7 @@ def add_context(json_schema: dict) -> None:
         "title": context_key_title,
         "type": "string",
     }
-    # required.append(context_key)
+    # required.append(context_key)  # Uncomment this line to make `@context` required
 
     # Update the schema
     # This is needed to handle the case in which the keys are newly created
