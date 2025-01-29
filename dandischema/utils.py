@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from typing import Any, Iterator, List, Union, get_args, get_origin
 
+from jsonschema.protocols import Validator as JsonschemaValidator
+from jsonschema.validators import validator_for
 from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode, JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
 
@@ -136,3 +138,41 @@ def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> 
     if field != "extension":
         value = value.replace(".", sub)
     return value
+
+
+def jsonschema_validator(
+    schema: dict[str, Any],
+    *,
+    check_format: bool,
+    default_cls: type[JsonschemaValidator] | None = None,
+) -> JsonschemaValidator:
+    """
+    Create a JSON schema validator appropriate for validating instances against a given
+    schema
+
+    :param schema: The JSON schema to validate against
+    :param check_format: Indicates whether to check the format against format
+        specifications in the schema
+    :param default_cls: The default JSON schema validator class to use to create the
+        validator should the appropriate validator class cannot be determined based on
+        the schema (by assessing the `$schema` property). If `None`, the class
+        representing the latest JSON schema draft supported by the `jsonschema` package.
+    :return: The JSON schema validator
+    :raises jsonschema.exceptions.SchemaError: If the JSON schema is invalid
+    """
+    # Retrieve appropriate validator class for validating the given schema
+    validator_cls: type[JsonschemaValidator] = (
+        validator_for(schema, default_cls)
+        if default_cls is not None
+        else validator_for(schema)
+    )
+
+    # Ensure the schema is valid
+    validator_cls.check_schema(schema)
+
+    if check_format:
+        # Return a validator with format checking enabled
+        return validator_cls(schema, format_checker=validator_cls.FORMAT_CHECKER)
+
+    # Return a validator with format checking disabled
+    return validator_cls(schema)
