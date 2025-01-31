@@ -1,7 +1,9 @@
+from contextlib import nullcontext
 from hashlib import md5, sha256
 import json
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence, Set
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -11,6 +13,7 @@ from ..exceptions import JsonschemaValidationError, PydanticValidationError
 from ..metadata import (
     _validate_asset_json,
     _validate_dandiset_json,
+    _validate_obj_json,
     aggregate_assets_summary,
     migrate,
     publish_model_schemata,
@@ -666,3 +669,131 @@ def test_aggregation_bids() -> None:
         sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
         == 1
     )  # only a single entry so we do not duplicate them
+
+
+class TestValidateObjJson:
+    """
+    Tests for `_validate_obj_json()`
+    """
+
+    @pytest.fixture
+    def dummy_schema(self) -> dict:
+        """Returns a dummy JSON schema."""
+        return {
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+            "required": ["name"],
+        }
+
+    @pytest.fixture
+    def dummy_instance(self) -> dict:
+        """Returns a dummy instance"""
+        return {"name": "Example"}
+
+    def test_valid_obj_no_errors(
+        self, monkeypatch: pytest.MonkeyPatch, dummy_schema: dict, dummy_instance: dict
+    ) -> None:
+        """
+        Test that `_validate_obj_json` does not raise when `validate_json` has no errors
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """Simulate successful validation with no exceptions."""
+            return  # No error raised
+
+        # Patch the validate_json function used inside `_validate_obj_json`
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # `_validate_obj_json` should succeed without raising an exception
+        _validate_obj_json(dummy_instance, dummy_schema)
+
+    def test_raises_error_without_missing_ok(
+        self, monkeypatch: pytest.MonkeyPatch, dummy_schema: dict, dummy_instance: dict
+    ) -> None:
+        """
+        Test that `_validate_obj_json` forwards JsonschemaValidationError
+        when `missing_ok=False`.
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """Simulate validation error."""
+            # Create a mock error that says a field is invalid
+            raise JsonschemaValidationError(
+                errors=[MagicMock(message="`name` is a required property")]
+            )
+
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # Since `missing_ok=False`, any error should be re-raised.
+        with pytest.raises(JsonschemaValidationError) as excinfo:
+            _validate_obj_json(dummy_instance, dummy_schema, missing_ok=False)
+        assert "`name` is a required property" == excinfo.value.errors[0].message
+
+    @pytest.mark.parametrize(
+        ("validation_errs", "expect_raises", "expected_remaining_errs_count"),
+        [
+            pytest.param(
+                [
+                    MagicMock(message="`name` is a required property"),
+                    MagicMock(message="`title` is a required property ..."),
+                ],
+                False,
+                None,
+                id="no_remaining_errors",
+            ),
+            pytest.param(
+                [
+                    MagicMock(message="`name` is a required property"),
+                    MagicMock(message="Some other validation error"),
+                ],
+                True,
+                1,
+                id="one_remaining_error",
+            ),
+        ],
+    )
+    def test_raises_only_nonmissing_errors_with_missing_ok(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_schema: dict,
+        dummy_instance: dict,
+        validation_errs: list[MagicMock],
+        expect_raises: bool,
+        expected_remaining_errs_count: Optional[int],
+    ) -> None:
+        """
+        Test that `_validate_obj_json` filters out 'is a required property' errors
+        when `missing_ok=True`.
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """
+            Simulate multiple validation errors, including missing required property.
+            """
+            raise JsonschemaValidationError(
+                errors=validation_errs  # type: ignore[arg-type]
+            )
+
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # If expect_raises is True, we use pytest.raises(ValidationError)
+        # Otherwise, we enter a no-op context
+        ctx = (
+            pytest.raises(JsonschemaValidationError) if expect_raises else nullcontext()
+        )
+
+        with ctx as excinfo:
+            _validate_obj_json(dummy_instance, dummy_schema, missing_ok=True)
+
+        if excinfo is not None:
+            filtered_errors = excinfo.value.errors
+
+            # We expect the "required property" error to be filtered out,
+            # so we should only see the "Some other validation error".
+            assert len(filtered_errors) == expected_remaining_errs_count
