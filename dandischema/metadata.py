@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_args
 
-import jsonschema
 import pydantic
 import requests
 
@@ -23,6 +22,7 @@ from .utils import (
     _ensure_newline,
     sanitize_value,
     strip_top_level_optional,
+    validate_json,
     version2tuple,
 )
 
@@ -147,27 +147,35 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     return vdir
 
 
-def _validate_obj_json(data: dict, schema: dict, missing_ok: bool = False) -> None:
-    validator: Union[jsonschema.Draft202012Validator, jsonschema.Draft7Validator]
+def _validate_obj_json(
+    instance: Any, schema: dict[str, Any], *, missing_ok: bool = False
+) -> None:
+    """
+    Validate a metadata instance of a **DANDI model** against the JSON schema of the
+    model with an option to filter out errors related to missing required properties
 
-    if version2tuple(data["schemaVersion"]) >= version2tuple("0.6.5"):
-        # schema version 0.7.0 and above is produced with Pydantic V2
-        # which is compliant with JSON Schema Draft 2020-12
-        validator = jsonschema.Draft202012Validator(
-            schema, format_checker=jsonschema.Draft202012Validator.FORMAT_CHECKER
-        )
-    else:
-        validator = jsonschema.Draft7Validator(
-            schema, format_checker=jsonschema.Draft7Validator.FORMAT_CHECKER
-        )
-
-    error_list = []
-    for error in sorted(validator.iter_errors(data), key=str):
-        if missing_ok and "is a required property" in error.message:
-            continue
-        error_list.append(error)
-    if error_list:
-        raise JsonschemaValidationError(error_list)
+    :param instance: The metadata instance to validate
+    :param schema: The JSON schema of the model
+    :param missing_ok: Indicates whether to filter out errors related to missing
+        required properties
+    :raises JsonschemaValidationError: If the metadata instance is invalid, and there
+        are errors detected in the validation, optionally discounting errors
+        related to missing required properties. An instance of this exception containing
+        a list of `jsonschema.exceptions.ValidationError` instances representing all the
+        (remaining) errors detected in the validation
+    """
+    try:
+        validate_json(instance, schema)
+    except JsonschemaValidationError as e:
+        if missing_ok:
+            remaining_errs = [
+                err for err in e.errors if "is a required property" not in err.message
+            ]
+            # Raise an exception only if there are errors left after filtering
+            if remaining_errs:
+                raise JsonschemaValidationError(remaining_errs) from e
+        else:
+            raise e
 
 
 def _validate_dandiset_json(data: dict, schema_dir: Union[str, Path]) -> None:
@@ -250,7 +258,7 @@ def validate(
                     "using json schema for older versions"
                 )
             schema = _get_schema(schema_version, schema_map[schema_key])
-        _validate_obj_json(obj, schema, missing_ok)
+        _validate_obj_json(obj, schema, missing_ok=missing_ok)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
