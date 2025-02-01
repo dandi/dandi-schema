@@ -265,45 +265,128 @@ def validate(
 
 def migrate(
     obj: dict,
-    to_version: Optional[str] = DANDI_SCHEMA_VERSION,
+    to_version: str = DANDI_SCHEMA_VERSION,
     skip_validation: bool = False,
 ) -> dict:
-    """Migrate dandiset metadata object to new schema"""
-    obj = deepcopy(obj)
+    """
+    Migrate a Dandiset metadata instance to a newer DANDI schema version
+
+    :param obj: The Dandiset metadata instance to migrate
+    :param to_version: The target DANDI schema version to migrate to
+    :param skip_validation: If True, the given instance will not be validated before
+        migration. Otherwise, the instance will be validated before migration.
+    :return: The Dandiset metadata instance migrated to the target DANDI schema version
+    :raises ValueError: If the provided instance doesn't have a `schemaVersion` field
+        that specifies a valid DANDI schema version
+    :raises ValueError: If `to_version` is not a valid DANDI schema version or an
+        allowed target schema
+    :raises ValueError: If the target DANDI schema version is lower than the DANDI
+        schema version of the provided instance
+    """
+
+    # ATM, we only support the latest schema version as a target. See definition of
+    # `ALLOWED_TARGET_SCHEMAS` for details
     if len(ALLOWED_TARGET_SCHEMAS) > 1:
-        raise NotImplementedError(
-            "ATM code below supports migration to current version only"
+        msg = f"Only migration to current version, {DANDI_SCHEMA_VERSION}, is supported"
+        raise NotImplementedError(msg)
+
+    # --------------------------------------------------------------
+    # Validate DANDI schema version provided in the metadata instance
+    # --------------------------------------------------------------
+    # DANDI schema version of the provided instance
+    obj_ver = obj.get("schemaVersion")
+    if obj_ver is None:
+        msg = (
+            "The provided Dandiset metadata instance does not have a "
+            "`schemaVersion` field for specifying the DANDI schema version."
         )
+        raise ValueError(msg)
+    if not isinstance(obj_ver, str):
+        msg = (
+            "The provided Dandiset metadata instance has a non-string "
+            "`schemaVersion` field for specifying the DANDI schema version."
+        )
+        raise ValueError(msg)
+    # Check if `obj_ver` is a valid DANDI schema version
+    try:
+        # DANDI schema version of the provided instance in tuple form
+        obj_ver_tuple = version2tuple(obj_ver)
+    except ValueError as e:
+        msg = (
+            "The provided Dandiset metadata instance has an invalid "
+            "`schemaVersion` field for specifying the DANDI schema version."
+        )
+        raise ValueError(msg) from e
+    if obj_ver not in ALLOWED_INPUT_SCHEMAS:
+        msg = (
+            f"The DANDI schema version of the provided Dandiset metadata instance, "
+            f"{obj_ver!r}, is not one of the supported versions for input "
+            f"Dandiset metadata instances. The supported versions are "
+            f"{ALLOWED_INPUT_SCHEMAS}."
+        )
+        raise ValueError(msg)
+    # ----------------------------------------------------------------
+
+    # --------------------------------------------------------------
+    # Validate `to_version`
+    # --------------------------------------------------------------
+    # Check if `to_version` is a valid DANDI schema version
+    try:
+        # The target DANDI schema version in tuple form
+        target_ver_tuple = version2tuple(to_version)
+    except ValueError as e:
+        msg = (
+            "The provided target version, {to_version!r}, is not a valid DANDI schema "
+            "version."
+        )
+        raise ValueError(msg) from e
+
+    # Permit only allowed target schemas
     if to_version not in ALLOWED_TARGET_SCHEMAS:
-        raise ValueError(f"Current target schemas: {ALLOWED_TARGET_SCHEMAS}.")
-    schema_version = obj.get("schemaVersion")
-    if schema_version == DANDI_SCHEMA_VERSION:
-        return obj
-    if schema_version not in ALLOWED_INPUT_SCHEMAS:
-        raise ValueError(f"Current input schemas supported: {ALLOWED_INPUT_SCHEMAS}.")
-    if version2tuple(schema_version) > version2tuple(to_version):
-        raise ValueError(f"Cannot migrate from {schema_version} to lower {to_version}.")
-    if not (skip_validation):
-        schema = _get_schema(schema_version, "dandiset.json")
+        msg = (
+            f"Target version, {to_version!r}, is not among supported target schemas: "
+            f"{ALLOWED_TARGET_SCHEMAS}"
+        )
+        raise ValueError(msg)
+    # ----------------------------------------------------------------
+
+    # Ensure the target DANDI schema version is at least the DANDI schema version
+    # of the provided instance
+    if obj_ver_tuple > target_ver_tuple:
+        raise ValueError(f"Cannot migrate from {obj_ver} to lower {to_version}.")
+
+    # Optionally validate the instance against the DANDI schema it specifies
+    # before migration
+    if not skip_validation:
+        schema = _get_schema(obj_ver, "dandiset.json")
         _validate_obj_json(obj, schema)
-    if version2tuple(schema_version) < version2tuple("0.6.0"):
-        for val in obj.get("about", []):
+
+    obj_migrated = deepcopy(obj)
+
+    if obj_ver_tuple == target_ver_tuple:
+        return obj_migrated
+
+    if obj_ver_tuple < version2tuple("0.6.0") <= target_ver_tuple:
+        for val in obj_migrated.get("about", []):
             if "schemaKey" not in val:
                 if "identifier" in val and "UBERON" in val["identifier"]:
                     val["schemaKey"] = "Anatomy"
                 else:
                     raise ValueError("Cannot auto migrate. SchemaKey missing")
-        for val in obj.get("access", []):
+        for val in obj_migrated.get("access", []):
             if "schemaKey" not in val:
                 val["schemaKey"] = "AccessRequirements"
-        for resource in obj.get("relatedResource", []):
+        for resource in obj_migrated.get("relatedResource", []):
             resource["schemaKey"] = "Resource"
-        if "schemaKey" not in obj["assetsSummary"]:
-            obj["assetsSummary"]["schemaKey"] = "AssetsSummary"
-        if "schemaKey" not in obj:
-            obj["schemaKey"] = "Dandiset"
-        obj["schemaVersion"] = to_version
-    return obj
+        if (
+            "assetsSummary" in obj_migrated
+            and "schemaKey" not in obj_migrated["assetsSummary"]
+        ):
+            obj_migrated["assetsSummary"]["schemaKey"] = "AssetsSummary"
+        if "schemaKey" not in obj_migrated:
+            obj_migrated["schemaKey"] = "Dandiset"
+        obj_migrated["schemaVersion"] = to_version
+    return obj_migrated
 
 
 _stats_var_type = TypeVar("_stats_var_type", int, list)
