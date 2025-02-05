@@ -952,7 +952,7 @@ class Person(Contributor):
         json_schema_extra={"nskey": "schema"},
     )
     affiliation: Optional[List[Affiliation]] = Field(
-        None,
+        default=[],
         description="An organization that this person is affiliated with.",
         json_schema_extra={"nskey": "schema"},
     )
