@@ -340,17 +340,62 @@ def test_missing_ok_error() -> None:
 
 
 @pytest.mark.parametrize(
-    "obj, target",
+    "obj, target, msg",
     [
-        ({}, "0.6.0"),
-        ({"schemaVersion": "0.4.4"}, None),
-        ({"schemaVersion": "0.4.4"}, "0.4.6"),
-        ({"schemaVersion": "0.6.0"}, "0.5.2"),
+        ({}, "0.6.0", "does not have a `schemaVersion` field"),
+        # Non-string `schemaVersion` field in the instance
+        ({"schemaVersion": 42}, DANDI_SCHEMA_VERSION, "has a non-string"),
+        # `schemaVersion` field in the instance with invalid format
+        (
+            {"schemaVersion": "abc"},
+            DANDI_SCHEMA_VERSION,
+            "has an invalid `schemaVersion` field",
+        ),
+        # `schemaVersion` field in the instance is not an allowed input schema
+        (
+            {"schemaVersion": "0.4.5"},
+            DANDI_SCHEMA_VERSION,
+            "is not one of the supported versions "
+            "for input Dandiset metadata instances",
+        ),
+        # target schema with invalid format
+        (
+            {"schemaVersion": "0.4.4"},
+            "cba",
+            "target version.* is not a valid DANDI schema version",
+        ),
+        # target schema is not an allowed target schema
+        (
+            {"schemaVersion": "0.4.4"},
+            "0.4.5",
+            "Target version, .*, is not among supported target schemas",
+        ),
     ],
 )
-def test_migrate_errors(obj: Dict[str, Any], target: Optional[str]) -> None:
-    with pytest.raises(ValueError):
+def test_migrate_value_errors(obj: Dict[str, Any], target: Any, msg: str) -> None:
+    """
+    Test cases when `migrate()` is expected to raise a `ValueError` exception
+
+    :param obj: The metadata instance of `Dandiset` to migrate
+    :param target: The target DANDI schema version to migrate to
+    :param msg: The expected error message with in the raised exception
+    """
+    with pytest.raises(ValueError, match=msg):
         migrate(obj, to_version=target, skip_validation=True)
+
+
+def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    Test cases when `migrate()` is expected to raise a `ValueError` exception
+    when the target schema version is lesser than the schema version of the metadata
+    instance
+    """
+    from dandischema import metadata
+
+    monkeypatch.setattr(metadata, "ALLOWED_TARGET_SCHEMAS", ["0.6.0"])
+
+    with pytest.raises(ValueError, match="Cannot migrate from .* to lower"):
+        migrate({"schemaVersion": "0.6.7"}, to_version="0.6.0", skip_validation=True)
 
 
 @skipif_no_network
