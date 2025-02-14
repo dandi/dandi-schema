@@ -136,3 +136,30 @@ def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> 
     if field != "extension":
         value = value.replace(".", sub)
     return value
+
+
+def find_objs(instance: Any, schema_key: str) -> list[dict]:
+    """
+    Find JSON objects, represented as dictionaries, that possess a specified schema key
+    as the value of their `"schemaKey"` field, from a data instance
+
+    :param instance: The data instance to fetch JSON objects from
+    :param schema_key: The schema key
+    :return: The list of JSON objects with the specified schema key in the data instance
+    """
+
+    def find_objs_(data: Any) -> None:
+        if isinstance(data, dict):
+            if "schemaKey" in data and data["schemaKey"] == schema_key:
+                objs.append(data)
+            for value in data.values():
+                find_objs_(value)
+        elif isinstance(data, list):
+            for item in data:
+                find_objs_(item)
+        else:
+            return
+
+    objs: list[dict] = []
+    find_objs_(instance)
+    return objs
