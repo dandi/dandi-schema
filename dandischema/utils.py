@@ -6,6 +6,7 @@ from typing import Any, Iterator, List, Union, cast, get_args, get_origin
 from jsonschema import Draft7Validator, Draft202012Validator
 from jsonschema.protocols import Validator as JsonschemaValidator
 from jsonschema.validators import validator_for
+from pydantic import ConfigDict, TypeAdapter
 from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode, JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
 
@@ -143,6 +144,47 @@ def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> 
     return value
 
 
+def dandi_jsonschema_validator(schema: dict[str, Any]) -> JsonschemaValidator:
+    """
+    Create a JSON Schema validator appropriate for validating instances against the
+    JSON schema of a DANDI model
+
+    :param schema: The JSON schema of the DANDI model to validate against
+    :return: The JSON schema validator
+    :raises ValueError: If the schema does not have a 'schemaVersion' property that
+        specifies the schema version with a 'default' field.
+    :raises jsonschema.exceptions.SchemaError: If the JSON schema is invalid
+    """
+    if (
+        "properties" not in schema
+        or "schemaVersion" not in schema["properties"]
+        or "default" not in schema["properties"]["schemaVersion"]
+    ):
+        msg = (
+            "The schema must has a 'schemaVersion' property that specifies the schema "
+            "version with a 'default' field."
+        )
+        raise ValueError(msg)
+
+    default_validator_cls = cast(
+        type[JsonschemaValidator],
+        (
+            Draft202012Validator
+            # `"schemaVersion"` 0.6.5 and above is produced with Pydantic V2
+            # which is compliant with JSON Schema Draft 2020-12
+            if (
+                version2tuple(schema["properties"]["schemaVersion"]["default"])
+                >= version2tuple("0.6.5")
+            )
+            else Draft7Validator
+        ),
+    )
+
+    return jsonschema_validator(
+        schema, check_format=True, default_cls=default_validator_cls
+    )
+
+
 def jsonschema_validator(
     schema: dict[str, Any],
     *,
@@ -150,8 +192,8 @@ def jsonschema_validator(
     default_cls: type[JsonschemaValidator] | None = None,
 ) -> JsonschemaValidator:
     """
-    Create a JSON schema validator appropriate for validating instances against a given
-    schema
+    Create a jsonschema validator appropriate for validating instances against a given
+    JSON schema
 
     :param schema: The JSON schema to validate against
     :param check_format: Indicates whether to check the format against format
@@ -181,51 +223,21 @@ def jsonschema_validator(
     return validator_cls(schema)
 
 
-def validate_json(instance: Any, schema: dict[str, Any]) -> None:
+def validate_json(instance: Any, validator: JsonschemaValidator) -> None:
     """
-    Validate a metadata instance of a **DANDI model** against the JSON schema of the
-    model
+    Validate a data instance using a jsonschema validator
 
-    :param instance: The metadata instance to validate
-    :param schema: The JSON schema of the model
-
+    :param instance: The data instance to validate
+    :param validator: The JSON schema validator to use
     :raises JsonschemaValidationError: If the metadata instance is invalid, an instance
         of this exception containing a list of `jsonschema.exceptions.ValidationError`
         instances representing all the errors detected in the validation is raised
-    :raises jsonschema.exceptions.SchemaError: If the JSON schema is invalid
-    :raises ValueError: If the schema does not have a 'schemaVersion' property that
-        specifies the schema version with a 'default' field.
     """
-    if (
-        "properties" not in schema
-        or "schemaVersion" not in schema["properties"]
-        or "default" not in schema["properties"]["schemaVersion"]
-    ):
-        msg = (
-            "The schema must has a 'schemaVersion' property that specifies the schema "
-            "version with a 'default' field."
-        )
-        raise ValueError(msg)
-
-    default_validator_cls = cast(
-        type[JsonschemaValidator],
-        (
-            Draft202012Validator
-            # `"schemaVersion"` 0.6.5 and above is produced with Pydantic V2
-            # which is compliant with JSON Schema Draft 2020-12
-            if (
-                version2tuple(schema["properties"]["schemaVersion"]["default"])
-                >= version2tuple("0.6.5")
-            )
-            else Draft7Validator
-        ),
-    )
-
-    validator = jsonschema_validator(
-        schema, check_format=True, default_cls=default_validator_cls
-    )
-
     errs = sorted(validator.iter_errors(instance), key=str)
 
     if errs:
         raise JsonschemaValidationError(errs)
+
+
+# Pydantic type adapter for a JSON object, which is of type `dict[str, Any]`
+json_object_adapter = TypeAdapter(dict[str, Any], config=ConfigDict(strict=True))

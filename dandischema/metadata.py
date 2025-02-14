@@ -1,11 +1,12 @@
 from copy import deepcopy
 from enum import Enum
-from functools import lru_cache
+from functools import cache
 from inspect import isclass
 import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_args
 
+from jsonschema.protocols import Validator as JsonschemaValidator
 import pydantic
 import requests
 
@@ -20,13 +21,16 @@ from . import models
 from .utils import (
     TransitionalGenerateJsonSchema,
     _ensure_newline,
+    dandi_jsonschema_validator,
+    json_object_adapter,
     sanitize_value,
     strip_top_level_optional,
     validate_json,
     version2tuple,
 )
 
-schema_map = {
+# A mapping of the schema keys of DANDI models to the names of their JSON schema files
+SCHEMA_MAP = {
     "Dandiset": "dandiset.json",
     "PublishedDandiset": "published-dandiset.json",
     "Asset": "asset.json",
@@ -130,7 +134,7 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     version = models.get_schema_version()
     vdir = Path(releasedir, version)
     vdir.mkdir(exist_ok=True, parents=True)
-    for class_, filename in schema_map.items():
+    for class_, filename in SCHEMA_MAP.items():
         (vdir / filename).write_text(
             _ensure_newline(
                 json.dumps(
@@ -148,14 +152,14 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
 
 
 def _validate_obj_json(
-    instance: Any, schema: dict[str, Any], *, missing_ok: bool = False
+    instance: Any, validator: JsonschemaValidator, *, missing_ok: bool = False
 ) -> None:
     """
-    Validate a metadata instance of a **DANDI model** against the JSON schema of the
-    model with an option to filter out errors related to missing required properties
+    Validate a data instance using a jsonschema validator with an option to filter out
+    errors related to missing required properties
 
-    :param instance: The metadata instance to validate
-    :param schema: The JSON schema of the model
+    :param instance: The data instance to validate
+    :param validator: The JSON schema validator to use
     :param missing_ok: Indicates whether to filter out errors related to missing
         required properties
     :raises JsonschemaValidationError: If the metadata instance is invalid, and there
@@ -165,7 +169,7 @@ def _validate_obj_json(
         (remaining) errors detected in the validation
     """
     try:
-        validate_json(instance, schema)
+        validate_json(instance, validator)
     except JsonschemaValidationError as e:
         if missing_ok:
             remaining_errs = [
@@ -181,23 +185,88 @@ def _validate_obj_json(
 def _validate_dandiset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj_json(data, schema)
+    _validate_obj_json(data, dandi_jsonschema_validator(schema))
 
 
 def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj_json(data, schema)
+    _validate_obj_json(data, dandi_jsonschema_validator(schema))
 
 
-@lru_cache
-def _get_schema(schema_version: str, schema_name: str) -> Any:
-    r = requests.get(
-        "https://raw.githubusercontent.com/dandi/schema/"
-        f"master/releases/{schema_version}/{schema_name}"
+@cache
+def _get_jsonschema_validator(
+    schema_version: str, schema_key: str
+) -> JsonschemaValidator:
+    """
+    Get jsonschema validator for validating instances against a specific DANDI schema
+
+    :param schema_version: The version of the specific DANDI schema
+    :param schema_key: The schema key that identifies the specific DANDI schema
+    :return: The jsonschema validator appropriate for validating instances against the
+        specific DANDI schema
+    :raises ValueError: If the provided schema version is among the allowed versions,
+        `ALLOWED_VALIDATION_SCHEMAS`
+    :raises ValueError: If the provided schema key is not among the keys in `SCHEMA_MAP`
+    :raises requests.HTTPError: If the schema cannot be fetched from the `dandi/schema`
+        repository
+    :raises RuntimeError: If the fetched schema is not a valid JSON object
+    """
+    if schema_version not in ALLOWED_VALIDATION_SCHEMAS:
+        raise ValueError(
+            f"DANDI schema version {schema_version} is not allowed. "
+            f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
+        )
+    if schema_key not in SCHEMA_MAP:
+        raise ValueError(
+            f"Schema key must be one of {', '.join(map(repr, SCHEMA_MAP.keys()))}"
+        )
+
+    # Fetch the schema from the `dandi/schema` repository
+    schema_url = (
+        f"https://raw.githubusercontent.com/dandi/schema/"
+        f"master/releases/{schema_version}/{SCHEMA_MAP[schema_key]}"
     )
+    r = requests.get(schema_url)
     r.raise_for_status()
-    return r.json()
+    schema = r.json()
+
+    # Validate that the retrieved schema is a valid JSON object, i.e., a dictionary
+    # This step is needed because the `jsonschema` package requires the schema to be a
+    # `Mapping[str, Any]` object
+    try:
+        json_object_adapter.validate_python(schema)
+    except pydantic.ValidationError as e:
+        msg = (
+            f"The JSON schema at {schema_url} is not a valid JSON object. "
+            f"Received: {schema}"
+        )
+        raise RuntimeError(msg) from e
+
+    # Create a jsonschema validator for the schema
+    return dandi_jsonschema_validator(schema)
+
+
+@cache
+def _get_jsonschema_validator_local(schema_key: str) -> JsonschemaValidator:
+    """
+    Get jsonschema validator for validating instances against a specific DANDI schema
+    generated from the corresponding locally defined Pydantic model
+
+    :param schema_key: The schema key that identifies the specific DANDI schema
+    :raises ValueError: If the provided schema key is not among the keys in `SCHEMA_MAP`
+    """
+    if schema_key not in SCHEMA_MAP:
+        raise ValueError(
+            f"Schema key must be one of {', '.join(map(repr, SCHEMA_MAP.keys()))}"
+        )
+
+    # The pydantic model with the specified schema key
+    m: type[pydantic.BaseModel] = getattr(models, schema_key)
+
+    return dandi_jsonschema_validator(
+        m.model_json_schema(schema_generator=TransitionalGenerateJsonSchema)
+    )
 
 
 def validate(
@@ -240,25 +309,22 @@ def validate(
     if schema_key is None:
         raise ValueError("Provided object has no known schemaKey")
     schema_version = schema_version or obj.get("schemaVersion")
-    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in schema_map:
+    if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in SCHEMA_MAP:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
             f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
     if json_validation:
         if schema_version == DANDI_SCHEMA_VERSION:
-            klass = getattr(models, schema_key)
-            schema = klass.model_json_schema(
-                schema_generator=TransitionalGenerateJsonSchema
-            )
+            jvalidator = _get_jsonschema_validator_local(schema_key)
         else:
-            if schema_key not in schema_map:
+            if schema_key not in SCHEMA_MAP:
                 raise ValueError(
                     "Only dandisets and assets can be validated "
                     "using json schema for older versions"
                 )
-            schema = _get_schema(schema_version, schema_map[schema_key])
-        _validate_obj_json(obj, schema, missing_ok=missing_ok)
+            jvalidator = _get_jsonschema_validator(schema_version, schema_key)
+        _validate_obj_json(obj, jvalidator, missing_ok=missing_ok)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
@@ -366,8 +432,7 @@ def migrate(
     # Optionally validate the instance against the DANDI schema it specifies
     # before migration
     if not skip_validation:
-        schema = _get_schema(obj_ver, "dandiset.json")
-        _validate_obj_json(obj, schema)
+        _validate_obj_json(obj, _get_jsonschema_validator(obj_ver, "Dandiset"))
 
     obj_migrated = deepcopy(obj)
 
