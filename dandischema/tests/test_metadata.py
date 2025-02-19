@@ -1,16 +1,26 @@
+from contextlib import nullcontext
 from hashlib import md5, sha256
 import json
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence, Set
+from unittest.mock import MagicMock, patch
 
+from jsonschema.protocols import Validator as JsonschemaValidator
+from pydantic import BaseModel
 import pytest
+
+from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandiset
+from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validator
 
 from .utils import skipif_no_network
 from ..consts import DANDI_SCHEMA_VERSION
 from ..exceptions import JsonschemaValidationError, PydanticValidationError
 from ..metadata import (
+    _get_jsonschema_validator,
+    _get_jsonschema_validator_local,
     _validate_asset_json,
     _validate_dandiset_json,
+    _validate_obj_json,
     aggregate_assets_summary,
     migrate,
     publish_model_schemata,
@@ -666,3 +676,283 @@ def test_aggregation_bids() -> None:
         sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
         == 1
     )  # only a single entry so we do not duplicate them
+
+
+class TestValidateObjJson:
+    """
+    Tests for `_validate_obj_json()`
+    """
+
+    @pytest.fixture
+    def dummy_jvalidator(self) -> JsonschemaValidator:
+        """Returns a dummy jsonschema validator initialized with a dummy schema."""
+        return jsonschema_validator(
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "required": ["name"],
+            },
+            check_format=True,
+        )
+
+    @pytest.fixture
+    def dummy_instance(self) -> dict:
+        """Returns a dummy instance"""
+        return {"name": "Example"}
+
+    def test_valid_obj_no_errors(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_jvalidator: JsonschemaValidator,
+        dummy_instance: dict,
+    ) -> None:
+        """
+        Test that `_validate_obj_json` does not raise when `validate_json` has no errors
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """Simulate successful validation with no exceptions."""
+            return  # No error raised
+
+        # Patch the validate_json function used inside `_validate_obj_json`
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # `_validate_obj_json` should succeed without raising an exception
+        _validate_obj_json(dummy_instance, dummy_jvalidator)
+
+    def test_raises_error_without_missing_ok(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_jvalidator: JsonschemaValidator,
+        dummy_instance: dict,
+    ) -> None:
+        """
+        Test that `_validate_obj_json` forwards JsonschemaValidationError
+        when `missing_ok=False`.
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """Simulate validation error."""
+            # Create a mock error that says a field is invalid
+            raise JsonschemaValidationError(
+                errors=[MagicMock(message="`name` is a required property")]
+            )
+
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # Since `missing_ok=False`, any error should be re-raised.
+        with pytest.raises(JsonschemaValidationError) as excinfo:
+            _validate_obj_json(dummy_instance, dummy_jvalidator, missing_ok=False)
+        assert "`name` is a required property" == excinfo.value.errors[0].message
+
+    @pytest.mark.parametrize(
+        ("validation_errs", "expect_raises", "expected_remaining_errs_count"),
+        [
+            pytest.param(
+                [
+                    MagicMock(message="`name` is a required property"),
+                    MagicMock(message="`title` is a required property ..."),
+                ],
+                False,
+                None,
+                id="no_remaining_errors",
+            ),
+            pytest.param(
+                [
+                    MagicMock(message="`name` is a required property"),
+                    MagicMock(message="Some other validation error"),
+                ],
+                True,
+                1,
+                id="one_remaining_error",
+            ),
+        ],
+    )
+    def test_raises_only_nonmissing_errors_with_missing_ok(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_jvalidator: JsonschemaValidator,
+        dummy_instance: dict,
+        validation_errs: list[MagicMock],
+        expect_raises: bool,
+        expected_remaining_errs_count: Optional[int],
+    ) -> None:
+        """
+        Test that `_validate_obj_json` filters out 'is a required property' errors
+        when `missing_ok=True`.
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """
+            Simulate multiple validation errors, including missing required property.
+            """
+            raise JsonschemaValidationError(
+                errors=validation_errs  # type: ignore[arg-type]
+            )
+
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # If expect_raises is True, we use pytest.raises(ValidationError)
+        # Otherwise, we enter a no-op context
+        ctx = (
+            pytest.raises(JsonschemaValidationError) if expect_raises else nullcontext()
+        )
+
+        with ctx as excinfo:
+            _validate_obj_json(dummy_instance, dummy_jvalidator, missing_ok=True)
+
+        if excinfo is not None:
+            filtered_errors = excinfo.value.errors
+
+            # We expect the "required property" error to be filtered out,
+            # so we should only see the "Some other validation error".
+            assert len(filtered_errors) == expected_remaining_errs_count
+
+
+class TestGetJsonschemaValidator:
+    @pytest.mark.parametrize(
+        "schema_version, schema_key, expected_error_msg",
+        [
+            pytest.param(
+                "0.5.8",
+                "Dandiset",
+                "DANDI schema version 0.5.8 is not allowed",
+                id="invalid-schema-version",
+            ),
+            pytest.param(
+                "0.6.0",
+                "Nonexistent",
+                "Schema key must be one of",
+                id="invalid-schema-key",
+            ),
+        ],
+    )
+    def test_invalid_parameters(
+        self, schema_version: str, schema_key: str, expected_error_msg: str
+    ) -> None:
+        """
+        Test that providing an invalid schema version or key raises ValueError.
+        """
+        # Clear the cache to avoid interference from previous calls
+        _get_jsonschema_validator.cache_clear()
+        with pytest.raises(ValueError, match=expected_error_msg):
+            _get_jsonschema_validator(schema_version, schema_key)
+
+    def test_valid_schema(self) -> None:
+        """
+        Test the valid case:
+          - requests.get() is patched directly using patch("requests.get")
+          - The returned JSON is a valid dict
+          - The resulting validator is produced via dandi_jsonschema_validator
+        """
+        valid_version = "0.6.0"
+        valid_key = "Dandiset"
+        expected_url = (
+            f"https://raw.githubusercontent.com/dandi/schema/master/releases/"
+            f"{valid_version}/dandiset.json"
+        )
+        dummy_validator = MagicMock(spec=JsonschemaValidator)
+        valid_schema = {"type": "object"}
+
+        with patch("requests.get") as mock_get, patch(
+            "dandischema.metadata.dandi_jsonschema_validator",
+            return_value=dummy_validator,
+        ) as mock_validator:
+            mock_response = MagicMock()
+            mock_response.raise_for_status.return_value = None
+            mock_response.json.return_value = valid_schema
+            mock_get.return_value = mock_response
+
+            # Clear the cache to avoid interference from previous calls
+            _get_jsonschema_validator.cache_clear()
+            result = _get_jsonschema_validator(valid_version, valid_key)
+
+            mock_get.assert_called_once_with(expected_url)
+            mock_response.raise_for_status.assert_called_once()
+            mock_response.json.assert_called_once()
+            mock_validator.assert_called_once_with(valid_schema)
+            assert result is dummy_validator
+
+    def test_invalid_json_schema_raises_runtime_error(self) -> None:
+        """
+        Test that if the fetched schema is not a valid JSON object,
+        then _get_jsonschema_validator() raises a RuntimeError.
+        """
+        valid_version = "0.6.0"
+        valid_key = "Dandiset"
+        expected_url = (
+            f"https://raw.githubusercontent.com/dandi/schema/master/releases/"
+            f"{valid_version}/dandiset.json"
+        )
+        # Return a list (instead of a dict) to trigger a ValidationError in json_object_adapter
+        invalid_schema = {4: 2}
+
+        with patch("requests.get") as mock_get:
+            mock_response = MagicMock()
+            mock_response.raise_for_status.return_value = None
+            mock_response.json.return_value = invalid_schema
+            mock_get.return_value = mock_response
+
+            # Clear the cache to avoid interference from previous calls
+            _get_jsonschema_validator.cache_clear()
+            with pytest.raises(RuntimeError, match="not a valid JSON object"):
+                _get_jsonschema_validator(valid_version, valid_key)
+
+            mock_get.assert_called_once_with(expected_url)
+            mock_response.raise_for_status.assert_called_once()
+            mock_response.json.assert_called_once()
+
+
+class TestGetJsonschemaValidatorLocal:
+    @pytest.mark.parametrize(
+        ("schema_key", "pydantic_model"),
+        [
+            pytest.param("Dandiset", Dandiset, id="valid-Dandiset"),
+            pytest.param(
+                "PublishedDandiset", PublishedDandiset, id="valid-PublishedDandiset"
+            ),
+            pytest.param("Asset", Asset, id="valid-Asset"),
+            pytest.param("PublishedAsset", PublishedAsset, id="valid-PublishedAsset"),
+        ],
+    )
+    def test_valid_schema_keys(
+        self, schema_key: str, pydantic_model: type[BaseModel]
+    ) -> None:
+        # Get the expected schema from the corresponding model.
+        expected_schema = pydantic_model.model_json_schema(
+            schema_generator=TransitionalGenerateJsonSchema
+        )
+
+        # Clear the cache to avoid interference from previous calls
+        _get_jsonschema_validator_local.cache_clear()
+
+        # Call the function under test.
+        validator = _get_jsonschema_validator_local(schema_key)
+
+        # Assert that the returned validator has a 'schema' attribute
+        # equal to the expected schema.
+        assert validator.schema == expected_schema, (
+            f"For schema key {schema_key!r}, expected schema:\n{expected_schema}\n"
+            f"but got:\n{validator.schema}"
+        )
+
+    @pytest.mark.parametrize(
+        "invalid_schema_key",
+        [
+            pytest.param("Nonexistent", id="invalid-Nonexistent"),
+            pytest.param("", id="invalid-empty-string"),
+            pytest.param("InvalidKey", id="invalid-Key"),
+        ],
+    )
+    def test_invalid_schema_keys(self, invalid_schema_key: str) -> None:
+        # Clear the cache to avoid interference from previous calls
+        _get_jsonschema_validator_local.cache_clear()
+
+        with pytest.raises(ValueError, match="Schema key must be one of"):
+            _get_jsonschema_validator_local(invalid_schema_key)
