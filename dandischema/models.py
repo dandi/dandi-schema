@@ -966,7 +966,7 @@ class Person(Contributor):
 class Software(DandiBaseModel):
     identifier: Optional[RRID] = Field(
         None,
-        pattern=r"^RRID\:.*",
+        pattern=r"^RRID:.*",
         title="Research resource identifier",
         description="RRID of the software from scicrunch.org.",
         json_schema_extra={"nskey": "schema"},
@@ -1612,7 +1612,7 @@ class Dandiset(CommonModel):
     identifier: DANDI = Field(
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
-        pattern=r"^DANDI\:\d{6}$",
+        pattern=r"^DANDI:\d{6}$",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     name: str = Field(
