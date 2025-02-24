@@ -429,7 +429,14 @@ def test_migrate_044(schema_dir: Path) -> None:
     ]
 
     # if already the target version - we do not change it, and do not crash
-    newmeta_2 = migrate(newmeta, to_version=DANDI_SCHEMA_VERSION)
+    newmeta_2 = migrate(
+        newmeta,
+        to_version=DANDI_SCHEMA_VERSION,
+        # to avoid possible crash due to attempt to download not yet
+        # released schema if we are still working within yet to be
+        # released version of the schema
+        skip_validation=True,
+    )
     assert newmeta_2 == newmeta
     assert newmeta_2 is not newmeta  # but we do create a copy
 
