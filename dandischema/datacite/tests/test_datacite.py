@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 import os
 from pathlib import Path
@@ -9,6 +10,7 @@ import pytest
 import requests
 
 from dandischema.models import (
+    Dandiset,
     LicenseType,
     PublishedDandiset,
     RelationType,
@@ -21,7 +23,7 @@ from dandischema.tests.utils import _basic_publishmeta, skipif_no_network
 from .. import _get_datacite_schema, to_datacite
 
 
-def datacite_post(datacite: dict, doi: str) -> None:
+def datacite_post(datacite: dict, doi: str, clean: bool = True) -> None:
     """Post the datacite object and check the status of the request"""
 
     # removing doi in case it exists
@@ -35,21 +37,178 @@ def datacite_post(datacite: dict, doi: str) -> None:
         auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
     )
     rp.raise_for_status()
+    print("\n in datacite_post, after posting", doi, rp.status_code)
+    # checking if i'm able to get the url
+    rg = requests.get(url=f"https://api.test.datacite.org/dois/{doi}/activities")
+    rg.raise_for_status()
+
+    if clean:
+        # cleaning url
+        _clean_doi(doi)
+
+
+def datacite_update(datacite: dict, doi: str) -> None:
+    """Update the datacite object and check the status of the request"""
+    rp = requests.put(
+        url=f"https://api.test.datacite.org/dois/{doi}",
+        json=datacite,
+        headers={"Content-Type": "application/vnd.api+json"},
+        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
+    )
+    rp.raise_for_status()
 
     # checking if i'm able to get the url
     rg = requests.get(url=f"https://api.test.datacite.org/dois/{doi}/activities")
     rg.raise_for_status()
 
-    # cleaning url
-    _clean_doi(doi)
-
 
 def _clean_doi(doi: str) -> None:
     """Remove doi. Status code is ignored"""
-    requests.delete(
+    rq = requests.delete(
         f"https://api.test.datacite.org/dois/{doi}",
         auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
     )
+    print("\n in _clean_doi", doi, rq.status_code)
+    return rq.status_code
+
+
+@pytest.mark.skip(
+    reason="to not produced too many dois, not sure if we want to keep it as a test"
+)
+def test_datacite_lifecycle() -> None:
+    """testing the lifecycle of a public dandiset and doi (from draft to published)"""
+
+    # checking which doi is available
+    doi_available = False
+    while not doi_available:
+        dandi_id = f"000{random.randrange(500, 999)}"
+        print(f"searching for available doi, trying dandi_id: {dandi_id}")
+        doi_root = f"10.80507/dandi.{dandi_id}"
+        if _clean_doi(doi_root) != 405:
+            doi_available = True
+            print(f"found available doi, dandi_id: {dandi_id}")
+
+    dandi_id_prefix = f"DANDI:{dandi_id}"
+    # creating the main/root doi and url
+    doi_root = f"10.80507/dandi.{dandi_id}"
+    url_root = f"https://dandiarchive.org/dandiset/{dandi_id}"
+
+    # creating draft dandiset with minimal metadata
+    version = "draft"
+    meta_dict = {
+        "identifier": dandi_id_prefix,
+        "id": f"{dandi_id_prefix}/{version}",
+        "name": "Testing Dataset: lifecycle",
+        "description": "testing lifecycle of a dataset and doi: draft",
+        "version": version,
+        "contributor": [
+            {
+                "name": "A_last, A_first",
+                "email": "nemo@example.com",
+                "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
+            }
+        ],
+        "license": [LicenseType("spdx:CC-BY-4.0")],
+        "citation": "A_last, A_first 2021",
+        "manifestLocation": [
+            f"https://api.dandiarchive.org/api/dandisets/{dandi_id}/versions/{version}/assets/"
+        ],
+        "assetsSummary": {
+            "schemaKey": "AssetsSummary",
+            "numberOfBytes": 10,
+            "numberOfFiles": 1,
+        },
+    }
+    # in addition to minimal metadata, we need to add doi and url if we want to create draft doi
+    meta_dict["doi"] = doi_root
+    meta_dict["url"] = url_root
+    # creating draft dandiset
+    dset = Dandiset(**meta_dict)
+
+    # creating datacite object and posting the main doi entry (should be draft)
+    datacite = to_datacite(dset)
+    datacite_post(datacite, doi_root, clean=False)
+
+    # updating the draft but not enough to create PublishDandiset
+    meta_dict["description"] = "testing lifecycle of a dataset and doi: new draft"
+    # the dandi workflow should check if we cna create a datacite that can be validated and published
+    # try: datacite_new = to_datacite(meta_dict, validate=True, publish=True)
+    # if the metadata is not enough to create a valid datacite, we should update the draft doi
+    datacite_new = to_datacite(meta_dict)
+    datacite_update(datacite_new, doi_root)
+
+    # creating v1.0.0
+    version = "1.0.0"
+    # adding contributors and updating description
+    meta_dict["contributor"].append(
+        {
+            "name": "B_last, B_first",
+            "email": "nemo@example.com",
+            "roleName": [RoleType("dcite:DataCurator")],
+            "schemaKey": "Person",
+        }
+    )
+    meta_dict["description"] = "testing lifecycle of a dataset and doi: v1.0.0"
+    # adding mandatory metadata for PublishDandiset
+    publish_meta = {
+        "datePublished": "2020",
+        "publishedBy": {
+            "id": "urn:uuid:08fffc59-9f1b-44d6-8e02-6729d266d1b6",
+            "name": "DANDI publish",
+            "startDate": "2021-05-18T19:58:39.310338-04:00",
+            "endDate": "2021-05-18T19:58:39.310361-04:00",
+            "wasAssociatedWith": [
+                {
+                    "id": "urn:uuid:9267d2e1-4a37-463b-9b10-dad3c66d8eaa",
+                    "identifier": "RRID:SCR_017571",
+                    "name": "DANDI API",
+                    "version": version,
+                    "schemaKey": "Software",
+                }
+            ],
+            "schemaKey": "PublishActivity",
+        },
+    }
+    meta_dict.update(publish_meta)
+    # updating the version, id etc.
+    meta_dict["version"] = version
+    meta_dict["id"] = f"{dandi_id_prefix}/{version}"
+    meta_dict["doi"] = f"{doi_root}/{version}"
+    meta_dict["url"] = f"https://dandiarchive.org/dandiset/{dandi_id}/{version}"
+    # creating new published dandiset
+    dset_v1 = PublishedDandiset(**meta_dict)
+    # creating datacite object and posting (should be findable)
+    datacite_v1 = to_datacite(dset_v1, publish=True, validate=True)
+    datacite_post(datacite_v1, meta_dict["doi"], clean=False)
+
+    # updating the main doi but keeping the root doi and url
+    datacite = deepcopy(datacite_v1)
+    datacite["data"]["attributes"]["doi"] = doi_root
+    datacite["data"]["attributes"]["url"] = url_root
+    # updating the doi (should change from draft to findable)
+    datacite_update(datacite, doi_root)
+
+    # creating v2.0.0
+    version = "2.0.0"
+    # updating description
+    meta_dict["description"] = "testing lifecycle of a dataset and doi: v2.0.0"
+    meta_dict["version"] = version
+    meta_dict["id"] = f"{dandi_id_prefix}/{version}"
+    meta_dict["doi"] = f"{doi_root}/{version}"
+    meta_dict["url"] = f"https://dandiarchive.org/dandiset/{dandi_id}/{version}"
+    # creating new published dandiset
+    dset_v2 = PublishedDandiset(**meta_dict)
+    # creating datacite object and posting (should be findable)
+    datacite_v2 = to_datacite(dset_v2, publish=True, validate=True)
+    datacite_post(datacite_v2, meta_dict["doi"], clean=False)
+
+    # updating the main doi to v2 but keeping the root doi and url
+    datacite = deepcopy(datacite_v2)
+    datacite["data"]["attributes"]["doi"] = doi_root
+    datacite["data"]["attributes"]["url"] = url_root
+    # updating the findable doi
+    datacite_update(datacite, doi_root)
 
 
 @pytest.fixture(scope="module")
@@ -59,7 +218,7 @@ def schema() -> Any:
 
 @pytest.fixture(scope="function")
 def metadata_basic() -> Dict[str, Any]:
-    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id_noprefix = f"000{random.randrange(100, 499)}"
     dandi_id = f"DANDI:{dandi_id_noprefix}"
     version = "0.0.0"
     # meta data without doi, datePublished and publishedBy
