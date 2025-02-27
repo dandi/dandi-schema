@@ -1580,6 +1580,20 @@ class CommonModel(DandiBaseModel):
     wasGeneratedBy: Optional[Sequence[Activity]] = Field(
         None, json_schema_extra={"nskey": "prov"}
     )
+
+    # Our current draft dandisets could be coming from Published ones,
+    # and thus carry their attributes. So we would need to define them here as well
+    # but make them optional, and `Publishable` would overload to make
+    # them mandatory.
+    publishedBy: Optional[Union[AnyHttpUrl, PublishActivity]] = Field(
+        default=None,
+        description="The URL should contain the provenance of the publishing process.",
+        json_schema_extra={"readOnly": True, "nskey": "dandi"},
+    )
+    datePublished: Optional[datetime] = Field(
+        default=None, json_schema_extra={"readOnly": True, "nskey": "schema"}
+    )
+
     schemaKey: str = Field(
         "CommonModel", validate_default=True, json_schema_extra={"readOnly": True}
     )
@@ -1667,6 +1681,12 @@ class Dandiset(CommonModel):
 
     version: str = Field(json_schema_extra={"nskey": "schema", "readOnly": True})
 
+    doi: Optional[str] = Field(
+        None,
+        title="DOI",
+        pattern=DANDI_DOI_PATTERN,
+        json_schema_extra={"readOnly": True, "nskey": "dandi"},
+    )
     wasGeneratedBy: Optional[Sequence[Project]] = Field(
         None,
         title="Associated projects",
