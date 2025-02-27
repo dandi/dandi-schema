@@ -120,6 +120,23 @@ class DigestType(Enum):
     dandi_zarr_checksum = "dandi:dandi-zarr-checksum"
 
 
+Identifier = str
+
+ORCID = Annotated[
+    Identifier,
+    StringConstraints(pattern=r"^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]$"),
+]
+
+RORID = Annotated[
+    Identifier,
+    StringConstraints(pattern=r"^(https://ror.org/)?0[0-9a-z]{6}[0-9a-z]{2}$"),
+]
+
+DANDI = Annotated[Identifier, StringConstraints(pattern=r"^DANDI:0[0-9]{5}$")]
+
+RRID = Annotated[Identifier, StringConstraints(pattern=r"^SCR_[0-9]{6}$")]
+
+
 class IdentifierType(Enum):
     """An enumeration of identifiers"""
 
@@ -128,6 +145,12 @@ class IdentifierType(Enum):
     ror = "dandi:ror"
     dandi = "dandi:dandi"
     rrid = "dandi:rrid"
+
+
+# TODO: somewhere/somehow add regexes for each of the IdentifierType values (str)
+# Good UI could then associate based on regex matching, but overall model should
+# likely be more explicit on what Identifier was used or allowed in each particular case.
+# So we should make it possible to traverse all Identifier subclasses and collect regexes.
 
 
 class LicenseType(Enum):
@@ -622,6 +645,10 @@ class PropertyValue(DandiBaseModel):
     valueReference: Optional["PropertyValue"] = Field(
         None, json_schema_extra={"nskey": "schema"}
     )  # Note: recursive (circular or not)
+    # TODO: check if here it is really the Union[IdentifierType, AnyHttpUrl] which was
+    # intended, or may be the dict[IdentifierType, AnyHttpUrl] as to point to specific
+    # identifiers, or even just an `Identifier` which is currently just a str.
+    # Note: seems to be not used yet
     propertyID: Optional[Union[IdentifierType, AnyHttpUrl]] = Field(
         None,
         description="A commonly used identifier for "
@@ -651,12 +678,6 @@ class PropertyValue(DandiBaseModel):
 # and continue to be so in Pydantic V2
 # https://docs.pydantic.dev/latest/concepts/postponed_annotations/#self-referencing-or-recursive-models
 PropertyValue.model_rebuild()
-
-Identifier = str
-ORCID = str
-RORID = str
-DANDI = str
-RRID = str
 
 
 class BaseType(DandiBaseModel):
@@ -840,7 +861,9 @@ class ContactPoint(DandiBaseModel):
     _ldmeta = {"nskey": "schema"}
 
 
+# ???: should it be hidden away since not used directly and only subclasses are used?
 class Contributor(DandiBaseModel):
+    # Note: type to be overloaded by subclasses
     identifier: Optional[Identifier] = Field(
         None,
         title="A common identifier",
@@ -890,7 +913,8 @@ class Organization(Contributor):
         None,
         title="A ror.org identifier",
         description="Use an ror.org identifier for institutions.",
-        pattern=r"^https://ror.org/[a-z0-9]+$",
+        # ??? Could it be removed, since should be enforced/checked by RORID type
+        # pattern=r"^https://ror.org/[a-z0-9]+$",
         json_schema_extra={"nskey": "schema"},
     )
 
@@ -1357,6 +1381,7 @@ class Participant(DandiBaseModel):
     when the Participant or Subject engaged in the production of data being described.
     """
 
+    # name?
     identifier: Identifier = Field(json_schema_extra={"nskey": "schema"})
     altName: Optional[List[Identifier]] = Field(
         None, json_schema_extra={"nskey": "dandi"}
