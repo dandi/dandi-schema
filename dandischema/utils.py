@@ -289,7 +289,7 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
     else:
         # If no schemaKey exists, create one
         result["schemaKey"] = ["schema:Dataset"]
-    
+
     # Create schema:creator field from contributor if it doesn't exist
     if "schema:creator" not in result and "contributor" in result:
         # Filter contributors with Author role
@@ -320,7 +320,7 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
                 creator["identifier"] = person["identifier"]
 
             result["schema:creator"].append(creator)
-    
+
     # Update contributor schemaKey and remove roleName
     if "contributor" in result:
         updated_contributors = []
