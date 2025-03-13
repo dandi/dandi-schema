@@ -76,13 +76,13 @@ def test_google_dataset_metadata_basic_transformation(sample_dandiset_metadata):
     # Check that schema:Dataset is added to schemaKey
     assert "schema:Dataset" in result["schemaKey"]
     
-    # Check that creator is properly formatted
-    assert "creator" in result
-    assert isinstance(result["creator"], list)
-    assert len(result["creator"]) > 0
+    # Check that schema:creator is properly formatted
+    assert "schema:creator" in result
+    assert isinstance(result["schema:creator"], list)
+    assert len(result["schema:creator"]) > 0
     
     # Check first creator
-    creator = result["creator"][0]
+    creator = result["schema:creator"][0]
     assert creator["schemaKey"] == "schema:Person"
     assert "name" in creator
     
@@ -168,8 +168,8 @@ def test_google_dataset_metadata_with_no_contributors(sample_dandiset_metadata):
     
     result = google_dataset_metadata(no_contributor_metadata)
     
-    # Check that creator is not in the result
-    assert "creator" not in result
+    # Check that schema:creator is not in the result
+    assert "schema:creator" not in result
 
 
 def test_google_dataset_metadata_with_date_published(sample_dandiset_metadata):
