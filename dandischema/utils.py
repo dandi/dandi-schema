@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import copy
 import re
 from typing import Any, Dict, Iterator, List, Union, cast, get_args, get_origin
-import copy
 
 from jsonschema import Draft7Validator, Draft202012Validator
 from jsonschema.protocols import Validator as JsonschemaValidator
@@ -247,10 +247,10 @@ json_object_adapter = TypeAdapter(dict[str, Any], config=ConfigDict(strict=True)
 def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
     """
     Transform DANDI metadata to be compatible with Google Dataset Search.
-    
+
     This function takes a DANDI metadata JSON-LD document and transforms it to ensure
     it passes the Google Dataset Search validator by adding or modifying required fields.
-    
+
     Required properties for Google Dataset Search:
     - @type: Dataset
     - name: The name of the dataset
@@ -260,12 +260,12 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
     - version: The version of the dataset
     - identifier: An identifier for the dataset (preferably a DOI)
     - keywords: Keywords describing the dataset
-    
+
     Parameters
     ----------
     metadata : Dict[str, Any]
         The original DANDI metadata JSON-LD document
-        
+
     Returns
     -------
     Dict[str, Any]
@@ -273,7 +273,7 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
     """
     # Make a deep copy to avoid modifying the original
     result = copy.deepcopy(metadata)
-    
+
     # Append schema:Dataset to schemaKey
     if "schemaKey" in result:
         # If schemaKey is a string, convert it to a list
@@ -294,26 +294,31 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
     if "schema:creator" not in result and "contributor" in result:
         # Filter contributors with Author role
         authors = [
-            contrib for contrib in result["contributor"] 
+            contrib
+            for contrib in result["contributor"]
             if contrib.get("roleName") and "dcite:Author" in contrib.get("roleName", [])
         ]
-        
+
         # If no authors found, use all contributors
         creators = authors if authors else result["contributor"]
-        
+
         # Format creators according to schema.org requirements
         result["schema:creator"] = []
         for person in creators:
             # Create a new creator object with updated schemaKey
             creator = {
-                "schemaKey": "schema:Organization" if person.get("schemaKey") == "Organization" else "schema:Person",
-                "name": person.get("name", "")
+                "schemaKey": (
+                    "schema:Organization"
+                    if person.get("schemaKey") == "Organization"
+                    else "schema:Person"
+                ),
+                "name": person.get("name", ""),
             }
-            
+
             # Add identifier if available (ORCID for Person, ROR for Organization)
             if person.get("identifier"):
                 creator["identifier"] = person["identifier"]
-            
+
             result["schema:creator"].append(creator)
     
     # Update contributor schemaKey and remove roleName
@@ -322,22 +327,22 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
         for contributor in result["contributor"]:
             # Make a copy of the contributor
             updated_contributor = copy.deepcopy(contributor)
-            
+
             # Update schemaKey if it exists
             if "schemaKey" in updated_contributor:
                 if updated_contributor["schemaKey"] == "Person":
                     updated_contributor["schemaKey"] = "schema:Person"
                 elif updated_contributor["schemaKey"] == "Organization":
                     updated_contributor["schemaKey"] = "schema:Organization"
-            
+
             # Remove roleName if it exists
             if "roleName" in updated_contributor:
                 del updated_contributor["roleName"]
-            
+
             updated_contributors.append(updated_contributor)
-        
+
         result["contributor"] = updated_contributors
-    
+
     # Ensure license is properly formatted for schema.org
     if "license" in result:
         # Transform DANDI license format to schema.org format
@@ -349,62 +354,62 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
                 schema_licenses.append(f"https://spdx.org/licenses/{license_id}")
             else:
                 schema_licenses.append(license_type)
-        
+
         result["license"] = schema_licenses
-    
+
     # Ensure version is present
     if "schemaVersion" in result and "version" not in result:
         result["version"] = result["schemaVersion"]
-    
+
     # Ensure identifier is properly formatted (preferably as a DOI URL)
     if "identifier" in result and isinstance(result["identifier"], str):
         # If it's a DOI in the format "DANDI:123456", convert to a URL
         if result["identifier"].startswith("DANDI:"):
             dandiset_id = result["identifier"].replace("DANDI:", "")
             result["identifier"] = f"https://identifiers.org/DANDI:{dandiset_id}"
-    
+
     # Generate keywords based on available metadata
     keywords = []
-    
+
     # Add data standard as keywords
     if "assetsSummary" in result and "dataStandard" in result["assetsSummary"]:
         for std in result["assetsSummary"]["dataStandard"]:
             if "name" in std:
                 keywords.append(std["name"])
-    
+
     # Add species as keywords
     if "assetsSummary" in result and "species" in result["assetsSummary"]:
         for species in result["assetsSummary"]["species"]:
             if "name" in species:
                 keywords.append(species["name"])
-    
+
     # Add approach as keywords
     if "assetsSummary" in result and "approach" in result["assetsSummary"]:
         for approach in result["assetsSummary"]["approach"]:
             if "name" in approach:
                 keywords.append(approach["name"])
-    
+
     # Transform measurement technique into a list of strings and add as keywords
     if "assetsSummary" in result and "measurementTechnique" in result["assetsSummary"]:
         # Extract technique names for keywords
         for technique in result["assetsSummary"]["measurementTechnique"]:
             if "name" in technique:
                 keywords.append(technique["name"])
-        
+
         # Transform the measurementTechnique to a list of strings (names only)
         technique_names = []
         for technique in result["assetsSummary"]["measurementTechnique"]:
             if "name" in technique:
                 technique_names.append(technique["name"])
-        
+
         # Replace the original complex objects with just the names
         if technique_names:
             result["assetsSummary"]["measurementTechnique"] = technique_names
-    
+
     # Add "neuroscience" as a default keyword for DANDI
     keywords.append("neuroscience")
     keywords.append("DANDI")
-    
+
     # Add keywords to result if we generated any
     if keywords:
         if "keywords" not in result or not result["keywords"]:
@@ -416,7 +421,7 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
                 if keyword not in existing_keywords:
                     existing_keywords.append(keyword)
             result["keywords"] = existing_keywords
-    
+
     # Add datePublished if available
     if "datePublished" in result:
         # Ensure it's in the proper format
@@ -424,5 +429,5 @@ def google_dataset_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
     elif "dateCreated" in result:
         # Use dateCreated as a fallback
         result["datePublished"] = result["dateCreated"]
-    
+
     return result
