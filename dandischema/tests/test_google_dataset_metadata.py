@@ -66,7 +66,9 @@ def sample_dandiset_metadata() -> Dict[str, Any]:
     }
 
 
-def test_google_dataset_metadata_basic_transformation(sample_dandiset_metadata):
+def test_google_dataset_metadata_basic_transformation(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test that the basic transformation works correctly"""
     result = google_dataset_metadata(sample_dandiset_metadata)
 
@@ -106,7 +108,9 @@ def test_google_dataset_metadata_basic_transformation(sample_dandiset_metadata):
     assert "DANDI" in result["keywords"]
 
 
-def test_google_dataset_metadata_preserves_original(sample_dandiset_metadata):
+def test_google_dataset_metadata_preserves_original(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test that the original metadata is not modified"""
     original = copy.deepcopy(sample_dandiset_metadata)
     google_dataset_metadata(sample_dandiset_metadata)
@@ -115,7 +119,9 @@ def test_google_dataset_metadata_preserves_original(sample_dandiset_metadata):
     assert original == sample_dandiset_metadata
 
 
-def test_google_dataset_metadata_with_existing_creator(sample_dandiset_metadata):
+def test_google_dataset_metadata_with_existing_creator(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test that existing creator is preserved"""
     # Add a creator field
     sample_dandiset_metadata["creator"] = [
@@ -132,7 +138,9 @@ def test_google_dataset_metadata_with_existing_creator(sample_dandiset_metadata)
     assert result["creator"] == sample_dandiset_metadata["creator"]
 
 
-def test_google_dataset_metadata_with_existing_keywords(sample_dandiset_metadata):
+def test_google_dataset_metadata_with_existing_keywords(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test that existing keywords are preserved and extended"""
     # Add keywords field
     sample_dandiset_metadata["keywords"] = ["test", "example"]
@@ -148,7 +156,9 @@ def test_google_dataset_metadata_with_existing_keywords(sample_dandiset_metadata
     assert "DANDI" in result["keywords"]
 
 
-def test_google_dataset_metadata_with_no_license(sample_dandiset_metadata):
+def test_google_dataset_metadata_with_no_license(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test handling when no license is present"""
     # Remove license field
     no_license_metadata = copy.deepcopy(sample_dandiset_metadata)
@@ -160,7 +170,9 @@ def test_google_dataset_metadata_with_no_license(sample_dandiset_metadata):
     assert "license" not in result
 
 
-def test_google_dataset_metadata_with_no_contributors(sample_dandiset_metadata):
+def test_google_dataset_metadata_with_no_contributors(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test handling when no contributors are present"""
     # Remove contributor field
     no_contributor_metadata = copy.deepcopy(sample_dandiset_metadata)
@@ -172,7 +184,9 @@ def test_google_dataset_metadata_with_no_contributors(sample_dandiset_metadata):
     assert "schema:creator" not in result
 
 
-def test_google_dataset_metadata_with_date_published(sample_dandiset_metadata):
+def test_google_dataset_metadata_with_date_published(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test handling of datePublished field"""
     # Add datePublished field
     sample_dandiset_metadata["datePublished"] = "2023-01-01T00:00:00Z"
@@ -183,7 +197,9 @@ def test_google_dataset_metadata_with_date_published(sample_dandiset_metadata):
     assert result["datePublished"] == "2023-01-01T00:00:00Z"
 
 
-def test_google_dataset_metadata_with_date_created_fallback(sample_dandiset_metadata):
+def test_google_dataset_metadata_with_date_created_fallback(
+    sample_dandiset_metadata: Dict[str, Any]
+) -> None:
     """Test fallback to dateCreated when datePublished is not present"""
     # Add dateCreated field
     sample_dandiset_metadata["dateCreated"] = "2022-01-01T00:00:00Z"
