@@ -1623,7 +1623,7 @@ class Dandiset(CommonModel):
     )
     description: str = Field(
         description="A description of the Dandiset",
-        max_length=3000,
+        max_length=10000,
         json_schema_extra={"nskey": "schema"},
     )
     contributor: List[
