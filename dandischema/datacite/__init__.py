@@ -14,7 +14,7 @@ from typing import Any, Dict, Union
 from jsonschema import Draft7Validator
 import requests
 
-from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
+from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType, Dandiset
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -64,19 +64,26 @@ DATACITE_IDENTYPE = {
 }
 DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
-
 def to_datacite(
     meta: Union[dict, PublishedDandiset],
+    event: str = None,
     validate: bool = False,
-    publish: bool = False,
+    version_doi: bool = True,
 ) -> dict:
-    """Convert published Dandiset metadata to Datacite"""
-    if not isinstance(meta, PublishedDandiset):
+    """Convert published Dandiset metadata to DataCite payload."""
+    if version_doi and not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
+    elif not version_doi and not isinstance(meta, Dandiset):
+        meta = Dandiset(**meta)
+
 
     attributes: Dict[str, Any] = {}
-    if publish:
-        attributes["event"] = "publish"
+
+    # None event means create a Draft DOI
+    if event is not None:
+        if event not in {"publish", "hide"}:
+            raise ValueError("Invalid event value: must be 'publish' or 'hide'")
+        attributes["event"] = event
 
     attributes["alternateIdentifiers"] = [
         {
@@ -103,7 +110,8 @@ def to_datacite(
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
-    attributes["publicationYear"] = str(meta.datePublished.year)
+    if getattr(meta, "datePublished", None):
+        attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
