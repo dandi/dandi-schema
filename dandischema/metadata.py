@@ -91,7 +91,7 @@ def generate_context() -> dict:
                         "@id": cast(str, field.json_schema_extra["nskey"]) + ":" + name
                     }
                 else:
-                    fields[name] = {"@id": "dandi:" + name}
+                    fields[name] = {"@id": f"{models.DANDI_NSKEY}:" + name}
 
                 # The annotation without the top-level optional
                 stripped_annotation = strip_top_level_optional(field.annotation)
@@ -123,8 +123,8 @@ def generate_context() -> dict:
 
     for item in models.DigestType:
         fields[item.value] = {"@id": item.value, "@nest": "digest"}
-    fields["Dandiset"] = "dandi:Dandiset"
-    fields["Asset"] = "dandi:Asset"
+    fields["Dandiset"] = f"{models.DANDI_NSKEY}:Dandiset"
+    fields["Asset"] = f"{models.DANDI_NSKEY}:Asset"
     fields = {k: fields[k] for k in sorted(fields)}
     field_preamble.update(**fields)
     return {"@context": field_preamble}

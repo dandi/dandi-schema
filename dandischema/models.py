@@ -66,6 +66,11 @@ DANDI_DOI_PATTERN = rf"^10.\d+/[a-z]\.{VERSION_PATTERN}"
 # DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
 # Unvendored:
 DANDI_PUBID_PATTERN = rf"^[A-Z]+:{VERSION_PATTERN}"
+# Vendored:
+#  potentially could be set to alternative namespace
+# Unvendored: use "dandi" by default
+DANDI_NSKEY = "dandi"
+
 PUBLISHED_VERSION_URL_PATTERN = (
     rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
 )
@@ -86,15 +91,15 @@ class AccessType(Enum):
     """An enumeration of access status options"""
 
     #: The dandiset is openly accessible
-    OpenAccess = "dandi:OpenAccess"
+    OpenAccess = f"{DANDI_NSKEY}:OpenAccess"
 
     #: The dandiset is embargoed
-    EmbargoedAccess = "dandi:EmbargoedAccess"
+    EmbargoedAccess = f"{DANDI_NSKEY}:EmbargoedAccess"
 
     """
     Uncomment when restricted access is implemented:
         #: The dandiset is restricted
-        RestrictedAccess = "dandi:RestrictedAccess"
+        RestrictedAccess = f"{DANDI_NSKEY}:RestrictedAccess"
     """
 
 
@@ -102,38 +107,38 @@ class DigestType(Enum):
     """An enumeration of checksum types"""
 
     #: MD5 checksum
-    md5 = "dandi:md5"
+    md5 = f"{DANDI_NSKEY}:md5"
 
     #: SHA1 checksum
-    sha1 = "dandi:sha1"
+    sha1 = f"{DANDI_NSKEY}:sha1"
 
     #: SHA2-256 checksum
-    sha2_256 = "dandi:sha2-256"
+    sha2_256 = f"{DANDI_NSKEY}:sha2-256"
 
     #: SHA3-256 checksum
-    sha3_256 = "dandi:sha3-256"
+    sha3_256 = f"{DANDI_NSKEY}:sha3-256"
 
     #: BLAKE2B-256 checksum
-    blake2b_256 = "dandi:blake2b-256"
+    blake2b_256 = f"{DANDI_NSKEY}:blake2b-256"
 
     #: BLAKE3-256 checksum
-    blake3 = "dandi:blake3"
+    blake3 = f"{DANDI_NSKEY}:blake3"
 
     #: S3-style ETag
-    dandi_etag = "dandi:dandi-etag"
+    dandi_etag = f"{DANDI_NSKEY}:dandi-etag"
 
     #: DANDI Zarr checksum
-    dandi_zarr_checksum = "dandi:dandi-zarr-checksum"
+    dandi_zarr_checksum = f"{DANDI_NSKEY}:dandi-zarr-checksum"
 
 
 class IdentifierType(Enum):
     """An enumeration of identifiers"""
 
-    doi = "dandi:doi"
-    orcid = "dandi:orcid"
-    ror = "dandi:ror"
-    dandi = "dandi:dandi"
-    rrid = "dandi:rrid"
+    doi = f"{DANDI_NSKEY}:doi"
+    orcid = f"{DANDI_NSKEY}:orcid"
+    ror = f"{DANDI_NSKEY}:ror"
+    dandi = f"{DANDI_NSKEY}:dandi"
+    rrid = f"{DANDI_NSKEY}:rrid"
 
 
 class LicenseType(Enum):
@@ -253,19 +258,19 @@ class ParticipantRelationType(Enum):
     """An enumeration of participant relations"""
 
     #: Indicates that A is a child of B
-    isChildOf = "dandi:isChildOf"
+    isChildOf = f"{DANDI_NSKEY}:isChildOf"
 
     #: Indicates that A is a parent of B
-    isParentOf = "dandi:isParentOf"
+    isParentOf = f"{DANDI_NSKEY}:isParentOf"
 
     #: Indicates that A is a sibling of B
-    isSiblingOf = "dandi:isSiblingOf"
+    isSiblingOf = f"{DANDI_NSKEY}:isSiblingOf"
 
     #: Indicates that A is a monozygotic twin of B
-    isMonozygoticTwinOf = "dandi:isMonozygoticTwinOf"
+    isMonozygoticTwinOf = f"{DANDI_NSKEY}:isMonozygoticTwinOf"
 
     #: Indicates that A is a dizygotic twin of B
-    isDizygoticTwinOf = "dandi:isDizygoticTwinOf"
+    isDizygoticTwinOf = f"{DANDI_NSKEY}:isDizygoticTwinOf"
 
 
 class RoleType(Enum):
@@ -484,10 +489,10 @@ class AgeReferenceType(Enum):
     """An enumeration of age reference"""
 
     #: Age since Birth
-    BirthReference = "dandi:BirthReference"
+    BirthReference = f"{DANDI_NSKEY}:BirthReference"
 
     #: Age of a pregnancy (https://en.wikipedia.org/wiki/Gestational_age)
-    GestationalReference = "dandi:GestationalReference"
+    GestationalReference = f"{DANDI_NSKEY}:GestationalReference"
 
 
 class DandiBaseModel(BaseModel):
@@ -693,7 +698,7 @@ class BaseType(DandiBaseModel):
     schemaKey: str = Field(
         "BaseType", validate_default=True, json_schema_extra={"readOnly": True}
     )
-    _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": "dandi"}
+    _ldmeta = {"rdfs:subClassOf": ["prov:Entity", "schema:Thing"], "nskey": DANDI_NSKEY}
 
     @classmethod
     def __get_pydantic_json_schema__(
@@ -771,7 +776,7 @@ class Disorder(BaseType):
         None,
         title="Dates of diagnosis",
         description="Dates of diagnosis",
-        json_schema_extra={"nskey": "dandi", "rangeIncludes": "schema:Date"},
+        json_schema_extra={"nskey": DANDI_NSKEY, "rangeIncludes": "schema:Date"},
     )
     schemaKey: Literal["Disorder"] = Field(
         "Disorder", validate_default=True, json_schema_extra={"readOnly": True}
@@ -868,13 +873,13 @@ class Contributor(DandiBaseModel):
         title="Include contributor in citation",
         description="A flag to indicate whether a contributor should be included "
         "when generating a citation for the item.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     awardNumber: Optional[Identifier] = Field(
         None,
         title="Identifier for an award",
         description="Identifier associated with a sponsored or gift award.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
         "Contributor", validate_default=True, json_schema_extra={"readOnly": True}
@@ -905,7 +910,7 @@ class Organization(Contributor):
         title="Include contributor in citation",
         description="A flag to indicate whether a contributor should be included "
         "when generating a citation for the item",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     contactPoint: Optional[List[ContactPoint]] = Field(
         None,
@@ -918,7 +923,7 @@ class Organization(Contributor):
     )
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -939,7 +944,7 @@ class Affiliation(DandiBaseModel):
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Organization", "prov:Organization"],
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -966,7 +971,10 @@ class Person(Contributor):
         "Person", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
-    _ldmeta = {"rdfs:subClassOf": ["schema:Person", "prov:Person"], "nskey": "dandi"}
+    _ldmeta = {
+        "rdfs:subClassOf": ["schema:Person", "prov:Person"],
+        "nskey": DANDI_NSKEY,
+    }
 
 
 class Software(DandiBaseModel):
@@ -990,7 +998,7 @@ class Software(DandiBaseModel):
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:SoftwareApplication", "prov:Software"],
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1011,7 +1019,7 @@ class Agent(DandiBaseModel):
 
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1032,7 +1040,7 @@ class EthicsApproval(DandiBaseModel):
         "EthicsApproval", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
-    _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
+    _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": DANDI_NSKEY}
 
 
 class Resource(DandiBaseModel):
@@ -1049,19 +1057,19 @@ class Resource(DandiBaseModel):
         None,
         title="Name of the repository",
         description="Name of the repository in which the resource is housed.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     relation: RelationType = Field(
         title="Resource relation",
         description="Indicates how the resource is related to the dataset. "
         "This relation should satisfy: dandiset <relation> resource.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     resourceType: Optional[ResourceType] = Field(
         default=None,
         title="Resource type",
         description="The type of resource.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
 
     schemaKey: Literal["Resource"] = Field(
@@ -1072,7 +1080,7 @@ class Resource(DandiBaseModel):
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
         "rdfs:comment": "A resource related to the project (e.g., another "
         "dataset, publication, Webpage)",
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
     @model_validator(mode="after")
@@ -1089,7 +1097,7 @@ class AccessRequirements(DandiBaseModel):
     status: AccessType = Field(
         title="Access status",
         description="The access status of the item.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     contactPoint: Optional[ContactPoint] = Field(
         None,
@@ -1107,7 +1115,7 @@ class AccessRequirements(DandiBaseModel):
         description="Date on which embargo ends.",
         json_schema_extra={
             "readOnly": True,
-            "nskey": "dandi",
+            "nskey": DANDI_NSKEY,
             "rangeIncludes": "schema:Date",
         },
     )
@@ -1117,7 +1125,7 @@ class AccessRequirements(DandiBaseModel):
         json_schema_extra={"readOnly": True},
     )
 
-    _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": "dandi"}
+    _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": DANDI_NSKEY}
 
     @model_validator(mode="after")
     def open_or_embargoed(self) -> "AccessRequirements":
@@ -1170,7 +1178,7 @@ class AssetsSummary(DandiBaseModel):
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1195,7 +1203,7 @@ class Equipment(DandiBaseModel):
 
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1238,7 +1246,10 @@ class Activity(DandiBaseModel):
         "Activity", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
-    _ldmeta = {"rdfs:subClassOf": ["prov:Activity", "schema:Thing"], "nskey": "dandi"}
+    _ldmeta = {
+        "rdfs:subClassOf": ["prov:Activity", "schema:Thing"],
+        "nskey": DANDI_NSKEY,
+    }
 
 
 class Project(Activity):
@@ -1290,7 +1301,7 @@ class Locus(DandiBaseModel):
     schemaKey: Literal["Locus"] = Field(
         "Locus", validate_default=True, json_schema_extra={"readOnly": True}
     )
-    _ldmeta = {"nskey": "dandi"}
+    _ldmeta = {"nskey": DANDI_NSKEY}
 
 
 class Allele(DandiBaseModel):
@@ -1303,7 +1314,7 @@ class Allele(DandiBaseModel):
     schemaKey: Literal["Allele"] = Field(
         "Allele", validate_default=True, json_schema_extra={"readOnly": True}
     )
-    _ldmeta = {"nskey": "dandi"}
+    _ldmeta = {"nskey": DANDI_NSKEY}
 
 
 class GenotypeInfo(DandiBaseModel):
@@ -1317,7 +1328,7 @@ class GenotypeInfo(DandiBaseModel):
     schemaKey: Literal["GenotypeInfo"] = Field(
         "GenotypeInfo", validate_default=True, json_schema_extra={"readOnly": True}
     )
-    _ldmeta = {"nskey": "dandi"}
+    _ldmeta = {"nskey": DANDI_NSKEY}
 
 
 class RelatedParticipant(DandiBaseModel):
@@ -1339,7 +1350,7 @@ class RelatedParticipant(DandiBaseModel):
         description="Indicates how the current participant or subject is related "
         "to the other participant or subject. This relation should "
         "satisfy: Participant/Subject <relation> relatedParticipant/Subject.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     schemaKey: Literal["RelatedParticipant"] = Field(
         "RelatedParticipant",
@@ -1351,7 +1362,7 @@ class RelatedParticipant(DandiBaseModel):
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
         "rdfs:comment": "Another participant or subject related to the current "
         "participant or subject (e.g., another parent, sibling, child).",
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1365,57 +1376,59 @@ class Participant(DandiBaseModel):
 
     identifier: Identifier = Field(json_schema_extra={"nskey": "schema"})
     altName: Optional[List[Identifier]] = Field(
-        None, json_schema_extra={"nskey": "dandi"}
+        None, json_schema_extra={"nskey": DANDI_NSKEY}
     )
 
     strain: Optional[StrainType] = Field(
         None,
         description="Identifier for the strain of the participant or subject.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     cellLine: Optional[Identifier] = Field(
         None,
         description="Cell line associated with the participant or subject.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
-    vendor: Optional[Organization] = Field(None, json_schema_extra={"nskey": "dandi"})
+    vendor: Optional[Organization] = Field(
+        None, json_schema_extra={"nskey": DANDI_NSKEY}
+    )
     age: Optional[PropertyValue] = Field(
         None,
         description="A representation of age using ISO 8601 duration. This "
         "should include a valueReference if anything other than "
         "date of birth is used.",
-        json_schema_extra={"nskey": "dandi", "rangeIncludes": "schema:Duration"},
+        json_schema_extra={"nskey": DANDI_NSKEY, "rangeIncludes": "schema:Duration"},
     )
 
     sex: Optional[SexType] = Field(
         None,
         description="Identifier for sex of the participant or subject if "
         "available. (e.g. from OBI)",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     genotype: Optional[Union[List[GenotypeInfo], Identifier]] = Field(
         None,
         description="Genotype descriptor of participant or subject if available",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     species: Optional[SpeciesType] = Field(
         None,
         description="An identifier indicating the taxonomic classification of "
         "the participant or subject.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     disorder: Optional[List[Disorder]] = Field(
         None,
         description="Any current diagnosed disease or disorder associated with "
         "the participant or subject.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
 
     relatedParticipant: Optional[List[RelatedParticipant]] = Field(
         None,
         description="Information about related participants or subjects in a "
         "study or across studies.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     sameAs: Optional[List[Identifier]] = Field(
         None,
@@ -1429,7 +1442,7 @@ class Participant(DandiBaseModel):
     _ldmeta = {
         "rdfs:subClassOf": ["prov:Agent"],
         "rdfs:label": "Information about the participant or subject.",
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1439,18 +1452,18 @@ class BioSample(DandiBaseModel):
     identifier: Identifier = Field(json_schema_extra={"nskey": "schema"})
     sampleType: SampleType = Field(
         description="Identifier for the sample characteristics (e.g., from OBI, Encode).",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     assayType: Optional[List[AssayType]] = Field(
         None,
         description="Identifier for the assay(s) used (e.g., OBI).",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     anatomy: Optional[List[Anatomy]] = Field(
         None,
         description="Identifier for what organ the sample belongs "
         "to. Use the most specific descriptor from sources such as UBERON.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
 
     wasDerivedFrom: Optional[List["BioSample"]] = Field(
@@ -1476,7 +1489,7 @@ class BioSample(DandiBaseModel):
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Thing", "prov:Entity"],
         "rdfs:label": "Information about the biosample.",
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1528,7 +1541,7 @@ class CommonModel(DandiBaseModel):
     studyTarget: Optional[List[str]] = Field(
         None,
         description="Objectives or specific questions of the study.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     license: Optional[List[LicenseType]] = Field(
         None,
@@ -1541,10 +1554,10 @@ class CommonModel(DandiBaseModel):
         None,
         description="A list of persistent URLs describing the protocol (e.g. "
         "protocols.io, or other DOIs).",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     ethicsApproval: Optional[List[EthicsApproval]] = Field(
-        None, title="Ethics approvals", json_schema_extra={"nskey": "dandi"}
+        None, title="Ethics approvals", json_schema_extra={"nskey": DANDI_NSKEY}
     )
     keywords: Optional[List[str]] = Field(
         None,
@@ -1554,14 +1567,14 @@ class CommonModel(DandiBaseModel):
     acknowledgement: Optional[str] = Field(
         None,
         description="Any acknowledgments not covered by contributors or external resources.",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
 
     # Linking to this dandiset or the larger thing
     access: List[AccessRequirements] = Field(
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
-        json_schema_extra={"nskey": "dandi", "readOnly": True},
+        json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True},
     )
     url: Optional[AnyHttpUrl] = Field(
         None,
@@ -1577,10 +1590,10 @@ class CommonModel(DandiBaseModel):
             else None
         ),
         description="location of the item",
-        json_schema_extra={"nskey": "dandi", "readOnly": True},
+        json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True},
     )
     relatedResource: Optional[List[Resource]] = Field(
-        None, json_schema_extra={"nskey": "dandi"}
+        None, json_schema_extra={"nskey": DANDI_NSKEY}
     )
 
     wasGeneratedBy: Optional[Sequence[Activity]] = Field(
@@ -1669,12 +1682,12 @@ class Dandiset(CommonModel):
 
     # From assets
     assetsSummary: AssetsSummary = Field(
-        json_schema_extra={"nskey": "dandi", "readOnly": True}
+        json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True}
     )
 
     # From server (requested by users even for drafts)
     manifestLocation: List[AnyHttpUrl] = Field(
-        min_length=1, json_schema_extra={"nskey": "dandi", "readOnly": True}
+        min_length=1, json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True}
     )
 
     version: str = Field(json_schema_extra={"nskey": "schema", "readOnly": True})
@@ -1693,7 +1706,7 @@ class Dandiset(CommonModel):
     _ldmeta = {
         "rdfs:subClassOf": ["schema:Dataset", "prov:Entity"],
         "rdfs:label": "Information about the dataset",
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
 
@@ -1709,9 +1722,9 @@ class BareAsset(CommonModel):
     )
     digest: Dict[DigestType, str] = Field(
         title="A map of dandi digests to their values",
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
-    path: str = Field(json_schema_extra={"nskey": "dandi"})
+    path: str = Field(json_schema_extra={"nskey": DANDI_NSKEY})
 
     dateModified: Optional[datetime] = Field(
         None,
@@ -1720,21 +1733,23 @@ class BareAsset(CommonModel):
     )
     blobDateModified: Optional[datetime] = Field(
         None,
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
         title="Asset file modification date and time.",
     )
     # overload to restrict with max_items=1
     access: List[AccessRequirements] = Field(
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
-        json_schema_extra={"nskey": "dandi"},
+        json_schema_extra={"nskey": DANDI_NSKEY},
         max_length=1,
     )
 
     # this is from C2M2 level 1 - using EDAM vocabularies - in our case we would
     # need to come up with things for neurophys
     # TODO: waiting on input <https://github.com/dandi/dandi-cli/pull/226>
-    dataType: Optional[AnyHttpUrl] = Field(None, json_schema_extra={"nskey": "dandi"})
+    dataType: Optional[AnyHttpUrl] = Field(
+        None, json_schema_extra={"nskey": DANDI_NSKEY}
+    )
 
     sameAs: Optional[List[AnyHttpUrl]] = Field(
         None, json_schema_extra={"nskey": "schema"}
@@ -1742,7 +1757,7 @@ class BareAsset(CommonModel):
 
     # TODO
     approach: Optional[List[ApproachType]] = Field(
-        None, json_schema_extra={"readOnly": True, "nskey": "dandi"}
+        None, json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY}
     )
     measurementTechnique: Optional[List[MeasurementTechniqueType]] = Field(
         None, json_schema_extra={"readOnly": True, "nskey": "schema"}
@@ -1774,7 +1789,7 @@ class BareAsset(CommonModel):
     _ldmeta = {
         "rdfs:subClassOf": ["schema:CreativeWork", "prov:Entity"],
         "rdfs:label": "Information about the asset",
-        "nskey": "dandi",
+        "nskey": DANDI_NSKEY,
     }
 
     @field_validator("digest")
@@ -1832,7 +1847,7 @@ class Asset(BareAsset):
 class Publishable(DandiBaseModel):
     publishedBy: Union[AnyHttpUrl, PublishActivity] = Field(
         description="The URL should contain the provenance of the publishing process.",
-        json_schema_extra={"readOnly": True, "nskey": "dandi"},
+        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
     )
     datePublished: datetime = Field(
         json_schema_extra={"readOnly": True, "nskey": "schema"}
@@ -1852,7 +1867,7 @@ class PublishedDandiset(Dandiset, Publishable):
     doi: str = Field(
         title="DOI",
         pattern=DANDI_DOI_PATTERN,
-        json_schema_extra={"readOnly": True, "nskey": "dandi"},
+        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
     )
     url: AnyHttpUrl = Field(
         description="Permalink to the Dandiset.",
