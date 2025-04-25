@@ -61,7 +61,7 @@ VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
 # Vendored
 # DANDI_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
 # Unvendored, only with 10. prefix, as likely all would have for datacite
-DANDI_DOI_PATTERN = rf"^10.\d+/[a-z]\.{VERSION_PATTERN}"
+DANDI_DOI_PATTERN = rf"^10.\d+/[a-z]+\.{VERSION_PATTERN}"
 # Vendored:
 # DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
 # Unvendored:
