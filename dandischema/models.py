@@ -36,10 +36,16 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
+from dandischema.conf import CONFIG
+
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
 from .utils import name2title
+
+# Load needed configurations into constants
+ID_PATTERN = CONFIG.id_pattern
+DATACITE_DOI_ID_PATTERN = CONFIG.datacite_doi_id_pattern
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]
@@ -58,18 +64,11 @@ UUID_PATTERN = (
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
-# Vendored
-# DANDI_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
-# Unvendored, only with 10. prefix, as likely all would have for datacite
-DANDI_DOI_PATTERN = rf"^10.\d+/[a-z]+\.{VERSION_PATTERN}"
-# Vendored:
-# DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
-# Unvendored:
-DANDI_PUBID_PATTERN = rf"^[A-Z]+:{VERSION_PATTERN}"
-# Vendored:
-#  potentially could be set to alternative namespace
-# Unvendored: use "dandi" by default
-DANDI_NSKEY = "dandi"
+DANDI_DOI_PATTERN = (
+    rf"^10\.{DATACITE_DOI_ID_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}"
+)
+DANDI_PUBID_PATTERN = rf"^{ID_PATTERN}:{VERSION_PATTERN}"
+DANDI_NSKEY = "dandi"  # Namespace for DANDI ontology
 
 PUBLISHED_VERSION_URL_PATTERN = (
     rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
@@ -1624,20 +1623,16 @@ class Dandiset(CommonModel):
 
     id: str = Field(
         description="Uniform resource identifier",
-        # Vendored:
-        # pattern=r"^(dandi|DANDI):\d{6}(/(draft|\d+\.\d+\.\d+))$",
-        # Unvendored:
-        pattern=r"^([a-z]+|[A-Z]+):\d{6}(/(draft|\d+\.\d+\.\d+))$",
+        pattern=(
+            rf"^({ID_PATTERN}|{ID_PATTERN.lower()}):\d{{6}}(/(draft|\d+\.\d+\.\d+))$"
+        ),
         json_schema_extra={"readOnly": True},
     )
 
     identifier: DANDI = Field(
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
-        # Vendored:
-        # pattern=r"^DANDI:\d{6}$",
-        # Unvendored:
-        pattern=r"^[A-Z]+:\d{6}$",
+        pattern=rf"^{ID_PATTERN}:\d{{6}}$",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     name: str = Field(
