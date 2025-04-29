@@ -1,4 +1,4 @@
-DANDI_SCHEMA_VERSION = "0.6.10"
+DANDI_SCHEMA_VERSION = "0.6.11"
 ALLOWED_INPUT_SCHEMAS = [
     "0.4.4",
     "0.5.1",
@@ -13,6 +13,7 @@ ALLOWED_INPUT_SCHEMAS = [
     "0.6.7",
     "0.6.8",
     "0.6.9",
+    "0.6.10",
     DANDI_SCHEMA_VERSION,
 ]
 
