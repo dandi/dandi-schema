@@ -57,12 +57,20 @@ UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
-VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
-DANDI_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
+DANDI_ID_PATTERN = r"\d{6}"
+VERSION_PATTERN = rf"{DANDI_ID_PATTERN}/\d+\.\d+\.\d+"
+DANDI_DOI_WITH_VERSION = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
+DANDI_DOI_NO_VERSION = r"^10\.(48324|80507)/dandi\.\d{6}"
+DANDI_DOI_PATTERN = rf"{DANDI_DOI_WITH_VERSION}|{DANDI_DOI_NO_VERSION}"
 DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
+
+PUBLISHED_DANDISET_URL_PATTERN = (
+    rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{DANDI_ID_PATTERN}"
+)
 PUBLISHED_VERSION_URL_PATTERN = (
     rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
 )
+PUBLISHED_URL_PATTERN = rf"{PUBLISHED_VERSION_URL_PATTERN}|{PUBLISHED_DANDISET_URL_PATTERN}"
 MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
 
@@ -1863,9 +1871,9 @@ class PublishedDandiset(Dandiset, Publishable):
     @field_validator("url")
     @classmethod
     def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
-        if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
+        if not re.match(PUBLISHED_URL_PATTERN, str(url)):
             raise ValueError(
-                f'string does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
+                f'string does not match regex "{PUBLISHED_URL_PATTERN}"'
             )
         return url
 

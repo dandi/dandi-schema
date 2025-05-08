@@ -68,14 +68,10 @@ def to_datacite(
     meta: Union[dict, PublishedDandiset],
     event: str = None,
     validate: bool = False,
-    version_doi: bool = True,
 ) -> dict:
     """Convert published Dandiset metadata to DataCite payload."""
-    if version_doi and not isinstance(meta, PublishedDandiset):
+    if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
-    elif not version_doi and not isinstance(meta, Dandiset):
-        meta = Dandiset(**meta)
-
 
     attributes: Dict[str, Any] = {}
 
@@ -110,8 +106,7 @@ def to_datacite(
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
-    if getattr(meta, "datePublished", None):
-        attributes["publicationYear"] = str(meta.datePublished.year)
+    attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
