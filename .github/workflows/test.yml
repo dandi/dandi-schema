@@ -9,21 +9,23 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    env:
-      NO_ET: 1
-      DATACITE_DEV_PASSWORD: ${{ secrets.DATACITE_DEV_PASSWORD }}
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-          - macos-latest
-        python:
-          - 3.9
-          - '3.10'
-          - '3.11'
-          - '3.12'
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        python: ['3.9', '3.10', '3.11', '3.12']
+        vendored_env: [unvendored]
+        include:
+          - os: ubuntu-latest
+            python: '3.9'
+            vendored_env: dandi
+            instance_name: DANDI
+            datacite_doi_id: '80507'
+          - os: ubuntu-latest
+            python: '3.9'
+            vendored_env: ember-dandi
+            instance_name: EMBER-DANDI
+            datacite_doi_id: '60533'
     steps:
     - name: Set up environment
       uses: actions/checkout@v4
@@ -42,7 +44,17 @@ jobs:
         python -m pip install --upgrade pip wheel
         python -m pip install --upgrade tox
 
+    - name: Set vendor environment
+      if: ${{ matrix.vendored_env != 'unvendored' }}
+      shell: bash
+      run: |
+        echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
+        echo "DANDI_DATACITE_DOI_ID=${{ matrix.datacite_doi_id }}" >> "$GITHUB_ENV"
+
     - name: Run all tests
+      env:
+        DATACITE_DEV_PASSWORD: ${{ secrets.DATACITE_DEV_PASSWORD }}
+        NO_ET: 1
       run: tox -e py -- -s --cov-report=xml
 
     - name: Upload coverage to Codecov
