@@ -70,7 +70,9 @@ PUBLISHED_DANDISET_URL_PATTERN = (
 PUBLISHED_VERSION_URL_PATTERN = (
     rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
 )
-PUBLISHED_URL_PATTERN = rf"{PUBLISHED_VERSION_URL_PATTERN}|{PUBLISHED_DANDISET_URL_PATTERN}"
+PUBLISHED_URL_PATTERN = (
+    rf"{PUBLISHED_VERSION_URL_PATTERN}|{PUBLISHED_DANDISET_URL_PATTERN}"
+)
 MD5_PATTERN = r"[0-9a-f]{32}"
 SHA256_PATTERN = r"[0-9a-f]{64}"
 
@@ -1838,6 +1840,37 @@ class Publishable(DandiBaseModel):
     )
 
 
+class DraftDandiset(Dandiset):
+    """
+    A relaxed schema for draft Dandisets that allows 'draft' in the ID pattern.
+
+    This is used for DOI creation for draft Dandisets before they are published.
+    """
+
+    id: str = Field(
+        description="Uniform resource identifier.",
+        pattern=r"^(dandi|DANDI):\d{6}(/(draft|\d+\.\d+\.\d+))$",
+        json_schema_extra={"readOnly": True},
+    )
+
+    doi: Optional[str] = Field(
+        None,
+        title="DOI",
+        pattern=DANDI_DOI_PATTERN,
+        json_schema_extra={"readOnly": True, "nskey": "dandi"},
+    )
+
+    # URL is required but validation pattern is relaxed
+    url: AnyHttpUrl = Field(
+        description="Permalink to the Dandiset.",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
+    )
+
+    schemaKey: Literal["DraftDandiset"] = Field(
+        "DraftDandiset", validate_default=True, json_schema_extra={"readOnly": True}
+    )
+
+
 class PublishedDandiset(Dandiset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
@@ -1872,9 +1905,7 @@ class PublishedDandiset(Dandiset, Publishable):
     @classmethod
     def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
         if not re.match(PUBLISHED_URL_PATTERN, str(url)):
-            raise ValueError(
-                f'string does not match regex "{PUBLISHED_URL_PATTERN}"'
-            )
+            raise ValueError(f'string does not match regex "{PUBLISHED_URL_PATTERN}"')
         return url
 
 

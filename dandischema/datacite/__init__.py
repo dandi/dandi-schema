@@ -7,15 +7,27 @@ Interfaces and data to interact with DataCite metadata
 from copy import deepcopy
 from functools import lru_cache
 import json
+import logging
 from pathlib import Path
 import re
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 from warnings import warn
 
 from jsonschema import Draft7Validator
+from pydantic import ValidationError
 import requests
 
-from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType, Dandiset
+from ..models import (
+    NAME_PATTERN,
+    Dandiset,
+    DraftDandiset,
+    Organization,
+    Person,
+    PublishedDandiset,
+    RoleType,
+)
+
+logger = logging.getLogger(__name__)
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -65,21 +77,47 @@ DATACITE_IDENTYPE = {
 }
 DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
+
 def to_datacite(
-    meta: Union[dict, PublishedDandiset],
+    meta: Union[dict, PublishedDandiset, DraftDandiset],
     validate: bool = False,
     publish: bool = False,
     *,
     event: Optional[str] = None,
 ) -> dict:
-    """Convert published Dandiset metadata to DataCite payload."""
-    if not isinstance(meta, PublishedDandiset):
-        meta = PublishedDandiset(**meta)
+    """
+    Convert Dandiset metadata to DataCite payload.
+
+    This function tries to validate the metadata against the appropriate model
+    (PublishedDandiset or DraftDandiset) based on the metadata state.
+    """
+    # Try to convert dict to model if needed
+    if isinstance(meta, dict):
+        try:
+            # First try PublishedDandiset
+            meta = PublishedDandiset(**meta)
+        except ValidationError as e:
+            try:
+                # If that fails, try DraftDandiset
+                logger.info("Falling back to DraftDandiset validation")
+                # Create a copy to avoid modifying the original dict
+                draft_meta = meta.copy()
+                # Set the correct schemaKey for DraftDandiset
+                draft_meta["schemaKey"] = "DraftDandiset"
+                meta = DraftDandiset(**draft_meta)
+            except ValidationError as e2:
+                error_msg = "Metadata validation failed for both PublishedDandiset and DraftDandiset"
+                logger.error(f"{error_msg}: {str(e2)}")
+                raise ValueError(
+                    f"{error_msg}. Original error: {str(e)}, Fallback error: {str(e2)}"
+                )
 
     attributes: Dict[str, Any] = {}
 
     if event is not None and publish:
-        raise ValueError("Cannot use both 'event' and deprecated 'publish'. Use only 'event'.")
+        raise ValueError(
+            "Cannot use both 'event' and deprecated 'publish'. Use only 'event'."
+        )
 
     # If there is no attributes["event"] a Draft DOI is minted
     if event is not None:
@@ -87,7 +125,11 @@ def to_datacite(
             raise ValueError("Invalid event value: must be 'publish' or 'hide'")
         attributes["event"] = event
     elif publish:
-        warn("'publish' is deprecated; use 'event=\"publish\"' instead", DeprecationWarning, stacklevel=2)
+        warn(
+            "'publish' is deprecated; use 'event=\"publish\"' instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         attributes["event"] = "publish"
 
     attributes["alternateIdentifiers"] = [
@@ -115,7 +157,11 @@ def to_datacite(
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
-    attributes["publicationYear"] = str(meta.datePublished.year)
+
+    # Only include publicationYear if datePublished is available (for published Dandisets)
+    if hasattr(meta, "datePublished") and meta.datePublished:
+        attributes["publicationYear"] = str(meta.datePublished.year)
+
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
