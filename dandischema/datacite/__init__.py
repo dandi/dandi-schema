@@ -9,7 +9,8 @@ from functools import lru_cache
 import json
 from pathlib import Path
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
+from warnings import warn
 
 from jsonschema import Draft7Validator
 import requests
@@ -66,8 +67,10 @@ DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 def to_datacite(
     meta: Union[dict, PublishedDandiset],
-    event: str = None,
     validate: bool = False,
+    publish: bool = False,
+    *,
+    event: Optional[str] = None,
 ) -> dict:
     """Convert published Dandiset metadata to DataCite payload."""
     if not isinstance(meta, PublishedDandiset):
@@ -75,11 +78,17 @@ def to_datacite(
 
     attributes: Dict[str, Any] = {}
 
-    # None event means create a Draft DOI
+    if event is not None and publish:
+        raise ValueError("Cannot use both 'event' and deprecated 'publish'. Use only 'event'.")
+
+    # If there is no attributes["event"] a Draft DOI is minted
     if event is not None:
         if event not in {"publish", "hide"}:
             raise ValueError("Invalid event value: must be 'publish' or 'hide'")
         attributes["event"] = event
+    elif publish:
+        warn("'publish' is deprecated; use 'event=\"publish\"' instead", DeprecationWarning, stacklevel=2)
+        attributes["event"] = "publish"
 
     attributes["alternateIdentifiers"] = [
         {
