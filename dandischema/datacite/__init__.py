@@ -14,7 +14,14 @@ from typing import Any, Dict, Union
 from jsonschema import Draft7Validator
 import requests
 
-from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
+from ..models import (
+    NAME_PATTERN,
+    Dandiset,
+    Organization,
+    Person,
+    PublishedDandiset,
+    RoleType,
+)
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -71,8 +78,13 @@ def to_datacite(
     publish: bool = False,
 ) -> dict:
     """Convert published Dandiset metadata to Datacite"""
-    if not isinstance(meta, PublishedDandiset):
-        meta = PublishedDandiset(**meta)
+
+    # checking the version, create Dandiset for draft version and PublishedDandiset otherwise
+    if isinstance(meta, dict):
+        if meta.get("version") == "draft":
+            meta = Dandiset(**meta)
+        else:
+            meta = PublishedDandiset(**meta)
 
     attributes: Dict[str, Any] = {}
     if publish:
@@ -89,7 +101,8 @@ def to_datacite(
         },
     ]
 
-    attributes["doi"] = meta.doi
+    if hasattr(meta, "doi"):
+        attributes["doi"] = meta.doi
     if meta.version:
         attributes["version"] = meta.version
     attributes["titles"] = [{"title": meta.name}]
@@ -103,7 +116,8 @@ def to_datacite(
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
-    attributes["publicationYear"] = str(meta.datePublished.year)
+    if hasattr(meta, "datePublished"):
+        attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
