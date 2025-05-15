@@ -1,3 +1,26 @@
+# 0.11.1 (Thu May 15 2025)
+
+#### 🐛 Bug Fix
+
+- Increase `Description` field max character length [#296](https://github.com/dandi/dandi-schema/pull/296) ([@kabilar](https://github.com/kabilar))
+- Remove escaping (\) of : in 2 identifiers regexes [#290](https://github.com/dandi/dandi-schema/pull/290) ([@yarikoptic](https://github.com/yarikoptic))
+- Improve (better arguments validation, avoiding repeated creation of validator objects, etc) `_validate_obj_json()` in `metadata.py` and supporting funcs [#278](https://github.com/dandi/dandi-schema/pull/278) ([@candleindark](https://github.com/candleindark))
+- Improve `migrate()` in `metadata.py` [#279](https://github.com/dandi/dandi-schema/pull/279) ([@candleindark](https://github.com/candleindark))
+- Update URL for DANDI Docs [#272](https://github.com/dandi/dandi-schema/pull/272) ([@kabilar](https://github.com/kabilar))
+
+#### 🏠 Internal
+
+- Revert version of schema to 0.6.10 since we have not yet released it [#300](https://github.com/dandi/dandi-schema/pull/300) ([@yarikoptic](https://github.com/yarikoptic))
+- Avoid multiple assignments of constant `ALLOWED_INPUT_SCHEMAS` [#280](https://github.com/dandi/dandi-schema/pull/280) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 3
+
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- Kabilar Gunalan ([@kabilar](https://github.com/kabilar))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.11.0 (Tue Jan 07 2025)
 
 #### 🚀 Enhancement
