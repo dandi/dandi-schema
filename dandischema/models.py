@@ -1840,8 +1840,6 @@ class Publishable(DandiBaseModel):
     )
 
 
-
-
 class PublishedDandiset(Dandiset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
