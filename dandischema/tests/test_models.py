@@ -4,7 +4,7 @@ from inspect import isclass
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
 
 import pydantic
-from pydantic import Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 import pytest
 
 from .utils import _basic_publishmeta
@@ -733,3 +733,174 @@ class TestContributor:
         Test creating a `Contributor` instance with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
+
+
+def _get_field_pattern(
+    field_name: str,
+    model: Type[BaseModel],
+) -> str:
+    """
+    Get the regex pattern for a field in a Pydantic model.
+
+    Parameters
+    ----------
+    field_name : str
+        The name of the field to get the pattern for.
+    model : Type[BaseModel]
+        The Pydantic model class.
+
+    Returns
+    -------
+    str
+        The regex pattern for the field.
+    """
+    if field_name not in model.model_fields:
+        raise ValueError(f"Field '{field_name}' not found in model '{model.__name__}'")
+
+    field = model.model_fields[field_name]
+    for data in field.metadata:
+        if hasattr(data, "pattern"):
+            assert isinstance(data.pattern, str)
+            return data.pattern
+    else:
+        raise ValueError(
+            f"field `{field_name}` in model `{model.__name__}` has no pattern "
+            f"constraint"
+        )
+
+
+@pytest.mark.parametrize(
+    (
+        "clear_dandischema_modules_and_set_env_vars",
+        # "exp" means "expected" in the following names
+        "exp_id_pattern",
+        "exp_datacite_doi_id_pattern",
+        "valid_vendored_fields",
+        "invalid_vendored_fields",
+    ),
+    [
+        # === DANDI DANDI instance test cases ===
+        # Without any environment variables set. dandischema is unvendorized.
+        (
+            {},
+            r"[A-Z]+",
+            r"\d{4,}",
+            {
+                "dandiset_id": "DANDI:001350/draft",
+                "dandiset_identifier": "DANDI:001350",
+                "published_dandiset_id": "DANDI:001350/0.250511.1527",
+                "published_dandiset_doi": "10.48324/dandi.001350/0.250511.1527",
+            },
+            {
+                "dandiset_id": "45:001350/draft",  # Invalid id prefix
+                "dandiset_identifier": "DANDI:001350",
+                "published_dandiset_id": "DANDI:001350/0.250511.1527",
+                "published_dandiset_doi": "10.48324/dandi.001350/0.250511.1527",
+            },
+        ),
+        (
+            {
+                "id_pattern": "DANDI",
+                "datacite_doi_id_pattern": r"(48324|80507)",
+            },
+            "DANDI",
+            r"(48324|80507)",
+            {
+                "dandiset_id": "DANDI:001425/draft",
+                "dandiset_identifier": "DANDI:001425",
+                "published_dandiset_id": "DANDI:001425/0.250514.0602",
+                "published_dandiset_doi": "10.48324/dandi.001425/0.250514.0602",
+            },
+            {
+                "dandiset_id": "DANDI:001425/draft",
+                "dandiset_identifier": "DANDI:001425",
+                "published_dandiset_id": "DANDI:001425/0.250514.0602",
+                # Invalid registrant code in the DOI prefix
+                "published_dandiset_doi": "10.1234/dandi.001425/0.250514.0602",
+            },
+        ),
+        # === EMBER DANDI instance test cases ===
+        # Without any environment variables set. dandischema is unvendorized.
+        (
+            {},
+            r"[A-Z]+",
+            r"\d{4,}",
+            {
+                "dandiset_id": "EMBER:000005/draft",
+                "dandiset_identifier": "EMBER:000005",
+                "published_dandiset_id": "EMBER:000005/0.250404.1839",
+                "published_dandiset_doi": "10.60533/ember.000005/0.250404.1839",
+            },
+            {
+                "dandiset_id": "EMBER:000005/draft",
+                "dandiset_identifier": "EMBER:000005",
+                "published_dandiset_id": "EMBER:000005/0.250404.1839",
+                # Invalid registrant code in the DOI prefix
+                "published_dandiset_doi": "10.60/ember.000005/0.250404.1839",
+            },
+        ),
+        (
+            {
+                "id_pattern": "EMBER",
+                "datacite_doi_id_pattern": r"(60533|82754)",
+            },
+            "EMBER",
+            r"(60533|82754)",
+            {
+                "dandiset_id": "EMBER:000005/draft",
+                "dandiset_identifier": "EMBER:000005",
+                "published_dandiset_id": "EMBER:000005/0.250404.1839",
+                "published_dandiset_doi": "10.60533/ember.000005/0.250404.1839",
+            },
+            {
+                "dandiset_id": "EMBER:000005/draft",
+                "dandiset_identifier": "EMBER:000005",
+                # Invalid id prefix
+                "published_dandiset_id": "EM:000005/0.250404.1839",
+                "published_dandiset_doi": "10.60533/ember.000005/0.250404.1839",
+            },
+        ),
+    ],
+    indirect=["clear_dandischema_modules_and_set_env_vars"],
+)
+def test_vendorization(
+    clear_dandischema_modules_and_set_env_vars: None,
+    exp_id_pattern: str,
+    exp_datacite_doi_id_pattern: str,
+    # Fields that are valid for the vendorization
+    valid_vendored_fields: dict[str, str],
+    # Fields that are invalid for the vendorization
+    invalid_vendored_fields: dict[str, str],
+) -> None:
+    """
+    Test the vendorization of the DANDI schema
+    """
+    import dandischema.models as models_
+
+    assert models_.ID_PATTERN == exp_id_pattern
+    assert models_.DATACITE_DOI_ID_PATTERN == exp_datacite_doi_id_pattern
+
+    class VendoredFieldModel(BaseModel):
+        """
+        A model consisting of fields with vendorized patterns in `dandischema.models`
+        """
+
+        dandiset_id: str = Field(pattern=_get_field_pattern("id", models_.Dandiset))
+        dandiset_identifier: str = Field(
+            pattern=_get_field_pattern("identifier", models_.Dandiset)
+        )
+        published_dandiset_id: str = Field(
+            pattern=_get_field_pattern("id", models_.PublishedDandiset)
+        )
+        published_dandiset_doi: str = Field(
+            pattern=_get_field_pattern("doi", models_.PublishedDandiset)
+        )
+
+        model_config = ConfigDict(strict=True)
+
+    # Validate the valid vendored fields against the vendored patterns
+    VendoredFieldModel.model_validate(valid_vendored_fields)
+
+    # Validate the invalid vendored fields against the vendored patterns
+    with pytest.raises(ValidationError):
+        VendoredFieldModel.model_validate(invalid_vendored_fields)
