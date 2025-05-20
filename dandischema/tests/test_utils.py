@@ -14,6 +14,7 @@ from dandischema.utils import (
     jsonschema_validator,
     name2title,
     sanitize_value,
+    sort_versions,
     strip_top_level_optional,
     validate_json,
     version2tuple,
@@ -97,6 +98,21 @@ def test_sanitize_value() -> None:
     assert sanitize_value("A;B") == "A-B"
     assert sanitize_value("A\\/B") == "A--B"
     assert sanitize_value("A\"'B") == "A--B"
+
+
+def test_sort_versions() -> None:
+    """Test that sort_versions correctly sorts version strings semantically."""
+    # Test for correct semantic version sorting
+    unsorted_versions = ["0.6.2", "0.6.10", "0.6.1", "0.5.1", "0.6.0", "0.4.4"]
+    expected_sort = ["0.4.4", "0.5.1", "0.6.0", "0.6.1", "0.6.2", "0.6.10"]
+
+    assert sort_versions(unsorted_versions) == expected_sort
+
+    # Test with empty list
+    assert sort_versions([]) == []
+
+    # Test with single element
+    assert sort_versions(["0.6.0"]) == ["0.6.0"]
 
 
 @pytest.fixture

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Iterator, List, Union, cast, get_args, get_origin
+from typing import Any, Iterator, List, Sequence, Union, cast, get_args, get_origin
 
 from jsonschema import Draft7Validator, Draft202012Validator
 from jsonschema.protocols import Validator as JsonschemaValidator
 from jsonschema.validators import validator_for
+from packaging.version import Version
 from pydantic import ConfigDict, TypeAdapter
 from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode, JsonSchemaValue
 from pydantic_core import CoreSchema, core_schema
@@ -241,3 +242,17 @@ def validate_json(instance: Any, validator: JsonschemaValidator) -> None:
 
 # Pydantic type adapter for a JSON object, which is of type `dict[str, Any]`
 json_object_adapter = TypeAdapter(dict[str, Any], config=ConfigDict(strict=True))
+
+
+def sort_versions(versions: Sequence[str]) -> list[str]:
+    """
+    Sort version strings in proper version order using packaging.version
+
+    This function sorts a list of version strings semantically rather
+    than lexicographically, ensuring correct ordering of versions
+    (e.g., "0.6.10" comes after "0.6.9", not before "0.6.2").
+
+    :param versions: A sequence of version strings to sort
+    :return: A list of version strings sorted in proper version order
+    """
+    return sorted(versions, key=Version)

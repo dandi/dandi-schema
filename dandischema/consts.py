@@ -23,6 +23,8 @@ ALLOWED_TARGET_SCHEMAS = [DANDI_SCHEMA_VERSION]
 
 # This allows multiple schemas for validation, whereas target schemas focus on
 # migration.
+# We use simple sorted() here to avoid circular imports, but use
+# utils.sort_versions() if to output to the user
 ALLOWED_VALIDATION_SCHEMAS = sorted(
     set(ALLOWED_INPUT_SCHEMAS).union(ALLOWED_TARGET_SCHEMAS)
 )
