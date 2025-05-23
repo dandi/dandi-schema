@@ -54,14 +54,9 @@ class Config(BaseSettings):
         return _UNVENDORED_ID_PATTERN
 
     @property
-    def datacite_doi_id_pattern(self) -> str:
+    def datacite_doi_id_pattern(self) -> Optional[str]:
         """The registrant code pattern of the DOI prefix at DataCite"""
-        if self.datacite_doi_id is not None:
-            return self.datacite_doi_id
-
-        # If the DataCite ID, registrant code, is not provided,
-        #   we use a pattern for unvendored DANDI instances
-        return _UNVENDORED_DATACITE_DOI_ID_PATTERN
+        return self.datacite_doi_id
 
 
 CONFIG = Config()
