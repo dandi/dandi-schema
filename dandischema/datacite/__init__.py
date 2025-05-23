@@ -18,9 +18,9 @@ from pydantic import ValidationError
 import requests
 
 from ..models import (
-    LicenseType,
     NAME_PATTERN,
     Dandiset,
+    LicenseType,
     Organization,
     Person,
     PublishedDandiset,
@@ -87,31 +87,31 @@ def construct_unvalidated_dandiset(meta_dict: dict) -> Dandiset:
     meta = Dandiset.model_construct(**meta_dict)
 
     # model_construct doesn't handle nested objects so we have to init classes manually
-    if hasattr(meta, 'license') and meta.license:
+    if hasattr(meta, "license") and meta.license:
         processed_licenses = []
         for license_item in meta.license:
             processed_licenses.append(LicenseType(license_item))
         meta.license = processed_licenses
 
-    if hasattr(meta, 'contributor') and meta.contributor:
+    if hasattr(meta, "contributor") and meta.contributor:
         for i, contributor_dict in enumerate(meta.contributor):
-            if 'roleName' in contributor_dict and contributor_dict['roleName']:
+            if "roleName" in contributor_dict and contributor_dict["roleName"]:
                 processed_roles = []
-                for role in contributor_dict['roleName']:
+                for role in contributor_dict["roleName"]:
                     processed_roles.append(RoleType(role))
-                contributor_dict['roleName'] = processed_roles
+                contributor_dict["roleName"] = processed_roles
 
             # Based on schemaKey, convert to proper model type
-            schema_key = contributor_dict.get('schemaKey')
-            if schema_key == 'Person':
+            schema_key = contributor_dict.get("schemaKey")
+            if schema_key == "Person":
                 meta.contributor[i] = Person.model_construct(**contributor_dict)
-            elif schema_key == 'Organization':
+            elif schema_key == "Organization":
                 meta.contributor[i] = Organization.model_construct(**contributor_dict)
 
-    if hasattr(meta, 'relatedResource') and meta.relatedResource:
+    if hasattr(meta, "relatedResource") and meta.relatedResource:
         for i, resource_dict in enumerate(meta.relatedResource):
-            if 'relation' in resource_dict:
-                resource_dict['relation'] = RelationType(resource_dict['relation'])
+            if "relation" in resource_dict:
+                resource_dict["relation"] = RelationType(resource_dict["relation"])
             meta.relatedResource[i] = Resource.model_construct(**resource_dict)
 
     return meta
