@@ -1,3 +1,5 @@
+from packaging.version import Version as _Version
+
 DANDI_SCHEMA_VERSION = "0.6.10"
 ALLOWED_INPUT_SCHEMAS = [
     "0.4.4",
@@ -21,10 +23,7 @@ ALLOWED_INPUT_SCHEMAS = [
 # version
 ALLOWED_TARGET_SCHEMAS = [DANDI_SCHEMA_VERSION]
 
-# This allows multiple schemas for validation, whereas target schemas focus on
-# migration.
-# We use simple sorted() here to avoid circular imports, but use
-# utils.sort_versions() if to output to the user
+# Note: utils.sort_versions() is there to sort if created from sets again
 ALLOWED_VALIDATION_SCHEMAS = sorted(
-    set(ALLOWED_INPUT_SCHEMAS).union(ALLOWED_TARGET_SCHEMAS)
+    set(ALLOWED_INPUT_SCHEMAS).union(ALLOWED_TARGET_SCHEMAS), key=_Version
 )
