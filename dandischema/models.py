@@ -29,6 +29,7 @@ from pydantic import (
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
+    create_model,
     field_validator,
     model_validator,
 )
@@ -1854,44 +1855,69 @@ class Publishable(DandiBaseModel):
     )
 
 
-class PublishedDandiset(Dandiset, Publishable):
-    id: str = Field(
-        description="Uniform resource identifier.",
-        pattern=DANDI_PUBID_PATTERN,
-        json_schema_extra={"readOnly": True},
+published_dandiset_field_defs = {
+    "id": (
+        str,
+        Field(
+            description="Uniform resource identifier.",
+            pattern=DANDI_PUBID_PATTERN,
+            json_schema_extra={"readOnly": True},
+        ),
+    ),
+    "url": (
+        AnyHttpUrl,
+        Field(
+            description="Permalink to the Dandiset.",
+            json_schema_extra={"readOnly": True, "nskey": "schema"},
+        ),
+    ),
+    "schemaKey": (
+        Literal["Dandiset"],
+        Field("Dandiset", validate_default=True, json_schema_extra={"readOnly": True}),
+    ),
+}
+
+
+# Add the `doi` field on condition
+if DANDI_DOI_PATTERN is not None:
+    published_dandiset_field_defs["doi"] = (
+        str,
+        Field(
+            title="DOI",
+            pattern=DANDI_DOI_PATTERN,
+            json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
+        ),
     )
 
-    doi: str = Field(
-        title="DOI",
-        pattern=DANDI_DOI_PATTERN,
-        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
-    )
-    url: AnyHttpUrl = Field(
-        description="Permalink to the Dandiset.",
-        json_schema_extra={"readOnly": True, "nskey": "schema"},
-    )
 
-    schemaKey: Literal["Dandiset"] = Field(
-        "Dandiset", validate_default=True, json_schema_extra={"readOnly": True}
-    )
+@field_validator("assetsSummary")
+def _check_filesbytes(values: AssetsSummary) -> AssetsSummary:
+    if values.numberOfBytes == 0 or values.numberOfFiles == 0:
+        raise ValueError(
+            "A Dandiset containing no files or zero bytes is not publishable"
+        )
+    return values
 
-    @field_validator("assetsSummary")
-    @classmethod
-    def check_filesbytes(cls, values: AssetsSummary) -> AssetsSummary:
-        if values.numberOfBytes == 0 or values.numberOfFiles == 0:
-            raise ValueError(
-                "A Dandiset containing no files or zero bytes is not publishable"
-            )
-        return values
 
-    @field_validator("url")
-    @classmethod
-    def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
-        if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
-            raise ValueError(
-                f'string does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
-            )
-        return url
+@field_validator("url")
+def _check_url(url: AnyHttpUrl) -> AnyHttpUrl:
+    if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
+        raise ValueError(
+            f'string does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
+        )
+    return url
+
+
+# Create the PublishedDandiset model dynamically
+# This model has the `doi` field conditionally included based on whether
+# `DANDI_DOI_PATTERN is not None`.
+#  Note: `mypy` doesn't play well with `create_model`
+PublishedDandiset = create_model(  # type: ignore[call-overload]
+    "PublishedDandiset",
+    **published_dandiset_field_defs,
+    __base__=(Dandiset, Publishable),
+    __validators__={"check_filesbytes": _check_filesbytes, "check_url": _check_url},
+)
 
 
 class PublishedAsset(Asset, Publishable):
