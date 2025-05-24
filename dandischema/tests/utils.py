@@ -1,16 +1,46 @@
 from datetime import datetime
 import os
+from pathlib import Path
 from typing import Any, Dict
 
 import pytest
+
+from dandischema.conf import CONFIG
+
+if CONFIG.instance_name not in ["DANDI", "DANDI-ADHOC", "EMBER-DANDI"]:
+    # This should never happen
+    raise NotImplementedError(
+        f"There is no testing `Dandiset` metadata for a DANDI"
+        f"instance named {CONFIG.instance_name}"
+    )
+
+INSTANCE_NAME = CONFIG.instance_name
+METADATA_DIR = Path(__file__).with_name("data") / "metadata"
+DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
+
+if CONFIG.instance_name == "DANDI" or CONFIG.instance_name == "DANDI-ADHOC":
+    DOI_PREFIX = "10.80507"
+elif CONFIG.instance_name == "EMBER-DANDI":
+    DOI_PREFIX = "10.60533"
+else:
+    raise AssertionError(
+        f"Invalid instance name, {INSTANCE_NAME}, in testing. "
+        f"This is an error in the program."
+    )
+
 
 skipif_no_network = pytest.mark.skipif(
     bool(os.environ.get("DANDI_TESTS_NONETWORK")), reason="no network settings"
 )
 
 
+skipif_instance_name_not_dandi = pytest.mark.skipif(
+    INSTANCE_NAME != "DANDI", reason='The DANDI instance\'s name is not "DANDI"'
+)
+
+
 def _basic_publishmeta(
-    dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
+    instance_name: str, dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
 ) -> Dict[str, Any]:
     """Return extra metadata required by PublishedDandiset
 
@@ -35,6 +65,6 @@ def _basic_publishmeta(
             "schemaKey": "PublishActivity",
         },
         "version": version,
-        "doi": f"{prefix}/dandi.{dandi_id}/{version}",
+        "doi": f"{prefix}/{instance_name.lower()}.{dandi_id}/{version}",
     }
     return publish_meta
