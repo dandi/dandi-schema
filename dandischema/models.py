@@ -1861,11 +1861,13 @@ class PublishedDandiset(Dandiset, Publishable):
         json_schema_extra={"readOnly": True},
     )
 
-    doi: str = Field(
-        title="DOI",
-        pattern=DANDI_DOI_PATTERN,
-        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
-    )
+    if DANDI_DOI_PATTERN is not None:
+        doi: str = Field(
+            title="DOI",
+            pattern=DANDI_DOI_PATTERN,
+            json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
+        )
+
     url: AnyHttpUrl = Field(
         description="Permalink to the Dandiset.",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
