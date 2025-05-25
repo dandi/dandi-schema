@@ -1854,18 +1854,32 @@ class Publishable(DandiBaseModel):
     )
 
 
+_doi_field_kwargs: dict[str, Any] = {
+    "title": "DOI",
+    "json_schema_extra": {"readOnly": True, "nskey": DANDI_NSKEY},
+}
+if DANDI_DOI_PATTERN is not None:
+    _doi_field_kwargs["pattern"] = DANDI_DOI_PATTERN
+else:
+    _doi_field_kwargs["default"] = ""
+    # restricting the value to empty string to indicate that there is no DOI
+    _doi_field_kwargs["pattern"] = r"^$"
+
+
 class PublishedDandiset(Dandiset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
         pattern=DANDI_PUBID_PATTERN,
         json_schema_extra={"readOnly": True},
     )
+    doi: str = Field(**_doi_field_kwargs)
+    """
+    The DOI of the published Dandiset
 
-    doi: str = Field(
-        title="DOI",
-        pattern=DANDI_DOI_PATTERN,
-        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
-    )
+    The value of the empty string indicates that there is no DOI for the published
+    Dandiset.
+    """
+
     url: AnyHttpUrl = Field(
         description="Permalink to the Dandiset.",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
