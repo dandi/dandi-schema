@@ -15,6 +15,8 @@ if CONFIG.instance_name not in ["DANDI", "DANDI-ADHOC", "EMBER-DANDI"]:
     )
 
 INSTANCE_NAME = CONFIG.instance_name
+DATACITE_DOI_ID = CONFIG.datacite_doi_id
+
 METADATA_DIR = Path(__file__).with_name("data") / "metadata"
 DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
 

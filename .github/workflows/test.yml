@@ -26,6 +26,10 @@ jobs:
             vendored_env: ember-dandi
             instance_name: EMBER-DANDI
             datacite_doi_id: '60533'
+          - os: ubuntu-latest
+            python: '3.9'
+            vendored_env: ember-dandi-no-doi
+            instance_name: EMBER-DANDI
     steps:
     - name: Set up environment
       uses: actions/checkout@v4
@@ -44,12 +48,17 @@ jobs:
         python -m pip install --upgrade pip wheel
         python -m pip install --upgrade tox
 
-    - name: Set vendor environment
-      if: ${{ matrix.vendored_env != 'unvendored' }}
+     # Set only if matrix.instance_name is defined
+    - name: Set DANDI_INSTANCE_NAME
+      if: ${{ matrix.instance_name }}
       shell: bash
-      run: |
-        echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
-        echo "DANDI_DATACITE_DOI_ID=${{ matrix.datacite_doi_id }}" >> "$GITHUB_ENV"
+      run: echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
+
+    # Set only if matrix.datacite_doi_id is defined
+    - name: Set DANDI_DATACITE_DOI_ID
+      if: ${{ matrix.datacite_doi_id }}
+      shell: bash
+      run: echo "DANDI_DATACITE_DOI_ID=${{ matrix.datacite_doi_id }}" >> "$GITHUB_ENV"
 
     - name: Run all tests
       env:
