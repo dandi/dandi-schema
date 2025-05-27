@@ -7,7 +7,7 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 import pytest
 
-from .utils import DOI_PREFIX, INSTANCE_NAME, _basic_publishmeta
+from .utils import DATACITE_DOI_ID, DOI_PREFIX, INSTANCE_NAME, _basic_publishmeta
 from .. import models
 from ..models import (
     DANDI_INSTANCE_URL_PATTERN,
@@ -425,10 +425,16 @@ def test_dandimeta_1() -> None:
             msg="Value error, "
             "A Dandiset containing no files or zero bytes is not publishable",
         ),
-        ("doi",): ErrDetail(type="missing", msg=None),
     }
 
-    assert len(exc.value.errors()) == 6
+    # Handle the case where `PublishedDandiset` requires the `doi` field
+    if DATACITE_DOI_ID is not None:
+        expected_errors[("doi",)] = ErrDetail(
+            type="missing",
+            msg=None,
+        )
+
+    assert len(exc.value.errors()) == len(expected_errors)
     for err in exc.value.errors():
         err_loc = err["loc"]
         assert err_loc in expected_errors
@@ -438,12 +444,16 @@ def test_dandimeta_1() -> None:
             assert err["msg"] == expected_errors[err_loc].msg
 
     assert set([el["loc"][0] for el in exc.value.errors()]) == {
-        "assetsSummary",
-        "datePublished",
-        "publishedBy",
-        "doi",
-        "url",
-        "id",
+        e
+        for e in [
+            "assetsSummary",
+            "datePublished",
+            "publishedBy",
+            "doi",
+            "url",
+            "id",
+        ]
+        if DATACITE_DOI_ID is not None or e != "doi"
     }
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,

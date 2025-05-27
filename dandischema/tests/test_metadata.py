@@ -14,6 +14,7 @@ from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validat
 
 from .utils import (
     DANDISET_METADATA_DIR,
+    DATACITE_DOI_ID,
     INSTANCE_NAME,
     METADATA_DIR,
     skipif_instance_name_not_dandi,
@@ -131,20 +132,24 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             {"schemaKey": "Dandiset"},
             "PublishedDandiset",
             {
-                "assetsSummary",
-                "citation",
-                "contributor",
-                "datePublished",
-                "description",
-                "doi",
-                "id",
-                "identifier",
-                "license",
-                "manifestLocation",
-                "name",
-                "publishedBy",
-                "url",
-                "version",
+                e
+                for e in [
+                    "assetsSummary",
+                    "citation",
+                    "contributor",
+                    "datePublished",
+                    "description",
+                    "doi",
+                    "id",
+                    "identifier",
+                    "license",
+                    "manifestLocation",
+                    "name",
+                    "publishedBy",
+                    "url",
+                    "version",
+                ]
+                if DATACITE_DOI_ID is not None or e != "doi"
             },
         ),
         (
@@ -154,20 +159,24 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                "assetsSummary",
-                "citation",
-                "contributor",
-                "datePublished",
-                "description",
-                "doi",
-                "id",
-                "identifier",
-                "license",
-                "manifestLocation",
-                "name",
-                "publishedBy",
-                "url",
-                "version",
+                e
+                for e in [
+                    "assetsSummary",
+                    "citation",
+                    "contributor",
+                    "datePublished",
+                    "description",
+                    "doi",
+                    "id",
+                    "identifier",
+                    "license",
+                    "manifestLocation",
+                    "name",
+                    "publishedBy",
+                    "url",
+                    "version",
+                ]
+                if DATACITE_DOI_ID is not None or e != "doi"
             },
         ),
         (
@@ -184,19 +193,23 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                "assetsSummary",
-                "citation",
-                "datePublished",
-                "description",
-                "doi",
-                "id",
-                "identifier",
-                "license",
-                "manifestLocation",
-                "name",
-                "publishedBy",
-                "url",
-                "version",
+                e
+                for e in [
+                    "assetsSummary",
+                    "citation",
+                    "datePublished",
+                    "description",
+                    "doi",
+                    "id",
+                    "identifier",
+                    "license",
+                    "manifestLocation",
+                    "name",
+                    "publishedBy",
+                    "url",
+                    "version",
+                ]
+                if DATACITE_DOI_ID is not None or e != "doi"
             },
         ),
         (
