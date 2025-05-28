@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
@@ -51,25 +54,21 @@ jobs:
      # Set only if matrix.instance_name is defined
     - name: Set DANDI_INSTANCE_NAME
       if: ${{ matrix.instance_name }}
-      shell: bash
       run: echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
 
     # Set only if matrix.datacite_doi_id is defined
     - name: Set DANDI_DATACITE_DOI_ID
       if: ${{ matrix.datacite_doi_id }}
-      shell: bash
       run: echo "DANDI_DATACITE_DOI_ID=${{ matrix.datacite_doi_id }}" >> "$GITHUB_ENV"
 
     - name: Set DANDI DataCite credentials
       if: ${{ matrix.vendored_env == 'dandi' }}
-      shell: bash
       run: |
         echo "DATACITE_DEV_LOGIN=${{ secrets.DATACITE_DEV_DANDI_LOGIN }}" >> "$GITHUB_ENV"
         echo "DATACITE_DEV_PASSWORD=${{ secrets.DATACITE_DEV_DANDI_PASSWORD }}" >> "$GITHUB_ENV"
 
     - name: Set EMBER DataCite credentials
       if: ${{ matrix.vendored_env == 'ember-dandi' }}
-      shell: bash
       run: |
         echo "DATACITE_DEV_LOGIN=${{ secrets.DATACITE_DEV_EMBER_LOGIN }}" >> "$GITHUB_ENV"
         echo "DATACITE_DEV_PASSWORD=${{ secrets.DATACITE_DEV_EMBER_PASSWORD }}" >> "$GITHUB_ENV"
