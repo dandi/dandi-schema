@@ -110,9 +110,12 @@ def metadata_basic() -> Dict[str, Any]:
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
+@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
 def test_datacite(dandi_id: str, schema: Any) -> None:
     """checking to_datacite for a specific datasets"""
+
+    assert DOI_PREFIX is not None
 
     # reading metadata taken from exemplary dandisets and saved in json files
     with (DANDISET_METADATA_DIR / f"meta_{dandi_id}.json").open() as f:
@@ -368,6 +371,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
+@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 def test_dandimeta_datacite(
     schema: Any,
     metadata_basic: Dict[str, Any],
@@ -378,6 +382,8 @@ def test_dandimeta_datacite(
     checking datacite objects for specific metadata dictionaries,
     posting datacite object and checking the status code
     """
+
+    assert DOI_PREFIX is not None
 
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
@@ -413,7 +419,10 @@ def test_dandimeta_datacite(
     datacite_post(datacite, metadata_basic["doi"])
 
 
+@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
+    assert DOI_PREFIX is not None
+
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]
@@ -540,6 +549,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
+@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 def test_datacite_related_res_url(
     metadata_basic: Dict[str, Any],
     related_res_url: Dict[str, Any],
@@ -549,6 +559,8 @@ def test_datacite_related_res_url(
     checking if urls provided in the relatedResource.identifier could be
     translated to DOI for some websites: e.g. bioarxiv.org, doi.org
     """
+    assert DOI_PREFIX is not None
+
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
 
