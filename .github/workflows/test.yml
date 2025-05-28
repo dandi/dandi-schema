@@ -25,7 +25,7 @@ jobs:
             python: '3.9'
             vendored_env: ember-dandi
             instance_name: EMBER-DANDI
-            datacite_doi_id: '60533'
+            datacite_doi_id: '82754'
           - os: ubuntu-latest
             python: '3.9'
             vendored_env: ember-dandi-no-doi
@@ -60,9 +60,22 @@ jobs:
       shell: bash
       run: echo "DANDI_DATACITE_DOI_ID=${{ matrix.datacite_doi_id }}" >> "$GITHUB_ENV"
 
+    - name: Set DANDI DataCite credentials
+      if: ${{ matrix.vendored_env == 'dandi' }}
+      shell: bash
+      run: |
+        echo "DATACITE_DEV_LOGIN=${{ secrets.DATACITE_DEV_DANDI_LOGIN }}" >> "$GITHUB_ENV"
+        echo "DATACITE_DEV_PASSWORD=${{ secrets.DATACITE_DEV_DANDI_PASSWORD }}" >> "$GITHUB_ENV"
+
+    - name: Set EMBER DataCite credentials
+      if: ${{ matrix.vendored_env == 'ember-dandi' }}
+      shell: bash
+      run: |
+        echo "DATACITE_DEV_LOGIN=${{ secrets.DATACITE_DEV_EMBER_LOGIN }}" >> "$GITHUB_ENV"
+        echo "DATACITE_DEV_PASSWORD=${{ secrets.DATACITE_DEV_EMBER_PASSWORD }}" >> "$GITHUB_ENV"
+
     - name: Run all tests
       env:
-        DATACITE_DEV_PASSWORD: ${{ secrets.DATACITE_DEV_PASSWORD }}
         NO_ET: 1
       run: tox -e py -- -s --cov-report=xml
 

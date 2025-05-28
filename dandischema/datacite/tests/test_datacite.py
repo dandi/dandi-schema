@@ -36,7 +36,7 @@ def datacite_post(datacite: dict, doi: str) -> None:
         "https://api.test.datacite.org/dois",
         json=datacite,
         headers={"Content-Type": "application/vnd.api+json"},
-        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
+        auth=(os.environ["DATACITE_DEV_LOGIN"], os.environ["DATACITE_DEV_PASSWORD"]),
     )
     rp.raise_for_status()
 
@@ -52,7 +52,7 @@ def _clean_doi(doi: str) -> None:
     """Remove doi. Status code is ignored"""
     requests.delete(
         f"https://api.test.datacite.org/dois/{doi}",
-        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
+        auth=(os.environ["DATACITE_DEV_LOGIN"], os.environ["DATACITE_DEV_PASSWORD"]),
     )
 
 
