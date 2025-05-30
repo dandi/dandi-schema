@@ -543,9 +543,6 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
         ),
     ],
 )
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
 @pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 def test_datacite_related_res_url(
     metadata_basic: Dict[str, Any],
