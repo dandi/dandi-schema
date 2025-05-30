@@ -22,6 +22,7 @@ from dandischema.tests.utils import (
     skipif_no_datacite_auth,
     skipif_no_doi_prefix,
     skipif_no_network,
+    skipif_no_test_dandiset_metadata_dir,
 )
 
 from .. import _get_datacite_schema, to_datacite
@@ -111,6 +112,7 @@ def metadata_basic() -> Dict[str, Any]:
 @skipif_no_network
 @skipif_no_datacite_auth
 @skipif_no_doi_prefix
+@skipif_no_test_dandiset_metadata_dir
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
 def test_datacite(dandi_id: str, schema: Any) -> None:
     """checking to_datacite for a specific datasets"""

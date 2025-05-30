@@ -7,13 +7,6 @@ import pytest
 
 from dandischema.conf import CONFIG
 
-if CONFIG.instance_name not in ["DANDI", "DANDI-ADHOC", "EMBER-DANDI"]:
-    # This should never happen
-    raise NotImplementedError(
-        f"There is no testing `Dandiset` metadata for a DANDI"
-        f"instance named {CONFIG.instance_name}"
-    )
-
 INSTANCE_NAME = CONFIG.instance_name
 DATACITE_DOI_ID = CONFIG.datacite_doi_id
 
@@ -35,6 +28,12 @@ skipif_no_doi_prefix = pytest.mark.skipif(
 
 skipif_no_network = pytest.mark.skipif(
     bool(os.environ.get("DANDI_TESTS_NONETWORK")), reason="no network settings"
+)
+
+skipif_no_test_dandiset_metadata_dir = pytest.mark.skipif(
+    not DANDISET_METADATA_DIR.is_dir(),
+    reason=f"No test Dandiset metadata directory for a DANDI instance named "
+    f"{INSTANCE_NAME} exists",
 )
 
 
