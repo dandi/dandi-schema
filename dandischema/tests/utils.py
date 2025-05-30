@@ -43,7 +43,7 @@ skipif_instance_name_not_dandi = pytest.mark.skipif(
 )
 
 
-def _basic_publishmeta(
+def basic_publishmeta(
     instance_name: str, dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
 ) -> Dict[str, Any]:
     """Return extra metadata required by PublishedDandiset
