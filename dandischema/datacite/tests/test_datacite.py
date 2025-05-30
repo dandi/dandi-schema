@@ -19,6 +19,7 @@ from dandischema.tests.utils import (
     DOI_PREFIX,
     INSTANCE_NAME,
     _basic_publishmeta,
+    skipif_no_datacite_auth,
     skipif_no_network,
 )
 
@@ -107,9 +108,7 @@ def metadata_basic() -> Dict[str, Any]:
 
 
 @skipif_no_network
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
+@skipif_no_datacite_auth
 @pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
 def test_datacite(dandi_id: str, schema: Any) -> None:
@@ -368,9 +367,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
         ),
     ],
 )
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
+@skipif_no_datacite_auth
 @pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
 def test_dandimeta_datacite(
     schema: Any,
