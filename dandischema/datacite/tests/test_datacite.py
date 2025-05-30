@@ -20,6 +20,7 @@ from dandischema.tests.utils import (
     INSTANCE_NAME,
     _basic_publishmeta,
     skipif_no_datacite_auth,
+    skipif_no_doi_prefix,
     skipif_no_network,
 )
 
@@ -109,7 +110,7 @@ def metadata_basic() -> Dict[str, Any]:
 
 @skipif_no_network
 @skipif_no_datacite_auth
-@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
+@skipif_no_doi_prefix
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
 def test_datacite(dandi_id: str, schema: Any) -> None:
     """checking to_datacite for a specific datasets"""
@@ -368,7 +369,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
     ],
 )
 @skipif_no_datacite_auth
-@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
+@skipif_no_doi_prefix
 def test_dandimeta_datacite(
     schema: Any,
     metadata_basic: Dict[str, Any],
@@ -416,7 +417,7 @@ def test_dandimeta_datacite(
     datacite_post(datacite, metadata_basic["doi"])
 
 
-@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
+@skipif_no_doi_prefix
 def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     assert DOI_PREFIX is not None
 
@@ -543,7 +544,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
         ),
     ],
 )
-@pytest.mark.skipif(DOI_PREFIX is None, reason="DOI_PREFIX is not set")
+@skipif_no_doi_prefix
 def test_datacite_related_res_url(
     metadata_basic: Dict[str, Any],
     related_res_url: Dict[str, Any],

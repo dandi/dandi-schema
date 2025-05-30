@@ -29,6 +29,10 @@ skipif_no_datacite_auth = pytest.mark.skipif(
     reason="no datacite login or password set in environment variables",
 )
 
+skipif_no_doi_prefix = pytest.mark.skipif(
+    DOI_PREFIX is None, reason="DOI_PREFIX is not set"
+)
+
 skipif_no_network = pytest.mark.skipif(
     bool(os.environ.get("DANDI_TESTS_NONETWORK")), reason="no network settings"
 )
