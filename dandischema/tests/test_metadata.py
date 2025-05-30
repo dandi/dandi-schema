@@ -19,6 +19,7 @@ from .utils import (
     METADATA_DIR,
     skipif_instance_name_not_dandi,
     skipif_no_network,
+    skipif_no_test_dandiset_metadata_dir,
 )
 from ..consts import DANDI_SCHEMA_VERSION
 from ..exceptions import JsonschemaValidationError, PydanticValidationError
@@ -50,6 +51,7 @@ def test_asset(schema_dir: Path) -> None:
     validate(data_as_dict)
 
 
+@skipif_no_test_dandiset_metadata_dir
 def test_dandiset(schema_dir: Path) -> None:
     with (DANDISET_METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
@@ -64,6 +66,7 @@ def test_id(schema_dir: Path) -> None:
 
 
 @skipif_no_network
+@skipif_no_test_dandiset_metadata_dir
 def test_pydantic_validation(schema_dir: Path) -> None:
     with (DANDISET_METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
@@ -436,6 +439,7 @@ def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 @skipif_no_network
+@skipif_no_test_dandiset_metadata_dir
 # Skip for instance name not being DANDI because JSON schema version at `0.4.4`, the
 # schema version of the metadata in `meta_000004old.json`, is hardcoded to only for
 # an DANDI instance named `DANDI`
