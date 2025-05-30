@@ -18,7 +18,7 @@ from dandischema.tests.utils import (
     DANDISET_METADATA_DIR,
     DOI_PREFIX,
     INSTANCE_NAME,
-    _basic_publishmeta,
+    basic_publishmeta,
     skipif_no_datacite_auth,
     skipif_no_doi_prefix,
     skipif_no_network,
@@ -128,7 +128,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     # updating with basic fields required for PublishDandiset
     meta_js.update(
-        _basic_publishmeta(
+        basic_publishmeta(
             INSTANCE_NAME,
             dandi_id.replace("000", str(random.randrange(100, 999))),
             prefix=DOI_PREFIX,
@@ -387,7 +387,7 @@ def test_dandimeta_datacite(
     dandi_id_noprefix = dandi_id.split(":")[1]
 
     metadata_basic.update(
-        _basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
     )
     metadata_basic.update(additional_meta)
 
@@ -425,7 +425,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]
     metadata_basic.update(
-        _basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
     )
 
     # creating and validating datacite objects
@@ -560,7 +560,7 @@ def test_datacite_related_res_url(
     dandi_id_noprefix = dandi_id.split(":")[1]
 
     metadata_basic.update(
-        _basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
     )
     metadata_basic["relatedResource"] = [related_res_url]
 

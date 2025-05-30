@@ -11,7 +11,7 @@ from .utils import (
     DATACITE_DOI_ID,
     DOI_PREFIX,
     INSTANCE_NAME,
-    _basic_publishmeta,
+    basic_publishmeta,
     skipif_no_doi_prefix,
 )
 from .. import models
@@ -472,7 +472,7 @@ def test_dandimeta_1() -> None:
     meta_dict["id"] = f"{INSTANCE_NAME}:999999/0.0.0"
     meta_dict["version"] = "0.0.0"
     meta_dict.update(
-        _basic_publishmeta(INSTANCE_NAME, dandi_id="999999", prefix=DOI_PREFIX)
+        basic_publishmeta(INSTANCE_NAME, dandi_id="999999", prefix=DOI_PREFIX)
     )
     meta_dict["assetsSummary"].update(**{"numberOfBytes": 1, "numberOfFiles": 1})
     PublishedDandiset(**meta_dict)
