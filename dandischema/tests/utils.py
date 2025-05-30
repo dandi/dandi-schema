@@ -23,6 +23,12 @@ DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
 DOI_PREFIX = f"10.{DATACITE_DOI_ID}" if DATACITE_DOI_ID is not None else None
 
 
+skipif_no_datacite_auth = pytest.mark.skipif(
+    os.getenv("DATACITE_DEV_LOGIN") is None
+    or os.getenv("DATACITE_DEV_PASSWORD") is None,
+    reason="no datacite login or password set in environment variables",
+)
+
 skipif_no_network = pytest.mark.skipif(
     bool(os.environ.get("DANDI_TESTS_NONETWORK")), reason="no network settings"
 )
