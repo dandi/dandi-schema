@@ -91,7 +91,7 @@ def generate_context() -> dict:
                         "@id": cast(str, field.json_schema_extra["nskey"]) + ":" + name
                     }
                 else:
-                    fields[name] = {"@id": f"{models.DANDI_NSKEY}:" + name}
+                    fields[name] = {"@id": f"{models.DANDI_NSKEY}:{name}"}
 
                 # The annotation without the top-level optional
                 stripped_annotation = strip_top_level_optional(field.annotation)
