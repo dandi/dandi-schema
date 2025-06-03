@@ -36,7 +36,7 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
-from dandischema.conf import INSTANCE_CONFIG
+from dandischema.conf import get_instance_config
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
@@ -44,8 +44,9 @@ from .types import ByteSizeJsonSchema
 from .utils import name2title
 
 # Load needed configurations into constants
-ID_PATTERN = INSTANCE_CONFIG.id_pattern
-DATACITE_DOI_ID_PATTERN = INSTANCE_CONFIG.datacite_doi_id_pattern
+_INSTANCE_CONFIG = get_instance_config()
+ID_PATTERN = _INSTANCE_CONFIG.id_pattern
+DATACITE_DOI_ID_PATTERN = _INSTANCE_CONFIG.datacite_doi_id_pattern
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]

@@ -65,15 +65,6 @@ class Config(BaseSettings):
         return self.datacite_doi_id
 
 
-INSTANCE_CONFIG = Config()
-"""
-Configuration of the DANDI instance
-
-This configuration holds the information used to customize the DANDI schema to a
-specific vendor
-"""
-
-
 _instance_config = Config()  # Initial value is set by env vars alone
 """
 Configuration of the DANDI instance
