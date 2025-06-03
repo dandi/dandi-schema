@@ -5,10 +5,10 @@ from typing import Any, Dict
 
 import pytest
 
-from dandischema.conf import CONFIG
+from dandischema.conf import INSTANCE_CONFIG
 
-INSTANCE_NAME = CONFIG.instance_name
-DATACITE_DOI_ID = CONFIG.datacite_doi_id
+INSTANCE_NAME = INSTANCE_CONFIG.instance_name
+DATACITE_DOI_ID = INSTANCE_CONFIG.datacite_doi_id
 
 METADATA_DIR = Path(__file__).with_name("data") / "metadata"
 DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
