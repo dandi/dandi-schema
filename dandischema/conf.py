@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Annotated, Any, Optional
 
 from pydantic import StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_MODELS_MODULE_NAME = "dandischema.models"
+"""The full import name of the module containing the DANDI Pydantic models"""
+
 _UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 _UNVENDORED_DATACITE_DOI_ID_PATTERN = r"\d{4,}"
+
+logger = logging.getLogger(__name__)
 
 
 class Config(BaseSettings):
@@ -115,6 +121,14 @@ def reset_instance_config(**kwargs: Any) -> None:
         `dandischema.models`.
 
     """
-    # todo: give a warning if the `models.py` is already imported
+    import sys
+
+    if _MODELS_MODULE_NAME in sys.modules:
+        logger.warning(
+            f"{_MODELS_MODULE_NAME}` is already imported. Resetting the DANDI instance "
+            "configuration will not have any affect on the models defined in "
+            f"`{_MODELS_MODULE_NAME}`. "
+        )
+
     global _instance_config
     _instance_config = Config(**kwargs)
