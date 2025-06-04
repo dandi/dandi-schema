@@ -31,6 +31,11 @@ from .. import _get_datacite_schema, to_datacite
 def datacite_post(datacite: dict, doi: str) -> None:
     """Post the datacite object and check the status of the request"""
 
+    print(f"posting datacite object with doi {doi}")
+    print(f"INSTANCE_NAME: {INSTANCE_NAME}")
+    print(f"DOI_PREFIX: {DOI_PREFIX}")
+    print(f"payload: \n{json.dumps(datacite, indent=2)}")
+
     # removing doi in case it exists
     _clean_doi(doi)
 
