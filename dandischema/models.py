@@ -15,6 +15,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 from warnings import warn
 
@@ -74,6 +75,51 @@ def diff_models(model1: M, model2: M) -> None:
     for field in model1.model_fields:
         if getattr(model1, field) != getattr(model2, field):
             print(f"{field} is different")
+
+
+def get_dict_without_context(d: Any) -> Any:
+    """
+    If a given object is a dictionary, return a copy of it without the
+    `@context` key. Otherwise, return the input object as is.
+
+    :param d: The given object
+    :return: If the object is a dictionary, a copy of it without the `@context` key;
+             otherwise, the input object as is.
+    """
+    if isinstance(d, dict):
+        return {k: v for k, v in d.items() if k != "@context"}
+    return d
+
+
+def add_context(json_schema: dict) -> None:
+    """
+    Add the `@context` key to the given JSON schema
+
+    :param json_schema: The dictionary representing the JSON schema
+
+    raises: ValueError if the `@context` key is already present in the given schema
+    """
+    context_key = "@context"
+    context_key_title = "@Context"
+    properties = cast(dict, json_schema.get("properties", {}))
+    required = cast(list, json_schema.get("required", []))
+
+    if context_key in properties or context_key in required:
+        msg = f"The '{context_key}' key is already present in the given JSON schema."
+        raise ValueError(msg)
+
+    properties[context_key] = {
+        "format": "uri",
+        "minLength": 1,
+        "title": context_key_title,
+        "type": "string",
+    }
+    # required.append(context_key)  # Uncomment this line to make `@context` required
+
+    # Update the schema
+    # This is needed to handle the case in which the keys are newly created
+    json_schema["properties"] = properties
+    json_schema["required"] = required
 
 
 class AccessType(Enum):
@@ -607,6 +653,8 @@ class DandiBaseModel(BaseModel):
                     del value["readOnly"]
 
         return schema
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class PropertyValue(DandiBaseModel):
@@ -1588,8 +1636,6 @@ class CommonModel(DandiBaseModel):
 class Dandiset(CommonModel):
     """A body of structured information describing a DANDI dataset."""
 
-    model_config = ConfigDict(extra="allow")
-
     @field_validator("contributor")
     @classmethod
     def contributor_musthave_contact(
@@ -1683,6 +1729,12 @@ class Dandiset(CommonModel):
         "rdfs:label": "Information about the dataset",
         "nskey": "dandi",
     }
+
+    # Model validator to remove the `"@context"` key from data instance before
+    # "base" validation is performed.
+    _remove_context_key = model_validator(mode="before")(get_dict_without_context)
+
+    model_config = ConfigDict(json_schema_extra=add_context)
 
 
 class BareAsset(CommonModel):
@@ -1815,6 +1867,12 @@ class Asset(BareAsset):
     contentUrl: List[AnyHttpUrl] = Field(
         json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
+
+    # Model validator to remove the `"@context"` key from data instance before
+    # "base" validation is performed.
+    _remove_context_key = model_validator(mode="before")(get_dict_without_context)
+
+    model_config = ConfigDict(json_schema_extra=add_context)
 
 
 class Publishable(DandiBaseModel):
