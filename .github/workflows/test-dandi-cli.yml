@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - windows-2019
+          - windows-latest
           - ubuntu-latest
           - macos-latest
         python:
@@ -45,7 +45,7 @@ jobs:
         exclude:
           # Temporarily disabled due to h5py/hdf5 dependency issue
           # See <https://github.com/dandi/dandi-cli/pull/315>
-          - os: windows-2019
+          - os: windows-latest
             python: 3.9
     steps:
       - name: Set up Python ${{ matrix.python }}
