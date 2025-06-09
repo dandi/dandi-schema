@@ -8,12 +8,10 @@ import pytest
 from dandischema.conf import INSTANCE_CONFIG
 
 INSTANCE_NAME = INSTANCE_CONFIG.instance_name
-DATACITE_DOI_ID = INSTANCE_CONFIG.datacite_doi_id
+DOI_PREFIX = INSTANCE_CONFIG.doi_prefix
 
 METADATA_DIR = Path(__file__).with_name("data") / "metadata"
 DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
-
-DOI_PREFIX = f"10.{DATACITE_DOI_ID}" if DATACITE_DOI_ID is not None else None
 
 
 skipif_no_datacite_auth = pytest.mark.skipif(

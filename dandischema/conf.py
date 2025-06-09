@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import re
 from typing import Annotated, Optional
 
 from pydantic import StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
-_UNVENDORED_DATACITE_DOI_ID_PATTERN = r"\d{4,}"
+_UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
 
 class Config(BaseSettings):
@@ -31,16 +32,13 @@ class Config(BaseSettings):
     ] = "DANDI-ADHOC"
     """Name of the DANDI instance"""
 
-    datacite_doi_id: Optional[
+    doi_prefix: Optional[
         Annotated[
-            str, StringConstraints(pattern=rf"^{_UNVENDORED_DATACITE_DOI_ID_PATTERN}$")
+            str, StringConstraints(pattern=rf"^{_UNVENDORED_DOI_PREFIX_PATTERN}$")
         ]
     ] = None
     """
-    The registrant code of the DOI prefix at DataCite
-
-    The number sequence that follows "10." within the DOI prefix as documented
-    at https://support.datacite.org/docs/prefixes.
+    The DOI prefix at DataCite
     """
 
     @property
@@ -54,9 +52,9 @@ class Config(BaseSettings):
         return _UNVENDORED_ID_PATTERN
 
     @property
-    def datacite_doi_id_pattern(self) -> Optional[str]:
-        """The registrant code pattern of the DOI prefix at DataCite"""
-        return self.datacite_doi_id
+    def doi_prefix_pattern(self) -> Optional[str]:
+        """The pattern that a DOI prefix of a dandiset must conform to"""
+        return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
 
 
 INSTANCE_CONFIG = Config()

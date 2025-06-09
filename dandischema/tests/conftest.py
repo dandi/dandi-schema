@@ -61,11 +61,11 @@ def clear_dandischema_modules_and_set_env_vars(
             {},
             {
                 "instance_name": "DANDI",
-                "datacite_doi_id": "48324",
+                "doi_prefix": "10.48324",
             },
             {
                 "instance_name": "EMBER-DANDI",
-                "datacite_doi_id": "60533",
+                "doi_prefix": "10.60533",
             }
         ],
         indirect=True,

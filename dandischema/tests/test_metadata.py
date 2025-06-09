@@ -14,7 +14,7 @@ from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validat
 
 from .utils import (
     DANDISET_METADATA_DIR,
-    DATACITE_DOI_ID,
+    DOI_PREFIX,
     INSTANCE_NAME,
     METADATA_DIR,
     skipif_instance_name_not_dandi,
@@ -152,7 +152,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
                     "url",
                     "version",
                 ]
-                if DATACITE_DOI_ID is not None or e != "doi"
+                if DOI_PREFIX is not None or e != "doi"
             },
         ),
         (
@@ -179,7 +179,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
                     "url",
                     "version",
                 ]
-                if DATACITE_DOI_ID is not None or e != "doi"
+                if DOI_PREFIX is not None or e != "doi"
             },
         ),
         (
@@ -212,7 +212,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
                     "url",
                     "version",
                 ]
-                if DATACITE_DOI_ID is not None or e != "doi"
+                if DOI_PREFIX is not None or e != "doi"
             },
         ),
         (

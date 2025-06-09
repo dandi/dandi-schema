@@ -23,12 +23,12 @@ jobs:
             python: '3.9'
             vendored_env: dandi
             instance_name: DANDI
-            datacite_doi_id: '80507'
+            doi_prefix: '10.80507'
           - os: ubuntu-latest
             python: '3.9'
             vendored_env: ember-dandi
             instance_name: EMBER-DANDI
-            datacite_doi_id: '82754'
+            doi_prefix: '10.82754'
           - os: ubuntu-latest
             python: '3.9'
             vendored_env: ember-dandi-no-doi
@@ -56,10 +56,10 @@ jobs:
       if: ${{ matrix.instance_name }}
       run: echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
 
-    # Set only if matrix.datacite_doi_id is defined
-    - name: Set DANDI_DATACITE_DOI_ID
-      if: ${{ matrix.datacite_doi_id }}
-      run: echo "DANDI_DATACITE_DOI_ID=${{ matrix.datacite_doi_id }}" >> "$GITHUB_ENV"
+    # Set only if matrix.doi_prefix is defined
+    - name: Set DANDI_DOI_PREFIX
+      if: ${{ matrix.doi_prefix }}
+      run: echo "DANDI_DOI_PREFIX=${{ matrix.doi_prefix }}" >> "$GITHUB_ENV"
 
     - name: Set DANDI DataCite credentials
       if: ${{ matrix.vendored_env == 'dandi' }}
