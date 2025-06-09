@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Annotated, Optional
 
 from pydantic import StringConstraints
@@ -9,6 +10,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 _UNVENDORED_DATACITE_DOI_ID_PATTERN = r"\d{4,}"
+_UNVENDORED_DOI_PREFIX_PATTERN = r"10.\d{4,}"
 
 
 class Config(BaseSettings):
@@ -43,6 +45,15 @@ class Config(BaseSettings):
     at https://support.datacite.org/docs/prefixes.
     """
 
+    doi_prefix: Optional[
+        Annotated[
+            str, StringConstraints(pattern=rf"^{_UNVENDORED_DOI_PREFIX_PATTERN}$")
+        ]
+    ] = None
+    """
+    The DOI prefix at DataCite
+    """
+
     @property
     def id_pattern(self) -> str:
         """Regex pattern for the prefix of identifiers"""
@@ -57,6 +68,11 @@ class Config(BaseSettings):
     def datacite_doi_id_pattern(self) -> Optional[str]:
         """The registrant code pattern of the DOI prefix at DataCite"""
         return self.datacite_doi_id
+
+    @property
+    def doi_prefix_pattern(self) -> Optional[str]:
+        """The pattern that a DOI prefix of a dandiset must conform to"""
+        return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
 
 
 INSTANCE_CONFIG = Config()
