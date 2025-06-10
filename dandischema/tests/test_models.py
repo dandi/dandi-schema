@@ -796,7 +796,7 @@ def _get_field_pattern(
         "clear_dandischema_modules_and_set_env_vars",
         # "exp" means "expected" in the following names
         "exp_id_pattern",
-        "exp_datacite_doi_id_pattern",
+        "exp_doi_prefix_pattern",
         "valid_vendored_fields",
         "invalid_vendored_fields",
     ),
@@ -821,10 +821,10 @@ def _get_field_pattern(
         (
             {
                 "instance_name": "DANDI",
-                "datacite_doi_id": "48324",
+                "doi_prefix": "10.48324",
             },
             "DANDI",
-            "48324",
+            r"10\.48324",
             {
                 "dandiset_id": "DANDI:001425/draft",
                 "dandiset_identifier": "DANDI:001425",
@@ -877,10 +877,10 @@ def _get_field_pattern(
         (
             {
                 "instance_name": "EMBER-DANDI",
-                "datacite_doi_id": "60533",
+                "doi_prefix": "10.60533",
             },
             "EMBER-DANDI",
-            "60533",
+            r"10\.60533",
             {
                 "dandiset_id": "EMBER-DANDI:000005/draft",
                 "dandiset_identifier": "EMBER-DANDI:000005",
@@ -901,7 +901,7 @@ def _get_field_pattern(
 def test_vendorization(
     clear_dandischema_modules_and_set_env_vars: None,
     exp_id_pattern: str,
-    exp_datacite_doi_id_pattern: Optional[str],
+    exp_doi_prefix_pattern: Optional[str],
     # Fields that are valid for the vendorization
     valid_vendored_fields: dict[str, str],
     # Fields that are invalid for the vendorization
@@ -913,7 +913,7 @@ def test_vendorization(
     import dandischema.models as models_
 
     assert models_.ID_PATTERN == exp_id_pattern
-    assert models_.DATACITE_DOI_ID_PATTERN == exp_datacite_doi_id_pattern
+    assert models_.DOI_PREFIX_PATTERN == exp_doi_prefix_pattern
 
     class VendoredFieldModel(BaseModel):
         """
@@ -927,7 +927,7 @@ def test_vendorization(
         published_dandiset_id: str = Field(
             pattern=_get_field_pattern("id", models_.PublishedDandiset)
         )
-        if exp_datacite_doi_id_pattern is not None:
+        if exp_doi_prefix_pattern is not None:
             published_dandiset_doi: str = Field(
                 pattern=_get_field_pattern("doi", models_.PublishedDandiset)
             )

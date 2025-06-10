@@ -45,7 +45,7 @@ from .utils import name2title
 
 # Load needed configurations into constants
 ID_PATTERN = INSTANCE_CONFIG.id_pattern
-DATACITE_DOI_ID_PATTERN = INSTANCE_CONFIG.datacite_doi_id_pattern
+DOI_PREFIX_PATTERN = INSTANCE_CONFIG.doi_prefix_pattern
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]
@@ -65,8 +65,8 @@ UUID_PATTERN = (
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
 DANDI_DOI_PATTERN = (
-    (rf"^10\.{DATACITE_DOI_ID_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}$")
-    if DATACITE_DOI_ID_PATTERN is not None
+    rf"^{DOI_PREFIX_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}$"
+    if DOI_PREFIX_PATTERN is not None
     else None
 )
 DANDI_PUBID_PATTERN = rf"^{ID_PATTERN}:{VERSION_PATTERN}$"
