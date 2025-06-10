@@ -65,11 +65,6 @@ class Config(BaseSettings):
         return _UNVENDORED_ID_PATTERN
 
     @property
-    def datacite_doi_id_pattern(self) -> Optional[str]:
-        """The registrant code pattern of the DOI prefix at DataCite"""
-        return self.datacite_doi_id
-
-    @property
     def doi_prefix_pattern(self) -> Optional[str]:
         """The pattern that a DOI prefix of a dandiset must conform to"""
         return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
