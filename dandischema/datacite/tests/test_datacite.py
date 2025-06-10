@@ -1,3 +1,5 @@
+from copy import deepcopy
+from datetime import datetime
 import json
 import os
 from pathlib import Path
@@ -58,7 +60,8 @@ def schema() -> Any:
 
 
 @pytest.fixture(scope="function")
-def metadata_basic() -> Dict[str, Any]:
+def metadata_minimal() -> Dict[str, Any]:
+    """Basic metadata without assetsSummary"""
     dandi_id_noprefix = f"000{random.randrange(100, 999)}"
     dandi_id = f"DANDI:{dandi_id_noprefix}"
     version = "0.0.0"
@@ -83,23 +86,31 @@ def metadata_basic() -> Dict[str, Any]:
         "manifestLocation": [
             f"https://api.dandiarchive.org/api/dandisets/{dandi_id_noprefix}/versions/draft/assets/"
         ],
-        "assetsSummary": {
-            "schemaKey": "AssetsSummary",
-            "numberOfBytes": 10,
-            "numberOfFiles": 1,
-            "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
-            "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
-            "measurementTechnique": [
-                {
-                    "schemaKey": "MeasurementTechniqueType",
-                    "name": "two-photon microscopy technique",
-                }
-            ],
-            "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
-        },
     }
 
     return meta_dict
+
+
+@pytest.fixture(scope="function")
+def metadata_with_assets(metadata_minimal: Dict[str, Any]) -> Dict[str, Any]:
+    """Metadata with assetsSummary included"""
+    meta_dict = deepcopy(metadata_minimal)
+    meta_dict["assetsSummary"] = {
+        "schemaKey": "AssetsSummary",
+        "numberOfBytes": 10,
+        "numberOfFiles": 1,
+        "dataStandard": [{"schemaKey": "StandardsType", "name": "NWB"}],
+        "approach": [{"schemaKey": "ApproachType", "name": "electrophysiology"}],
+        "measurementTechnique": [
+            {
+                "schemaKey": "MeasurementTechniqueType",
+                "name": "two-photon microscopy technique",
+            }
+        ],
+        "species": [{"schemaKey": "SpeciesType", "name": "Human"}],
+    }
+    return meta_dict
+
 
 
 @skipif_no_network
@@ -366,7 +377,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 )
 def test_dandimeta_datacite(
     schema: Any,
-    metadata_basic: Dict[str, Any],
+    metadata_with_assets: Dict[str, Any],
     additional_meta: Dict[str, Any],
     datacite_checks: Dict[str, Any],
 ) -> None:
@@ -375,14 +386,14 @@ def test_dandimeta_datacite(
     posting datacite object and checking the status code
     """
 
-    dandi_id = metadata_basic["identifier"]
+    dandi_id = metadata_with_assets["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
 
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
-    metadata_basic.update(additional_meta)
+    metadata_with_assets.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_with_assets.update(additional_meta)
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic)
+    datacite = to_datacite(metadata_with_assets)
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema)
     validator.validate(datacite["data"]["attributes"])
@@ -404,20 +415,20 @@ def test_dandimeta_datacite(
                 assert attr[key] == el_flds
 
     # trying to post to datacite
-    datacite_post(datacite, metadata_basic["doi"])
+    datacite_post(datacite, metadata_with_assets["doi"])
 
 
-def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
-    dandi_id = metadata_basic["identifier"]
+def test_datacite_publish(metadata_with_assets: Dict[str, Any]) -> None:
+    dandi_id = metadata_with_assets["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
-    version = metadata_basic["version"]
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    version = metadata_with_assets["version"]
+    metadata_with_assets.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic, publish=True, validate=True)
+    with pytest.warns(DeprecationWarning, match="'publish' is deprecated"):
+        datacite = to_datacite(metadata_with_assets, publish=True, validate=True)
 
-    assert datacite == {
-        # 'data': {}
+    expected = {
         "data": {
             "id": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
             "type": "dois",
@@ -463,7 +474,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "alternateIdentifierType": "URL",
                     },
                 ],
-                "publicationYear": "1970",
+                "publicationYear": str(datetime.now().year),
                 "publisher": {
                     "name": "DANDI Archive",
                     "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
@@ -489,6 +500,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
             },
         }
     }
+    assert datacite == expected
 
 
 @pytest.mark.parametrize(
@@ -530,7 +542,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
 )
 def test_datacite_related_res_url(
-    metadata_basic: Dict[str, Any],
+    metadata_with_assets: Dict[str, Any],
     related_res_url: Dict[str, Any],
     related_ident_exp: Tuple[str, str],
 ) -> None:
@@ -538,14 +550,146 @@ def test_datacite_related_res_url(
     checking if urls provided in the relatedResource.identifier could be
     translated to DOI for some websites: e.g. bioarxiv.org, doi.org
     """
-    dandi_id = metadata_basic["identifier"]
+    dandi_id = metadata_with_assets["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
 
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
-    metadata_basic["relatedResource"] = [related_res_url]
+    metadata_with_assets.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_with_assets["relatedResource"] = [related_res_url]
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic)
+    datacite = to_datacite(metadata_with_assets)
     relIdent = datacite["data"]["attributes"]["relatedIdentifiers"][0]
     assert relIdent["relatedIdentifier"] == related_ident_exp[0].lower()
     assert relIdent["relatedIdentifierType"] == related_ident_exp[1]
+
+
+def test_event_none_draft_doi(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that event=None leaves event out of payload)"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    datacite = to_datacite(metadata_minimal, event=None)
+
+    # Check that there is no event attribute
+    assert "event" not in datacite["data"]["attributes"]
+
+
+def test_no_event_draft_doi(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that event is optional (no event in payload)"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    datacite = to_datacite(metadata_minimal)
+
+    # Check that there is no event attribute
+    assert "event" not in datacite["data"]["attributes"]
+
+
+def test_event_publish_findable_doi(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that event="publish" is included in payload"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    datacite = to_datacite(metadata_minimal, event="publish")
+
+    # Check that event is "publish"
+    assert datacite["data"]["attributes"]["event"] == "publish"
+
+
+def test_event_hide_registered_doi(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that event="hide" is included in payload"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    datacite = to_datacite(metadata_minimal, event="hide")
+
+    # Check that event is "hide"
+    assert datacite["data"]["attributes"]["event"] == "hide"
+
+
+def test_invalid_event(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that invalid event values raise ValueError"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    with pytest.raises(ValueError, match="Invalid event value"):
+        to_datacite(metadata_minimal, event="invalid")
+
+
+def test_event_and_publish_conflict(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that using both event and publish parameters raises ValueError"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    with pytest.raises(
+        ValueError, match="Cannot use both 'event' and deprecated 'publish'"
+    ):
+        to_datacite(metadata_minimal, event="publish", publish=True)
+
+
+def test_deprecated_publish_parameter(metadata_minimal: Dict[str, Any]) -> None:
+    """Test the deprecated publish parameter still works but shows warning"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_minimal.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    with pytest.warns(DeprecationWarning, match="'publish' is deprecated"):
+        datacite = to_datacite(metadata_minimal, publish=True)
+
+    # Check that event is "publish" despite using the deprecated parameter
+    assert datacite["data"]["attributes"]["event"] == "publish"
+
+
+def test_dandiset_doi_url_handling(metadata_minimal: Dict[str, Any]) -> None:
+    """Test that a Dandiset DOI points to the DLP (no version in URL)"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    version = metadata_minimal["version"]
+
+    # Create a copy of the metadata
+    meta_dict = deepcopy(metadata_minimal)
+    meta_dict.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    # Override with a Dandiset DOI (no version)
+    meta_dict["doi"] = f"10.80507/dandi.{dandi_id_noprefix}"
+
+    # Process as a Dandiset DOI
+    datacite = to_datacite(meta_dict)
+
+    # Verify the DOI is correctly reflected in output
+    assert datacite["data"]["attributes"]["doi"] == meta_dict["doi"]
+
+    # Verify that the URL in the metadata contains the version ID
+    assert f"/{version}" in meta_dict["url"]
+
+    # And the URL in the datacite output should use the same URL
+    assert datacite["data"]["attributes"]["url"] == meta_dict["url"]
+
+
+def test_doi_formats(metadata_minimal: Dict[str, Any]) -> None:
+    """Test both Dandiset DOI and Version DOI format handling"""
+    dandi_id = metadata_minimal["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    version = metadata_minimal["version"]
+
+    # Test with Dandiset DOI format
+    dandiset_meta = deepcopy(metadata_minimal)
+    dandiset_meta.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    dandiset_meta["doi"] = f"10.80507/dandi.{dandi_id_noprefix}"
+    dandiset_datacite = to_datacite(dandiset_meta)
+
+    # Test with Version DOI format
+    version_meta = deepcopy(metadata_minimal)
+    version_meta.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    version_meta["doi"] = f"10.80507/dandi.{dandi_id_noprefix}/{version}"
+    version_datacite = to_datacite(version_meta)
+
+    # Verify DOIs are correctly reflected in output
+    assert dandiset_datacite["data"]["attributes"]["doi"] == dandiset_meta["doi"]
+    assert version_datacite["data"]["attributes"]["doi"] == version_meta["doi"]
