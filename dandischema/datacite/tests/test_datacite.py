@@ -1,6 +1,5 @@
 import json
 import os
-from pathlib import Path
 import random
 from typing import Any, Dict, Tuple
 
@@ -15,8 +14,16 @@ from dandischema.models import (
     ResourceType,
     RoleType,
 )
-import dandischema.tests
-from dandischema.tests.utils import _basic_publishmeta, skipif_no_network
+from dandischema.tests.utils import (
+    DANDISET_METADATA_DIR,
+    DOI_PREFIX,
+    INSTANCE_NAME,
+    basic_publishmeta,
+    skipif_no_datacite_auth,
+    skipif_no_doi_prefix,
+    skipif_no_network,
+    skipif_no_test_dandiset_metadata_dir,
+)
 
 from .. import _get_datacite_schema, to_datacite
 
@@ -32,7 +39,7 @@ def datacite_post(datacite: dict, doi: str) -> None:
         "https://api.test.datacite.org/dois",
         json=datacite,
         headers={"Content-Type": "application/vnd.api+json"},
-        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
+        auth=(os.environ["DATACITE_DEV_LOGIN"], os.environ["DATACITE_DEV_PASSWORD"]),
     )
     rp.raise_for_status()
 
@@ -48,7 +55,7 @@ def _clean_doi(doi: str) -> None:
     """Remove doi. Status code is ignored"""
     requests.delete(
         f"https://api.test.datacite.org/dois/{doi}",
-        auth=("DARTLIB.DANDI", os.environ["DATACITE_DEV_PASSWORD"]),
+        auth=(os.environ["DATACITE_DEV_LOGIN"], os.environ["DATACITE_DEV_PASSWORD"]),
     )
 
 
@@ -60,7 +67,7 @@ def schema() -> Any:
 @pytest.fixture(scope="function")
 def metadata_basic() -> Dict[str, Any]:
     dandi_id_noprefix = f"000{random.randrange(100, 999)}"
-    dandi_id = f"DANDI:{dandi_id_noprefix}"
+    dandi_id = f"{INSTANCE_NAME}:{dandi_id_noprefix}"
     version = "0.0.0"
     # meta data without doi, datePublished and publishedBy
     meta_dict = {
@@ -103,19 +110,17 @@ def metadata_basic() -> Dict[str, Any]:
 
 
 @skipif_no_network
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
+@skipif_no_datacite_auth
+@skipif_no_doi_prefix
+@skipif_no_test_dandiset_metadata_dir
 @pytest.mark.parametrize("dandi_id", ["000004", "000008"])
 def test_datacite(dandi_id: str, schema: Any) -> None:
     """checking to_datacite for a specific datasets"""
 
+    assert DOI_PREFIX is not None
+
     # reading metadata taken from exemplary dandisets and saved in json files
-    with (
-        Path(dandischema.tests.__file__).with_name("data")
-        / "metadata"
-        / f"meta_{dandi_id}.json"
-    ).open() as f:
+    with (DANDISET_METADATA_DIR / f"meta_{dandi_id}.json").open() as f:
         meta_js = json.load(f)
 
     version = "0.0.0"
@@ -125,7 +130,11 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     # updating with basic fields required for PublishDandiset
     meta_js.update(
-        _basic_publishmeta(dandi_id.replace("000", str(random.randrange(100, 999))))
+        basic_publishmeta(
+            INSTANCE_NAME,
+            dandi_id.replace("000", str(random.randrange(100, 999))),
+            prefix=DOI_PREFIX,
+        )
     )
     meta = PublishedDandiset(**meta_js)
 
@@ -361,9 +370,8 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
         ),
     ],
 )
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
+@skipif_no_datacite_auth
+@skipif_no_doi_prefix
 def test_dandimeta_datacite(
     schema: Any,
     metadata_basic: Dict[str, Any],
@@ -375,10 +383,14 @@ def test_dandimeta_datacite(
     posting datacite object and checking the status code
     """
 
+    assert DOI_PREFIX is not None
+
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
 
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_basic.update(
+        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+    )
     metadata_basic.update(additional_meta)
 
     # creating and validating datacite objects
@@ -407,11 +419,16 @@ def test_dandimeta_datacite(
     datacite_post(datacite, metadata_basic["doi"])
 
 
+@skipif_no_doi_prefix
 def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
+    assert DOI_PREFIX is not None
+
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
     version = metadata_basic["version"]
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_basic.update(
+        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+    )
 
     # creating and validating datacite objects
     datacite = to_datacite(metadata_basic, publish=True, validate=True)
@@ -419,7 +436,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     assert datacite == {
         # 'data': {}
         "data": {
-            "id": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
+            "id": f"{DOI_PREFIX}/{INSTANCE_NAME.lower()}.{dandi_id_noprefix}/{version}",
             "type": "dois",
             "attributes": {
                 "event": "publish",
@@ -449,7 +466,10 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                 "descriptions": [
                     {"description": "testing", "descriptionType": "Abstract"}
                 ],
-                "doi": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
+                "doi": (
+                    f"{DOI_PREFIX}/"
+                    f"{INSTANCE_NAME.lower()}.{dandi_id_noprefix}/{version}"
+                ),
                 "alternateIdentifiers": [
                     {
                         "alternateIdentifier": f"https://identifiers.org/{dandi_id}/{version}",
@@ -526,9 +546,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
         ),
     ],
 )
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
+@skipif_no_doi_prefix
 def test_datacite_related_res_url(
     metadata_basic: Dict[str, Any],
     related_res_url: Dict[str, Any],
@@ -538,10 +556,14 @@ def test_datacite_related_res_url(
     checking if urls provided in the relatedResource.identifier could be
     translated to DOI for some websites: e.g. bioarxiv.org, doi.org
     """
+    assert DOI_PREFIX is not None
+
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
 
-    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+    metadata_basic.update(
+        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+    )
     metadata_basic["relatedResource"] = [related_res_url]
 
     # creating and validating datacite objects
