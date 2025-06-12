@@ -7,14 +7,29 @@ Interfaces and data to interact with DataCite metadata
 from copy import deepcopy
 from functools import lru_cache
 import json
+import logging
 from pathlib import Path
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 from jsonschema import Draft7Validator
+from pydantic import ValidationError
 import requests
 
-from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
+from ..models import (
+    NAME_PATTERN,
+    Dandiset,
+    LicenseType,
+    Organization,
+    Person,
+    PublishedDandiset,
+    RelationType,
+    Resource,
+    RoleType,
+)
+
+logger = logging.getLogger(__name__)
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -65,17 +80,102 @@ DATACITE_IDENTYPE = {
 DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
+def construct_unvalidated_dandiset(meta_dict: dict) -> Dandiset:
+    """
+    Construct a Dandiset model from a dictionary without validation.
+
+    Process all nested data first, then construct the final object.
+    """
+    # Work on a copy to avoid mutating the input
+    processed_dict = deepcopy(meta_dict)
+
+    if "license" in processed_dict and processed_dict["license"]:
+        processed_dict["license"] = [
+            LicenseType(item) for item in processed_dict["license"]
+        ]
+
+    if "contributor" in processed_dict and processed_dict["contributor"]:
+        processed_contributors: List[Union[Person, Organization]] = []
+        for contributor_data in processed_dict["contributor"]:
+            if "roleName" in contributor_data and contributor_data["roleName"]:
+                contributor_data["roleName"] = [
+                    RoleType(role) for role in contributor_data["roleName"]
+                ]
+
+            schema_key = contributor_data.get("schemaKey")
+            if schema_key == "Person":
+                processed_contributors.append(
+                    Person.model_construct(**contributor_data)
+                )
+            elif schema_key == "Organization":
+                processed_contributors.append(
+                    Organization.model_construct(**contributor_data)
+                )
+
+        processed_dict["contributor"] = processed_contributors
+
+    if "relatedResource" in processed_dict and processed_dict["relatedResource"]:
+        processed_resources = []
+        for resource_data in processed_dict["relatedResource"]:
+            if "relation" in resource_data:
+                resource_data["relation"] = RelationType(resource_data["relation"])
+            processed_resources.append(Resource.model_construct(**resource_data))
+
+        processed_dict["relatedResource"] = processed_resources
+
+    return Dandiset.model_construct(**processed_dict)
+
+
 def to_datacite(
     meta: Union[dict, PublishedDandiset],
     validate: bool = False,
     publish: bool = False,
+    *,
+    event: Optional[str] = None,
 ) -> dict:
-    """Convert published Dandiset metadata to Datacite"""
-    if not isinstance(meta, PublishedDandiset):
-        meta = PublishedDandiset(**meta)
+    """
+    Convert Dandiset metadata to DataCite payload.
 
+    This function tries to validate the metadata against PublishedDandiset model.
+    If strict validation fails, it falls back to using construct_unvalidated_dandiset()
+    to build the model without validation but with properly handled nested types.
+    """
+    if isinstance(meta, dict):
+        meta = deepcopy(meta)
+        try:
+            meta = PublishedDandiset(**meta)
+        except ValidationError:
+            # mypy can't track that meta is still dict after failed PublishedDandiset(**meta)
+            assert isinstance(meta, dict)
+            if meta.get("version") == "draft":
+                logger.debug("Falling back to unvalidated dandiset for draft version")
+            else:
+                logger.warning(
+                    "Validation failed for %s, using construct_unvalidated_dandiset()",
+                    meta.get("id", "unknown"),
+                )
+            meta = construct_unvalidated_dandiset(meta)  # type: ignore[assignment]
+
+    # At this point, meta is always a model object (PublishedDandiset or Dandiset)
+    assert isinstance(meta, (PublishedDandiset, Dandiset))
     attributes: Dict[str, Any] = {}
-    if publish:
+
+    if event is not None and publish:
+        raise ValueError(
+            "Cannot use both 'event' and deprecated 'publish'. Use only 'event'."
+        )
+
+    # If there is no attributes["event"] a Draft DOI is minted
+    if event is not None:
+        if event not in {"publish", "hide"}:
+            raise ValueError("Invalid event value: must be 'publish' or 'hide'")
+        attributes["event"] = event
+    elif publish:
+        warn(
+            "'publish' is deprecated; use 'event=\"publish\"' instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         attributes["event"] = "publish"
 
     attributes["alternateIdentifiers"] = [
@@ -103,7 +203,11 @@ def to_datacite(
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
-    attributes["publicationYear"] = str(meta.datePublished.year)
+
+    # publicationYear is not available for draft dandisets
+    if hasattr(meta, "datePublished") and meta.datePublished:
+        attributes["publicationYear"] = str(meta.datePublished.year)
+
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
