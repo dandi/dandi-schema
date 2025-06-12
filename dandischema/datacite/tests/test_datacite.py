@@ -1,4 +1,3 @@
-from copy import deepcopy
 from datetime import datetime
 import json
 import os
@@ -57,6 +56,33 @@ def _clean_doi(doi: str) -> None:
 @pytest.fixture(scope="module")
 def schema() -> Any:
     return _get_datacite_schema()
+
+
+@pytest.fixture(scope="function")
+def metadata_draft() -> Dict[str, Any]:
+    """Draft dandiset metadata that will trigger unvalidated fallback"""
+    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id = f"DANDI:{dandi_id_noprefix}"
+
+    return {
+        "identifier": dandi_id,
+        "id": f"{dandi_id}/draft",
+        "name": "testing draft dataset",
+        "description": "testing draft",
+        "contributor": [
+            {
+                "name": "A_last, A_first",
+                "email": "nemo@example.com",
+                "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
+            }
+        ],
+        "license": [LicenseType("spdx:CC-BY-4.0")],
+        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}",  # DLP, not version url
+        "doi": f"10.80507/dandi.{dandi_id_noprefix}",
+        "version": "draft",
+        # Missing: datePublished, publishedBy, citation, etc. (triggers fallback)
+    }
 
 
 @pytest.fixture(scope="function")
@@ -615,3 +641,39 @@ def test_deprecated_publish_parameter(metadata_basic: Dict[str, Any]) -> None:
 
     # Check that event is "publish" despite using the deprecated parameter
     assert datacite["data"]["attributes"]["event"] == "publish"
+
+
+def test_draft_dandiset_unvalidated_fallback(metadata_draft: Dict[str, Any]) -> None:
+    """Test that draft dandiset metadata uses unvalidated fallback"""
+    # Should work via unvalidated fallback without raising exception
+    datacite = to_datacite(metadata_draft)
+
+    # Verify basic structure is correct
+    assert datacite["data"]["type"] == "dois"
+    assert datacite["data"]["id"] == metadata_draft["doi"]
+
+    # Verify key attributes are populated from draft metadata
+    attrs = datacite["data"]["attributes"]
+    assert attrs["doi"] == metadata_draft["doi"]
+    assert attrs["version"] == "draft"
+    assert attrs["titles"][0]["title"] == metadata_draft["name"]
+    assert attrs["descriptions"][0]["description"] == metadata_draft["description"]
+
+    # Should have creators/contributors from the contributor field
+    assert len(attrs["creators"]) > 0
+    assert len(attrs["contributors"]) > 0
+
+    # Should NOT have publicationYear (since no datePublished in draft)
+    assert "publicationYear" not in attrs
+
+
+@pytest.mark.skipif(
+    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
+)
+def test_draft_dandiset_datacite_api(metadata_draft: Dict[str, Any]) -> None:
+    """Test that draft dandiset metadata works with actual DataCite API"""
+    # Generate DataCite payload
+    datacite = to_datacite(metadata_draft)
+
+    # Post to actual DataCite API
+    datacite_post(datacite, metadata_draft["doi"])
