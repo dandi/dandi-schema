@@ -10,7 +10,7 @@ import json
 import logging
 from pathlib import Path
 import re
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from warnings import warn
 
 from jsonschema import Draft7Validator
@@ -18,9 +18,9 @@ from pydantic import ValidationError
 import requests
 
 from ..models import (
-    LicenseType,
     NAME_PATTERN,
     Dandiset,
+    LicenseType,
     Organization,
     Person,
     PublishedDandiset,
@@ -83,38 +83,47 @@ DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 def construct_unvalidated_dandiset(meta_dict: dict) -> Dandiset:
     """
     Construct a Dandiset model from a dictionary without validation.
+
+    Process all nested data first, then construct the final object.
     """
-    meta = Dandiset.model_construct(**meta_dict)
+    # Work on a copy to avoid mutating the input
+    processed_dict = deepcopy(meta_dict)
 
-    # model_construct doesn't handle nested objects so we have to init classes manually
-    if hasattr(meta, 'license') and meta.license:
-        processed_licenses = []
-        for license_item in meta.license:
-            processed_licenses.append(LicenseType(license_item))
-        meta.license = processed_licenses
+    if "license" in processed_dict and processed_dict["license"]:
+        processed_dict["license"] = [
+            LicenseType(item) for item in processed_dict["license"]
+        ]
 
-    if hasattr(meta, 'contributor') and meta.contributor:
-        for i, contributor_dict in enumerate(meta.contributor):
-            if 'roleName' in contributor_dict and contributor_dict['roleName']:
-                processed_roles = []
-                for role in contributor_dict['roleName']:
-                    processed_roles.append(RoleType(role))
-                contributor_dict['roleName'] = processed_roles
+    if "contributor" in processed_dict and processed_dict["contributor"]:
+        processed_contributors: List[Union[Person, Organization]] = []
+        for contributor_data in processed_dict["contributor"]:
+            if "roleName" in contributor_data and contributor_data["roleName"]:
+                contributor_data["roleName"] = [
+                    RoleType(role) for role in contributor_data["roleName"]
+                ]
 
-            # Based on schemaKey, convert to proper model type
-            schema_key = contributor_dict.get('schemaKey')
-            if schema_key == 'Person':
-                meta.contributor[i] = Person.model_construct(**contributor_dict)
-            elif schema_key == 'Organization':
-                meta.contributor[i] = Organization.model_construct(**contributor_dict)
+            schema_key = contributor_data.get("schemaKey")
+            if schema_key == "Person":
+                processed_contributors.append(
+                    Person.model_construct(**contributor_data)
+                )
+            elif schema_key == "Organization":
+                processed_contributors.append(
+                    Organization.model_construct(**contributor_data)
+                )
 
-    if hasattr(meta, 'relatedResource') and meta.relatedResource:
-        for i, resource_dict in enumerate(meta.relatedResource):
-            if 'relation' in resource_dict:
-                resource_dict['relation'] = RelationType(resource_dict['relation'])
-            meta.relatedResource[i] = Resource.model_construct(**resource_dict)
+        processed_dict["contributor"] = processed_contributors
 
-    return meta
+    if "relatedResource" in processed_dict and processed_dict["relatedResource"]:
+        processed_resources = []
+        for resource_data in processed_dict["relatedResource"]:
+            if "relation" in resource_data:
+                resource_data["relation"] = RelationType(resource_data["relation"])
+            processed_resources.append(Resource.model_construct(**resource_data))
+
+        processed_dict["relatedResource"] = processed_resources
+
+    return Dandiset.model_construct(**processed_dict)
 
 
 def to_datacite(
@@ -136,15 +145,19 @@ def to_datacite(
         try:
             meta = PublishedDandiset(**meta)
         except ValidationError:
+            # mypy can't track that meta is still dict after failed PublishedDandiset(**meta)
+            assert isinstance(meta, dict)
             if meta.get("version") == "draft":
                 logger.debug("Falling back to unvalidated dandiset for draft version")
             else:
                 logger.warning(
                     "Validation failed for %s, using construct_unvalidated_dandiset()",
-                    meta.get("id", "unknown")
+                    meta.get("id", "unknown"),
                 )
-            meta = construct_unvalidated_dandiset(meta)
+            meta = construct_unvalidated_dandiset(meta)  # type: ignore[assignment]
 
+    # At this point, meta is always a model object (PublishedDandiset or Dandiset)
+    assert isinstance(meta, (PublishedDandiset, Dandiset))
     attributes: Dict[str, Any] = {}
 
     if event is not None and publish:

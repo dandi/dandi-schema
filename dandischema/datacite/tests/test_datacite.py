@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 import random
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from jsonschema import Draft7Validator
 import pytest
@@ -588,7 +588,9 @@ def test_datacite_related_res_url(
     ],
 )
 def test_event_parameter(
-    metadata_basic: Dict[str, Any], event_param: str, expected_event_in_output: str
+    metadata_basic: Dict[str, Any],
+    event_param: str,
+    expected_event_in_output: Optional[str],
 ) -> None:
     """Test event parameter handling in to_datacite"""
     dandi_id = metadata_basic["identifier"]
