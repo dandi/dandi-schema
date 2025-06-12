@@ -16,7 +16,6 @@ def _basic_publishmeta(
 
     Returned fields are additional to fields required by Dandiset
     """
-        # "datePublished": datetime.now(),
     publish_meta = {
         "datePublished": datetime.now(),
         "publishedBy": {

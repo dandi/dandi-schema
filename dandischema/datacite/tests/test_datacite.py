@@ -81,7 +81,7 @@ def metadata_draft() -> Dict[str, Any]:
         "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}",  # DLP, not version url
         "doi": f"10.80507/dandi.{dandi_id_noprefix}",
         "version": "draft",
-        # Missing: datePublished, publishedBy, citation, etc. (triggers fallback)
+        # Missing: datePublished, publishedBy
     }
 
 

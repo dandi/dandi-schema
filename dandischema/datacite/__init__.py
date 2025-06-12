@@ -131,14 +131,11 @@ def to_datacite(
     If strict validation fails, it falls back to using construct_unvalidated_dandiset()
     to build the model without validation but with properly handled nested types.
     """
-    # Try to convert dict to model if needed
     if isinstance(meta, dict):
         meta = deepcopy(meta)
         try:
-            # First try PublishedDandiset
             meta = PublishedDandiset(**meta)
         except ValidationError:
-            # If that fails, use construct_unvalidated_dandiset
             if meta.get("version") == "draft":
                 logger.debug("Falling back to unvalidated dandiset for draft version")
             else:
@@ -194,7 +191,7 @@ def to_datacite(
         "lang": "en",
     }
 
-    # Only include publicationYear if datePublished is available (for published Dandisets)
+    # publicationYear is not available for draft dandisets
     if hasattr(meta, "datePublished") and meta.datePublished:
         attributes["publicationYear"] = str(meta.datePublished.year)
 
