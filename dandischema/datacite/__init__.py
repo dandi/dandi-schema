@@ -139,7 +139,13 @@ def to_datacite(
             meta = PublishedDandiset(**meta)
         except ValidationError:
             # If that fails, use construct_unvalidated_dandiset
-            logger.exception("Validation failed, using construct_unvalidated_dandiset()")
+            if meta.get("version") == "draft":
+                logger.debug("Falling back to unvalidated dandiset for draft version")
+            else:
+                logger.warning(
+                    "Validation failed for %s, using construct_unvalidated_dandiset()",
+                    meta.get("id", "unknown")
+                )
             meta = construct_unvalidated_dandiset(meta)
 
     attributes: Dict[str, Any] = {}
