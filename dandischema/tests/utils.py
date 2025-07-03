@@ -15,9 +15,9 @@ DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
 
 
 skipif_no_datacite_auth = pytest.mark.skipif(
-    os.getenv("DATACITE_DEV_LOGIN") is None
-    or os.getenv("DATACITE_DEV_PASSWORD") is None,
-    reason="no datacite login or password set in environment variables",
+    not os.getenv("DATACITE_DEV_LOGIN")
+    or not os.getenv("DATACITE_DEV_PASSWORD"),
+    reason="no non-empty datacite login and password provided",
 )
 
 skipif_no_doi_prefix = pytest.mark.skipif(
