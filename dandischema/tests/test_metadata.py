@@ -12,7 +12,15 @@ import pytest
 from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandiset
 from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validator
 
-from .utils import skipif_no_network
+from .utils import (
+    DANDISET_METADATA_DIR,
+    DOI_PREFIX,
+    INSTANCE_NAME,
+    METADATA_DIR,
+    skipif_instance_name_not_dandi,
+    skipif_no_network,
+    skipif_no_test_dandiset_metadata_dir,
+)
 from ..consts import DANDI_SCHEMA_VERSION
 from ..exceptions import JsonschemaValidationError, PydanticValidationError
 from ..metadata import (
@@ -26,8 +34,6 @@ from ..metadata import (
     publish_model_schemata,
     validate,
 )
-
-METADATA_DIR = Path(__file__).with_name("data") / "metadata"
 
 
 @pytest.fixture(scope="module")
@@ -45,8 +51,9 @@ def test_asset(schema_dir: Path) -> None:
     validate(data_as_dict)
 
 
+@skipif_no_test_dandiset_metadata_dir
 def test_dandiset(schema_dir: Path) -> None:
-    with (METADATA_DIR / "meta_000004.json").open() as fp:
+    with (DANDISET_METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
     _validate_dandiset_json(data_as_dict, schema_dir)
@@ -59,11 +66,16 @@ def test_id(schema_dir: Path) -> None:
 
 
 @skipif_no_network
+@skipif_no_test_dandiset_metadata_dir
 def test_pydantic_validation(schema_dir: Path) -> None:
-    with (METADATA_DIR / "meta_000004.json").open() as fp:
+    with (DANDISET_METADATA_DIR / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = "0.4.4"
-    validate(data_as_dict, schema_key="Dandiset", json_validation=True)
+    if INSTANCE_NAME == "DANDI":
+        # This is run only when the DANDI instance is `"DANDI"`
+        # since the JSON schema at `0.4.4` is hardcoded to only
+        # for an instance named `DANDI`
+        validate(data_as_dict, schema_key="Dandiset", json_validation=True)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
     validate(data_as_dict, schema_key="Dandiset", json_validation=True)
     validate(data_as_dict["about"][0])
@@ -72,6 +84,9 @@ def test_pydantic_validation(schema_dir: Path) -> None:
 
 
 @skipif_no_network
+# Skip for when the instance being tested is not `DANDI` since the JSON schema
+# version at `0.4.4` and `0.6.0` is hardcoded to only for an instance named `DANDI`
+@skipif_instance_name_not_dandi
 def test_json_schemakey_validation() -> None:
     with pytest.raises(JsonschemaValidationError) as exc:
         validate(
@@ -120,20 +135,24 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             {"schemaKey": "Dandiset"},
             "PublishedDandiset",
             {
-                "assetsSummary",
-                "citation",
-                "contributor",
-                "datePublished",
-                "description",
-                "doi",
-                "id",
-                "identifier",
-                "license",
-                "manifestLocation",
-                "name",
-                "publishedBy",
-                "url",
-                "version",
+                e
+                for e in [
+                    "assetsSummary",
+                    "citation",
+                    "contributor",
+                    "datePublished",
+                    "description",
+                    "doi",
+                    "id",
+                    "identifier",
+                    "license",
+                    "manifestLocation",
+                    "name",
+                    "publishedBy",
+                    "url",
+                    "version",
+                ]
+                if DOI_PREFIX is not None or e != "doi"
             },
         ),
         (
@@ -143,20 +162,24 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                "assetsSummary",
-                "citation",
-                "contributor",
-                "datePublished",
-                "description",
-                "doi",
-                "id",
-                "identifier",
-                "license",
-                "manifestLocation",
-                "name",
-                "publishedBy",
-                "url",
-                "version",
+                e
+                for e in [
+                    "assetsSummary",
+                    "citation",
+                    "contributor",
+                    "datePublished",
+                    "description",
+                    "doi",
+                    "id",
+                    "identifier",
+                    "license",
+                    "manifestLocation",
+                    "name",
+                    "publishedBy",
+                    "url",
+                    "version",
+                ]
+                if DOI_PREFIX is not None or e != "doi"
             },
         ),
         (
@@ -173,19 +196,23 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                "assetsSummary",
-                "citation",
-                "datePublished",
-                "description",
-                "doi",
-                "id",
-                "identifier",
-                "license",
-                "manifestLocation",
-                "name",
-                "publishedBy",
-                "url",
-                "version",
+                e
+                for e in [
+                    "assetsSummary",
+                    "citation",
+                    "datePublished",
+                    "description",
+                    "doi",
+                    "id",
+                    "identifier",
+                    "license",
+                    "manifestLocation",
+                    "name",
+                    "publishedBy",
+                    "url",
+                    "version",
+                ]
+                if DOI_PREFIX is not None or e != "doi"
             },
         ),
         (
@@ -304,7 +331,7 @@ def test_requirements(
         (
             {
                 "schemaKey": "Dandiset",
-                "identifier": "DANDI:000000",
+                "identifier": f"{INSTANCE_NAME}:000000",
                 "schemaVersion": "0.4.4",
             },
             None,
@@ -328,16 +355,19 @@ def test_missing_ok(
 
 @skipif_no_network
 def test_missing_ok_error() -> None:
-    with pytest.raises(JsonschemaValidationError):
-        validate(
-            {
-                "schemaKey": "Dandiset",
-                "identifier": "000000",
-                "schemaVersion": "0.4.4",
-            },
-            json_validation=True,
-            missing_ok=True,
-        )
+    if INSTANCE_NAME == "DANDI":
+        # Skip for when the instance being tested is not `DANDI` since the JSON schema
+        # version at `0.4.4` is hardcoded to only for an instance named `DANDI`
+        with pytest.raises(JsonschemaValidationError):
+            validate(
+                {
+                    "schemaKey": "Dandiset",
+                    "identifier": "000000",
+                    "schemaVersion": "0.4.4",
+                },
+                json_validation=True,
+                missing_ok=True,
+            )
     with pytest.raises(PydanticValidationError):
         validate(
             {
@@ -409,8 +439,13 @@ def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 @skipif_no_network
+@skipif_no_test_dandiset_metadata_dir
+# Skip for instance name not being DANDI because JSON schema version at `0.4.4`, the
+# schema version of the metadata in `meta_000004old.json`, is hardcoded to only for
+# an DANDI instance named `DANDI`
+@skipif_instance_name_not_dandi
 def test_migrate_044(schema_dir: Path) -> None:
-    with (METADATA_DIR / "meta_000004old.json").open() as fp:
+    with (DANDISET_METADATA_DIR / "meta_000004old.json").open() as fp:
         data_as_dict = json.load(fp)
     with pytest.raises(ValueError):
         validate(data_as_dict)
@@ -586,12 +621,17 @@ def test_aggregate_nonsupported(version: str) -> None:
 
 @skipif_no_network
 def test_validate_older() -> None:
-    with pytest.raises(ValueError):
-        validate(
-            {"schemaVersion": "0.5.2", "schemaKey": "Anykey"}, json_validation=True
-        )
-    with pytest.raises(JsonschemaValidationError):
-        validate({"schemaVersion": "0.5.2", "schemaKey": "Asset"}, json_validation=True)
+    if INSTANCE_NAME == "DANDI":
+        # Skip for when the instance being tested is not `DANDI` since the JSON schema
+        # version at `0.5.2` is hardcoded to only for an instance named `DANDI`
+        with pytest.raises(ValueError):
+            validate(
+                {"schemaVersion": "0.5.2", "schemaKey": "Anykey"}, json_validation=True
+            )
+        with pytest.raises(JsonschemaValidationError):
+            validate(
+                {"schemaVersion": "0.5.2", "schemaKey": "Asset"}, json_validation=True
+            )
     with pytest.raises(JsonschemaValidationError):
         validate(
             {"schemaVersion": DANDI_SCHEMA_VERSION, "schemaKey": "Asset"},
