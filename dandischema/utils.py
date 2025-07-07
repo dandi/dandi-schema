@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 import re
-from typing import Any, Iterator, List, Sequence, Union, cast, get_args, get_origin
+from typing import Any, Iterator, List, Union, cast, get_args, get_origin
 
 from jsonschema import Draft7Validator, Draft202012Validator
 from jsonschema.protocols import Validator as JsonschemaValidator
