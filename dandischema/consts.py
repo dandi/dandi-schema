@@ -23,7 +23,8 @@ ALLOWED_INPUT_SCHEMAS = [
 # version
 ALLOWED_TARGET_SCHEMAS = [DANDI_SCHEMA_VERSION]
 
-# Note: utils.sort_versions() is there to sort if created from sets again
+# This allows multiple schemas for validation, whereas target schemas focus on
+# migration.
 ALLOWED_VALIDATION_SCHEMAS = sorted(
     set(ALLOWED_INPUT_SCHEMAS).union(ALLOWED_TARGET_SCHEMAS), key=_Version
 )

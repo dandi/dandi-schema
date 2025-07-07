@@ -24,7 +24,6 @@ from .utils import (
     dandi_jsonschema_validator,
     json_object_adapter,
     sanitize_value,
-    sort_versions,
     strip_top_level_optional,
     validate_json,
     version2tuple,
@@ -216,7 +215,7 @@ def _get_jsonschema_validator(
     if schema_version not in ALLOWED_VALIDATION_SCHEMAS:
         raise ValueError(
             f"DANDI schema version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(sort_versions(ALLOWED_VALIDATION_SCHEMAS))}."
+            f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
     if schema_key not in SCHEMA_MAP:
         raise ValueError(
@@ -313,7 +312,7 @@ def validate(
     if schema_version not in ALLOWED_VALIDATION_SCHEMAS and schema_key in SCHEMA_MAP:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(sort_versions(ALLOWED_VALIDATION_SCHEMAS))}."
+            f"Allowed are: {', '.join(ALLOWED_VALIDATION_SCHEMAS)}."
         )
     if json_validation:
         if schema_version == DANDI_SCHEMA_VERSION:
@@ -489,7 +488,7 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     if schema_version not in ALLOWED_INPUT_SCHEMAS:
         raise ValueError(
             f"Metadata version {schema_version} is not allowed. "
-            f"Allowed are: {', '.join(sort_versions(ALLOWED_INPUT_SCHEMAS))}."
+            f"Allowed are: {', '.join(ALLOWED_INPUT_SCHEMAS)}."
         )
 
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
