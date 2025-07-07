@@ -241,5 +241,3 @@ def validate_json(instance: Any, validator: JsonschemaValidator) -> None:
 
 # Pydantic type adapter for a JSON object, which is of type `dict[str, Any]`
 json_object_adapter = TypeAdapter(dict[str, Any], config=ConfigDict(strict=True))
-
-
