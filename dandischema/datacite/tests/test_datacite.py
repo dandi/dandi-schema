@@ -1,8 +1,9 @@
+from datetime import datetime
 import json
 import os
 from pathlib import Path
 import random
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from jsonschema import Draft7Validator
 import pytest
@@ -55,6 +56,33 @@ def _clean_doi(doi: str) -> None:
 @pytest.fixture(scope="module")
 def schema() -> Any:
     return _get_datacite_schema()
+
+
+@pytest.fixture(scope="function")
+def metadata_draft() -> Dict[str, Any]:
+    """Draft dandiset metadata that will trigger unvalidated fallback"""
+    dandi_id_noprefix = f"000{random.randrange(100, 999)}"
+    dandi_id = f"DANDI:{dandi_id_noprefix}"
+
+    return {
+        "identifier": dandi_id,
+        "id": f"{dandi_id}/draft",
+        "name": "testing draft dataset",
+        "description": "testing draft",
+        "contributor": [
+            {
+                "name": "A_last, A_first",
+                "email": "nemo@example.com",
+                "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
+            }
+        ],
+        "license": [LicenseType("spdx:CC-BY-4.0")],
+        "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}",  # DLP, not version url
+        "doi": f"10.80507/dandi.{dandi_id_noprefix}",
+        "version": "draft",
+        # Missing: datePublished, publishedBy
+    }
 
 
 @pytest.fixture(scope="function")
@@ -414,10 +442,10 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic, publish=True, validate=True)
+    with pytest.warns(DeprecationWarning, match="'publish' is deprecated"):
+        datacite = to_datacite(metadata_basic, publish=True, validate=True)
 
-    assert datacite == {
-        # 'data': {}
+    expected = {
         "data": {
             "id": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
             "type": "dois",
@@ -463,7 +491,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "alternateIdentifierType": "URL",
                     },
                 ],
-                "publicationYear": "1970",
+                "publicationYear": str(datetime.now().year),
                 "publisher": {
                     "name": "DANDI Archive",
                     "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
@@ -489,6 +517,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
             },
         }
     }
+    assert datacite == expected
 
 
 @pytest.mark.parametrize(
@@ -526,9 +555,6 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
         ),
     ],
 )
-@pytest.mark.skipif(
-    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
-)
 def test_datacite_related_res_url(
     metadata_basic: Dict[str, Any],
     related_res_url: Dict[str, Any],
@@ -549,3 +575,107 @@ def test_datacite_related_res_url(
     relIdent = datacite["data"]["attributes"]["relatedIdentifiers"][0]
     assert relIdent["relatedIdentifier"] == related_ident_exp[0].lower()
     assert relIdent["relatedIdentifierType"] == related_ident_exp[1]
+
+
+@pytest.mark.parametrize(
+    "event_param, expected_event_in_output",
+    [
+        (None, None),  # event=None should not include event in output
+        ("publish", "publish"),  # event="publish" should include event="publish"
+        ("hide", "hide"),  # event="hide" should include event="hide"
+        # Test no event parameter at all
+        ("no_param", None),  # Special marker for no event parameter
+    ],
+)
+def test_event_parameter(
+    metadata_basic: Dict[str, Any],
+    event_param: str,
+    expected_event_in_output: Optional[str],
+) -> None:
+    """Test event parameter handling in to_datacite"""
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    # Handle the special case where we don't pass event parameter at all
+    if event_param == "no_param":
+        datacite = to_datacite(metadata_basic)
+    else:
+        datacite = to_datacite(metadata_basic, event=event_param)
+
+    # Check event attribute presence/value
+    if expected_event_in_output is None:
+        assert "event" not in datacite["data"]["attributes"]
+    else:
+        assert datacite["data"]["attributes"]["event"] == expected_event_in_output
+
+
+def test_invalid_event(metadata_basic: Dict[str, Any]) -> None:
+    """Test that invalid event values raise ValueError"""
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    with pytest.raises(ValueError, match="Invalid event value"):
+        to_datacite(metadata_basic, event="invalid")
+
+
+def test_event_and_publish_conflict(metadata_basic: Dict[str, Any]) -> None:
+    """Test that using both event and publish parameters raises ValueError"""
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    with pytest.raises(
+        ValueError, match="Cannot use both 'event' and deprecated 'publish'"
+    ):
+        to_datacite(metadata_basic, event="publish", publish=True)
+
+
+def test_deprecated_publish_parameter(metadata_basic: Dict[str, Any]) -> None:
+    """Test the deprecated publish parameter still works but shows warning"""
+    dandi_id = metadata_basic["identifier"]
+    dandi_id_noprefix = dandi_id.split(":")[1]
+    metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
+
+    with pytest.warns(DeprecationWarning, match="'publish' is deprecated"):
+        datacite = to_datacite(metadata_basic, publish=True)
+
+    # Check that event is "publish" despite using the deprecated parameter
+    assert datacite["data"]["attributes"]["event"] == "publish"
+
+
+def test_draft_dandiset_unvalidated_fallback(metadata_draft: Dict[str, Any]) -> None:
+    """Test that draft dandiset metadata uses unvalidated fallback"""
+    # Should work via unvalidated fallback without raising exception
+    datacite = to_datacite(metadata_draft)
+
+    # Verify basic structure is correct
+    assert datacite["data"]["type"] == "dois"
+    assert datacite["data"]["id"] == metadata_draft["doi"]
+
+    # Verify key attributes are populated from draft metadata
+    attrs = datacite["data"]["attributes"]
+    assert attrs["doi"] == metadata_draft["doi"]
+    assert attrs["version"] == "draft"
+    assert attrs["titles"][0]["title"] == metadata_draft["name"]
+    assert attrs["descriptions"][0]["description"] == metadata_draft["description"]
+
+    # Should have creators/contributors from the contributor field
+    assert len(attrs["creators"]) > 0
+    assert len(attrs["contributors"]) > 0
+
+    # Should NOT have publicationYear (since no datePublished in draft)
+    assert "publicationYear" not in attrs
+
+
+@pytest.mark.skipif(
+    not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
+)
+def test_draft_dandiset_datacite_api(metadata_draft: Dict[str, Any]) -> None:
+    """Test that draft dandiset metadata works with actual DataCite API"""
+    # Generate DataCite payload
+    datacite = to_datacite(metadata_draft)
+
+    # Post to actual DataCite API
+    datacite_post(datacite, metadata_draft["doi"])

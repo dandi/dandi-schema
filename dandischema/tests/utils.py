@@ -17,7 +17,7 @@ def _basic_publishmeta(
     Returned fields are additional to fields required by Dandiset
     """
     publish_meta = {
-        "datePublished": str(datetime.now().year),
+        "datePublished": datetime.now(),
         "publishedBy": {
             "id": "urn:uuid:08fffc59-9f1b-44d6-8e02-6729d266d1b6",
             "name": "DANDI publish",
