@@ -1048,7 +1048,7 @@ class Resource(DandiBaseModel):
     relation: RelationType = Field(
         title="Resource relation",
         description="Indicates how the resource is related to the dataset. "
-        "This relation should satisfy: dandiset <relation> resource.",
+        r"This relation should satisfy: dandiset \<relation\> resource.",
         json_schema_extra={"nskey": "dandi"},
     )
     resourceType: Optional[ResourceType] = Field(
@@ -1332,7 +1332,7 @@ class RelatedParticipant(DandiBaseModel):
         title="Participant or subject relation",
         description="Indicates how the current participant or subject is related "
         "to the other participant or subject. This relation should "
-        "satisfy: Participant/Subject <relation> relatedParticipant/Subject.",
+        r"satisfy: Participant/Subject \<relation\> relatedParticipant/Subject.",
         json_schema_extra={"nskey": "dandi"},
     )
     schemaKey: Literal["RelatedParticipant"] = Field(
