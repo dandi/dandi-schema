@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, Optional, Union
 
 from pydantic import StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -88,17 +88,32 @@ def get_instance_config() -> Config:
     return _instance_config.model_copy(deep=True)
 
 
-def set_instance_config(**kwargs: Any) -> None:
+def set_instance_config(
+    config: Optional[Union[Config, dict]] = None, /, **kwargs: Any
+) -> None:
     """
     Set the DANDI instance configuration returned by `get_instance_config()`
 
-    This setting is done by creating a new instance of `Config` with the keyword
+    This setting is done by creating a new instance of `Config` with the positional
+    argument of type of `Config` or `dict` or the keyword
     arguments passed to this function and overwriting the existing one.
 
     Parameters
     ----------
+    config : Optional[Union[Config, dict]], optional
+        An instance of `Config` or a dictionary with the configuration. If an instance
+        of `Config` is provided, a copy will be made to use to set the DANDI instance
+        configuration. If a dictionary is provided, it will be validated and converted
+        to an instance of `Config`. If this argument is provided, no keyword arguments
+        should be provided. Defaults to `None`.
     **kwargs
-        Keyword arguments to pass to the `Config` constructor
+        Keyword arguments to pass to `Config.model_validate()` to create a new
+        instance of `Config` to set the DANDI instance configuration.
+
+    Raises
+    ------
+    ValueError
+        If both a non-none positional argument and keyword arguments are provided
 
     Note
     ----
@@ -110,11 +125,23 @@ def set_instance_config(**kwargs: Any) -> None:
         `dandischema.models`.
 
     """
+    if config is not None and kwargs:
+        raise ValueError(
+            "Either a positional argument or a set of keyword arguments should be "
+            "provided, but not both."
+        )
+
     import sys
 
     global _instance_config
 
-    new_config = Config(**kwargs)
+    if config is not None:
+        if isinstance(config, Config):
+            new_config = config.model_copy(deep=True)
+        else:
+            new_config = Config.model_validate(config)
+    else:
+        new_config = Config.model_validate(kwargs)
 
     if _MODELS_MODULE_NAME in sys.modules:
         if new_config != _instance_config:
