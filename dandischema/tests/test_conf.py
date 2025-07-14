@@ -1,11 +1,18 @@
 import logging
+from typing import Union
 from unittest.mock import ANY
 
 import pytest
 
+from dandischema.conf import (
+    Config,
+    _instance_config,
+    get_instance_config,
+    set_instance_config,
+)
+
 
 def test_get_instance_config() -> None:
-    from dandischema.conf import _instance_config, get_instance_config
 
     obtained_config = get_instance_config()
 
@@ -22,6 +29,24 @@ FOO_CONFIG_DICT = {
 
 
 class TestSetInstanceConfig:
+    @pytest.mark.parametrize(
+        ("arg", "kwargs"),
+        [
+            (FOO_CONFIG_DICT, {"instance_name": "BAR"}),
+            (
+                Config.model_validate(FOO_CONFIG_DICT),
+                {"instance_name": "Baz", "key": "value"},
+            ),
+        ],
+    )
+    def test_invalid_args(self, arg: Union[Config, dict], kwargs: dict) -> None:
+        """
+        Test that `set_instance_config` raises a `ValueError` when called with both
+        a non-none positional argument and one or more keyword arguments.
+        """
+
+        with pytest.raises(ValueError, match="not both"):
+            set_instance_config(arg, **kwargs)
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars",
@@ -36,7 +61,6 @@ class TestSetInstanceConfig:
         """
 
         # Import entities in `dandischema.conf` after clearing dandischema modules
-        from dandischema.conf import Config, get_instance_config, set_instance_config
 
         set_instance_config(**FOO_CONFIG_DICT)
         assert get_instance_config() == Config.model_validate(
@@ -59,7 +83,6 @@ class TestSetInstanceConfig:
         """
         # Make sure the `dandischema.models` module is imported before calling
         # `set_instance_config`
-        from dandischema.conf import Config, get_instance_config, set_instance_config
         import dandischema.models  # noqa: F401
 
         initial_config = get_instance_config()
@@ -101,7 +124,6 @@ class TestSetInstanceConfig:
         """
         # Make sure the `dandischema.models` module is imported before calling
         # `set_instance_config`
-        from dandischema.conf import Config, get_instance_config, set_instance_config
         import dandischema.models  # noqa: F401
 
         new_config_dict = {
