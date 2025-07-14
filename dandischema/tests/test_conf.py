@@ -1,5 +1,5 @@
 import logging
-from typing import Union
+from typing import Optional, Union
 from unittest.mock import ANY
 
 import pytest
@@ -49,12 +49,19 @@ class TestSetInstanceConfig:
             set_instance_config(arg, **kwargs)
 
     @pytest.mark.parametrize(
-        "clear_dandischema_modules_and_set_env_vars",
-        [{}],
-        indirect=True,
+        ("clear_dandischema_modules_and_set_env_vars", "arg", "kwargs"),
+        [
+            ({}, FOO_CONFIG_DICT, {}),
+            ({}, Config.model_validate(FOO_CONFIG_DICT), {}),
+            ({}, None, FOO_CONFIG_DICT),
+        ],
+        indirect=["clear_dandischema_modules_and_set_env_vars"],
     )
     def test_before_models_import(
-        self, clear_dandischema_modules_and_set_env_vars: None
+        self,
+        clear_dandischema_modules_and_set_env_vars: None,
+        arg: Optional[Union[Config, dict]],
+        kwargs: dict,
     ) -> None:
         """
         Test setting the instance configuration before importing `dandischema.models`.
@@ -62,7 +69,7 @@ class TestSetInstanceConfig:
 
         # Import entities in `dandischema.conf` after clearing dandischema modules
 
-        set_instance_config(**FOO_CONFIG_DICT)
+        set_instance_config(arg, **kwargs)
         assert get_instance_config() == Config.model_validate(
             FOO_CONFIG_DICT
         ), "Configuration values are not set to the expected values"
