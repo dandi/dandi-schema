@@ -1,0 +1,474 @@
+{
+    "id": "EMBER-DANDI:000004/draft",
+    "url": "https://dandiarchive.org/dandiset/000004/draft",
+    "name": "A NWB-based dataset and processing pipeline of human single-neuron activity during a declarative memory task",
+    "about": [
+        {
+            "name": "Right Temporal Lobe",
+            "identifier": "http://purl.obolibrary.org/obo/UBERON_0002809"
+        },
+        {
+            "name": "Medial Temporal Lobe"
+        }
+    ],
+    "access": [
+        {
+            "status": "dandi:OpenAccess",
+            "contactPoint": {
+                "schemaKey": "ContactPoint"
+            }
+        }
+    ],
+    "license": [
+        "spdx:CC-BY-4.0"
+    ],
+    "version": "draft",
+    "@context": "https://raw.githubusercontent.com/dandi/schema/master/releases/0.4.4/context.json",
+    "citation": "Chandravadia, Nand; Liang, Dehua; Schjetnan, Andrea Gomez Palacio; Carlson, April; Faraut, Mailys; Chung, Jeffrey M.; Reed, Chrystal M.; Dichter, Ben; Maoz, Uri; Kalia, Suneil K.; Valiante, Taufik A.; Mamelak, Adam N.; Rutishauser, Ueli (2021) A NWB-based dataset and processing pipeline of human single-neuron activity during a declarative memory task (Version draft) [Data set]. DANDI archive. https://dandiarchive.org/dandiset/000004/draft",
+    "keywords": [
+        "cognitive neuroscience",
+        "data standardization",
+        "decision making",
+        "declarative memory",
+        "neurophysiology",
+        "neurosurgery",
+        "NWB",
+        "open source",
+        "single-neurons"
+    ],
+    "protocol": [],
+    "identifier": "EMBER-DANDI:000004",
+    "repository": "https://dandiarchive.org/",
+    "contributor": [
+        {
+            "name": "Chandravadia, Nand",
+            "email": "nandc10@gmail.com",
+            "roleName": [
+                "dcite:Author",
+                "dcite:ContactPerson",
+                "dcite:DataCurator",
+                "dcite:DataManager",
+                "dcite:FormalAnalysis",
+                "dcite:Investigation",
+                "dcite:Maintainer",
+                "dcite:Methodology",
+                "dcite:ProjectLeader",
+                "dcite:ProjectManager",
+                "dcite:ProjectMember",
+                "dcite:Researcher",
+                "dcite:Software",
+                "dcite:Validation",
+                "dcite:Visualization"
+            ],
+            "schemaKey": "Person",
+            "identifier": "0000-0003-0161-4007",
+            "affiliation": [
+                {
+                    "name": "Department of Neurosurgery, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Liang, Dehua",
+            "email": "liang134@mail.chapman.edu",
+            "roleName": [
+                "dcite:Author",
+                "dcite:Methodology",
+                "dcite:ProjectMember",
+                "dcite:Software",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Institute for Interdisciplinary Brain and Behavioral Sciences, Crean College of Health and Behavioral Sciences, Schmid College of Science and Technology, Chapman University, Orange, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Schjetnan, Andrea Gomez Palacio",
+            "email": "Andrea.Schjetan@uhnresearch.ca",
+            "roleName": [
+                "dcite:Author",
+                "dcite:DataCollector",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "identifier": "0000-0002-4319-7689",
+            "affiliation": [
+                {
+                    "name": "Krembil Brain Institute, Toronto Western Hospital, Toronto, Canada",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Carlson, April",
+            "email": "april.carlson@tufts.edu",
+            "roleName": [
+                "dcite:Author",
+                "dcite:DataCurator",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "identifier": "0000-0002-9207-7069",
+            "affiliation": [
+                {
+                    "name": "Department of Neurosurgery, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Faraut, Mailys",
+            "email": "mailyscm.faraut@gmail.com",
+            "roleName": [
+                "dcite:Author",
+                "dcite:DataCollector",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Department of Neurosurgery, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Chung, Jeffrey M.",
+            "email": "Jeffrey.Chung@cshs.org",
+            "roleName": [
+                "dcite:Author",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Department of Neurology, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Reed, Chrystal M.",
+            "email": "Chrystal.Reed@csmc.edu",
+            "roleName": [
+                "dcite:Author",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Department of Neurology, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Dichter, Ben",
+            "email": "ben.dichter@gmail.com",
+            "roleName": [
+                "dcite:Author",
+                "dcite:Software",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Biological Systems & Engineering Division, Lawrence Berkeley National Laboratory, Berkeley, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Department of Neurosurgery, Stanford University, Stanford, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Maoz, Uri",
+            "email": "maoz.uri@gmail.com",
+            "roleName": [
+                "dcite:Author",
+                "dcite:Conceptualization",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Institute for Interdisciplinary Brain and Behavioral Sciences, Crean College of Health and Behavioral Sciences, Schmid College of Science and Technology, Chapman University, Orange, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Division of Biology and Biological Engineering, California Institute of Technology, Pasadena, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Kalia, Suneil K.",
+            "email": "suneil.kalia@uhn.ca",
+            "roleName": [
+                "dcite:Author",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Division of Neurosurgery, Department of Surgery, University of Toronto, Toronto, Canada",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Krembil Brain Institute, Toronto Western Hospital, Toronto, Canada",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Valiante, Taufik A.",
+            "email": "Taufik.Valiante@uhn.ca",
+            "roleName": [
+                "dcite:Author",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Krembil Brain Institute, Toronto Western Hospital, Toronto, Canada",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Division of Neurosurgery, Department of Surgery, University of Toronto, Toronto, Canada",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Mamelak, Adam N.",
+            "email": "Adam.Mamelak@cshs.org",
+            "roleName": [
+                "dcite:Author",
+                "dcite:ProjectMember",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "affiliation": [
+                {
+                    "name": "Department of Neurosurgery, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "Rutishauser, Ueli",
+            "email": "Ueli.Rutishauser@cshs.org",
+            "roleName": [
+                "dcite:Author",
+                "dcite:Conceptualization",
+                "dcite:FundingAcquisition",
+                "dcite:ProjectMember",
+                "dcite:Resources",
+                "dcite:Software",
+                "dcite:Supervision",
+                "dcite:Validation"
+            ],
+            "schemaKey": "Person",
+            "identifier": "0000-0002-9207-7069",
+            "affiliation": [
+                {
+                    "name": "Department of Neurosurgery, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Department of Neurology, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Division of Biology and Biological Engineering, California Institute of Technology, Pasadena, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Computational and Neural Systems Program, California Institute of Technology, Pasadena, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                },
+                {
+                    "name": "Center for Neural Science and Medicine, Department of Biomedical Science, Cedars-Sinai Medical Center, Los Angeles, CA, USA",
+                    "schemaKey": "Affiliation",
+                    "includeInCitation": false
+                }
+            ],
+            "includeInCitation": true
+        },
+        {
+            "name": "National Institute of Neurological Disorders and Stroke",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "awardNumber": "U01NS103792",
+            "contactPoint": [],
+            "includeInCitation": false
+        },
+        {
+            "name": "National Science Foundation",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "awardNumber": "1554105",
+            "contactPoint": [],
+            "includeInCitation": false
+        },
+        {
+            "name": "National Institute of Mental Health",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "awardNumber": "R01MH110831",
+            "contactPoint": [],
+            "includeInCitation": false
+        },
+        {
+            "name": "McKnight Endowment for Neuroscience",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "contactPoint": [],
+            "includeInCitation": false
+        },
+        {
+            "name": "NARSAD Young Investigator grant from the Brain & Behavior Research Foundation",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "contactPoint": [],
+            "includeInCitation": false
+        },
+        {
+            "name": "Kavli Foundation",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "contactPoint": [],
+            "includeInCitation": false
+        },
+        {
+            "name": "BRAIN initiative",
+            "roleName": [
+                "dcite:Sponsor"
+            ],
+            "schemaKey": "Organization",
+            "awardNumber": "U19NS104590",
+            "contactPoint": [],
+            "includeInCitation": false
+        }
+    ],
+    "description": "A challenge for data sharing in systems neuroscience is the multitude of different data formats used. Neurodata Without Borders: Neurophysiology 2.0 (NWB:N) has emerged as a standardized data format for the storage of cellular-level data together with meta-data, stimulus information, and behavior. A key next step to facilitate NWB:N adoption is to provide easy to use processing pipelines to import/export data from/to NWB:N. Here, we present a NWB-formatted dataset of 1863 single neurons recorded from the medial temporal lobes of 59 human subjects undergoing intracranial monitoring while they performed a recognition memory task. We provide code to analyze and export/import stimuli, behavior, and electrophysiological recordings to/from NWB in both MATLAB and Python. The data files are NWB:N compliant, which affords interoperability between programming languages and operating systems. This combined data and code release is a case study for how to utilize NWB:N for human single-neuron recordings and enables easy reuse of this hard-to-obtain data for both teaching and research on the mechanisms of human memory.",
+    "studyTarget": [],
+    "assetsSummary": {
+        "species": [
+            {
+                "name": "Human",
+                "schemaKey": "SpeciesType",
+                "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_9606"
+            }
+        ],
+        "approach": [
+            {
+                "name": "electrophysiological approach",
+                "schemaKey": "ApproachType"
+            }
+        ],
+        "dataStandard": [
+            {
+                "name": "Neurodata Without Borders (NWB)",
+                "schemaKey": "StandardsType",
+                "identifier": "RRID:SCR_015242"
+            }
+        ],
+        "numberOfBytes": 6197474020,
+        "numberOfFiles": 87,
+        "numberOfSubjects": 59,
+        "variableMeasured": [
+            "Units",
+            "ElectrodeGroup"
+        ],
+        "measurementTechnique": [
+            {
+                "name": "spike sorting technique",
+                "schemaKey": "MeasurementTechniqueType"
+            },
+            {
+                "name": "surgical technique",
+                "schemaKey": "MeasurementTechniqueType"
+            }
+        ]
+    },
+    "schemaVersion": "0.4.4",
+    "ethicsApproval": [],
+    "wasGeneratedBy": [],
+    "relatedResource": [
+        {
+            "url": "https://osf.io/hv7ja/",
+            "name": "A NWB-based Dataset and Processing Pipeline of Human Single-Neuron Activity During a Declarative Memory Task",
+            "relation": "dcite:IsDerivedFrom",
+            "identifier": "DOI:10.17605/OSF.IO/HV7JA",
+            "repository": "Open Science Framework"
+        },
+        {
+            "url": "https://www.nature.com/articles/s41597-020-0415-9",
+            "relation": "dcite:IsDescribedBy",
+            "identifier": "DOI:10.1038/s41597-020-0415-9"
+        }
+    ],
+    "manifestLocation": [
+        "https://api.dandiarchive.org/api/dandisets/000004/versions/draft/assets/"
+    ]
+}
