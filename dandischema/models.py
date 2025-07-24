@@ -45,7 +45,9 @@ from .utils import name2title
 
 # Load needed configurations into constants
 _INSTANCE_CONFIG = get_instance_config()
-ID_PATTERN = _INSTANCE_CONFIG.id_pattern
+
+# Regex pattern for the prefix of identifiers
+ID_PATTERN = _INSTANCE_CONFIG.instance_name
 DOI_PREFIX_PATTERN = _INSTANCE_CONFIG.doi_prefix_pattern
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.

@@ -792,17 +792,17 @@ def _get_field_pattern(
         # Without any environment variables set. dandischema is unvendorized.
         (
             {},
-            r"[A-Z][-A-Z]*",
+            "DANDI-ADHOC",
             None,
             {
-                "dandiset_id": "DANDI:001350/draft",
-                "dandiset_identifier": "DANDI:001350",
-                "published_dandiset_id": "DANDI:001350/0.250511.1527",
+                "dandiset_id": "DANDI-ADHOC:001350/draft",
+                "dandiset_identifier": "DANDI-ADHOC:001350",
+                "published_dandiset_id": "DANDI-ADHOC:001350/0.250511.1527",
             },
             {
                 "dandiset_id": "45:001350/draft",  # Invalid id prefix
-                "dandiset_identifier": "DANDI:001350",
-                "published_dandiset_id": "DANDI:001350/0.250511.1527",
+                "dandiset_identifier": "DANDI-ADHOC:001350",
+                "published_dandiset_id": "DANDI-ADHOC:001350/0.250511.1527",
             },
         ),
         (
@@ -848,17 +848,17 @@ def _get_field_pattern(
         # Without any environment variables set. dandischema is unvendorized.
         (
             {},
-            r"[A-Z][-A-Z]*",
+            "DANDI-ADHOC",
             None,
             {
-                "dandiset_id": "EMBER-DANDI:000005/draft",
-                "dandiset_identifier": "EMBER-DANDI:000005",
-                "published_dandiset_id": "EMBER-DANDI:000005/0.250404.1839",
+                "dandiset_id": "DANDI-ADHOC:000005/draft",
+                "dandiset_identifier": "DANDI-ADHOC:000005",
+                "published_dandiset_id": "DANDI-ADHOC:000005/0.250404.1839",
             },
             {
-                "dandiset_id": "EMBER-DANDI:000005/draft",
-                "dandiset_identifier": "-EMBER-DANDI:000005",  # Invalid id prefix
-                "published_dandiset_id": "EMBER-DANDI:000005/0.250404.1839",
+                "dandiset_id": "DANDI-ADHOC:000005/draft",
+                "dandiset_identifier": "-DANDI-ADHOC:000005",  # Invalid id prefix
+                "published_dandiset_id": "DANDI-ADHOC:000005/0.250404.1839",
             },
         ),
         (

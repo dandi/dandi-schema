@@ -48,16 +48,6 @@ class Config(BaseSettings):
     """
 
     @property
-    def id_pattern(self) -> str:
-        """Regex pattern for the prefix of identifiers"""
-        if "instance_name" in self.model_fields_set:
-            return self.instance_name
-
-        # If the instance name is not set,
-        #   we use a pattern for unvendored DANDI instances
-        return _UNVENDORED_ID_PATTERN
-
-    @property
     def doi_prefix_pattern(self) -> Optional[str]:
         """The pattern that a DOI prefix of a dandiset must conform to"""
         return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
