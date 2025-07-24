@@ -48,7 +48,13 @@ _INSTANCE_CONFIG = get_instance_config()
 
 # Regex pattern for the prefix of identifiers
 ID_PATTERN = _INSTANCE_CONFIG.instance_name
-DOI_PREFIX_PATTERN = _INSTANCE_CONFIG.doi_prefix_pattern
+
+# The pattern that a DOI prefix of a dandiset must conform to
+DOI_PREFIX_PATTERN = (
+    re.escape(_INSTANCE_CONFIG.doi_prefix)
+    if _INSTANCE_CONFIG.doi_prefix is not None
+    else None
+)
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]

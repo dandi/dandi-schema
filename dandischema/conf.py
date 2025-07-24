@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from typing import Annotated, Any, Optional, Union
 
 from pydantic import StringConstraints
@@ -46,11 +45,6 @@ class Config(BaseSettings):
     """
     The DOI prefix at DataCite
     """
-
-    @property
-    def doi_prefix_pattern(self) -> Optional[str]:
-        """The pattern that a DOI prefix of a dandiset must conform to"""
-        return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
 
 
 _instance_config = Config()  # Initial value is set by env vars alone
