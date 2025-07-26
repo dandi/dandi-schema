@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from enum import Enum
+from importlib.resources import files
 import logging
-from typing import Annotated, Any, Optional, Union
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
-from pydantic import StringConstraints
+from pydantic import BaseModel, Field, StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _MODELS_MODULE_NAME = "dandischema.models"
@@ -15,6 +18,60 @@ _UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 _UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
 logger = logging.getLogger(__name__)
+
+
+class SpdxLicense(BaseModel):
+    """
+    Represent a license in the SPDX License List, https://spdx.org/licenses/.
+
+    Notes
+    ----
+        An object of this class is loaded from the JSON version of the list at
+        https://github.com/spdx/license-list-data/blob/main/json/licenses.json
+        at a specific version, e.g., "3.27.0"
+    """
+
+    license_id: str = Field(validation_alias="licenseId")
+
+
+class SpdxLicenseList(BaseModel):
+    """
+    Represents the SPDX License List, https://spdx.org/licenses/.
+
+    Notes
+    ----
+        The resulting object is a representation of the JSON version of the list at
+        https://github.com/spdx/license-list-data/blob/main/json/licenses.json
+        at a specific version, e.g., "3.27.0"
+
+    """
+
+    license_list_version: str = Field(validation_alias="licenseListVersion")
+    licenses: list[SpdxLicense]
+    release_date: datetime = Field(validation_alias="releaseDate")
+
+
+spdx_licenses_file_path = (
+    files("dandischema").joinpath("_resources").joinpath("licenses.json")
+)
+
+spdx_license_list = SpdxLicenseList.model_validate_json(
+    spdx_licenses_file_path.read_text()
+)
+
+if TYPE_CHECKING:
+    # This is just a placeholder for static type checking
+    class License(Enum):
+        ...  # fmt: skip
+
+else:
+    License = Enum(
+        "License",
+        [
+            ("spdx:" + license_.license_id,) * 2
+            for license_ in spdx_license_list.licenses
+        ],
+    )
 
 
 class Config(BaseSettings):
@@ -44,6 +101,21 @@ class Config(BaseSettings):
     ] = None
     """
     The DOI prefix at DataCite
+    """
+
+    licenses: list[License] = Field(
+        default=[License("spdx:CC0-1.0"), License("spdx:CC-BY-4.0")]
+    )
+    """
+    List of licenses to be supported by the DANDI instance
+
+    Currently, the values for this list must be the identifier of a license in the
+    list at https://spdx.org/licenses/ prefixed with "spdx:" when set with the
+    corresponding environment variable. E.g.
+
+    ```shell
+    export DANDI_LICENSES='["spdx:CC0-1.0", "spdx:CC-BY-4.0"]'
+    ```
     """
 
 
