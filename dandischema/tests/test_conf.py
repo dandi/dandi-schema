@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Optional
 from unittest.mock import ANY
@@ -19,6 +20,11 @@ def test_get_instance_config() -> None:
 FOO_CONFIG_DICT = {
     "instance_name": "FOO",
     "doi_prefix": "10.1234",
+    "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
+}
+
+FOO_CONFIG_ENV_VARS = {
+    k: v if k != "licenses" else json.dumps(v) for k, v in FOO_CONFIG_DICT.items()
 }
 
 
@@ -76,7 +82,7 @@ class TestSetInstanceConfig:
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars",
-        [FOO_CONFIG_DICT],
+        [FOO_CONFIG_ENV_VARS],
         indirect=True,
     )
     def test_after_models_import_same_config(
@@ -119,7 +125,7 @@ class TestSetInstanceConfig:
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars",
-        [FOO_CONFIG_DICT],
+        [FOO_CONFIG_ENV_VARS],
         indirect=True,
     )
     def test_after_models_import_different_config(
