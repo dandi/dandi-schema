@@ -1,18 +1,12 @@
 import logging
-from typing import Optional, Union
+from typing import Optional
 from unittest.mock import ANY
 
 import pytest
 
-from dandischema.conf import (
-    Config,
-    _instance_config,
-    get_instance_config,
-    set_instance_config,
-)
-
 
 def test_get_instance_config() -> None:
+    from dandischema.conf import _instance_config, get_instance_config
 
     obtained_config = get_instance_config()
 
@@ -34,25 +28,28 @@ class TestSetInstanceConfig:
         [
             (FOO_CONFIG_DICT, {"instance_name": "BAR"}),
             (
-                Config.model_validate(FOO_CONFIG_DICT),
+                FOO_CONFIG_DICT,
                 {"instance_name": "Baz", "key": "value"},
             ),
         ],
     )
-    def test_invalid_args(self, arg: Union[Config, dict], kwargs: dict) -> None:
+    def test_invalid_args(self, arg: dict, kwargs: dict) -> None:
         """
         Test that `set_instance_config` raises a `ValueError` when called with both
         a non-none positional argument and one or more keyword arguments.
         """
+        from dandischema.conf import Config, set_instance_config
 
-        with pytest.raises(ValueError, match="not both"):
-            set_instance_config(arg, **kwargs)
+        # Loop over arg in different types/forms
+        for arg_ in (arg, Config.model_validate(arg)):
+            with pytest.raises(ValueError, match="not both"):
+                set_instance_config(arg_, **kwargs)
 
     @pytest.mark.parametrize(
         ("clear_dandischema_modules_and_set_env_vars", "arg", "kwargs"),
         [
             ({}, FOO_CONFIG_DICT, {}),
-            ({}, Config.model_validate(FOO_CONFIG_DICT), {}),
+            ({}, FOO_CONFIG_DICT, {}),
             ({}, None, FOO_CONFIG_DICT),
         ],
         indirect=["clear_dandischema_modules_and_set_env_vars"],
@@ -60,7 +57,7 @@ class TestSetInstanceConfig:
     def test_before_models_import(
         self,
         clear_dandischema_modules_and_set_env_vars: None,
-        arg: Optional[Union[Config, dict]],
+        arg: Optional[dict],
         kwargs: dict,
     ) -> None:
         """
@@ -68,11 +65,14 @@ class TestSetInstanceConfig:
         """
 
         # Import entities in `dandischema.conf` after clearing dandischema modules
+        from dandischema.conf import Config, get_instance_config, set_instance_config
 
-        set_instance_config(arg, **kwargs)
-        assert get_instance_config() == Config.model_validate(
-            FOO_CONFIG_DICT
-        ), "Configuration values are not set to the expected values"
+        # Loop over arg in different types/forms
+        for arg_ in (arg, Config.model_validate(arg)) if arg is not None else (arg,):
+            set_instance_config(arg_, **kwargs)
+            assert get_instance_config() == Config.model_validate(
+                FOO_CONFIG_DICT
+            ), "Configuration values are not set to the expected values"
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars",
@@ -88,6 +88,8 @@ class TestSetInstanceConfig:
         Test setting the instance configuration after importing `dandischema.models`
         with the same configuration.
         """
+        from dandischema.conf import Config, get_instance_config, set_instance_config
+
         # Make sure the `dandischema.models` module is imported before calling
         # `set_instance_config`
         import dandischema.models  # noqa: F401
@@ -129,6 +131,8 @@ class TestSetInstanceConfig:
         Test setting the instance configuration after importing `dandischema.models`
         with a different configuration.
         """
+        from dandischema.conf import Config, get_instance_config, set_instance_config
+
         # Make sure the `dandischema.models` module is imported before calling
         # `set_instance_config`
         import dandischema.models  # noqa: F401
