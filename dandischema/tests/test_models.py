@@ -7,6 +7,8 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 import pytest
 
+from dandischema.conf import get_instance_config
+
 from .utils import DOI_PREFIX, INSTANCE_NAME, basic_publishmeta, skipif_no_doi_prefix
 from .. import models
 from ..models import (
@@ -34,6 +36,8 @@ from ..models import (
     RoleType,
 )
 from ..utils import TransitionalGenerateJsonSchema
+
+_INSTANCE_CONFIG = get_instance_config()
 
 
 def test_dandiset() -> None:
@@ -319,10 +323,7 @@ def test_asset_digest() -> None:
         ),
         (
             LicenseType,
-            {
-                "CC0_10": "spdx:CC0-1.0",
-                "CC_BY_40": "spdx:CC-BY-4.0",
-            },
+            {member.name: member.value for member in _INSTANCE_CONFIG.licenses},
         ),
         (
             IdentifierType,
