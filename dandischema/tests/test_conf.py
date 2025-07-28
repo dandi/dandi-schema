@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 from unittest.mock import ANY
 
+from pydantic import ValidationError
 import pytest
 
 
@@ -20,6 +21,57 @@ FOO_CONFIG_DICT = {
     "instance_name": "FOO",
     "doi_prefix": "10.1234",
 }
+
+
+class TestConfig:
+    @pytest.mark.parametrize(
+        "instance_name",
+        ["DANDI-ADHOC", "DANDI-TEST", "DANDI", "DANDI--TEST", "DANDI-TE-ST"],
+    )
+    def test_valid_instance_name(self, instance_name: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid instance name
+        """
+        from dandischema.conf import Config
+
+        Config(instance_name=instance_name)
+
+    @pytest.mark.parametrize("instance_name", ["-DANDI", "dandi", "DANDI0", "DANDI*"])
+    def test_invalid_instance_name(self, instance_name: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid instance name
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            Config(instance_name=instance_name)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("instance_name",)
+
+    @pytest.mark.parametrize(
+        "doi_prefix", ["10.1234", "10.5678", "10.12345678", "10.987654321"]
+    )
+    def test_valid_doi_prefix(self, doi_prefix: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid DOI prefix
+        """
+        from dandischema.conf import Config
+
+        Config(doi_prefix=doi_prefix)
+
+    @pytest.mark.parametrize("doi_prefix", ["1234", ".1234", "1.1234", "10.123"])
+    def test_invalid_doi_prefix(self, doi_prefix: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid DOI prefix
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            Config(doi_prefix=doi_prefix)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("doi_prefix",)
 
 
 class TestSetInstanceConfig:
