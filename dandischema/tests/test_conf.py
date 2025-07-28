@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Optional
+from typing import Optional, Union
 from unittest.mock import ANY
 
 from pydantic import ValidationError
@@ -78,6 +78,81 @@ class TestConfig:
 
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"] == ("doi_prefix",)
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            [],
+            ["spdx:AGPL-1.0-only"],
+            ["spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0", "spdx:LOOP"],
+            set(),
+            {"spdx:AGPL-1.0-only"},
+            {"spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0"},
+        ],
+    )
+    def test_valid_licenses_by_args(self, licenses: Union[list[str], set[str]]) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid list/set of licenses
+        as argument.
+        """
+        from dandischema.conf import Config, License
+
+        # noinspection PyTypeChecker
+        config = Config(licenses=licenses)
+
+        assert config.licenses == {License(license_) for license_ in set(licenses)}
+
+    @pytest.mark.parametrize(
+        ("clear_dandischema_modules_and_set_env_vars", "licenses"),
+        [
+            ({"licenses": "[]"}, set()),
+            (
+                {"licenses": '["spdx:AGPL-1.0-only"]'},
+                {"spdx:AGPL-1.0-only"},
+            ),
+            (
+                {
+                    "licenses": '["spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0", "spdx:LOOP"]'
+                },
+                {"spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0", "spdx:LOOP"},
+            ),
+        ],
+        indirect=["clear_dandischema_modules_and_set_env_vars"],
+    )
+    def test_valid_licenses_by_env_var(
+        self, clear_dandischema_modules_and_set_env_vars: None, licenses: set[str]
+    ) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid array of licenses,
+        in JSON format, as an environment variable.
+        """
+        from dandischema.conf import Config, License
+
+        # noinspection PyTypeChecker
+        config = Config()
+
+        assert config.licenses == {License(license_) for license_ in licenses}
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            {"AGPL-1.0-only"},
+            {"spdx:AGPL-1.0-only", "spdx:NOT-A-LICENSE", "spdx:SPL-1.0"},
+        ],
+    )
+    def test_invalid_licenses_by_args(self, licenses: set[str]) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid list/set of
+        licenses as an argument
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            # noinspection PyTypeChecker
+            Config(licenses=licenses)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("licenses", ANY)
 
 
 class TestSetInstanceConfig:
