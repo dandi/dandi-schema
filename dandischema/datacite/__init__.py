@@ -14,7 +14,14 @@ from typing import Any, Dict, Union
 from jsonschema import Draft7Validator
 import requests
 
-from ..models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
+from ..models import (
+    NAME_PATTERN,
+    LicenseType,
+    Organization,
+    Person,
+    PublishedDandiset,
+    RoleType,
+)
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -65,6 +72,46 @@ DATACITE_IDENTYPE = {
 DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
+def _licenses_to_rights_list(licenses: list[LicenseType]) -> list[dict[str, str]]:
+    """
+    Construct the `rightsList` in DataCite metadata per given list of `LicenseType`
+    objects.
+
+    Parameters
+    ----------
+    licenses : list[LicenseType]
+        The list of `LicenseType` objects
+    """
+    rights_list = []
+    license_pattern = re.compile(r"^([^:\s]+):(\S+)$")
+    for license_ in licenses:
+        license_match = license_pattern.match(license_.value)
+        assert (
+            license_match
+        ), 'License is not of the expected format of "scheme:identifier"'
+        scheme, identifier = license_match.groups()
+        assert all(
+            [scheme, identifier]
+        ), "License scheme and identifier must both exist and be non-empty"
+
+        if scheme.upper() == "SPDX":
+            # SPDX license
+            rights_list.append(
+                {
+                    "rightsIdentifier": identifier,
+                    "rightsIdentifierScheme": "SPDX",
+                    "schemeUri": "https://spdx.org/licenses/",
+                }
+            )
+        else:
+            raise NotImplementedError(
+                f"License scheme {scheme} is not supported. "
+                "Currently only SPDX licenses are supported."
+            )
+
+    return rights_list
+
+
 def to_datacite(
     meta: Union[dict, PublishedDandiset],
     validate: bool = False,
@@ -111,15 +158,7 @@ def to_datacite(
     }
     # meta has also attribute url, but it often empty
     attributes["url"] = str(meta.url or "")
-    # assuming that all licenses are from SPDX?
-    attributes["rightsList"] = [
-        {
-            "schemeUri": "https://spdx.org/licenses/",
-            "rightsIdentifierScheme": "SPDX",
-            "rightsIdentifier": el.name,
-        }
-        for el in meta.license
-    ]
+    attributes["rightsList"] = _licenses_to_rights_list(meta.license)
     attributes["schemaVersion"] = "http://datacite.org/schema/kernel-4"
 
     contributors = []
