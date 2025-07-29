@@ -162,7 +162,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                 ),
                 "rightsList": (
                     1,
-                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC_BY_40"},
+                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC-BY-4.0"},
                 ),
                 "types": (
                     None,
@@ -473,7 +473,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                 },
                 "rightsList": [
                     {
-                        "rightsIdentifier": "CC_BY_40",
+                        "rightsIdentifier": "CC-BY-4.0",
                         "rightsIdentifierScheme": "SPDX",
                         "schemeUri": "https://spdx.org/licenses/",
                     }
