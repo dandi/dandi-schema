@@ -108,7 +108,14 @@ else:
         "LicenseType",
         [(license_.name, license_.value) for license_ in _INSTANCE_CONFIG.licenses],
     )
-    """An enumeration of supported licenses"""
+    r"""
+    An enumeration of supported licenses
+
+    The value of each member is a string that matches the regex pattern of
+    `^([^:\s]+):(\S+)$` in which the first group matches the license scheme such
+    as `"spdx"`, and the second group matches the license identifier such as
+    `"CC-BY-4.0"`.
+    """
 
 
 class AccessType(Enum):
