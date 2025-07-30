@@ -8,7 +8,7 @@ from importlib.resources import files
 import logging
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import AnyUrl, BaseModel, Field, StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _MODELS_MODULE_NAME = "dandischema.models"
@@ -20,43 +20,32 @@ _UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 logger = logging.getLogger(__name__)
 
 
-class SpdxLicense(BaseModel):
+class SpdxLicenseListInfo(BaseModel):
     """
-    Represent a license in the SPDX License List, https://spdx.org/licenses/.
-
-    Notes
-    ----
-        An object of this class is loaded from the JSON version of the list at
-        https://github.com/spdx/license-list-data/blob/main/json/licenses.json
-        at a specific version, e.g., "3.27.0"
+    Represents information about the SPDX License List.
     """
 
-    license_id: str = Field(validation_alias="licenseId")
+    version: str
+    release_date: datetime
+    url: AnyUrl
+    reference: AnyUrl = AnyUrl("https://spdx.org/licenses/")
 
 
-class SpdxLicenseList(BaseModel):
+class SpdxLicenseIdList(BaseModel):
     """
-    Represents the SPDX License List, https://spdx.org/licenses/.
-
-    Notes
-    ----
-        The resulting object is a representation of the JSON version of the list at
-        https://github.com/spdx/license-list-data/blob/main/json/licenses.json
-        at a specific version, e.g., "3.27.0"
-
+    Represents a list of SPDX license IDs.
     """
 
-    license_list_version: str = Field(validation_alias="licenseListVersion")
-    licenses: list[SpdxLicense]
-    release_date: datetime = Field(validation_alias="releaseDate")
+    source: SpdxLicenseListInfo
+    license_ids: list[str]
 
 
-spdx_licenses_file_path = (
-    files("dandischema").joinpath("_resources").joinpath("licenses.json")
+license_id_file_path = (
+    files("dandischema").joinpath("_resources").joinpath("spdx_license_ids.json")
 )
 
-spdx_license_list = SpdxLicenseList.model_validate_json(
-    spdx_licenses_file_path.read_text()
+spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
+    license_id_file_path.read_text()
 )
 
 if TYPE_CHECKING:
@@ -67,10 +56,7 @@ if TYPE_CHECKING:
 else:
     License = Enum(
         "License",
-        [
-            ("spdx:" + license_.license_id,) * 2
-            for license_ in spdx_license_list.licenses
-        ],
+        [("spdx:" + id_,) * 2 for id_ in spdx_license_id_list.license_ids],
     )
 
 
