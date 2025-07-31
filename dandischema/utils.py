@@ -217,7 +217,7 @@ def jsonschema_validator(
 
     if check_format:
         # Return a validator with format checking enabled
-        # ⏳ Static type checking is temporarily disabled partially in the following line
+        # TODO: Static type checking is temporarily disabled partially in the following line
         #   because of https://github.com/python-jsonschema/jsonschema/issues/1382.
         #   It should be re-enabled once the issue is resolved.
         return validator_cls(
