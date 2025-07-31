@@ -10,6 +10,7 @@ from dandischema.conf import get_instance_config
 _INSTANCE_CONFIG = get_instance_config()
 INSTANCE_NAME = _INSTANCE_CONFIG.instance_name
 DOI_PREFIX = _INSTANCE_CONFIG.doi_prefix
+DANDI_INSTANCE_URL_PATTERN = _INSTANCE_CONFIG.dandi_instance_url_pattern
 
 METADATA_DIR = Path(__file__).with_name("data") / "metadata"
 DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME

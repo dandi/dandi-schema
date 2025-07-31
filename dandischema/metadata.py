@@ -15,6 +15,7 @@ from .consts import (
     ALLOWED_TARGET_SCHEMAS,
     ALLOWED_VALIDATION_SCHEMAS,
     DANDI_SCHEMA_VERSION,
+    DANDI_NSKEY,
 )
 from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models
@@ -91,7 +92,7 @@ def generate_context() -> dict:
                         "@id": cast(str, field.json_schema_extra["nskey"]) + ":" + name
                     }
                 else:
-                    fields[name] = {"@id": f"{models.DANDI_NSKEY}:{name}"}
+                    fields[name] = {"@id": f"{DANDI_NSKEY}:{name}"}
 
                 # The annotation without the top-level optional
                 stripped_annotation = strip_top_level_optional(field.annotation)
@@ -123,8 +124,8 @@ def generate_context() -> dict:
 
     for item in models.DigestType:
         fields[item.value] = {"@id": item.value, "@nest": "digest"}
-    fields["Dandiset"] = f"{models.DANDI_NSKEY}:Dandiset"
-    fields["Asset"] = f"{models.DANDI_NSKEY}:Asset"
+    fields["Dandiset"] = f"{DANDI_NSKEY}:Dandiset"
+    fields["Asset"] = f"{DANDI_NSKEY}:Asset"
     fields = {k: fields[k] for k in sorted(fields)}
     field_preamble.update(**fields)
     return {"@context": field_preamble}

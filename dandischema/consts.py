@@ -28,3 +28,14 @@ ALLOWED_TARGET_SCHEMAS = [DANDI_SCHEMA_VERSION]
 ALLOWED_VALIDATION_SCHEMAS = sorted(
     set(ALLOWED_INPUT_SCHEMAS).union(ALLOWED_TARGET_SCHEMAS), key=_Version
 )
+
+# Static patterns
+NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
+UUID_PATTERN = (
+    "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
+)
+ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
+VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
+DANDI_NSKEY = "dandi"  # Namespace for DANDI ontology
+MD5_PATTERN = r"[0-9a-f]{32}"
+SHA256_PATTERN = r"[0-9a-f]{64}"

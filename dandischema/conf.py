@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import logging
+import os
+import re
 from datetime import datetime
 from enum import Enum
 from importlib.resources import files
-import logging
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Field, StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from .consts import VERSION_PATTERN
 
 _MODELS_MODULE_NAME = "dandischema.models"
 """The full import name of the module containing the DANDI Pydantic models"""
@@ -53,8 +57,7 @@ _spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
 
 if TYPE_CHECKING:
     # This is just a placeholder for static type checking
-    class License(Enum):
-        ...  # fmt: skip
+    class License(Enum): ...  # fmt: skip
 
 else:
     License = Enum(
@@ -104,6 +107,39 @@ class Config(BaseSettings):
     export DANDI_LICENSES='["spdx:CC0-1.0", "spdx:CC-BY-4.0"]'
     ```
     """
+
+    @property
+    def id_pattern(self) -> str:
+        return self.instance_name
+
+    @property
+    def doi_prefix_pattern(self) -> str | None:
+        return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
+
+    @property
+    def dandi_instance_url(self) -> str | None:
+        return os.environ.get("DJANGO_DANDI_WEB_APP_URL")
+
+    @property
+    def dandi_instance_url_pattern(self) -> str:
+        pattern = self.dandi_instance_url or ".*"
+        return re.escape(pattern.rstrip("/"))
+
+    @property
+    def dandi_doi_pattern(self) -> str | None:
+        return (
+            rf"^{self.doi_prefix_pattern}/{self.id_pattern.lower()}\.{VERSION_PATTERN}$"
+            if self.doi_prefix_pattern is not None
+            else None
+        )
+
+    @property
+    def dandi_pubid_pattern(self) -> str:
+        return rf"^{self.id_pattern}:{VERSION_PATTERN}$"
+
+    @property
+    def published_version_pattern(self) -> str:
+        return rf"^{self.dandi_instance_url_pattern}/dandiset/{VERSION_PATTERN}$"
 
 
 _instance_config = Config()  # Initial value is set by env vars alone

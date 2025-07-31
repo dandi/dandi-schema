@@ -1,18 +1,33 @@
 from collections import namedtuple
 from enum import Enum
 from inspect import isclass
-from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
+from typing import (
+    Annotated,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+    cast,
+)
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
 import pytest
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    Field,
+    ValidationError,
+)
 
-from dandischema.conf import get_instance_config
+from dandischema.conf import get_instance_config, set_instance_config
 
-from .utils import DOI_PREFIX, INSTANCE_NAME, basic_publishmeta, skipif_no_doi_prefix
 from .. import models
 from ..models import (
-    DANDI_INSTANCE_URL_PATTERN,
     AccessRequirements,
     AccessType,
     Affiliation,
@@ -36,7 +51,15 @@ from ..models import (
     RoleType,
 )
 from ..utils import TransitionalGenerateJsonSchema
+from .utils import (
+    DANDI_INSTANCE_URL_PATTERN,
+    DOI_PREFIX,
+    INSTANCE_NAME,
+    basic_publishmeta,
+    skipif_no_doi_prefix,
+)
 
+# TODO: Remove
 _INSTANCE_CONFIG = get_instance_config()
 
 
@@ -542,7 +565,7 @@ def test_duplicate_classes() -> None:
         if hasattr(klass, "_ldmeta"):
             if "nskey" in klass._ldmeta.default:
                 name = klass.__name__
-                qname = f'{klass._ldmeta.default["nskey"]}:{name}'
+                qname = f"{klass._ldmeta.default['nskey']}:{name}"
             else:
                 qname = f"dandi:{name}"
             check_qname(qname, klass)
@@ -717,7 +740,6 @@ _CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
 
 
 class TestContributor:
-
     @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
     def test_contact_person_without_email(self, roles: List[RoleType]) -> None:
         """
@@ -781,7 +803,7 @@ def _get_field_pattern(
 
 @pytest.mark.parametrize(
     (
-        "clear_dandischema_modules_and_set_env_vars",
+        "config_dict",
         # "exp" means "expected" in the following names
         "exp_id_pattern",
         "exp_doi_prefix_pattern",
@@ -891,10 +913,9 @@ def _get_field_pattern(
             },
         ),
     ],
-    indirect=["clear_dandischema_modules_and_set_env_vars"],
 )
 def test_vendorization(
-    clear_dandischema_modules_and_set_env_vars: None,
+    config_dict: dict,
     exp_id_pattern: str,
     exp_doi_prefix_pattern: str,
     # Fields that are valid for the vendorization
@@ -905,26 +926,25 @@ def test_vendorization(
     """
     Test the vendorization of the DANDI schema
     """
-    import dandischema.models as models_
+    set_instance_config(config_dict)
+    config = get_instance_config()
 
-    assert models_.ID_PATTERN == exp_id_pattern
-    assert models_.DOI_PREFIX_PATTERN == exp_doi_prefix_pattern
+    assert config.id_pattern == exp_id_pattern
+    assert config.doi_prefix_pattern == exp_doi_prefix_pattern
 
     class VendoredFieldModel(BaseModel):
         """
         A model consisting of fields with vendorized patterns in `dandischema.models`
         """
 
-        dandiset_id: str = Field(pattern=_get_field_pattern("id", models_.Dandiset))
-        dandiset_identifier: str = Field(
-            pattern=_get_field_pattern("identifier", models_.Dandiset)
-        )
-        published_dandiset_id: str = Field(
-            pattern=_get_field_pattern("id", models_.PublishedDandiset)
-        )
-        published_dandiset_doi: str = Field(
-            pattern=_get_field_pattern("doi", models_.PublishedDandiset)
-        )
+        dandiset_id: Annotated[str, BeforeValidator(Dandiset.check_id)]
+        dandiset_identifier: Annotated[str, BeforeValidator(Dandiset.check_identifier)]
+        published_dandiset_id: Annotated[
+            str, BeforeValidator(PublishedDandiset.check_id)
+        ]
+        published_dandiset_doi: Annotated[
+            str, BeforeValidator(PublishedDandiset.check_doi)
+        ]
 
         model_config = ConfigDict(strict=True)
 

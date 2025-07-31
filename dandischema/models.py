@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from enum import Enum
-import os
-import re
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -44,61 +43,16 @@ from dandischema.conf import (
     get_instance_config,
 )
 
-from .consts import DANDI_SCHEMA_VERSION
+from .consts import (
+    ASSET_UUID_PATTERN,
+    DANDI_NSKEY,
+    DANDI_SCHEMA_VERSION,
+    NAME_PATTERN,
+    SHA256_PATTERN,
+)
 from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
 from .utils import name2title
-
-# Load needed configurations into constants
-_INSTANCE_CONFIG = get_instance_config()
-
-# Regex pattern for the prefix of identifiers
-ID_PATTERN = (
-    _INSTANCE_CONFIG.instance_name
-    if _INSTANCE_CONFIG.instance_name != DEFAULT_INSTANCE_NAME
-    else UNVENDORED_ID_PATTERN
-)
-
-# The pattern that a DOI prefix of a dandiset must conform to
-DOI_PREFIX_PATTERN = (
-    re.escape(_INSTANCE_CONFIG.doi_prefix)
-    if _INSTANCE_CONFIG.doi_prefix is not None
-    else UNVENDORED_DOI_PREFIX_PATTERN
-)
-
-# Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
-DANDI_INSTANCE_URL: Optional[str]
-try:
-    DANDI_INSTANCE_URL = os.environ["DJANGO_DANDI_WEB_APP_URL"]
-except KeyError:
-    DANDI_INSTANCE_URL = None
-    DANDI_INSTANCE_URL_PATTERN = ".*"
-else:
-    # Ensure no trailing / for consistency
-    DANDI_INSTANCE_URL_PATTERN = re.escape(DANDI_INSTANCE_URL.rstrip("/"))
-
-NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
-UUID_PATTERN = (
-    "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
-)
-ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
-VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
-_INNER_DANDI_DOI_PATTERN = (
-    rf"{DOI_PREFIX_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}"
-)
-DANDI_DOI_PATTERN = (
-    rf"^{_INNER_DANDI_DOI_PATTERN}$"
-    if _INSTANCE_CONFIG.doi_prefix is not None
-    else rf"^({_INNER_DANDI_DOI_PATTERN}|)$"  # This matches an empty string as well
-)
-DANDI_PUBID_PATTERN = rf"^{ID_PATTERN}:{VERSION_PATTERN}$"
-DANDI_NSKEY = "dandi"  # Namespace for DANDI ontology
-
-PUBLISHED_VERSION_URL_PATTERN = (
-    rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
-)
-MD5_PATTERN = r"[0-9a-f]{32}"
-SHA256_PATTERN = r"[0-9a-f]{64}"
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -112,8 +66,7 @@ def diff_models(model1: M, model2: M) -> None:
 
 if TYPE_CHECKING:
     # This is just a placeholder for static type checking
-    class LicenseType(Enum):
-        ...  # fmt: skip
+    class LicenseType(Enum): ...  # fmt: skip
 
 else:
     LicenseType = Enum(
@@ -1537,6 +1490,14 @@ class BioSample(DandiBaseModel):
 BioSample.model_rebuild()
 
 
+def repository_default() -> AnyHttpUrl | None:
+    url = get_instance_config().dandi_instance_url
+    if url is not None:
+        return TypeAdapter(AnyHttpUrl).validate_python(url)
+
+    return None
+
+
 class CommonModel(DandiBaseModel):
     schemaVersion: str = Field(
         default=DANDI_SCHEMA_VERSION,
@@ -1620,11 +1581,7 @@ class CommonModel(DandiBaseModel):
     repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        (
-            TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
-            if DANDI_INSTANCE_URL is not None
-            else None
-        ),
+        default_factory=repository_default,
         description="location of the item",
         json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True},
     )
@@ -1658,18 +1615,37 @@ class Dandiset(CommonModel):
             raise ValueError("At least one contributor must have role ContactPerson")
         return values
 
+    @field_validator("id")
+    @staticmethod
+    def check_id(value: str) -> str:
+        conf = get_instance_config()
+        sub_pattern = conf.id_pattern + "|" + conf.id_pattern.lower()
+        pattern = rf"^({sub_pattern}):\d{{6}}(/(draft|\d+\.\d+\.\d+))$"
+
+        if re.match(pattern, value) is None:
+            raise ValueError("ID does not match pattern")
+
+        return value
+
+    @field_validator("identifier")
+    @staticmethod
+    def check_identifier(value: str) -> str:
+        conf = get_instance_config()
+        pattern = rf"^{conf.id_pattern}:\d{{6}}$"
+
+        if re.match(pattern, value) is None:
+            raise ValueError("Identifier does not match pattern")
+
+        return value
+
     id: str = Field(
         description="Uniform resource identifier",
-        pattern=(
-            rf"^({ID_PATTERN}|{ID_PATTERN.lower()}):\d{{6}}(/(draft|\d+\.\d+\.\d+))$"
-        ),
         json_schema_extra={"readOnly": True},
     )
 
     identifier: DANDI = Field(
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
-        pattern=rf"^{ID_PATTERN}:\d{{6}}$",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     name: str = Field(
@@ -1857,8 +1833,7 @@ class BareAsset(CommonModel):
             digest = v[DigestType.dandi_etag]
             if not re.fullmatch(DandiETag.REGEX, digest):
                 raise ValueError(
-                    f"Digest must have an appropriate dandi-etag value. "
-                    f"Got {digest}"
+                    f"Digest must have an appropriate dandi-etag value. Got {digest}"
                 )
         return v
 
@@ -1889,22 +1864,26 @@ class Publishable(DandiBaseModel):
     )
 
 
-_doi_field_kwargs: dict[str, Any] = {
-    "title": "DOI",
-    "pattern": DANDI_DOI_PATTERN,
-    "json_schema_extra": {"readOnly": True, "nskey": DANDI_NSKEY},
-}
-if _INSTANCE_CONFIG.doi_prefix is None:
-    _doi_field_kwargs["default"] = ""
+# TODO: Reconcile
+# _doi_field_kwargs: dict[str, Any] = {
+#     "title": "DOI",
+#     "pattern": DANDI_DOI_PATTERN,
+#     "json_schema_extra": {"readOnly": True, "nskey": DANDI_NSKEY},
+# }
+# if _INSTANCE_CONFIG.doi_prefix is None:
+#     _doi_field_kwargs["default"] = ""
 
 
 class PublishedDandiset(Dandiset, Publishable):
     id: str = Field(
         description="Uniform resource identifier.",
-        pattern=DANDI_PUBID_PATTERN,
         json_schema_extra={"readOnly": True},
     )
-    doi: str = Field(**_doi_field_kwargs)
+    doi: str = Field(
+        title="DOI",
+        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
+        default="",
+    )
     """
     The DOI of the published Dandiset
 
@@ -1933,11 +1912,28 @@ class PublishedDandiset(Dandiset, Publishable):
     @field_validator("url")
     @classmethod
     def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
-        if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
-            raise ValueError(
-                f'string does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
-            )
+        pattern = get_instance_config().published_version_pattern
+        if not re.match(pattern, str(url)):
+            raise ValueError(f'string does not match regex "{pattern}"')
         return url
+
+    @field_validator("id")
+    @staticmethod
+    def check_id(idstr: str) -> str:
+        pattern = get_instance_config().dandi_pubid_pattern
+        if not re.match(pattern, idstr):
+            raise ValueError(f'string does not match regex "{pattern}"')
+
+        return idstr
+
+    @field_validator("doi")
+    @staticmethod
+    def check_doi(doi: str) -> str:
+        pattern = get_instance_config().dandi_doi_pattern or r"^$"
+        if not re.match(pattern, doi):
+            raise ValueError(f'string does not match regex "{pattern}"')
+
+        return doi
 
 
 class PublishedAsset(Asset, Publishable):
