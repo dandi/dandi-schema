@@ -48,7 +48,7 @@ class SpdxLicenseList(BaseModel):
     release_date: datetime = Field(validation_alias="releaseDate")
 
 
-resp = get(licenses_source_url)
+resp = get(licenses_source_url, timeout=30.0)
 resp.raise_for_status()
 spdx_license_list = SpdxLicenseList.model_validate_json(resp.text)
 
