@@ -16,6 +16,11 @@ _UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_INSTANCE_NAME = "DANDI-ADHOC"
+"""
+The default name of the DANDI instance
+"""
+
 
 class Config(BaseSettings):
     """
@@ -34,7 +39,7 @@ class Config(BaseSettings):
 
     instance_name: Annotated[
         str, StringConstraints(pattern=rf"^{_UNVENDORED_ID_PATTERN}$")
-    ] = "DANDI-ADHOC"
+    ] = DEFAULT_INSTANCE_NAME
     """Name of the DANDI instance"""
 
     doi_prefix: Optional[
