@@ -41,7 +41,7 @@ class SpdxLicenseIdList(BaseModel):
 
 
 license_id_file_path = (
-    files("dandischema").joinpath("_resources").joinpath("spdx_license_ids.json")
+    files("dandischema") / "_resources" / "spdx_license_ids.json"
 )
 
 spdx_license_id_list = SpdxLicenseIdList.model_validate_json(

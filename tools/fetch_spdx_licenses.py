@@ -62,9 +62,8 @@ spdx_license_id_list = SpdxLicenseIdList(
 )
 
 
-license_id_file_path = (
-    files("dandischema").joinpath("_resources").joinpath("spdx_license_ids.json")
-)
+license_id_file_path = files("dandischema") / "_resources" / "spdx_license_ids.json"
+
 
 with as_file(license_id_file_path) as license_id_file_path_writable:
     license_id_file_path_writable.write_text(
