@@ -1,7 +1,8 @@
+from enum import Enum
 import json
 import os
 import random
-from typing import Any, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Tuple, cast
 
 from jsonschema import Draft7Validator
 import pytest
@@ -25,7 +26,118 @@ from dandischema.tests.utils import (
     skipif_no_test_dandiset_metadata_dir,
 )
 
-from .. import _get_datacite_schema, to_datacite
+from .. import _get_datacite_schema, _licenses_to_rights_list, to_datacite
+
+
+class TestLicensesToRightsList:
+    """
+    Tests for the `_licenses_to_rights_list()` helper function.
+    """
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            [" "],
+            ["bad_license"],
+            [" spdx:CC0-1.0"],
+            ["spdx:CC0-1.0 "],
+            ["spdx: CC0-1.0"],
+            ["spdx:CC0-1.0", "foo-license"],
+        ],
+    )
+    def test_bad_format(self, licenses: list[str]) -> None:
+        """
+        Test handling of licenses with a value of  bad format
+        """
+        if TYPE_CHECKING:
+
+            # noinspection PyUnusedLocal
+            class BadLicenseType(Enum):
+                ...  # fmt: skip
+
+        else:
+            # noinspection PyPep8Naming
+            BadLicenseType = Enum(
+                "BadLicenseType",
+                [(f"M{idx}", license_) for idx, license_ in enumerate(licenses)],
+            )
+
+            with pytest.raises(AssertionError, match="not of the expected format"):
+                _licenses_to_rights_list(list(BadLicenseType))
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            ["foo:license"],
+            ["bar:license"],
+            ["foo:license", "bar:license"],
+        ],
+    )
+    def test_non_spdx_license(self, licenses: list[str]) -> None:
+        """
+        Test handling of licenses not denoted using the `"spdx"` schema, i.e.
+        licenses that are not in the SPDX license list at
+        https://spdx.org/licenses/
+        """
+        if TYPE_CHECKING:
+            # noinspection PyUnusedLocal
+            class NonSpdxLicenseType(Enum):
+                ...  # fmt: skip
+
+        else:
+            # noinspection PyPep8Naming
+            NonSpdxLicenseType = Enum(
+                "NonSpdxLicenseType",
+                [(f"M{idx}", license_) for idx, license_ in enumerate(licenses)],
+            )
+
+        with pytest.raises(
+            NotImplementedError, match="Currently only SPDX licenses are supported"
+        ):
+            _licenses_to_rights_list(list(NonSpdxLicenseType))
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            ["spdx:CC0-1.0"],
+            ["spdx:CC-BY-4.0"],
+            ["spdx:CC0-1.0", "spdx:CC-BY-4.0"],
+        ],
+    )
+    def test_valid_input(self, licenses: list[str]) -> None:
+        """
+        Test handling of valid input
+        """
+        if TYPE_CHECKING:
+            # noinspection PyUnusedLocal
+            class ValidLicenseType(Enum):
+                ...  # fmt: skip
+
+        else:
+            # noinspection PyPep8Naming
+            ValidLicenseType = Enum(
+                "ValidLicenseType",
+                [(license_,) * 2 for license_ in licenses],
+            )
+
+        expected_rights_list = [
+            {
+                "rightsIdentifier": license_.removeprefix("spdx:"),
+                "rightsIdentifierScheme": "SPDX",
+                "schemeUri": "https://spdx.org/licenses/",
+            }
+            for license_ in licenses
+        ]
+
+        assert (
+            _licenses_to_rights_list(
+                cast(
+                    list[LicenseType],
+                    [ValidLicenseType(license_) for license_ in licenses],
+                )
+            )
+            == expected_rights_list
+        )
 
 
 def datacite_post(datacite: dict, doi: str) -> None:
@@ -171,7 +283,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                 ),
                 "rightsList": (
                     1,
-                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC_BY_40"},
+                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC-BY-4.0"},
                 ),
                 "types": (
                     None,
@@ -493,7 +605,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                 },
                 "rightsList": [
                     {
-                        "rightsIdentifier": "CC_BY_40",
+                        "rightsIdentifier": "CC-BY-4.0",
                         "rightsIdentifierScheme": "SPDX",
                         "schemeUri": "https://spdx.org/licenses/",
                     }
