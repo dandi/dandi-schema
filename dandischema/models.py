@@ -36,7 +36,11 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
-from dandischema.conf import get_instance_config
+from dandischema.conf import (
+    DEFAULT_INSTANCE_NAME,
+    UNVENDORED_ID_PATTERN,
+    get_instance_config,
+)
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
@@ -47,7 +51,11 @@ from .utils import name2title
 _INSTANCE_CONFIG = get_instance_config()
 
 # Regex pattern for the prefix of identifiers
-ID_PATTERN = _INSTANCE_CONFIG.instance_name
+ID_PATTERN = (
+    _INSTANCE_CONFIG.instance_name
+    if _INSTANCE_CONFIG.instance_name != DEFAULT_INSTANCE_NAME
+    else UNVENDORED_ID_PATTERN
+)
 
 # The pattern that a DOI prefix of a dandiset must conform to
 DOI_PREFIX_PATTERN = (
