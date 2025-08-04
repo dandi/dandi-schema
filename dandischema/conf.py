@@ -40,9 +40,7 @@ class SpdxLicenseIdList(BaseModel):
     license_ids: list[str]
 
 
-license_id_file_path = (
-    files("dandischema") / "_resources" / "spdx_license_ids.json"
-)
+license_id_file_path = files("dandischema") / "_resources" / "spdx_license_ids.json"
 
 spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
     license_id_file_path.read_text()
