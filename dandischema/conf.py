@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 _MODELS_MODULE_NAME = "dandischema.models"
 """The full import name of the module containing the DANDI Pydantic models"""
 
-_UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
+UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 _UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class Config(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="dandi_")
 
     instance_name: Annotated[
-        str, StringConstraints(pattern=rf"^{_UNVENDORED_ID_PATTERN}$")
+        str, StringConstraints(pattern=rf"^{UNVENDORED_ID_PATTERN}$")
     ] = DEFAULT_INSTANCE_NAME
     """Name of the DANDI instance"""
 
