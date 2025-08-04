@@ -792,7 +792,7 @@ def _get_field_pattern(
         # Without any environment variables set. dandischema is unvendorized.
         (
             {},
-            "DANDI-ADHOC",
+            r"[A-Z][-A-Z]*",
             None,
             {
                 "dandiset_id": "DANDI-ADHOC:001350/draft",
@@ -848,7 +848,7 @@ def _get_field_pattern(
         # Without any environment variables set. dandischema is unvendorized.
         (
             {},
-            "DANDI-ADHOC",
+            r"[A-Z][-A-Z]*",
             None,
             {
                 "dandiset_id": "DANDI-ADHOC:000005/draft",
