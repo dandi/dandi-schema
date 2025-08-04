@@ -40,10 +40,10 @@ class SpdxLicenseIdList(BaseModel):
     license_ids: list[str]
 
 
-license_id_file_path = files(__package__) / "_resources" / "spdx_license_ids.json"
+_license_id_file_path = files(__package__) / "_resources" / "spdx_license_ids.json"
 
-spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
-    license_id_file_path.read_text()
+_spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
+    _license_id_file_path.read_text()
 )
 
 if TYPE_CHECKING:
@@ -54,7 +54,7 @@ if TYPE_CHECKING:
 else:
     License = Enum(
         "License",
-        [("spdx:" + id_,) * 2 for id_ in spdx_license_id_list.license_ids],
+        [("spdx:" + id_,) * 2 for id_ in _spdx_license_id_list.license_ids],
     )
 
 
