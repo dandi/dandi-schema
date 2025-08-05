@@ -88,7 +88,7 @@ _INNER_DANDI_DOI_PATTERN = (
 DANDI_DOI_PATTERN = (
     rf"^{_INNER_DANDI_DOI_PATTERN}$"
     if _INSTANCE_CONFIG.doi_prefix is not None
-    else rf"^(?:{_INNER_DANDI_DOI_PATTERN})?$"  # This matches an empty string as well
+    else rf"^({_INNER_DANDI_DOI_PATTERN}|)$"  # This matches an empty string as well
 )
 DANDI_PUBID_PATTERN = rf"^{ID_PATTERN}:{VERSION_PATTERN}$"
 DANDI_NSKEY = "dandi"  # Namespace for DANDI ontology
