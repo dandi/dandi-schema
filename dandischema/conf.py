@@ -12,7 +12,7 @@ _MODELS_MODULE_NAME = "dandischema.models"
 """The full import name of the module containing the DANDI Pydantic models"""
 
 UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
-_UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
+UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +43,7 @@ class Config(BaseSettings):
     """Name of the DANDI instance"""
 
     doi_prefix: Optional[
-        Annotated[
-            str, StringConstraints(pattern=rf"^{_UNVENDORED_DOI_PREFIX_PATTERN}$")
-        ]
+        Annotated[str, StringConstraints(pattern=rf"^{UNVENDORED_DOI_PREFIX_PATTERN}$")]
     ] = None
     """
     The DOI prefix at DataCite
