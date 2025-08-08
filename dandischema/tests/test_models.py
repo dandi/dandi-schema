@@ -793,17 +793,19 @@ def _get_field_pattern(
         # Without any environment variables set. dandischema is unvendorized.
         (
             {},
-            "DANDI-ADHOC",
-            None,
+            r"[A-Z][-A-Z]*",
+            r"10\.\d{4,}",
             {
                 "dandiset_id": "DANDI-ADHOC:001350/draft",
                 "dandiset_identifier": "DANDI-ADHOC:001350",
                 "published_dandiset_id": "DANDI-ADHOC:001350/0.250511.1527",
+                "published_dandiset_doi": "",
             },
             {
                 "dandiset_id": "45:001350/draft",  # Invalid id prefix
                 "dandiset_identifier": "DANDI-ADHOC:001350",
                 "published_dandiset_id": "DANDI-ADHOC:001350/0.250511.1527",
+                "published_dandiset_doi": "",
             },
         ),
         (
@@ -832,34 +834,39 @@ def _get_field_pattern(
                 "instance_name": "DANDI",
             },
             "DANDI",
-            None,
+            r"10\.\d{4,}",
             {
                 "dandiset_id": "DANDI:001425/draft",
                 "dandiset_identifier": "DANDI:001425",
                 "published_dandiset_id": "DANDI:001425/0.250514.0602",
+                "published_dandiset_doi": "10.48324/dandi.001425/0.250514.0602",
             },
             {
                 "dandiset_id": "DANDI:001425/draft",
                 "dandiset_identifier": "DANDI:001425",
                 # Not matching the `ID_PATTERN` regex
                 "published_dandiset_id": "DANDI3:001425/0.250514.0602",
+                "published_dandiset_doi": "10.48324/dandi.001425/0.250514.0602",
             },
         ),
         # === EMBER DANDI instance test cases ===
         # Without any environment variables set. dandischema is unvendorized.
         (
             {},
-            "DANDI-ADHOC",
-            None,
+            r"[A-Z][-A-Z]*",
+            r"10\.\d{4,}",
             {
                 "dandiset_id": "DANDI-ADHOC:000005/draft",
-                "dandiset_identifier": "DANDI-ADHOC:000005",
+                "dandiset_identifier": "ABC:000005",
                 "published_dandiset_id": "DANDI-ADHOC:000005/0.250404.1839",
+                "published_dandiset_doi": "10.60533/ember-dandi.000005/0.250404.1839",
             },
             {
                 "dandiset_id": "DANDI-ADHOC:000005/draft",
-                "dandiset_identifier": "-DANDI-ADHOC:000005",  # Invalid id prefix
+                "dandiset_identifier": "ABC:000005",
                 "published_dandiset_id": "DANDI-ADHOC:000005/0.250404.1839",
+                # Invalid registrant code in the DOI prefix
+                "published_dandiset_doi": "10.605/ember-dandi.000005/0.250404.1839",
             },
         ),
         (
@@ -889,7 +896,7 @@ def _get_field_pattern(
 def test_vendorization(
     clear_dandischema_modules_and_set_env_vars: None,
     exp_id_pattern: str,
-    exp_doi_prefix_pattern: Optional[str],
+    exp_doi_prefix_pattern: str,
     # Fields that are valid for the vendorization
     valid_vendored_fields: dict[str, str],
     # Fields that are invalid for the vendorization
@@ -915,12 +922,11 @@ def test_vendorization(
         published_dandiset_id: str = Field(
             pattern=_get_field_pattern("id", models_.PublishedDandiset)
         )
-        if exp_doi_prefix_pattern is not None:
-            published_dandiset_doi: str = Field(
-                pattern=_get_field_pattern("doi", models_.PublishedDandiset)
-            )
+        published_dandiset_doi: str = Field(
+            pattern=_get_field_pattern("doi", models_.PublishedDandiset)
+        )
 
-        model_config = ConfigDict(strict=True, extra="forbid")
+        model_config = ConfigDict(strict=True)
 
     # Validate the valid vendored fields against the vendored patterns
     VendoredFieldModel.model_validate(valid_vendored_fields)

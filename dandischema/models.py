@@ -37,7 +37,12 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
-from dandischema.conf import get_instance_config
+from dandischema.conf import (
+    DEFAULT_INSTANCE_NAME,
+    UNVENDORED_DOI_PREFIX_PATTERN,
+    UNVENDORED_ID_PATTERN,
+    get_instance_config,
+)
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
@@ -48,13 +53,17 @@ from .utils import name2title
 _INSTANCE_CONFIG = get_instance_config()
 
 # Regex pattern for the prefix of identifiers
-ID_PATTERN = _INSTANCE_CONFIG.instance_name
+ID_PATTERN = (
+    _INSTANCE_CONFIG.instance_name
+    if _INSTANCE_CONFIG.instance_name != DEFAULT_INSTANCE_NAME
+    else UNVENDORED_ID_PATTERN
+)
 
 # The pattern that a DOI prefix of a dandiset must conform to
 DOI_PREFIX_PATTERN = (
     re.escape(_INSTANCE_CONFIG.doi_prefix)
     if _INSTANCE_CONFIG.doi_prefix is not None
-    else None
+    else UNVENDORED_DOI_PREFIX_PATTERN
 )
 
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
@@ -74,10 +83,13 @@ UUID_PATTERN = (
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
 VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
+_INNER_DANDI_DOI_PATTERN = (
+    rf"{DOI_PREFIX_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}"
+)
 DANDI_DOI_PATTERN = (
-    rf"^{DOI_PREFIX_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}$"
-    if DOI_PREFIX_PATTERN is not None
-    else None
+    rf"^{_INNER_DANDI_DOI_PATTERN}$"
+    if _INSTANCE_CONFIG.doi_prefix is not None
+    else rf"^({_INNER_DANDI_DOI_PATTERN}|)$"  # This matches an empty string as well
 )
 DANDI_PUBID_PATTERN = rf"^{ID_PATTERN}:{VERSION_PATTERN}$"
 DANDI_NSKEY = "dandi"  # Namespace for DANDI ontology
@@ -1879,14 +1891,11 @@ class Publishable(DandiBaseModel):
 
 _doi_field_kwargs: dict[str, Any] = {
     "title": "DOI",
+    "pattern": DANDI_DOI_PATTERN,
     "json_schema_extra": {"readOnly": True, "nskey": DANDI_NSKEY},
 }
-if DANDI_DOI_PATTERN is not None:
-    _doi_field_kwargs["pattern"] = DANDI_DOI_PATTERN
-else:
+if _INSTANCE_CONFIG.doi_prefix is None:
     _doi_field_kwargs["default"] = ""
-    # restricting the value to empty string to indicate that there is no DOI
-    _doi_field_kwargs["pattern"] = r"^$"
 
 
 class PublishedDandiset(Dandiset, Publishable):
