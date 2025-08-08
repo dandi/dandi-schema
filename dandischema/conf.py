@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from enum import Enum
+from importlib.resources import files
 import logging
-from typing import Annotated, Any, Optional, Union
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
-from pydantic import StringConstraints
+from pydantic import AnyUrl, BaseModel, Field, StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _MODELS_MODULE_NAME = "dandischema.models"
@@ -15,6 +18,44 @@ _UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 _UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
 logger = logging.getLogger(__name__)
+
+
+class SpdxLicenseListInfo(BaseModel):
+    """
+    Represents information about the SPDX License List.
+    """
+
+    version: str
+    release_date: datetime
+    url: AnyUrl
+    reference: AnyUrl = AnyUrl("https://spdx.org/licenses/")
+
+
+class SpdxLicenseIdList(BaseModel):
+    """
+    Represents a list of SPDX license IDs.
+    """
+
+    source: SpdxLicenseListInfo
+    license_ids: list[str]
+
+
+_license_id_file_path = files(__package__) / "_resources" / "spdx_license_ids.json"
+
+_spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
+    _license_id_file_path.read_text()
+)
+
+if TYPE_CHECKING:
+    # This is just a placeholder for static type checking
+    class License(Enum):
+        ...  # fmt: skip
+
+else:
+    License = Enum(
+        "License",
+        [("spdx:" + id_,) * 2 for id_ in _spdx_license_id_list.license_ids],
+    )
 
 
 class Config(BaseSettings):
@@ -44,6 +85,21 @@ class Config(BaseSettings):
     ] = None
     """
     The DOI prefix at DataCite
+    """
+
+    licenses: set[License] = Field(
+        default={License("spdx:CC0-1.0"), License("spdx:CC-BY-4.0")}
+    )
+    """
+    Set of licenses to be supported by the DANDI instance
+
+    Currently, the values for this set must be the identifier of a license in the
+    list at https://spdx.org/licenses/ prefixed with "spdx:" when set with the
+    corresponding environment variable. E.g.
+
+    ```shell
+    export DANDI_LICENSES='["spdx:CC0-1.0", "spdx:CC-BY-4.0"]'
+    ```
     """
 
 

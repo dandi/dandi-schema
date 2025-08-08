@@ -5,6 +5,7 @@ from enum import Enum
 import os
 import re
 from typing import (
+    TYPE_CHECKING,
     Annotated,
     Any,
     Dict,
@@ -97,6 +98,26 @@ def diff_models(model1: M, model2: M) -> None:
             print(f"{field} is different")
 
 
+if TYPE_CHECKING:
+    # This is just a placeholder for static type checking
+    class LicenseType(Enum):
+        ...  # fmt: skip
+
+else:
+    LicenseType = Enum(
+        "LicenseType",
+        [(license_.name, license_.value) for license_ in _INSTANCE_CONFIG.licenses],
+    )
+    r"""
+    An enumeration of supported licenses
+
+    The value of each member is a string that matches the regex pattern of
+    `^([^:\s]+):(\S+)$` in which the first group matches the license scheme such
+    as `"spdx"`, and the second group matches the license identifier such as
+    `"CC-BY-4.0"`.
+    """
+
+
 class AccessType(Enum):
     """An enumeration of access status options"""
 
@@ -149,13 +170,6 @@ class IdentifierType(Enum):
     ror = f"{DANDI_NSKEY}:ror"
     dandi = f"{DANDI_NSKEY}:dandi"
     rrid = f"{DANDI_NSKEY}:rrid"
-
-
-class LicenseType(Enum):
-    """An enumeration of supported licenses"""
-
-    CC0_10 = "spdx:CC0-1.0"
-    CC_BY_40 = "spdx:CC-BY-4.0"
 
 
 class RelationType(Enum):
