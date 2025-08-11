@@ -558,6 +558,12 @@ class DandiBaseModel(BaseModel):
         if schema["type"] == "object":
             schema["required"] = sorted({"schemaKey"}.union(schema.get("required", [])))
         for prop, value in schema.get("properties", {}).items():
+            # Dynamically inject pattern for models with config based patterns
+            if value.get("pattern", None) is None:
+                pattern_function = getattr(cls, f"get_{prop}_pattern", None)
+                if pattern_function is not None:
+                    value["pattern"] = pattern_function()
+
             if schema["title"] == "Person":
                 if prop == "name":
                     # JSON schema doesn't support validating unicode
@@ -1615,26 +1621,35 @@ class Dandiset(CommonModel):
             raise ValueError("At least one contributor must have role ContactPerson")
         return values
 
-    @field_validator("id")
     @staticmethod
-    def check_id(value: str) -> str:
+    def get_id_pattern():
         conf = get_instance_config()
         sub_pattern = conf.id_pattern + "|" + conf.id_pattern.lower()
         pattern = rf"^({sub_pattern}):\d{{6}}(/(draft|\d+\.\d+\.\d+))$"
 
+        return pattern
+
+    @field_validator("id")
+    @classmethod
+    def check_id(cls, value: str) -> str:
+        pattern = cls.get_id_pattern()
         if re.match(pattern, value) is None:
-            raise ValueError("ID does not match pattern")
+            raise ValueError(f"ID does not match pattern {pattern}")
 
         return value
 
+    @classmethod
+    def get_identifier_pattern(cls):
+        id_pattern = cls.get_id_pattern()
+        return rf"^{id_pattern}:\d{{6}}$"
+
     @field_validator("identifier")
-    @staticmethod
-    def check_identifier(value: str) -> str:
-        conf = get_instance_config()
-        pattern = rf"^{conf.id_pattern}:\d{{6}}$"
+    @classmethod
+    def check_identifier(cls, value: str) -> str:
+        pattern = cls.get_identifier_pattern()
 
         if re.match(pattern, value) is None:
-            raise ValueError("Identifier does not match pattern")
+            raise ValueError(f"Identifier does not match pattern {pattern}")
 
         return value
 
@@ -1909,27 +1924,39 @@ class PublishedDandiset(Dandiset, Publishable):
             )
         return values
 
+    @staticmethod
+    def get_url_pattern() -> str:
+        return get_instance_config().published_version_pattern
+
     @field_validator("url")
     @classmethod
     def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
-        pattern = get_instance_config().published_version_pattern
+        pattern = cls.get_url_pattern()
         if not re.match(pattern, str(url)):
             raise ValueError(f'string does not match regex "{pattern}"')
         return url
 
-    @field_validator("id")
     @staticmethod
-    def check_id(idstr: str) -> str:
-        pattern = get_instance_config().dandi_pubid_pattern
+    def get_id_pattern() -> str:
+        return get_instance_config().dandi_pubid_pattern
+
+    @field_validator("id")
+    @classmethod
+    def check_id(cls, idstr: str) -> str:
+        pattern = cls.get_id_pattern()
         if not re.match(pattern, idstr):
             raise ValueError(f'string does not match regex "{pattern}"')
 
         return idstr
 
-    @field_validator("doi")
     @staticmethod
-    def check_doi(doi: str) -> str:
-        pattern = get_instance_config().dandi_doi_pattern or r"^$"
+    def get_doi_pattern():
+        return get_instance_config().dandi_doi_pattern or r"^$"
+
+    @field_validator("doi")
+    @classmethod
+    def check_doi(cls, doi: str) -> str:
+        pattern = cls.get_doi_pattern()
         if not re.match(pattern, doi):
             raise ValueError(f'string does not match regex "{pattern}"')
 
