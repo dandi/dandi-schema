@@ -1500,10 +1500,12 @@ class BioSample(DandiBaseModel):
 BioSample.model_rebuild()
 
 
+StrToUrlAdapter = TypeAdapter(AnyHttpUrl)
+
 def repository_default() -> AnyHttpUrl | None:
     url = get_instance_config().dandi_instance_url
     if url is not None:
-        return TypeAdapter(AnyHttpUrl).validate_python(url)
+        return StrToUrlAdapter.validate_python(url)
 
     return None
 
