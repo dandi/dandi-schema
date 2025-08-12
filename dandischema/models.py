@@ -49,6 +49,7 @@ from .consts import (
     DANDI_SCHEMA_VERSION,
     NAME_PATTERN,
     SHA256_PATTERN,
+    UUID_PATTERN,  # Import for dandi-cli backwards compatibility  # noqa: F401
 )
 from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
