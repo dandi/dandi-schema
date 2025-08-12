@@ -14,8 +14,8 @@ from .consts import (
     ALLOWED_INPUT_SCHEMAS,
     ALLOWED_TARGET_SCHEMAS,
     ALLOWED_VALIDATION_SCHEMAS,
-    DANDI_SCHEMA_VERSION,
     DANDI_NSKEY,
+    DANDI_SCHEMA_VERSION,
 )
 from .exceptions import JsonschemaValidationError, PydanticValidationError
 from . import models

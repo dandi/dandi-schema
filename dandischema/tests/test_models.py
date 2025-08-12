@@ -15,17 +15,18 @@ from typing import (
 )
 
 import pydantic
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, ValidationError
 import pytest
-from pydantic import (
-    BaseModel,
-    BeforeValidator,
-    ConfigDict,
-    Field,
-    ValidationError,
-)
 
 from dandischema.conf import get_instance_config, set_instance_config
 
+from .utils import (
+    DANDI_INSTANCE_URL_PATTERN,
+    DOI_PREFIX,
+    INSTANCE_NAME,
+    basic_publishmeta,
+    skipif_no_doi_prefix,
+)
 from .. import models
 from ..models import (
     AccessRequirements,
@@ -51,13 +52,6 @@ from ..models import (
     RoleType,
 )
 from ..utils import TransitionalGenerateJsonSchema
-from .utils import (
-    DANDI_INSTANCE_URL_PATTERN,
-    DOI_PREFIX,
-    INSTANCE_NAME,
-    basic_publishmeta,
-    skipif_no_doi_prefix,
-)
 
 # TODO: Remove
 _INSTANCE_CONFIG = get_instance_config()

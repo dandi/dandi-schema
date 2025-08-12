@@ -4,24 +4,18 @@ Interfaces and data to interact with DataCite metadata
 
 # TODO: RF into submodules for some next "minor" taking care not to break
 
-import json
-import re
 from copy import deepcopy
 from functools import lru_cache
+import json
 from pathlib import Path
+import re
 from typing import Any, Dict, Union
 
-import requests
 from jsonschema import Draft7Validator
+import requests
 
 from ..consts import NAME_PATTERN
-from ..models import (
-    LicenseType,
-    Organization,
-    Person,
-    PublishedDandiset,
-    RoleType,
-)
+from ..models import LicenseType, Organization, Person, PublishedDandiset, RoleType
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -86,13 +80,13 @@ def _licenses_to_rights_list(licenses: list[LicenseType]) -> list[dict[str, str]
     license_pattern = re.compile(r"^([^:\s]+):(\S+)$")
     for license_ in licenses:
         license_match = license_pattern.match(license_.value)
-        assert license_match, (
-            'License is not of the expected format of "scheme:identifier"'
-        )
+        assert (
+            license_match
+        ), 'License is not of the expected format of "scheme:identifier"'
         scheme, identifier = license_match.groups()
-        assert all([scheme, identifier]), (
-            "License scheme and identifier must both exist and be non-empty"
-        )
+        assert all(
+            [scheme, identifier]
+        ), "License scheme and identifier must both exist and be non-empty"
 
         if scheme.upper() == "SPDX":
             # SPDX license

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import re
 from datetime import date, datetime
 from enum import Enum
+import re
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -49,7 +49,9 @@ from .consts import (
     DANDI_SCHEMA_VERSION,
     NAME_PATTERN,
     SHA256_PATTERN,
-    UUID_PATTERN,  # Import for dandi-cli backwards compatibility  # noqa: F401
+)
+from .consts import (  # Import for dandi-cli backwards compatibility  # noqa: F401
+    UUID_PATTERN,
 )
 from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
@@ -67,7 +69,8 @@ def diff_models(model1: M, model2: M) -> None:
 
 if TYPE_CHECKING:
     # This is just a placeholder for static type checking
-    class LicenseType(Enum): ...  # fmt: skip
+    class LicenseType(Enum):
+        ...  # fmt: skip
 
 else:
     LicenseType = Enum(
@@ -1501,6 +1504,7 @@ BioSample.model_rebuild()
 
 
 StrToUrlAdapter = TypeAdapter(AnyHttpUrl)
+
 
 def repository_default() -> AnyHttpUrl | None:
     url = get_instance_config().dandi_instance_url

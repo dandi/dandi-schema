@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import logging
-import os
-import re
 from datetime import datetime
 from enum import Enum
 from importlib.resources import files
+import logging
+import os
+import re
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Field, StringConstraints
@@ -57,7 +57,8 @@ _spdx_license_id_list = SpdxLicenseIdList.model_validate_json(
 
 if TYPE_CHECKING:
     # This is just a placeholder for static type checking
-    class License(Enum): ...  # fmt: skip
+    class License(Enum):
+        ...  # fmt: skip
 
 else:
     License = Enum(

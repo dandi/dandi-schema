@@ -2,8 +2,8 @@ import json
 from typing import Union
 from unittest.mock import ANY
 
-import pytest
 from pydantic import ValidationError
+import pytest
 
 from dandischema.conf import (
     Config,
@@ -18,9 +18,9 @@ def test_get_instance_config() -> None:
     obtained_config = get_instance_config()
 
     assert obtained_config == _instance_config
-    assert obtained_config is not _instance_config, (
-        "`get_instance_config` should return a copy of the instance config"
-    )
+    assert (
+        obtained_config is not _instance_config
+    ), "`get_instance_config` should return a copy of the instance config"
 
 
 FOO_CONFIG_DICT = {
