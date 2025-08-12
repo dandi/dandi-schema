@@ -130,8 +130,11 @@ class Config(BaseSettings):
 
     @property
     def dandi_instance_url_pattern(self) -> str:
-        pattern = self.dandi_instance_url or ".*"
-        return re.escape(pattern.rstrip("/"))
+        pattern = self.dandi_instance_url
+        if pattern:
+            return re.escape(pattern.rstrip("/"))
+
+        return ".*"
 
     @property
     def dandi_doi_pattern(self) -> str | None:
