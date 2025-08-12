@@ -1641,10 +1641,10 @@ class Dandiset(CommonModel):
 
         return value
 
-    @classmethod
-    def get_identifier_pattern(cls):
-        id_pattern = cls.get_id_pattern()
-        return rf"^{id_pattern}:\d{{6}}$"
+    @staticmethod
+    def get_identifier_pattern():
+        conf = get_instance_config()
+        return rf"^{conf.id_pattern}:\d{{6}}$"
 
     @field_validator("identifier")
     @classmethod
