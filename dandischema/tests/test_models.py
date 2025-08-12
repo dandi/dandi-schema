@@ -821,7 +821,7 @@ def _get_field_pattern(
                 "dandiset_id": "DANDI-ADHOC:001350/draft",
                 "dandiset_identifier": "DANDI-ADHOC:001350",
                 "published_dandiset_id": "DANDI-ADHOC:001350/0.250511.1527",
-                "published_dandiset_doi": "",
+                "published_dandiset_doi": "10.1234/dandi-adhoc.001425/0.250514.0602",
             },
             {
                 "dandiset_id": "45:001350/draft",  # Invalid id prefix
