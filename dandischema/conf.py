@@ -110,11 +110,19 @@ class Config(BaseSettings):
 
     @property
     def id_pattern(self) -> str:
-        return self.instance_name
+        return (
+            self.instance_name
+            if self.instance_name != DEFAULT_INSTANCE_NAME
+            else UNVENDORED_ID_PATTERN
+        )
 
     @property
-    def doi_prefix_pattern(self) -> str | None:
-        return re.escape(self.doi_prefix) if self.doi_prefix is not None else None
+    def doi_prefix_pattern(self) -> str:
+        return (
+            re.escape(self.doi_prefix)
+            if self.doi_prefix is not None
+            else UNVENDORED_DOI_PREFIX_PATTERN
+        )
 
     @property
     def dandi_instance_url(self) -> str | None:
