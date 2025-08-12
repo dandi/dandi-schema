@@ -71,7 +71,10 @@ if TYPE_CHECKING:
 else:
     LicenseType = Enum(
         "LicenseType",
-        [(license_.name, license_.value) for license_ in _INSTANCE_CONFIG.licenses],
+        [
+            (license_.name, license_.value)
+            for license_ in get_instance_config().licenses
+        ],
     )
     r"""
     An enumeration of supported licenses
