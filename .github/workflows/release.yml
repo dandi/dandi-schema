@@ -18,7 +18,7 @@ jobs:
       auto-version: ${{ steps.auto-version.outputs.version }}
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # A full checkout is required so that auto will have access to tag
           # information.
@@ -44,7 +44,7 @@ jobs:
     if: needs.release-check.outputs.auto-version != ''
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           path: dandischema
@@ -74,7 +74,7 @@ jobs:
           echo "SCHEMA_VERSION=$SCHEMA_VERSION" >> "$GITHUB_ENV"
 
       - name: Checkout dandi/schema
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: dandi/schema
           path: schema
