@@ -36,12 +36,7 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
-from dandischema.conf import (
-    DEFAULT_INSTANCE_NAME,
-    UNVENDORED_DOI_PREFIX_PATTERN,
-    UNVENDORED_ID_PATTERN,
-    get_instance_config,
-)
+from dandischema.conf import get_instance_config
 
 from .consts import (
     ASSET_UUID_PATTERN,
@@ -50,9 +45,9 @@ from .consts import (
     NAME_PATTERN,
     SHA256_PATTERN,
 )
-from .consts import (  # Import for dandi-cli backwards compatibility  # noqa: F401
-    UUID_PATTERN,
-)
+
+# Import for dandi-cli backwards compatibility
+from .consts import UUID_PATTERN  # noqa: F401
 from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
 from .utils import name2title
