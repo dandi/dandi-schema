@@ -126,7 +126,7 @@ class Config(BaseSettings):
         )
 
     @property
-    def dandi_instance_url(self) -> str | None:
+    def dandi_instance_url(self) -> Optional[str]:
         return os.environ.get("DJANGO_DANDI_WEB_APP_URL")
 
     @property
@@ -138,7 +138,7 @@ class Config(BaseSettings):
         return ".*"
 
     @property
-    def dandi_doi_pattern(self) -> str | None:
+    def dandi_doi_pattern(self) -> Optional[str]:
         return (
             rf"^{self.doi_prefix_pattern}/{self.id_pattern.lower()}\.{VERSION_PATTERN}$"
             if self.doi_prefix_pattern is not None
