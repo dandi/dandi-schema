@@ -138,11 +138,14 @@ class Config(BaseSettings):
         return ".*"
 
     @property
-    def dandi_doi_pattern(self) -> Optional[str]:
+    def dandi_doi_pattern(self) -> str:
+        inner_dandi_doi_pattern = (
+            rf"{self.doi_prefix_pattern}/{self.id_pattern.lower()}\.{VERSION_PATTERN}"
+        )
         return (
-            rf"^{self.doi_prefix_pattern}/{self.id_pattern.lower()}\.{VERSION_PATTERN}$"
-            if self.doi_prefix_pattern is not None
-            else None
+            rf"^{inner_dandi_doi_pattern}$"
+            if self.doi_prefix is not None
+            else rf"^({inner_dandi_doi_pattern}|)$"  # This matches an empty string as well
         )
 
     @property
