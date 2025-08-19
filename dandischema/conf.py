@@ -111,6 +111,9 @@ class Config(BaseSettings):
 
     @property
     def id_pattern(self) -> str:
+        """
+        Regex pattern for the prefix of identifiers
+        """
         return (
             self.instance_name
             if self.instance_name != DEFAULT_INSTANCE_NAME
@@ -119,6 +122,9 @@ class Config(BaseSettings):
 
     @property
     def doi_prefix_pattern(self) -> str:
+        """
+        The pattern that a DOI prefix of a dandiset must conform to
+        """
         return (
             re.escape(self.doi_prefix)
             if self.doi_prefix is not None
