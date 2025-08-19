@@ -1956,7 +1956,7 @@ class PublishedDandiset(Dandiset, Publishable):
 
     @staticmethod
     def get_doi_pattern():
-        return get_instance_config().dandi_doi_pattern or r"^$"
+        return get_instance_config().dandi_doi_pattern
 
     @field_validator("doi")
     @classmethod
