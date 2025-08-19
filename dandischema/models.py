@@ -1931,7 +1931,7 @@ class PublishedDandiset(Dandiset, Publishable):
 
     @staticmethod
     def get_url_pattern() -> str:
-        return get_instance_config().published_version_pattern
+        return get_instance_config().published_version_url_pattern
 
     @field_validator("url")
     @classmethod

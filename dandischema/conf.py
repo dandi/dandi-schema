@@ -150,7 +150,7 @@ class Config(BaseSettings):
         return rf"^{self.id_pattern}:{VERSION_PATTERN}$"
 
     @property
-    def published_version_pattern(self) -> str:
+    def published_version_url_pattern(self) -> str:
         return rf"^{self.dandi_instance_url_pattern}/dandiset/{VERSION_PATTERN}$"
 
 
