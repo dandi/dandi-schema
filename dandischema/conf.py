@@ -131,9 +131,9 @@ class Config(BaseSettings):
 
     @property
     def dandi_instance_url_pattern(self) -> str:
-        pattern = self.dandi_instance_url
-        if pattern:
-            return re.escape(pattern.rstrip("/"))
+        instance_url = self.dandi_instance_url
+        if instance_url is not None:
+            return re.escape(instance_url.rstrip("/"))
 
         return ".*"
 
