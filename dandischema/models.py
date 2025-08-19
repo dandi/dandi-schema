@@ -1950,7 +1950,7 @@ class PublishedDandiset(Dandiset, Publishable):
     def check_id(cls, idstr: str) -> str:
         pattern = cls.get_id_pattern()
         if not re.match(pattern, idstr):
-            raise ValueError(f'string does not match regex "{pattern}"')
+            raise ValueError(f'Published dandiset ID does not match regex "{pattern}"')
 
         return idstr
 
@@ -1963,7 +1963,7 @@ class PublishedDandiset(Dandiset, Publishable):
     def check_doi(cls, doi: str) -> str:
         pattern = cls.get_doi_pattern()
         if not re.match(pattern, doi):
-            raise ValueError(f'string does not match regex "{pattern}"')
+            raise ValueError(f'Published dandiset DOI does not match regex "{pattern}"')
 
         return doi
 
