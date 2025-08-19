@@ -15,9 +15,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .consts import VERSION_PATTERN
 
-_MODELS_MODULE_NAME = "dandischema.models"
-"""The full import name of the module containing the DANDI Pydantic models"""
-
 UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
@@ -231,8 +228,6 @@ def set_instance_config(
             "provided, but not both."
         )
 
-    import sys
-
     global _instance_config
 
     if config is not None:
@@ -242,20 +237,5 @@ def set_instance_config(
             new_config = Config.model_validate(config)
     else:
         new_config = Config.model_validate(kwargs)
-
-    if _MODELS_MODULE_NAME in sys.modules:
-        if new_config != _instance_config:
-            logger.warning(
-                f"`{_MODELS_MODULE_NAME}` is already imported. Resetting the DANDI "
-                f"instance configuration to a different value will not have any affect "
-                f"in the models defined in `{_MODELS_MODULE_NAME}`."
-            )
-        else:
-            logger.debug(
-                f"`{_MODELS_MODULE_NAME}` is already imported. Attempt to "
-                f"reset the DANDI instance configuration to the same value by "
-                f"keyword argument has been ignored."
-            )
-            return
 
     _instance_config = new_config
