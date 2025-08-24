@@ -18,14 +18,17 @@ def test_get_instance_config() -> None:
     ), "`get_instance_config` should return a copy of the instance config"
 
 
-FOO_CONFIG_DICT = {
+_FOO_CONFIG_DICT_BY_FIELD_NAME = {
     "instance_name": "FOO",
     "doi_prefix": "10.1234",
     "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
 }
 
+FOO_CONFIG_DICT = {f"dandi_{k}": v for k, v in _FOO_CONFIG_DICT_BY_FIELD_NAME.items()}
+
 FOO_CONFIG_ENV_VARS = {
-    k: v if k != "licenses" else json.dumps(v) for k, v in FOO_CONFIG_DICT.items()
+    k: v if k != "licenses" else json.dumps(v)
+    for k, v in _FOO_CONFIG_DICT_BY_FIELD_NAME.items()
 }
 
 
@@ -40,7 +43,7 @@ class TestConfig:
         """
         from dandischema.conf import Config
 
-        Config(instance_name=instance_name)
+        Config(dandi_instance_name=instance_name)
 
     @pytest.mark.parametrize("instance_name", ["-DANDI", "dandi", "DANDI0", "DANDI*"])
     def test_invalid_instance_name(self, instance_name: str) -> None:
@@ -50,10 +53,10 @@ class TestConfig:
         from dandischema.conf import Config
 
         with pytest.raises(ValidationError) as exc_info:
-            Config(instance_name=instance_name)
+            Config(dandi_instance_name=instance_name)
 
         assert len(exc_info.value.errors()) == 1
-        assert exc_info.value.errors()[0]["loc"] == ("instance_name",)
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_name",)
 
     @pytest.mark.parametrize(
         "doi_prefix", ["10.1234", "10.5678", "10.12345678", "10.987654321"]
@@ -64,7 +67,7 @@ class TestConfig:
         """
         from dandischema.conf import Config
 
-        Config(doi_prefix=doi_prefix)
+        Config(dandi_doi_prefix=doi_prefix)
 
     @pytest.mark.parametrize("doi_prefix", ["1234", ".1234", "1.1234", "10.123"])
     def test_invalid_doi_prefix(self, doi_prefix: str) -> None:
@@ -74,10 +77,10 @@ class TestConfig:
         from dandischema.conf import Config
 
         with pytest.raises(ValidationError) as exc_info:
-            Config(doi_prefix=doi_prefix)
+            Config(dandi_doi_prefix=doi_prefix)
 
         assert len(exc_info.value.errors()) == 1
-        assert exc_info.value.errors()[0]["loc"] == ("doi_prefix",)
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_doi_prefix",)
 
     @pytest.mark.parametrize(
         "licenses",
@@ -98,7 +101,7 @@ class TestConfig:
         from dandischema.conf import Config, License
 
         # noinspection PyTypeChecker
-        config = Config(licenses=licenses)
+        config = Config(dandi_licenses=licenses)
 
         assert config.licenses == {License(license_) for license_ in set(licenses)}
 
@@ -149,20 +152,20 @@ class TestConfig:
 
         with pytest.raises(ValidationError) as exc_info:
             # noinspection PyTypeChecker
-            Config(licenses=licenses)
+            Config(dandi_licenses=licenses)
 
         assert len(exc_info.value.errors()) == 1
-        assert exc_info.value.errors()[0]["loc"] == ("licenses", ANY)
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_licenses", ANY)
 
 
 class TestSetInstanceConfig:
     @pytest.mark.parametrize(
         ("arg", "kwargs"),
         [
-            (FOO_CONFIG_DICT, {"instance_name": "BAR"}),
+            (FOO_CONFIG_DICT, {"dandi_instance_name": "BAR"}),
             (
                 FOO_CONFIG_DICT,
-                {"instance_name": "Baz", "key": "value"},
+                {"dandi_instance_name": "Baz", "key": "value"},
             ),
         ],
     )
@@ -271,8 +274,8 @@ class TestSetInstanceConfig:
         import dandischema.models  # noqa: F401
 
         new_config_dict = {
-            "instance_name": "BAR",
-            "doi_prefix": "10.5678",
+            "dandi_instance_name": "BAR",
+            "dandi_doi_prefix": "10.5678",
         }
 
         # noinspection DuplicatedCode
