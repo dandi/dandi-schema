@@ -8,7 +8,7 @@ from importlib.resources import files
 import logging
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
-from pydantic import AnyUrl, BaseModel, Field, StringConstraints
+from pydantic import AliasChoices, AnyUrl, BaseModel, Field, StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _MODELS_MODULE_NAME = "dandischema.models"
@@ -76,22 +76,42 @@ class Config(BaseSettings):
         For details, see https://docs.pydantic.dev/latest/concepts/pydantic_settings/
     """
 
-    model_config = SettingsConfigDict(env_prefix="dandi_")
+    model_config = SettingsConfigDict(
+        # TODO: currently `validate_by_name` is set to `False` because of the limitation
+        #   imposed by a bug, https://github.com/pydantic/pydantic/issues/12191, at
+        #   Pydantic. Once that bug is fixed, we should considered setting
+        #   `validate_by_name` to `True` and redefine the fields to allow population
+        #   of field values by field names.
+        validate_by_name=False,
+        validate_by_alias=True,
+    )
 
     instance_name: Annotated[
-        str, StringConstraints(pattern=rf"^{UNVENDORED_ID_PATTERN}$")
+        str,
+        StringConstraints(pattern=rf"^{UNVENDORED_ID_PATTERN}$"),
+        Field(
+            validation_alias=AliasChoices(
+                "dandi_instance_name", "django_dandi_instance_name"
+            )
+        ),
     ] = DEFAULT_INSTANCE_NAME
     """Name of the DANDI instance"""
 
     doi_prefix: Optional[
         Annotated[str, StringConstraints(pattern=rf"^{UNVENDORED_DOI_PREFIX_PATTERN}$")]
-    ] = None
+    ] = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "dandi_doi_prefix", "django_dandi_doi_api_prefix"
+        ),
+    )
     """
     The DOI prefix at DataCite
     """
 
     licenses: set[License] = Field(
-        default={License("spdx:CC0-1.0"), License("spdx:CC-BY-4.0")}
+        default={License("spdx:CC0-1.0"), License("spdx:CC-BY-4.0")},
+        validation_alias=AliasChoices("dandi_licenses", "django_dandi_licenses"),
     )
     """
     Set of licenses to be supported by the DANDI instance
