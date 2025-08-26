@@ -14,6 +14,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 _MODELS_MODULE_NAME = "dandischema.models"
 """The full import name of the module containing the DANDI Pydantic models"""
 
+INSTANCE_IDENTIFIER_PATTERN = r"RRID:\S+"
+"""
+The pattern of the ID identifying the DANDI service instance
+
+Note
+----
+    This pattern currently only allows Research Resource Identifiers (RRIDs).
+"""
+
 UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
 
@@ -96,6 +105,23 @@ class Config(BaseSettings):
         ),
     ] = DEFAULT_INSTANCE_NAME
     """Name of the DANDI instance"""
+
+    instance_identifier: Annotated[
+        str,
+        StringConstraints(pattern=rf"^{INSTANCE_IDENTIFIER_PATTERN}$"),
+        Field(
+            validation_alias=AliasChoices(
+                "dandi_instance_identifier", "django_dandi_instance_identifier"
+            )
+        ),
+    ]
+    """
+    ID identifying the DANDI service instance
+
+    Note
+    ----
+        This field currently only accepts Research Resource Identifiers (RRIDs).
+    """
 
     doi_prefix: Optional[
         Annotated[str, StringConstraints(pattern=rf"^{UNVENDORED_DOI_PREFIX_PATTERN}$")]
