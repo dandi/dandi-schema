@@ -106,15 +106,17 @@ class Config(BaseSettings):
     ] = DEFAULT_INSTANCE_NAME
     """Name of the DANDI instance"""
 
-    instance_identifier: Annotated[
-        str,
-        StringConstraints(pattern=rf"^{INSTANCE_IDENTIFIER_PATTERN}$"),
-        Field(
-            validation_alias=AliasChoices(
-                "dandi_instance_identifier", "django_dandi_instance_identifier"
-            )
+    instance_identifier: Optional[
+        Annotated[
+            str,
+            StringConstraints(pattern=rf"^{INSTANCE_IDENTIFIER_PATTERN}$"),
+        ]
+    ] = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "dandi_instance_identifier", "django_dandi_instance_identifier"
         ),
-    ]
+    )
     """
     ID identifying the DANDI service instance
 
