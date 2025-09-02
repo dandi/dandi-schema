@@ -12,7 +12,6 @@ import re
 from typing import Any, Dict, Union
 
 from jsonschema import Draft7Validator
-import requests
 
 from ..models import (
     NAME_PATTERN,
