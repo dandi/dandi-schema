@@ -1,3 +1,3 @@
 FROM dandiarchive/dandiarchive-api
 COPY . /opt/dandischema/
-RUN cd /opt/dandischema && pip install -e .[dev]
+RUN cd /opt/dandischema && uv pip install -e .[dev]
