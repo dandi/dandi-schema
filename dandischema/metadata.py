@@ -525,13 +525,16 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             stats = _get_samples(value, stats, hierarchy)
             break
 
+    # which components already found, so we do not count more than
+    # once in some incorrectly named datasets
+    found: Dict[str, str] = {}
     for part in Path(assetmeta["path"]).name.split(".")[0].split("_"):
-        if part.startswith("sub-"):
-            subject = part.replace("sub-", "")
+        if not found.get("subject") and part.startswith("sub-"):
+            found["subject"] = subject = part.split("sub-", 1)[1]
             if subject not in stats["subjects"]:
                 stats["subjects"].append(subject)
-        if part.startswith("sample-"):
-            sample = part.replace("sample-", "")
+        if not found.get("sample") and part.startswith("sample-"):
+            found["sample"] = sample = part.replace("sample-", "")
             if sample not in stats["tissuesample"]:
                 stats["tissuesample"].append(sample)
 
@@ -557,10 +560,13 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     stats: _stats_type = {}
     for meta in metadata:
         _add_asset_to_stats(meta, stats)
-
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
     stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
     stats["numberOfSubjects"] = len(stats.pop("subjects", [])) or None
+    if stats["numberOfSubjects"]:
+        # Must not happen. If does -- a bug in software
+        assert stats["numberOfFiles"]
+        assert stats["numberOfSubjects"] <= stats["numberOfFiles"]
     stats["numberOfSamples"] = (
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
