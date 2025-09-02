@@ -8,6 +8,7 @@ from jsonschema import Draft7Validator
 import pytest
 import requests
 
+from dandischema.conf import get_instance_config
 from dandischema.models import (
     LicenseType,
     PublishedDandiset,
@@ -27,6 +28,8 @@ from dandischema.tests.utils import (
 )
 
 from .. import _get_datacite_schema, _licenses_to_rights_list, to_datacite
+
+_INSTANCE_CONFIG = get_instance_config()
 
 
 class TestLicensesToRightsList:
@@ -274,8 +277,9 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                 "publisher": (
                     None,
                     {
-                        "name": "DANDI Archive",
-                        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                        "name": f"{_INSTANCE_CONFIG.instance_name} Archive",
+                        "publisherIdentifier": f"https://scicrunch.org/resolver/"
+                        f"{_INSTANCE_CONFIG.instance_identifier}",
                         "publisherIdentifierScheme": "RRID",
                         "schemeUri": "https://scicrunch.org/resolver/",
                         "lang": "en",
@@ -597,8 +601,9 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                 ],
                 "publicationYear": "1970",
                 "publisher": {
-                    "name": "DANDI Archive",
-                    "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                    "name": f"{_INSTANCE_CONFIG.instance_name} Archive",
+                    "publisherIdentifier": f"https://scicrunch.org/resolver/"
+                    f"{_INSTANCE_CONFIG.instance_identifier}",
                     "publisherIdentifierScheme": "RRID",
                     "schemeUri": "https://scicrunch.org/resolver/",
                     "lang": "en",
