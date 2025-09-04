@@ -20,6 +20,7 @@ def test_get_instance_config() -> None:
 
 _FOO_CONFIG_DICT_BY_FIELD_NAME = {
     "instance_name": "FOO",
+    "instance_identifier": "RRID:ABC_123456",
     "doi_prefix": "10.1234",
     "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
 }
@@ -34,6 +35,10 @@ FOO_CONFIG_ENV_VARS = {
 
 class TestConfig:
     @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
         "instance_name",
         ["DANDI-ADHOC", "DANDI-TEST", "DANDI", "DANDI--TEST", "DANDI-TE-ST"],
     )
@@ -45,6 +50,10 @@ class TestConfig:
 
         Config(dandi_instance_name=instance_name)
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
     @pytest.mark.parametrize("instance_name", ["-DANDI", "dandi", "DANDI0", "DANDI*"])
     def test_invalid_instance_name(self, instance_name: str) -> None:
         """
@@ -59,6 +68,10 @@ class TestConfig:
         assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_name",)
 
     @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
         "instance_identifier", [None, "RRID:ABC_123456", "RRID:SCR_1234567891234"]
     )
     def test_valid_instance_identifier(
@@ -71,6 +84,10 @@ class TestConfig:
 
         Config(dandi_instance_identifier=instance_identifier)
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
     @pytest.mark.parametrize("instance_identifier", ["", "RRID:AB C", "ID:ABC_123456"])
     def test_invalid_instance_identifier(self, instance_identifier: str) -> None:
         """
@@ -84,6 +101,10 @@ class TestConfig:
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_identifier",)
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
     def test_without_instance_identifier_with_doi_prefix(self) -> None:
         """
         Test instantiating `dandischema.conf.Config` without an instance identifier
@@ -97,6 +118,10 @@ class TestConfig:
             Config(dandi_doi_prefix="10.1234")
 
     @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
         "doi_prefix", ["10.1234", "10.5678", "10.12345678", "10.987654321"]
     )
     def test_valid_doi_prefix(self, doi_prefix: str) -> None:
@@ -105,8 +130,16 @@ class TestConfig:
         """
         from dandischema.conf import Config
 
-        Config(dandi_doi_prefix=doi_prefix)
+        Config(
+            # Instance identifier must be provided if doi_prefix is provided
+            dandi_instance_identifier="RRID:SCR_017571",
+            dandi_doi_prefix=doi_prefix,
+        )
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
     @pytest.mark.parametrize("doi_prefix", ["1234", ".1234", "1.1234", "10.123"])
     def test_invalid_doi_prefix(self, doi_prefix: str) -> None:
         """
@@ -115,11 +148,19 @@ class TestConfig:
         from dandischema.conf import Config
 
         with pytest.raises(ValidationError) as exc_info:
-            Config(dandi_doi_prefix=doi_prefix)
+            Config(
+                # Instance identifier must be provided if doi_prefix is provided
+                dandi_instance_identifier="RRID:SCR_017571",
+                dandi_doi_prefix=doi_prefix,
+            )
 
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"] == ("dandi_doi_prefix",)
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
     @pytest.mark.parametrize(
         "licenses",
         [
@@ -174,6 +215,10 @@ class TestConfig:
 
         assert config.licenses == {License(license_) for license_ in licenses}
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
     @pytest.mark.parametrize(
         "licenses",
         [
