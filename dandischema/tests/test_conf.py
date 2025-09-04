@@ -59,6 +59,44 @@ class TestConfig:
         assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_name",)
 
     @pytest.mark.parametrize(
+        "instance_identifier", [None, "RRID:ABC_123456", "RRID:SCR_1234567891234"]
+    )
+    def test_valid_instance_identifier(
+        self, instance_identifier: Optional[str]
+    ) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid instance identifier
+        """
+        from dandischema.conf import Config
+
+        Config(dandi_instance_identifier=instance_identifier)
+
+    @pytest.mark.parametrize("instance_identifier", ["", "RRID:AB C", "ID:ABC_123456"])
+    def test_invalid_instance_identifier(self, instance_identifier: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid instance identifier
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            Config(dandi_instance_identifier=instance_identifier)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_identifier",)
+
+    def test_without_instance_identifier_with_doi_prefix(self) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` without an instance identifier
+        when a DOI prefix is provided
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(
+            ValidationError, match="`instance_identifier` must also be set."
+        ):
+            Config(dandi_doi_prefix="10.1234")
+
+    @pytest.mark.parametrize(
         "doi_prefix", ["10.1234", "10.5678", "10.12345678", "10.987654321"]
     )
     def test_valid_doi_prefix(self, doi_prefix: str) -> None:
