@@ -99,11 +99,5 @@ jobs:
             .
         working-directory: dandischema
 
-      - name: Set DANDI_INSTANCE_NAME
-        run: echo "DANDI_INSTANCE_NAME=DANDI" >> "$GITHUB_ENV"
-
-      - name: Set DANDI_DOI_PREFIX
-        run: echo "DANDI_DOI_PREFIX=10.80507" >> "$GITHUB_ENV"
-
       - name: Run dandi-cli tests
         run: python -m pytest -s -v --pyargs dandi
