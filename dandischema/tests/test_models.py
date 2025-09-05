@@ -811,6 +811,7 @@ def _get_field_pattern(
         (
             {
                 "instance_name": "DANDI",
+                "instance_identifier": "RRID:ABC_123456",
                 "doi_prefix": "10.48324",
             },
             "DANDI",
@@ -872,6 +873,7 @@ def _get_field_pattern(
         (
             {
                 "instance_name": "EMBER-DANDI",
+                "instance_identifier": "RRID:ABC_123456",
                 "doi_prefix": "10.60533",
             },
             "EMBER-DANDI",

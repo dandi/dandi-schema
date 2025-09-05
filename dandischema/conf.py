@@ -8,11 +8,28 @@ from importlib.resources import files
 import logging
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
-from pydantic import AliasChoices, AnyUrl, BaseModel, Field, StringConstraints
+from pydantic import (
+    AliasChoices,
+    AnyUrl,
+    BaseModel,
+    Field,
+    StringConstraints,
+    model_validator,
+)
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing_extensions import Self
 
 _MODELS_MODULE_NAME = "dandischema.models"
 """The full import name of the module containing the DANDI Pydantic models"""
+
+INSTANCE_IDENTIFIER_PATTERN = r"RRID:\S+"
+"""
+The pattern of the ID identifying the DANDI service instance
+
+Note
+----
+    This pattern currently only allows Research Resource Identifiers (RRIDs).
+"""
 
 UNVENDORED_ID_PATTERN = r"[A-Z][-A-Z]*"
 UNVENDORED_DOI_PREFIX_PATTERN = r"10\.\d{4,}"
@@ -97,6 +114,25 @@ class Config(BaseSettings):
     ] = DEFAULT_INSTANCE_NAME
     """Name of the DANDI instance"""
 
+    instance_identifier: Optional[
+        Annotated[
+            str,
+            StringConstraints(pattern=rf"^{INSTANCE_IDENTIFIER_PATTERN}$"),
+        ]
+    ] = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "dandi_instance_identifier", "django_dandi_instance_identifier"
+        ),
+    )
+    """
+    ID identifying the DANDI service instance
+
+    Note
+    ----
+        This field currently only accepts Research Resource Identifiers (RRIDs).
+    """
+
     doi_prefix: Optional[
         Annotated[str, StringConstraints(pattern=rf"^{UNVENDORED_DOI_PREFIX_PATTERN}$")]
     ] = Field(
@@ -124,6 +160,22 @@ class Config(BaseSettings):
     export DANDI_LICENSES='["spdx:CC0-1.0", "spdx:CC-BY-4.0"]'
     ```
     """
+
+    @model_validator(mode="after")
+    def _ensure_non_none_instance_identifier_if_non_none_doi_prefix(
+        self,
+    ) -> Self:
+        """
+        Ensure that if `doi_prefix` is not `None`, then `instance_identifier`
+        must not be `None`.
+        """
+
+        if self.doi_prefix is not None and self.instance_identifier is None:
+            raise ValueError(
+                "If `doi_prefix` is set (not `None`), "
+                "`instance_identifier` must also be set."
+            )
+        return self
 
 
 _instance_config = Config()  # Initial value is set by env vars alone

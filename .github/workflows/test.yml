@@ -23,11 +23,13 @@ jobs:
             python: '3.9'
             vendored_env: dandi
             instance_name: DANDI
+            instance_identifier: 'RRID:SCR_017571'
             doi_prefix: '10.80507'
           - os: ubuntu-latest
             python: '3.9'
             vendored_env: ember-dandi
             instance_name: EMBER-DANDI
+            instance_identifier: 'RRID:SCR_026700'
             doi_prefix: '10.82754'
           - os: ubuntu-latest
             python: '3.9'
@@ -55,6 +57,11 @@ jobs:
     - name: Set DANDI_INSTANCE_NAME
       if: ${{ matrix.instance_name }}
       run: echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
+
+    # Set only if matrix.instance_identifier is defined
+    - name: Set DANDI_INSTANCE_IDENTIFIER
+      if: ${{ matrix.instance_identifier }}
+      run: echo "DANDI_INSTANCE_IDENTIFIER=${{ matrix.instance_identifier }}" >> "$GITHUB_ENV"
 
     # Set only if matrix.doi_prefix is defined
     - name: Set DANDI_DOI_PREFIX
