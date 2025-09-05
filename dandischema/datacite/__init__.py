@@ -12,7 +12,8 @@ import re
 from typing import Any, Dict, Union
 
 from jsonschema import Draft7Validator
-import requests
+
+from dandischema.conf import get_instance_config
 
 from ..models import (
     NAME_PATTERN,
@@ -118,6 +119,9 @@ def to_datacite(
     publish: bool = False,
 ) -> dict:
     """Convert published Dandiset metadata to Datacite"""
+
+    instance_config = get_instance_config()
+
     if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
 
@@ -143,13 +147,15 @@ def to_datacite(
     attributes["descriptions"] = [
         {"description": meta.description, "descriptionType": "Abstract"}
     ]
+
     attributes["publisher"] = {
-        "name": "DANDI Archive",
+        "name": f"{instance_config.instance_name} Archive",
         "schemeUri": "https://scicrunch.org/resolver/",
-        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+        "publisherIdentifier": f"https://scicrunch.org/resolver/{instance_config.instance_identifier}",
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
+
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
