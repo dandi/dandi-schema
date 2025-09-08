@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Annotated, Any, Optional, Union
 
 from pydantic import (
     AliasChoices,
+    AnyHttpUrl,
     AnyUrl,
     BaseModel,
     Field,
@@ -131,6 +132,14 @@ class Config(BaseSettings):
     Note
     ----
         This field currently only accepts Research Resource Identifiers (RRIDs).
+    """
+
+    instance_url: Optional[AnyHttpUrl] = Field(
+        default=None,
+        validation_alias=AliasChoices("dandi_instance_url", "django_dandi_web_app_url"),
+    )
+    """
+    The URL of the DANDI instance
     """
 
     doi_prefix: Optional[
