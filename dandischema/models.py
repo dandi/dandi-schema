@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import Enum
-import os
 import re
 from typing import (
     TYPE_CHECKING,
@@ -28,7 +27,6 @@ from pydantic import (
     Field,
     GetJsonSchemaHandler,
     StringConstraints,
-    TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,
@@ -66,16 +64,12 @@ DOI_PREFIX_PATTERN = (
     else UNVENDORED_DOI_PREFIX_PATTERN
 )
 
-# Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
-DANDI_INSTANCE_URL: Optional[str]
-try:
-    DANDI_INSTANCE_URL = os.environ["DJANGO_DANDI_WEB_APP_URL"]
-except KeyError:
-    DANDI_INSTANCE_URL = None
-    DANDI_INSTANCE_URL_PATTERN = ".*"
-else:
-    # Ensure no trailing / for consistency
-    DANDI_INSTANCE_URL_PATTERN = re.escape(DANDI_INSTANCE_URL.rstrip("/"))
+# The pattern of the DANDI instance URL
+DANDI_INSTANCE_URL_PATTERN = (
+    ".*"
+    if _INSTANCE_CONFIG.instance_url is None
+    else re.escape(str(_INSTANCE_CONFIG.instance_url).rstrip("/"))
+)
 
 NAME_PATTERN = r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$"
 UUID_PATTERN = (
@@ -1618,13 +1612,7 @@ class CommonModel(DandiBaseModel):
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     repository: Optional[AnyHttpUrl] = Field(
-        # mypy doesn't like using a string as the default for an AnyHttpUrl
-        # attribute, so we have to convert it to an AnyHttpUrl:
-        (
-            TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
-            if DANDI_INSTANCE_URL is not None
-            else None
-        ),
+        default=_INSTANCE_CONFIG.instance_url,
         description="location of the item",
         json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True},
     )
