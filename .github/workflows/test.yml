@@ -26,7 +26,7 @@ jobs:
           - '3.12'
     steps:
     - name: Set up environment
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         # Fetch all commits so that versioningit will return something
         # compatible with semantic-version
