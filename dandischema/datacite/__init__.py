@@ -148,13 +148,19 @@ def to_datacite(
         {"description": meta.description, "descriptionType": "Abstract"}
     ]
 
+    # Populate publisher info
     attributes["publisher"] = {
         "name": f"{instance_config.instance_name} Archive",
-        "schemeUri": "https://scicrunch.org/resolver/",
-        "publisherIdentifier": f"https://scicrunch.org/resolver/{instance_config.instance_identifier}",
-        "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
+    if instance_config.instance_identifier:
+        attributes["publisher"].update(
+            {
+                "schemeUri": "https://scicrunch.org/resolver/",
+                "publisherIdentifier": f"https://scicrunch.org/resolver/{instance_config.instance_identifier}",
+                "publisherIdentifierScheme": "RRID",
+            }
+        )
 
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
