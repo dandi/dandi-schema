@@ -15,7 +15,7 @@ Every [Dandiset](https://docs.dandiarchive.org/user-guide-sharing/creating-dandi
 or associated asset is described by a structured metadata object that can be
 retrieved through the DANDI API. The `dandi-schema` library provides Python data models
 and helper utilities to create, validate, migrate, and manage these metadata objects.
-It uses [Pydantic](https://github.com/samuelcolvin/pydantic) models to define metadata
+It uses [Pydantic](https://github.com/pydantic/pydantic) models to define metadata
 models, and the JSON Schema schemas corresponding to the Pydantic models are generated,
 versioned, and stored in the [dandi/schema](https://github.com/dandi/schema) repository
 with an associated `context.json` file for JSON-LD compliance. **Both** representations
