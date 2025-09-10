@@ -153,7 +153,7 @@ def to_datacite(
         "name": f"{instance_config.instance_name} Archive",
         "lang": "en",
     }
-    if instance_config.instance_identifier is not None:
+    if instance_config.instance_identifier:
         attributes["publisher"].update(
             {
                 "schemeUri": "https://scicrunch.org/resolver/",
