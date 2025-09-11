@@ -1,0 +1,378 @@
+import json
+import logging
+from typing import Optional, Union
+from unittest.mock import ANY
+
+from pydantic import ValidationError
+import pytest
+
+
+def test_get_instance_config() -> None:
+    from dandischema.conf import _instance_config, get_instance_config
+
+    obtained_config = get_instance_config()
+
+    assert obtained_config == _instance_config
+    assert (
+        obtained_config is not _instance_config
+    ), "`get_instance_config` should return a copy of the instance config"
+
+
+_FOO_CONFIG_DICT_BY_FIELD_NAME = {
+    "instance_name": "FOO",
+    "instance_identifier": "RRID:ABC_123456",
+    "doi_prefix": "10.1234",
+    "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
+}
+
+FOO_CONFIG_DICT = {f"dandi_{k}": v for k, v in _FOO_CONFIG_DICT_BY_FIELD_NAME.items()}
+
+FOO_CONFIG_ENV_VARS = {
+    k: v if k != "licenses" else json.dumps(v)
+    for k, v in _FOO_CONFIG_DICT_BY_FIELD_NAME.items()
+}
+
+
+class TestConfig:
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
+        "instance_name",
+        ["DANDI-ADHOC", "DANDI-TEST", "DANDI", "DANDI--TEST", "DANDI-TE-ST"],
+    )
+    def test_valid_instance_name(self, instance_name: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid instance name
+        """
+        from dandischema.conf import Config
+
+        Config(dandi_instance_name=instance_name)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize("instance_name", ["-DANDI", "dandi", "DANDI0", "DANDI*"])
+    def test_invalid_instance_name(self, instance_name: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid instance name
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            Config(dandi_instance_name=instance_name)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_name",)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
+        "instance_identifier", [None, "RRID:ABC_123456", "RRID:SCR_1234567891234"]
+    )
+    def test_valid_instance_identifier(
+        self, instance_identifier: Optional[str]
+    ) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid instance identifier
+        """
+        from dandischema.conf import Config
+
+        Config(dandi_instance_identifier=instance_identifier)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize("instance_identifier", ["", "RRID:AB C", "ID:ABC_123456"])
+    def test_invalid_instance_identifier(self, instance_identifier: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid instance identifier
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            Config(dandi_instance_identifier=instance_identifier)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_identifier",)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    def test_without_instance_identifier_with_doi_prefix(self) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` without an instance identifier
+        when a DOI prefix is provided
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(
+            ValidationError, match="`instance_identifier` must also be set."
+        ):
+            Config(dandi_doi_prefix="10.1234")
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
+        "doi_prefix", ["10.1234", "10.5678", "10.12345678", "10.987654321"]
+    )
+    def test_valid_doi_prefix(self, doi_prefix: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid DOI prefix
+        """
+        from dandischema.conf import Config
+
+        Config(
+            # Instance identifier must be provided if doi_prefix is provided
+            dandi_instance_identifier="RRID:SCR_017571",
+            dandi_doi_prefix=doi_prefix,
+        )
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize("doi_prefix", ["1234", ".1234", "1.1234", "10.123"])
+    def test_invalid_doi_prefix(self, doi_prefix: str) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid DOI prefix
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            Config(
+                # Instance identifier must be provided if doi_prefix is provided
+                dandi_instance_identifier="RRID:SCR_017571",
+                dandi_doi_prefix=doi_prefix,
+            )
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_doi_prefix",)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            [],
+            ["spdx:AGPL-1.0-only"],
+            ["spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0", "spdx:LOOP"],
+            set(),
+            {"spdx:AGPL-1.0-only"},
+            {"spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0"},
+        ],
+    )
+    def test_valid_licenses_by_args(self, licenses: Union[list[str], set[str]]) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid list/set of licenses
+        as argument.
+        """
+        from dandischema.conf import Config, License
+
+        # noinspection PyTypeChecker
+        config = Config(dandi_licenses=licenses)
+
+        assert config.licenses == {License(license_) for license_ in set(licenses)}
+
+    @pytest.mark.parametrize(
+        ("clear_dandischema_modules_and_set_env_vars", "licenses"),
+        [
+            ({"licenses": "[]"}, set()),
+            (
+                {"licenses": '["spdx:AGPL-1.0-only"]'},
+                {"spdx:AGPL-1.0-only"},
+            ),
+            (
+                {
+                    "licenses": '["spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0", "spdx:LOOP"]'
+                },
+                {"spdx:AGPL-1.0-only", "spdx:LOOP", "spdx:SPL-1.0", "spdx:LOOP"},
+            ),
+        ],
+        indirect=["clear_dandischema_modules_and_set_env_vars"],
+    )
+    def test_valid_licenses_by_env_var(
+        self, clear_dandischema_modules_and_set_env_vars: None, licenses: set[str]
+    ) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with a valid array of licenses,
+        in JSON format, as an environment variable.
+        """
+        from dandischema.conf import Config, License
+
+        # noinspection PyTypeChecker
+        config = Config()
+
+        assert config.licenses == {License(license_) for license_ in licenses}
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
+    )
+    @pytest.mark.usefixtures("clear_dandischema_modules_and_set_env_vars")
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            {"AGPL-1.0-only"},
+            {"spdx:AGPL-1.0-only", "spdx:NOT-A-LICENSE", "spdx:SPL-1.0"},
+        ],
+    )
+    def test_invalid_licenses_by_args(self, licenses: set[str]) -> None:
+        """
+        Test instantiating `dandischema.conf.Config` with an invalid list/set of
+        licenses as an argument
+        """
+        from dandischema.conf import Config
+
+        with pytest.raises(ValidationError) as exc_info:
+            # noinspection PyTypeChecker
+            Config(dandi_licenses=licenses)
+
+        assert len(exc_info.value.errors()) == 1
+        assert exc_info.value.errors()[0]["loc"] == ("dandi_licenses", ANY)
+
+
+class TestSetInstanceConfig:
+    @pytest.mark.parametrize(
+        ("arg", "kwargs"),
+        [
+            (FOO_CONFIG_DICT, {"dandi_instance_name": "BAR"}),
+            (
+                FOO_CONFIG_DICT,
+                {"dandi_instance_name": "Baz", "key": "value"},
+            ),
+        ],
+    )
+    def test_invalid_args(self, arg: dict, kwargs: dict) -> None:
+        """
+        Test that `set_instance_config` raises a `ValueError` when called with both
+        a non-none positional argument and one or more keyword arguments.
+        """
+        from dandischema.conf import Config, set_instance_config
+
+        # Loop over arg in different types/forms
+        for arg_ in (arg, Config.model_validate(arg)):
+            with pytest.raises(ValueError, match="not both"):
+                set_instance_config(arg_, **kwargs)
+
+    @pytest.mark.parametrize(
+        ("clear_dandischema_modules_and_set_env_vars", "arg", "kwargs"),
+        [
+            ({}, FOO_CONFIG_DICT, {}),
+            ({}, FOO_CONFIG_DICT, {}),
+            ({}, None, FOO_CONFIG_DICT),
+        ],
+        indirect=["clear_dandischema_modules_and_set_env_vars"],
+    )
+    def test_before_models_import(
+        self,
+        clear_dandischema_modules_and_set_env_vars: None,
+        arg: Optional[dict],
+        kwargs: dict,
+    ) -> None:
+        """
+        Test setting the instance configuration before importing `dandischema.models`.
+        """
+
+        # Import entities in `dandischema.conf` after clearing dandischema modules
+        from dandischema.conf import Config, get_instance_config, set_instance_config
+
+        # Loop over arg in different types/forms
+        for arg_ in (arg, Config.model_validate(arg)) if arg is not None else (arg,):
+            set_instance_config(arg_, **kwargs)
+            assert get_instance_config() == Config.model_validate(
+                FOO_CONFIG_DICT
+            ), "Configuration values are not set to the expected values"
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [FOO_CONFIG_ENV_VARS],
+        indirect=True,
+    )
+    def test_after_models_import_same_config(
+        self,
+        clear_dandischema_modules_and_set_env_vars: None,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """
+        Test setting the instance configuration after importing `dandischema.models`
+        with the same configuration.
+        """
+        from dandischema.conf import Config, get_instance_config, set_instance_config
+
+        # Make sure the `dandischema.models` module is imported before calling
+        # `set_instance_config`
+        import dandischema.models  # noqa: F401
+
+        initial_config = get_instance_config()
+
+        caplog.clear()
+        caplog.set_level(logging.DEBUG, logger="dandischema.conf")
+        set_instance_config(**FOO_CONFIG_DICT)
+
+        assert (
+            len(caplog.records) == 1
+        ), "There should be only one log record from logger `dandischema.conf`"
+
+        record_tuple = caplog.record_tuples[0]
+        assert record_tuple == ("dandischema.conf", logging.DEBUG, ANY)
+        assert (
+            "reset the DANDI instance configuration to the same value"
+            in record_tuple[2]
+        )
+
+        assert (
+            get_instance_config()
+            == initial_config
+            == Config.model_validate(FOO_CONFIG_DICT)
+        ), "Configuration values should remain the same"
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [FOO_CONFIG_ENV_VARS],
+        indirect=True,
+    )
+    def test_after_models_import_different_config(
+        self,
+        clear_dandischema_modules_and_set_env_vars: None,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """
+        Test setting the instance configuration after importing `dandischema.models`
+        with a different configuration.
+        """
+        from dandischema.conf import Config, get_instance_config, set_instance_config
+
+        # Make sure the `dandischema.models` module is imported before calling
+        # `set_instance_config`
+        import dandischema.models  # noqa: F401
+
+        new_config_dict = {
+            "dandi_instance_name": "BAR",
+            "dandi_doi_prefix": "10.5678",
+        }
+
+        # noinspection DuplicatedCode
+        caplog.clear()
+        caplog.set_level(logging.DEBUG, logger="dandischema.conf")
+        set_instance_config(**new_config_dict)
+
+        assert (
+            len(caplog.records) == 1
+        ), "There should be only one log record from logger `dandischema.conf`"
+        record_tuple = caplog.record_tuples[0]
+        assert record_tuple == ("dandischema.conf", logging.WARNING, ANY)
+        assert "different value will not have any affect" in record_tuple[2]
+
+        assert get_instance_config() == Config.model_validate(
+            new_config_dict
+        ), "Configuration values should be set to the new values"
