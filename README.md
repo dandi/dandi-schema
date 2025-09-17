@@ -30,6 +30,27 @@ Important files in this repository include:
 - [metadata.py](./dandischema/metadata.py) - contains functions for validating, migrating, and aggregating metadata
 - [datacite package](./dandischema/datacite) - contains functions for converting Dandiset metadata to DataCite metadata
 
+## Customization with Vendor Information
+
+The DANDI metadata models defined in this library can be customized with vendor-specific information.
+The parameters of the customization are defined by the fields of the `Config` class in
+[dandischema/conf.py](./dandischema/conf.py). The `Config` class is a subclass of
+[`pydantic_settings.BaseSettings`](https://docs.pydantic.dev/latest/concepts/pydantic_settings/),
+and the values of the fields in an instance of the `Config` class can be set through environment
+variables and `.env` files, as documented in
+[the Pydantic Settings documentation](https://docs.pydantic.dev/latest/concepts/pydantic_settings/).
+Specifically,
+
+- The value of a field is set from an environment variable with the same name, case-insensitively,
+  as one of the aliases of the field. For example, the `instance_name` field can be set from
+  the `DANDI_INSTANCE_NAME` or `DJANGO_DANDI_INSTANCE_NAME` environment variable.
+- A value of a complex type (e.g., `list`, `set`, `dict`) should be expressed as a JSON-encoded string
+  in an environment variable. For example, the value for the `licenses` field, which is of
+  type `set`, can be set from the `DANDI_LICENSES` environment variable defined as the following:
+  ```shell
+  export DANDI_LICENSES='["spdx:CC0-1.0", "spdx:CC-BY-4.0"]'
+  ```
+
 ## Resources
 
 * To learn how to interact with the DANDI archive,
