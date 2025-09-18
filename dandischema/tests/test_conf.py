@@ -1,7 +1,6 @@
 import json
 import logging
 from typing import Optional, Union
-from unittest.mock import ANY
 
 from pydantic import ValidationError
 import pytest
@@ -238,7 +237,7 @@ class TestConfig:
             Config(dandi_licenses=licenses)
 
         assert len(exc_info.value.errors()) == 1
-        assert exc_info.value.errors()[0]["loc"] == ("dandi_licenses", ANY)
+        assert exc_info.value.errors()[0]["loc"][:-1] == ("dandi_licenses",)
 
 
 class TestSetInstanceConfig:
@@ -324,7 +323,7 @@ class TestSetInstanceConfig:
         ), "There should be only one log record from logger `dandischema.conf`"
 
         record_tuple = caplog.record_tuples[0]
-        assert record_tuple == ("dandischema.conf", logging.DEBUG, ANY)
+        assert record_tuple[:-1] == ("dandischema.conf", logging.DEBUG)
         assert (
             "reset the DANDI instance configuration to the same value"
             in record_tuple[2]
@@ -370,7 +369,10 @@ class TestSetInstanceConfig:
             len(caplog.records) == 1
         ), "There should be only one log record from logger `dandischema.conf`"
         record_tuple = caplog.record_tuples[0]
-        assert record_tuple == ("dandischema.conf", logging.WARNING, ANY)
+        assert record_tuple[:-1] == (
+            "dandischema.conf",
+            logging.WARNING,
+        )
         assert "different value will not have any affect" in record_tuple[2]
 
         assert get_instance_config() == Config.model_validate(
