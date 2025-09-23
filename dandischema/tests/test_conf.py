@@ -25,6 +25,10 @@ FOO_CONFIG_DICT = {
     "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
 }
 
+# Same as `FOO_CONFIG_DICT` but with the field aliases instead of the field names being
+# the keys
+FOO_CONFIG_DICT_WITH_ALIASES = {f"dandi_{k}": v for k, v in FOO_CONFIG_DICT.items()}
+
 FOO_CONFIG_ENV_VARS = {
     k: v if k != "licenses" else json.dumps(v) for k, v in FOO_CONFIG_DICT.items()
 }
@@ -236,6 +240,38 @@ class TestConfig:
 
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"][:-1] == ("dandi_licenses",)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [
+            {},
+            {"instance_name": "BAR"},
+            {"instance_name": "BAZ", "instance_url": "https://www.example.com/"},
+        ],
+        indirect=True,
+    )
+    @pytest.mark.parametrize(
+        "config_dict", [FOO_CONFIG_DICT, FOO_CONFIG_DICT_WITH_ALIASES]
+    )
+    def test_init_by_kwargs(
+        self, clear_dandischema_modules_and_set_env_vars: None, config_dict: dict
+    ) -> None:
+        """
+        Test instantiating `Config` using keyword arguments
+
+        The kwargs are expected to override any environment variables
+        """
+        from dandischema.conf import Config
+
+        config = Config.model_validate(config_dict)
+        config_json_dump = config.model_dump(mode="json")
+
+        assert config_json_dump.keys() == FOO_CONFIG_DICT.keys()
+        for k, v in FOO_CONFIG_DICT.items():
+            if k == "licenses":
+                assert sorted(config_json_dump[k]) == sorted(v)
+            else:
+                assert config_json_dump[k] == v
 
 
 class TestSetInstanceConfig:
