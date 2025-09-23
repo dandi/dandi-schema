@@ -20,6 +20,7 @@ def test_get_instance_config() -> None:
 FOO_CONFIG_DICT = {
     "instance_name": "FOO",
     "instance_identifier": "RRID:ABC_123456",
+    "instance_url": "https://dandiarchive.org/",
     "doi_prefix": "10.1234",
     "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
 }
