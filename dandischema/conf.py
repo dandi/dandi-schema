@@ -17,7 +17,12 @@ from pydantic import (
     StringConstraints,
     model_validator,
 )
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic.fields import FieldInfo
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
 from typing_extensions import Self
 
 _MODELS_MODULE_NAME = "dandischema.models"
@@ -185,6 +190,48 @@ class Config(BaseSettings):
                 "`instance_identifier` must also be set."
             )
         return self
+
+    # This is a workaround for the limitation imposed by the bug at
+    # https://github.com/pydantic/pydantic/issues/12191 mentioned above.
+    # TODO: This will no longer be needed once that bug is fixed and
+    #       should be removed along with other workarounds in this model because
+    #       of that bug.
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        def wrap(source: PydanticBaseSettingsSource) -> PydanticBaseSettingsSource:
+            class Wrapped(PydanticBaseSettingsSource):
+                def get_field_value(
+                    self, field: FieldInfo, field_name: str
+                ) -> tuple[Any, str, bool]:
+                    raise NotImplementedError(
+                        "If this method is ever called, there is a bug"
+                    )
+
+                def __call__(self) -> dict[str, Any]:
+                    result = source().copy()
+                    for field_name in cls.model_fields:
+                        if field_name in result:
+                            alias = f"dandi_{field_name}"
+                            # This overwrites the `alias` key if it already exists
+                            result[alias] = result[field_name]
+                            del result[field_name]
+                    return result
+
+            return Wrapped(settings_cls)
+
+        return (
+            wrap(init_settings),
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        )
 
 
 _instance_config = Config()  # Initial value is set by env vars alone

@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 from typing import Optional, Union
 
 from pydantic import ValidationError
@@ -17,18 +18,20 @@ def test_get_instance_config() -> None:
     ), "`get_instance_config` should return a copy of the instance config"
 
 
-_FOO_CONFIG_DICT_BY_FIELD_NAME = {
+FOO_CONFIG_DICT = {
     "instance_name": "FOO",
     "instance_identifier": "RRID:ABC_123456",
+    "instance_url": "https://dandiarchive.org/",
     "doi_prefix": "10.1234",
     "licenses": ["spdx:AdaCore-doc", "spdx:AGPL-3.0-or-later", "spdx:NBPL-1.0"],
 }
 
-FOO_CONFIG_DICT = {f"dandi_{k}": v for k, v in _FOO_CONFIG_DICT_BY_FIELD_NAME.items()}
+# Same as `FOO_CONFIG_DICT` but with the field aliases instead of the field names being
+# the keys
+FOO_CONFIG_DICT_WITH_ALIASES = {f"dandi_{k}": v for k, v in FOO_CONFIG_DICT.items()}
 
 FOO_CONFIG_ENV_VARS = {
-    k: v if k != "licenses" else json.dumps(v)
-    for k, v in _FOO_CONFIG_DICT_BY_FIELD_NAME.items()
+    k: v if k != "licenses" else json.dumps(v) for k, v in FOO_CONFIG_DICT.items()
 }
 
 
@@ -47,7 +50,7 @@ class TestConfig:
         """
         from dandischema.conf import Config
 
-        Config(dandi_instance_name=instance_name)
+        Config(instance_name=instance_name)
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
@@ -61,7 +64,7 @@ class TestConfig:
         from dandischema.conf import Config
 
         with pytest.raises(ValidationError) as exc_info:
-            Config(dandi_instance_name=instance_name)
+            Config(instance_name=instance_name)
 
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_name",)
@@ -81,7 +84,7 @@ class TestConfig:
         """
         from dandischema.conf import Config
 
-        Config(dandi_instance_identifier=instance_identifier)
+        Config(instance_identifier=instance_identifier)
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
@@ -95,7 +98,7 @@ class TestConfig:
         from dandischema.conf import Config
 
         with pytest.raises(ValidationError) as exc_info:
-            Config(dandi_instance_identifier=instance_identifier)
+            Config(instance_identifier=instance_identifier)
 
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"] == ("dandi_instance_identifier",)
@@ -114,7 +117,7 @@ class TestConfig:
         with pytest.raises(
             ValidationError, match="`instance_identifier` must also be set."
         ):
-            Config(dandi_doi_prefix="10.1234")
+            Config(doi_prefix="10.1234")
 
     @pytest.mark.parametrize(
         "clear_dandischema_modules_and_set_env_vars", [{}], indirect=True
@@ -131,8 +134,8 @@ class TestConfig:
 
         Config(
             # Instance identifier must be provided if doi_prefix is provided
-            dandi_instance_identifier="RRID:SCR_017571",
-            dandi_doi_prefix=doi_prefix,
+            instance_identifier="RRID:SCR_017571",
+            doi_prefix=doi_prefix,
         )
 
     @pytest.mark.parametrize(
@@ -149,8 +152,8 @@ class TestConfig:
         with pytest.raises(ValidationError) as exc_info:
             Config(
                 # Instance identifier must be provided if doi_prefix is provided
-                dandi_instance_identifier="RRID:SCR_017571",
-                dandi_doi_prefix=doi_prefix,
+                instance_identifier="RRID:SCR_017571",
+                doi_prefix=doi_prefix,
             )
 
         assert len(exc_info.value.errors()) == 1
@@ -179,7 +182,7 @@ class TestConfig:
         from dandischema.conf import Config, License
 
         # noinspection PyTypeChecker
-        config = Config(dandi_licenses=licenses)
+        config = Config(licenses=licenses)
 
         assert config.licenses == {License(license_) for license_ in set(licenses)}
 
@@ -234,20 +237,113 @@ class TestConfig:
 
         with pytest.raises(ValidationError) as exc_info:
             # noinspection PyTypeChecker
-            Config(dandi_licenses=licenses)
+            Config(licenses=licenses)
 
         assert len(exc_info.value.errors()) == 1
         assert exc_info.value.errors()[0]["loc"][:-1] == ("dandi_licenses",)
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [
+            {},
+            {"instance_name": "BAR"},
+            {"instance_name": "BAZ", "instance_url": "https://www.example.com/"},
+        ],
+        indirect=True,
+    )
+    @pytest.mark.parametrize(
+        "config_dict", [FOO_CONFIG_DICT, FOO_CONFIG_DICT_WITH_ALIASES]
+    )
+    def test_init_by_kwargs(
+        self, clear_dandischema_modules_and_set_env_vars: None, config_dict: dict
+    ) -> None:
+        """
+        Test instantiating `Config` using keyword arguments
+
+        The kwargs are expected to override any environment variables
+        """
+        from dandischema.conf import Config
+
+        config = Config.model_validate(config_dict)
+        config_json_dump = config.model_dump(mode="json")
+
+        assert config_json_dump.keys() == FOO_CONFIG_DICT.keys()
+        for k, v in FOO_CONFIG_DICT.items():
+            if k == "licenses":
+                assert sorted(config_json_dump[k]) == sorted(v)
+            else:
+                assert config_json_dump[k] == v
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [
+            {},
+        ],
+        indirect=True,
+    )
+    def test_init_by_field_names_through_dotenv(
+        self,
+        clear_dandischema_modules_and_set_env_vars: None,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """
+        Test instantiating `Config` using a dotenv file with field names as keys
+
+        The initialization is expected to fail because the proper keys are the aliases
+        when using environment variables or dotenv files.
+        """
+        from dandischema.conf import Config
+
+        dotenv_file_name = "test.env"
+        dotenv_file_path = tmp_path / dotenv_file_name
+
+        # Write a dotenv file with a field name as key
+        dotenv_file_path.write_text("instance_name=DANDI-TEST")
+
+        monkeypatch.chdir(tmp_path)
+
+        with pytest.raises(ValidationError) as exc_info:
+            # noinspection PyArgumentList
+            Config(_env_file=dotenv_file_name)
+
+        errors = exc_info.value.errors()
+        assert len(errors) == 1
+
+        assert errors[0]["type"] == "extra_forbidden"
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [
+            {},
+        ],
+        indirect=True,
+    )
+    def test_round_trip(self, clear_dandischema_modules_and_set_env_vars: None) -> None:
+        """
+        Test that a `Config` instance can be round-tripped through JSON serialization
+        and deserialization without loss of information.
+        """
+        from dandischema.conf import Config
+
+        config_original = Config.model_validate(FOO_CONFIG_DICT)
+        config_original_str = config_original.model_dump_json()
+
+        config_reconstituted = Config.model_validate_json(config_original_str)
+
+        assert (
+            config_reconstituted == config_original
+        ), "Round-trip of `Config` instance failed"
 
 
 class TestSetInstanceConfig:
     @pytest.mark.parametrize(
         ("arg", "kwargs"),
         [
-            (FOO_CONFIG_DICT, {"dandi_instance_name": "BAR"}),
+            (FOO_CONFIG_DICT, {"instance_name": "BAR"}),
             (
                 FOO_CONFIG_DICT,
-                {"dandi_instance_name": "Baz", "key": "value"},
+                {"instance_name": "Baz", "key": "value"},
             ),
         ],
     )
@@ -356,8 +452,8 @@ class TestSetInstanceConfig:
         import dandischema.models  # noqa: F401
 
         new_config_dict = {
-            "dandi_instance_name": "BAR",
-            "dandi_doi_prefix": "10.5678",
+            "instance_name": "BAR",
+            "doi_prefix": "10.5678",
         }
 
         # noinspection DuplicatedCode
