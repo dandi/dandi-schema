@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 from typing import Optional, Union
 
 from pydantic import ValidationError
@@ -272,6 +273,44 @@ class TestConfig:
                 assert sorted(config_json_dump[k]) == sorted(v)
             else:
                 assert config_json_dump[k] == v
+
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [
+            {},
+        ],
+        indirect=True,
+    )
+    def test_init_by_field_names_through_dotenv(
+        self,
+        clear_dandischema_modules_and_set_env_vars: None,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """
+        Test instantiating `Config` using a dotenv file with field names as keys
+
+        The initialization is expected to fail because the proper keys are the aliases
+        when using environment variables or dotenv files.
+        """
+        from dandischema.conf import Config
+
+        dotenv_file_name = "test.env"
+        dotenv_file_path = tmp_path / dotenv_file_name
+
+        # Write a dotenv file with a field name as key
+        dotenv_file_path.write_text("instance_name=DANDI-TEST")
+
+        monkeypatch.chdir(tmp_path)
+
+        with pytest.raises(ValidationError) as exc_info:
+            # noinspection PyArgumentList
+            Config(_env_file=dotenv_file_name)
+
+        errors = exc_info.value.errors()
+        assert len(errors) == 1
+
+        assert errors[0]["type"] == "extra_forbidden"
 
 
 class TestSetInstanceConfig:
