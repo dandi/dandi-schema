@@ -312,6 +312,29 @@ class TestConfig:
 
         assert errors[0]["type"] == "extra_forbidden"
 
+    @pytest.mark.parametrize(
+        "clear_dandischema_modules_and_set_env_vars",
+        [
+            {},
+        ],
+        indirect=True,
+    )
+    def test_round_trip(self, clear_dandischema_modules_and_set_env_vars: None) -> None:
+        """
+        Test that a `Config` instance can be round-tripped through JSON serialization
+        and deserialization without loss of information.
+        """
+        from dandischema.conf import Config
+
+        config_original = Config.model_validate(FOO_CONFIG_DICT)
+        config_original_str = config_original.model_dump_json()
+
+        config_reconstituted = Config.model_validate_json(config_original_str)
+
+        assert (
+            config_reconstituted == config_original
+        ), "Round-trip of `Config` instance failed"
+
 
 class TestSetInstanceConfig:
     @pytest.mark.parametrize(
