@@ -5,16 +5,19 @@ Interfaces and data to interact with DataCite metadata
 # TODO: RF into submodules for some next "minor" taking care not to break
 
 from copy import deepcopy
+from datetime import datetime
 from functools import lru_cache
 import json
 from pathlib import Path
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, Literal, Optional, Type, Union
+from warnings import warn
 
 from jsonschema import Draft7Validator
 
 from ..models import (
     NAME_PATTERN,
+    Dandiset,
     LicenseType,
     Organization,
     Person,
@@ -111,18 +114,13 @@ def _licenses_to_rights_list(licenses: list[LicenseType]) -> list[dict[str, str]
     return rights_list
 
 
-def to_datacite(
-    meta: Union[dict, PublishedDandiset],
-    validate: bool = False,
-    publish: bool = False,
+def _to_datacite_dict(
+    meta: Union[Dandiset, PublishedDandiset],
+    event: Optional[Union[Literal["publish"], Literal["hide"]]] = None,
 ) -> dict:
-    """Convert published Dandiset metadata to Datacite"""
-    if not isinstance(meta, PublishedDandiset):
-        meta = PublishedDandiset(**meta)
-
     attributes: Dict[str, Any] = {}
-    if publish:
-        attributes["event"] = "publish"
+    if event:
+        attributes["event"] = event
 
     attributes["alternateIdentifiers"] = [
         {
@@ -149,7 +147,12 @@ def to_datacite(
         "publisherIdentifierScheme": "RRID",
         "lang": "en",
     }
-    attributes["publicationYear"] = str(meta.datePublished.year)
+
+    # TODO: Require dateCreated on all Dandisets?
+    attributes["publicationYear"] = (
+        str(meta.dateCreated.year) if meta.dateCreated else str(datetime.now().year)
+    )
+
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
@@ -285,8 +288,36 @@ def to_datacite(
     if hasattr(meta, "keywords") and meta.keywords is not None:
         attributes["subjects"] = [{"subject": el} for el in meta.keywords]
 
-    datacite_dict = {"data": {"id": meta.doi, "type": "dois", "attributes": attributes}}
+    return {"data": {"id": meta.doi, "type": "dois", "attributes": attributes}}
 
+
+def to_datacite_doi_payload(
+    meta: dict,
+    model: Union[Type[Dandiset], Type[PublishedDandiset]],
+    event: Optional[Union[Literal["publish"], Literal["hide"]]] = None,
+) -> dict:
+    assert event in {None, "publish", "hide"}, "Invalid Event Type"
+
+    instance = model(**meta)
+    return _to_datacite_dict(meta=instance, event=event)
+
+
+def to_datacite(
+    meta: Union[dict, PublishedDandiset],
+    validate: bool = False,
+    publish: bool = False,
+) -> dict:
+    """Convert published Dandiset metadata to Datacite"""
+    warn(
+        "'to_datacite' is deprecated; use 'to_datacite_doi_payload' instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    if not isinstance(meta, PublishedDandiset):
+        meta = PublishedDandiset(**meta)
+
+    datacite_dict = _to_datacite_dict(meta=meta, event="publish" if publish else None)
     if validate:
         validate_datacite(datacite_dict)
 
