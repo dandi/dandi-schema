@@ -57,8 +57,12 @@ UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
-VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
-DANDI_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
+
+DANDISET_ID_PATTERN = r"\d{6}"
+DANDISET_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{DANDISET_ID_PATTERN}$"
+VERSION_PATTERN = rf"{DANDISET_ID_PATTERN}/\d+\.\d+\.\d+"
+PUBLISHED_VERSION_DOI_PATTERN = rf"^10.(48324|80507)/dandi\.{VERSION_PATTERN}"
+
 DANDI_PUBID_PATTERN = rf"^DANDI:{VERSION_PATTERN}"
 PUBLISHED_VERSION_URL_PATTERN = (
     rf"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/{VERSION_PATTERN}$"
@@ -1609,6 +1613,12 @@ class Dandiset(CommonModel):
         json_schema_extra={"readOnly": True},
     )
 
+    doi: Optional[str] = Field(
+        default=None,
+        title="DOI",
+        pattern=DANDISET_DOI_PATTERN,
+        json_schema_extra={"readOnly": True, "nskey": "dandi"},
+    )
     identifier: DANDI = Field(
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
@@ -1839,7 +1849,7 @@ class PublishedDandiset(Dandiset, Publishable):
 
     doi: str = Field(
         title="DOI",
-        pattern=DANDI_DOI_PATTERN,
+        pattern=PUBLISHED_VERSION_DOI_PATTERN,
         json_schema_extra={"readOnly": True, "nskey": "dandi"},
     )
     url: AnyHttpUrl = Field(
