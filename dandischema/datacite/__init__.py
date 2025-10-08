@@ -118,9 +118,20 @@ def _to_datacite_dict(
     meta: Union[Dandiset, PublishedDandiset],
     event: Optional[Union[Literal["publish"], Literal["hide"]]] = None,
 ) -> dict:
-    attributes: Dict[str, Any] = {}
-    if event:
-        attributes["event"] = event
+    # The hide event has a very minimal payload, so we just return early if so
+    if event == "hide":
+        return {
+            "data": {
+                "id": meta.doi,
+                "type": "dois",
+                "attributes": {"event": "hide"},
+            },
+        }
+
+    attributes: Dict[str, Any] = {"doi": meta.doi, "version": meta.version}
+
+    if event == "publish":
+        attributes["event"] = "publish"
 
     attributes["alternateIdentifiers"] = [
         {
@@ -133,9 +144,6 @@ def _to_datacite_dict(
         },
     ]
 
-    attributes["doi"] = meta.doi
-    if meta.version:
-        attributes["version"] = meta.version
     attributes["titles"] = [{"title": meta.name}]
     attributes["descriptions"] = [
         {"description": meta.description, "descriptionType": "Abstract"}
