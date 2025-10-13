@@ -453,8 +453,20 @@ def test_dantimeta_1() -> None:
     meta_dict["version"] = "0.0.0"
     meta_dict.update(_basic_publishmeta(dandi_id="999999"))
     meta_dict["assetsSummary"].update(**{"numberOfBytes": 1, "numberOfFiles": 1})
+    
+    # Test that releaseNotes is optional (can be omitted)
+    dandiset_without_notes = PublishedDandiset(**meta_dict)
+    assert dandiset_without_notes.releaseNotes is None
+    
+    # Test that releaseNotes can be set to a string value
     meta_dict["releaseNotes"] = "Releasing during testing"
-    PublishedDandiset(**meta_dict)
+    dandiset_with_notes = PublishedDandiset(**meta_dict)
+    assert dandiset_with_notes.releaseNotes == "Releasing during testing"
+    
+    # Test that releaseNotes appears in model_dump
+    dumped = dandiset_with_notes.model_dump(exclude_none=True)
+    assert "releaseNotes" in dumped
+    assert dumped["releaseNotes"] == "Releasing during testing"
 
 
 def test_schemakey() -> None:
