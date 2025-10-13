@@ -1,17 +1,136 @@
-from datetime import datetime
+from enum import Enum
 import json
 import os
 from pathlib import Path
 import random
-from typing import Any, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Tuple, cast
 
 from jsonschema import Draft7Validator
 import pytest
 import requests
 
-from .utils import skipif_no_network
-from ..datacite import _get_datacite_schema, to_datacite
-from ..models import LicenseType, PublishedDandiset, RelationType, RoleType
+from dandischema.models import (
+    LicenseType,
+    PublishedDandiset,
+    RelationType,
+    ResourceType,
+    RoleType,
+)
+import dandischema.tests
+from dandischema.tests.utils import _basic_publishmeta, skipif_no_network
+
+from .. import _get_datacite_schema, _licenses_to_rights_list, to_datacite
+
+
+class TestLicensesToRightsList:
+    """
+    Tests for the `_licenses_to_rights_list()` helper function.
+    """
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            [" "],
+            ["bad_license"],
+            [" spdx:CC0-1.0"],
+            ["spdx:CC0-1.0 "],
+            ["spdx: CC0-1.0"],
+            ["spdx:CC0-1.0", "foo-license"],
+        ],
+    )
+    def test_bad_format(self, licenses: list[str]) -> None:
+        """
+        Test handling of licenses with a value of  bad format
+        """
+        if TYPE_CHECKING:
+
+            # noinspection PyUnusedLocal
+            class BadLicenseType(Enum):
+                ...  # fmt: skip
+
+        else:
+            # noinspection PyPep8Naming
+            BadLicenseType = Enum(
+                "BadLicenseType",
+                [(f"M{idx}", license_) for idx, license_ in enumerate(licenses)],
+            )
+
+            with pytest.raises(AssertionError, match="not of the expected format"):
+                _licenses_to_rights_list(list(BadLicenseType))
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            ["foo:license"],
+            ["bar:license"],
+            ["foo:license", "bar:license"],
+        ],
+    )
+    def test_non_spdx_license(self, licenses: list[str]) -> None:
+        """
+        Test handling of licenses not denoted using the `"spdx"` schema, i.e.
+        licenses that are not in the SPDX license list at
+        https://spdx.org/licenses/
+        """
+        if TYPE_CHECKING:
+            # noinspection PyUnusedLocal
+            class NonSpdxLicenseType(Enum):
+                ...  # fmt: skip
+
+        else:
+            # noinspection PyPep8Naming
+            NonSpdxLicenseType = Enum(
+                "NonSpdxLicenseType",
+                [(f"M{idx}", license_) for idx, license_ in enumerate(licenses)],
+            )
+
+        with pytest.raises(
+            NotImplementedError, match="Currently only SPDX licenses are supported"
+        ):
+            _licenses_to_rights_list(list(NonSpdxLicenseType))
+
+    @pytest.mark.parametrize(
+        "licenses",
+        [
+            ["spdx:CC0-1.0"],
+            ["spdx:CC-BY-4.0"],
+            ["spdx:CC0-1.0", "spdx:CC-BY-4.0"],
+        ],
+    )
+    def test_valid_input(self, licenses: list[str]) -> None:
+        """
+        Test handling of valid input
+        """
+        if TYPE_CHECKING:
+            # noinspection PyUnusedLocal
+            class ValidLicenseType(Enum):
+                ...  # fmt: skip
+
+        else:
+            # noinspection PyPep8Naming
+            ValidLicenseType = Enum(
+                "ValidLicenseType",
+                [(license_,) * 2 for license_ in licenses],
+            )
+
+        expected_rights_list = [
+            {
+                "rightsIdentifier": license_.removeprefix("spdx:"),
+                "rightsIdentifierScheme": "SPDX",
+                "schemeUri": "https://spdx.org/licenses/",
+            }
+            for license_ in licenses
+        ]
+
+        assert (
+            _licenses_to_rights_list(
+                cast(
+                    list[LicenseType],
+                    [ValidLicenseType(license_) for license_ in licenses],
+                )
+            )
+            == expected_rights_list
+        )
 
 
 def datacite_post(datacite: dict, doi: str) -> None:
@@ -64,7 +183,9 @@ def metadata_basic() -> Dict[str, Any]:
         "contributor": [
             {
                 "name": "A_last, A_first",
+                "email": "nemo@example.com",
                 "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
@@ -93,37 +214,6 @@ def metadata_basic() -> Dict[str, Any]:
     return meta_dict
 
 
-def _basic_publishmeta(
-    dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
-) -> Dict[str, Any]:
-    """Return extra metadata required by PublishedDandiset
-
-    Returned fields are additional to fields required by Dandiset
-    """
-    publish_meta = {
-        "datePublished": str(datetime.now().year),
-        "publishedBy": {
-            "id": "urn:uuid:08fffc59-9f1b-44d6-8e02-6729d266d1b6",
-            "name": "DANDI publish",
-            "startDate": "2021-05-18T19:58:39.310338-04:00",
-            "endDate": "2021-05-18T19:58:39.310361-04:00",
-            "wasAssociatedWith": [
-                {
-                    "id": "urn:uuid:9267d2e1-4a37-463b-9b10-dad3c66d8eaa",
-                    "identifier": "RRID:SCR_017571",
-                    "name": "DANDI API",
-                    "version": "0.1.0",
-                    "schemaKey": "Software",
-                }
-            ],
-            "schemaKey": "PublishActivity",
-        },
-        "version": version,
-        "doi": f"{prefix}/dandi.{dandi_id}/{version}",
-    }
-    return publish_meta
-
-
 @skipif_no_network
 @pytest.mark.skipif(
     not os.getenv("DATACITE_DEV_PASSWORD"), reason="no datacite password available"
@@ -134,7 +224,9 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     # reading metadata taken from exemplary dandisets and saved in json files
     with (
-        Path(__file__).with_name("data") / "metadata" / f"meta_{dandi_id}.json"
+        Path(dandischema.tests.__file__).with_name("data")
+        / "metadata"
+        / f"meta_{dandi_id}.json"
     ).open() as f:
         meta_js = json.load(f)
 
@@ -170,10 +262,19 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     1,
                     {"description": "testing", "descriptionType": "Abstract"},
                 ),
-                "publisher": (None, "DANDI Archive"),
+                "publisher": (
+                    None,
+                    {
+                        "name": "DANDI Archive",
+                        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                        "publisherIdentifierScheme": "RRID",
+                        "schemeUri": "https://scicrunch.org/resolver/",
+                        "lang": "en",
+                    },
+                ),
                 "rightsList": (
                     1,
-                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC_BY_40"},
+                    {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC-BY-4.0"},
                 ),
                 "types": (
                     None,
@@ -188,12 +289,18 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:Author")],
+                        "schemaKey": "Person",
                     },
-                    {"name": "C_last, C_first"},
+                    {
+                        "name": "C_last, C_first",
+                        "schemaKey": "Person",
+                    },
                 ],
             },
             {
@@ -211,10 +318,13 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:Sponsor")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -230,11 +340,14 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "identifier": "0000-0001-0000-0000",
                         "roleName": [RoleType("dcite:Sponsor")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -257,11 +370,14 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "name": "A_last, A_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "identifier": "0000-0001-0000-0000",
                         "roleName": [RoleType("dcite:Funder")],
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -290,10 +406,13 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                             RoleType("dcite:Software"),
                         ],
                         "identifier": "0000-0001-0000-0000",
+                        "schemaKey": "Person",
                     },
                     {
                         "name": "B_last, B_first",
                         "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "schemaKey": "Person",
                     },
                 ],
             },
@@ -304,7 +423,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                         "name": "A_last, A_first",
                         "nameIdentifiers": [
                             {
-                                "nameIdentifier": "0000-0001-0000-0000",
+                                "nameIdentifier": "https://orcid.org/0000-0001-0000-0000",
                                 "nameIdentifierScheme": "ORCID",
                                 "schemeUri": "https://orcid.org/",
                             }
@@ -318,7 +437,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                         "contributorType": "Other",
                         "nameIdentifiers": [
                             {
-                                "nameIdentifier": "0000-0001-0000-0000",
+                                "nameIdentifier": "https://orcid.org/0000-0001-0000-0000",
                                 "nameIdentifierScheme": "ORCID",
                                 "schemeUri": "https://orcid.org/",
                             }
@@ -337,6 +456,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     {
                         "identifier": "doi:10.123/123",
                         "relation": RelationType("dcite:IsDocumentedBy"),
+                        "resourceType": ResourceType("dcite:JournalArticle"),
                     },
                 ],
             },
@@ -395,7 +515,7 @@ def test_dandimeta_datacite(
             else:
                 assert attr[key] == el_flds
 
-    # trying to poste datacite
+    # trying to post to datacite
     datacite_post(datacite, metadata_basic["doi"])
 
 
@@ -406,7 +526,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
     metadata_basic.update(_basic_publishmeta(dandi_id=dandi_id_noprefix))
 
     # creating and validating datacite objects
-    datacite = to_datacite(metadata_basic, publish=True)
+    datacite = to_datacite(metadata_basic, publish=True, validate=True)
 
     assert datacite == {
         # 'data': {}
@@ -424,7 +544,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "givenName": "A_first",
                         "name": "A_last, A_first",
                         "nameType": "Personal",
-                        "schemeURI": "orcid.org",
+                        "schemeUri": "orcid.org",
                     }
                 ],
                 "creators": [
@@ -435,40 +555,39 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                         "givenName": "A_first",
                         "name": "A_last, A_first",
                         "nameType": "Personal",
-                        "schemeURI": "orcid.org",
+                        "schemeUri": "orcid.org",
                     }
                 ],
                 "descriptions": [
                     {"description": "testing", "descriptionType": "Abstract"}
                 ],
                 "doi": f"10.80507/dandi.{dandi_id_noprefix}/{version}",
-                "identifiers": [
+                "alternateIdentifiers": [
                     {
-                        "identifier": (
-                            f"https://doi.org/10.80507"
-                            f"/dandi.{dandi_id_noprefix}/{version}"
-                        ),
-                        "identifierType": "DOI",
+                        "alternateIdentifier": f"https://identifiers.org/{dandi_id}/{version}",
+                        "alternateIdentifierType": "URL",
                     },
                     {
-                        "identifier": f"https://identifiers.org/{dandi_id}/{version}",
-                        "identifierType": "URL",
-                    },
-                    {
-                        "identifier": (
+                        "alternateIdentifier": (
                             f"https://dandiarchive.org/dandiset"
                             f"/{dandi_id_noprefix}/{version}"
                         ),
-                        "identifierType": "URL",
+                        "alternateIdentifierType": "URL",
                     },
                 ],
                 "publicationYear": "1970",
-                "publisher": "DANDI Archive",
+                "publisher": {
+                    "name": "DANDI Archive",
+                    "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+                    "publisherIdentifierScheme": "RRID",
+                    "schemeUri": "https://scicrunch.org/resolver/",
+                    "lang": "en",
+                },
                 "rightsList": [
                     {
-                        "rightsIdentifier": "CC_BY_40",
+                        "rightsIdentifier": "CC-BY-4.0",
                         "rightsIdentifierScheme": "SPDX",
-                        "schemeURI": "https://spdx.org/licenses/",
+                        "schemeUri": "https://spdx.org/licenses/",
                     }
                 ],
                 "schemaVersion": "http://datacite.org/schema/kernel-4",
@@ -478,6 +597,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     "resourceTypeGeneral": "Dataset",
                 },
                 "url": f"https://dandiarchive.org/dandiset/{dandi_id_noprefix}/{version}",
+                "version": version,
             },
         }
     }

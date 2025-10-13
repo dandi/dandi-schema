@@ -1,3 +1,161 @@
+# 0.11.1 (Thu May 15 2025)
+
+#### 🐛 Bug Fix
+
+- Increase `Description` field max character length [#296](https://github.com/dandi/dandi-schema/pull/296) ([@kabilar](https://github.com/kabilar))
+- Remove escaping (\) of : in 2 identifiers regexes [#290](https://github.com/dandi/dandi-schema/pull/290) ([@yarikoptic](https://github.com/yarikoptic))
+- Improve (better arguments validation, avoiding repeated creation of validator objects, etc) `_validate_obj_json()` in `metadata.py` and supporting funcs [#278](https://github.com/dandi/dandi-schema/pull/278) ([@candleindark](https://github.com/candleindark))
+- Improve `migrate()` in `metadata.py` [#279](https://github.com/dandi/dandi-schema/pull/279) ([@candleindark](https://github.com/candleindark))
+- Update URL for DANDI Docs [#272](https://github.com/dandi/dandi-schema/pull/272) ([@kabilar](https://github.com/kabilar))
+
+#### 🏠 Internal
+
+- Revert version of schema to 0.6.10 since we have not yet released it [#300](https://github.com/dandi/dandi-schema/pull/300) ([@yarikoptic](https://github.com/yarikoptic))
+- Avoid multiple assignments of constant `ALLOWED_INPUT_SCHEMAS` [#280](https://github.com/dandi/dandi-schema/pull/280) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 3
+
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- Kabilar Gunalan ([@kabilar](https://github.com/kabilar))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
+# 0.11.0 (Tue Jan 07 2025)
+
+#### 🚀 Enhancement
+
+- Upgrade to datacite v4.5 serialization from inveniosoftware [#261](https://github.com/dandi/dandi-schema/pull/261) ([@yarikoptic](https://github.com/yarikoptic))
+- Add "version" to datacite record and bundle datacite json serializations [#260](https://github.com/dandi/dandi-schema/pull/260) ([@yarikoptic](https://github.com/yarikoptic))
+- Drop Python 3.8 support (remove typing_extensions from depends) [#262](https://github.com/dandi/dandi-schema/pull/262) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🐛 Bug Fix
+
+- Use `title` in place of `examples` [#271](https://github.com/dandi/dandi-schema/pull/271) ([@waxlamp](https://github.com/waxlamp) [@satra](https://github.com/satra) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- RF: detect BIDS based on having dataset_description.json [#263](https://github.com/dandi/dandi-schema/pull/263) ([@yarikoptic](https://github.com/yarikoptic))
+- Add support for detection and addition of ome/ngff "standard" into assets summary [#252](https://github.com/dandi/dandi-schema/pull/252) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🏠 Internal
+
+- [gh-actions](deps): Bump codecov/codecov-action from 4 to 5 [#267](https://github.com/dandi/dandi-schema/pull/267) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- [pre-commit.ci] pre-commit autoupdate (black 24.8.0 → 24.10.0; pre-commit-hooks: v4.6.0 → v5.0.0) [#253](https://github.com/dandi/dandi-schema/pull/253) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 📝 Documentation
+
+- doc: A comment on current identification of URI and missing space into a description string [#265](https://github.com/dandi/dandi-schema/pull/265) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 5
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Roni Choudhury ([@waxlamp](https://github.com/waxlamp))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
+# 0.10.4 (Thu Sep 05 2024)
+
+#### 🐛 Bug Fix
+
+- Properly handle failed requests to retrieve the schema [#251](https://github.com/dandi/dandi-schema/pull/251) ([@danlamanna](https://github.com/danlamanna))
+- ENH: adopt sanitize_value from dandi-cli and use for sanitization of identifier [#175](https://github.com/dandi/dandi-schema/pull/175) ([@yarikoptic](https://github.com/yarikoptic))
+- [pre-commit.ci] pre-commit autoupdate [#243](https://github.com/dandi/dandi-schema/pull/243) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🔩 Dependency Updates
+
+- Declare `typing_extensions` dependency [#248](https://github.com/dandi/dandi-schema/pull/248) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 4
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Dan LaManna ([@danlamanna](https://github.com/danlamanna))
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
+# 0.10.3 (Mon Aug 12 2024)
+
+#### 🐛 Bug Fix
+
+- Move pattern specification for `BaseType.identifier` to the annotation for the `str` type [#247](https://github.com/dandi/dandi-schema/pull/247) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 1
+
+- Isaac To ([@candleindark](https://github.com/candleindark))
+
+---
+
+# 0.10.2 (Wed Jul 10 2024)
+
+#### 🐛 Bug Fix
+
+- Use discriminated unions to provide more helpful error messages [#245](https://github.com/dandi/dandi-schema/pull/245) ([@mvandenburgh](https://github.com/mvandenburgh))
+- Set the `$schema` key with the schema dialect [#236](https://github.com/dandi/dandi-schema/pull/236) ([@candleindark](https://github.com/candleindark))
+- Add validator to ensure a contact person has email provided [#235](https://github.com/dandi/dandi-schema/pull/235) ([@candleindark](https://github.com/candleindark))
+
+#### 🏠 Internal
+
+- [pre-commit.ci] pre-commit autoupdate [#241](https://github.com/dandi/dandi-schema/pull/241) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#237](https://github.com/dandi/dandi-schema/pull/237) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#234](https://github.com/dandi/dandi-schema/pull/234) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🧪 Tests
+
+- GitHub tests.yml CI: explicitly specify macos-12 and use python 3.11 to test against dandi-cli [#238](https://github.com/dandi/dandi-schema/pull/238) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### Authors: 4
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- Mike VanDenburgh ([@mvandenburgh](https://github.com/mvandenburgh))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
+# 0.10.1 (Mon Mar 18 2024)
+
+#### 🐛 Bug Fix
+
+- Update auto version number [#233](https://github.com/dandi/dandi-schema/pull/233) ([@satra](https://github.com/satra))
+- Add ResourceType enum and associate with Resource model [#232](https://github.com/dandi/dandi-schema/pull/232) ([@bendichter](https://github.com/bendichter) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#229](https://github.com/dandi/dandi-schema/pull/229) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### Authors: 3
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Ben Dichter ([@bendichter](https://github.com/bendichter))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
+---
+
+# 0.10.0 (Mon Feb 12 2024)
+
+#### 🚀 Enhancement
+
+- Remove Zarr checksum code [#217](https://github.com/dandi/dandi-schema/pull/217) ([@jwodder](https://github.com/jwodder))
+
+#### 🐛 Bug Fix
+
+- [pre-commit.ci] pre-commit autoupdate [#219](https://github.com/dandi/dandi-schema/pull/219) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### 🏠 Internal
+
+- [gh-actions](deps): Bump codecov/codecov-action from 3 to 4 [#222](https://github.com/dandi/dandi-schema/pull/222) ([@dependabot[bot]](https://github.com/dependabot[bot]) [@jwodder](https://github.com/jwodder))
+
+#### 🧪 Tests
+
+- Move `TempKlass`es outside of test functions [#224](https://github.com/dandi/dandi-schema/pull/224) ([@jwodder](https://github.com/jwodder))
+
+#### Authors: 3
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- John T. Wodder II ([@jwodder](https://github.com/jwodder))
+
+---
+
 # 0.9.1 (Tue Jan 30 2024)
 
 #### 🐛 Bug Fix

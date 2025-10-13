@@ -1,8 +1,21 @@
+from __future__ import annotations
+
 from datetime import date, datetime
 from enum import Enum
 import os
 import re
-from typing import Any, Dict, List, Literal, Optional, Sequence, Type, TypeVar, Union
+from typing import (
+    Annotated,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+)
 from warnings import warn
 
 from pydantic import (
@@ -13,6 +26,7 @@ from pydantic import (
     EmailStr,
     Field,
     GetJsonSchemaHandler,
+    StringConstraints,
     TypeAdapter,
     ValidationInfo,
     field_validator,
@@ -20,10 +34,10 @@ from pydantic import (
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
+from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
 from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
-from .digests.zarr import ZARR_CHECKSUM_PATTERN, parse_directory_digest
 from .types import ByteSizeJsonSchema
 from .utils import name2title
 
@@ -336,6 +350,130 @@ class RoleType(Enum):
     Other = "dcite:Other"
 
 
+class ResourceType(Enum):
+    """An enumeration of resource types"""
+
+    #: Audiovisual: A series of visual representations imparting an impression of motion
+    # when shown in succession. May or may not include sound.
+    Audiovisual = "dcite:Audiovisual"
+
+    #: Book: A medium for recording information in the form of writing or images,
+    # typically composed of many pages bound together and protected by a cover.
+    Book = "dcite:Book"
+
+    #: BookChapter: One of the main divisions of a book.
+    BookChapter = "dcite:BookChapter"
+
+    #: Collection: An aggregation of resources, which may encompass collections of one
+    # resourceType as well as those of mixed types. A collection is described as a
+    # group; its parts may also be separately described.
+    Collection = "dcite:Collection"
+
+    #: ComputationalNotebook: A virtual notebook environment used for literate
+    # programming.
+    ComputationalNotebook = "dcite:ComputationalNotebook"
+
+    #: ConferencePaper: Article that is written with the goal of being accepted to a
+    # conference.
+    ConferencePaper = "dcite:ConferencePaper"
+
+    #: ConferenceProceeding: Collection of academic papers published in the context of
+    # an academic conference.
+    ConferenceProceeding = "dcite:ConferenceProceeding"
+
+    #: DataPaper: A factual and objective publication with a focused intent to identify
+    # and describe specific data, sets of data, or data collections to facilitate
+    # discoverability.
+    DataPaper = "dcite:DataPaper"
+
+    #: Dataset: Data encoded in a defined structure.
+    Dataset = "dcite:Dataset"
+
+    #: Dissertation: A written essay, treatise, or thesis, especially one written by a
+    # candidate for the degree of Doctor of Philosophy.
+    Dissertation = "dcite:Dissertation"
+
+    #: Event: A non-persistent, time-based occurrence.
+    Event = "dcite:Event"
+
+    #: Image: A visual representation other than text.
+    Image = "dcite:Image"
+
+    #: Instrument: A device, tool or apparatus used to obtain, measure and/or analyze
+    # data.
+    Instrument = "dcite:Instrument"
+
+    #: InteractiveResource: A resource requiring interaction from the user to be
+    # understood, executed, or experienced.
+    InteractiveResource = "dcite:InteractiveResource"
+
+    #: Journal: A scholarly publication consisting of articles that is published
+    # regularly throughout the year.
+    Journal = "dcite:Journal"
+
+    #: JournalArticle: A written composition on a topic of interest, which forms a
+    # separate part of a journal.
+    JournalArticle = "dcite:JournalArticle"
+
+    #: Model: An abstract, conceptual, graphical, mathematical or visualization model
+    # that represents empirical objects, phenomena, or physical processes.
+    Model = "dcite:Model"
+
+    #: OutputManagementPlan: A formal document that outlines how research outputs are to
+    # be handled both during a research project and after the project is completed.
+    OutputManagementPlan = "dcite:OutputManagementPlan"
+
+    #: PeerReview: Evaluation of scientific, academic, or professional work by others
+    # working in the same field.
+    PeerReview = "dcite:PeerReview"
+
+    #: PhysicalObject: A physical object or substance.
+    PhysicalObject = "dcite:PhysicalObject"
+
+    #: Preprint: A version of a scholarly or scientific paper that precedes formal peer
+    # review and publication in a peer-reviewed scholarly or scientific journal.
+    Preprint = "dcite:Preprint"
+
+    #: Report: A document that presents information in an organized format for a
+    # specific audience and purpose.
+    Report = "dcite:Report"
+
+    #: Service: An organized system of apparatus, appliances, staff, etc., for supplying
+    # some function(s) required by end users.
+    Service = "dcite:Service"
+
+    #: Software: A computer program other than a computational notebook, in either
+    # source code (text) or compiled form. Use this type for general software components
+    # supporting scholarly research. Use the “ComputationalNotebook” value for virtual
+    # notebooks.
+    Software = "dcite:Software"
+
+    #: Sound: A resource primarily intended to be heard.
+    Sound = "dcite:Sound"
+
+    #: Standard: Something established by authority, custom, or general consent as a
+    # model, example, or point of reference.
+    Standard = "dcite:Standard"
+
+    #: StudyRegistration: A detailed, time-stamped description of a research plan, often
+    # openly shared in a registry or published in a journal before the study is
+    # conducted to lend accountability and transparency in the hypothesis generating and
+    # testing process.
+    StudyRegistration = "dcite:StudyRegistration"
+
+    #: Text: A resource consisting primarily of words for reading that is not covered by
+    # any other textual resource type in this list.
+    Text = "dcite:Text"
+
+    #: Workflow: A structured series of steps which can be executed to produce a final
+    # outcome, allowing users a means to specify and enact their work in a more
+    # reproducible manner.
+    Workflow = "dcite:Workflow"
+
+    #: Other: A resource that does not fit into any of the other categories.
+    Other = "dcite:Other"
+
+
 class AgeReferenceType(Enum):
     """An enumeration of age reference"""
 
@@ -429,6 +567,7 @@ class DandiBaseModel(BaseModel):
             if value.get("title") is None or value["title"] == prop.title():
                 value["title"] = name2title(prop)
             if re.match("\\^https?://", value.get("pattern", "")):
+                # triggers only for ROR in identifier
                 value["format"] = "uri"
             if value.get("format", None) == "uri":
                 value["maxLength"] = 1000
@@ -485,7 +624,7 @@ class PropertyValue(DandiBaseModel):
     )  # Note: recursive (circular or not)
     propertyID: Optional[Union[IdentifierType, AnyHttpUrl]] = Field(
         None,
-        description="A commonly used identifier for"
+        description="A commonly used identifier for "
         "the characteristic represented by the property. "
         "For example, a known prefix like DOI or a full URL.",
         json_schema_extra={"nskey": "schema"},
@@ -523,11 +662,20 @@ RRID = str
 class BaseType(DandiBaseModel):
     """Base class for enumerated types"""
 
-    identifier: Optional[Union[AnyHttpUrl, str]] = Field(
+    identifier: Optional[
+        Annotated[
+            Union[
+                AnyHttpUrl,
+                Annotated[
+                    str, StringConstraints(pattern=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$")
+                ],
+            ],
+            Field(union_mode="left_to_right"),
+        ]
+    ] = Field(
         None,
         description="The identifier can be any url or a compact URI, preferably"
         " supported by identifiers.org.",
-        pattern=r"^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$",
         json_schema_extra={"nskey": "schema"},
     )
     name: Optional[str] = Field(
@@ -668,6 +816,11 @@ bids_standard = StandardsType(
     identifier="RRID:SCR_016124",
 ).model_dump(mode="json", exclude_none=True)
 
+ome_ngff_standard = StandardsType(
+    name="OME/NGFF Standard",
+    identifier="DOI:10.25504/FAIRsharing.9af712",
+).model_dump(mode="json", exclude_none=True)
+
 
 class ContactPoint(DandiBaseModel):
     email: Optional[EmailStr] = Field(
@@ -720,6 +873,16 @@ class Contributor(DandiBaseModel):
     schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
         "Contributor", validate_default=True, json_schema_extra={"readOnly": True}
     )
+
+    @model_validator(mode="after")
+    def ensure_contact_person_has_email(self) -> Contributor:
+        role_names = self.roleName
+
+        if role_names is not None and RoleType.ContactPerson in role_names:
+            if self.email is None:
+                raise ValueError("Contact person must have an email address.")
+
+        return self
 
 
 class Organization(Contributor):
@@ -783,10 +946,10 @@ class Person(Contributor):
         json_schema_extra={"nskey": "schema"},
     )
     name: str = Field(
+        title="Use Last, First. Example: Lovelace, Augusta Ada",
         description="Use the format: familyname, given names ...",
         pattern=NAME_PATTERN,
         json_schema_extra={"nskey": "schema"},
-        examples=["Lovelace, Augusta Ada", "Smith, John", "Chan, Kong-sang"],
     )
     affiliation: Optional[List[Affiliation]] = Field(
         None,
@@ -803,7 +966,7 @@ class Person(Contributor):
 class Software(DandiBaseModel):
     identifier: Optional[RRID] = Field(
         None,
-        pattern=r"^RRID\:.*",
+        pattern=r"^RRID:.*",
         title="Research resource identifier",
         description="RRID of the software from scicrunch.org.",
         json_schema_extra={"nskey": "schema"},
@@ -888,6 +1051,13 @@ class Resource(DandiBaseModel):
         "This relation should satisfy: dandiset <relation> resource.",
         json_schema_extra={"nskey": "dandi"},
     )
+    resourceType: Optional[ResourceType] = Field(
+        default=None,
+        title="Resource type",
+        description="The type of resource.",
+        json_schema_extra={"nskey": "dandi"},
+    )
+
     schemaKey: Literal["Resource"] = Field(
         "Resource", validate_default=True, json_schema_extra={"readOnly": True}
     )
@@ -1046,7 +1216,12 @@ class Activity(DandiBaseModel):
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     wasAssociatedWith: Optional[
-        List[Union[Person, Organization, Software, Agent]]
+        List[
+            Annotated[
+                Union[Person, Organization, Software, Agent],
+                Field(discriminator="schemaKey"),
+            ]
+        ]
     ] = Field(None, json_schema_extra={"nskey": "prov"})
     used: Optional[List[Equipment]] = Field(
         None,
@@ -1324,13 +1499,21 @@ class CommonModel(DandiBaseModel):
         description="A description of the item.",
         json_schema_extra={"nskey": "schema"},
     )
-    contributor: Optional[List[Union[Person, Organization]]] = Field(
+    contributor: Optional[
+        List[Annotated[Union[Person, Organization], Field(discriminator="schemaKey")]]
+    ] = Field(
         None,
         title="Contributors",
         description="Contributors to this item: persons or organizations.",
         json_schema_extra={"nskey": "schema"},
     )
-    about: Optional[List[Union[Disorder, Anatomy, GenericType]]] = Field(
+    about: Optional[
+        List[
+            Annotated[
+                Union[Disorder, Anatomy, GenericType], Field(discriminator="schemaKey")
+            ]
+        ]
+    ] = Field(
         None,
         title="Subject matter of the dataset",
         description="The subject matter of the content, such as disorders, brain anatomy.",
@@ -1382,9 +1565,11 @@ class CommonModel(DandiBaseModel):
     repository: Optional[AnyHttpUrl] = Field(
         # mypy doesn't like using a string as the default for an AnyHttpUrl
         # attribute, so we have to convert it to an AnyHttpUrl:
-        TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
-        if DANDI_INSTANCE_URL is not None
-        else None,
+        (
+            TypeAdapter(AnyHttpUrl).validate_python(DANDI_INSTANCE_URL)
+            if DANDI_INSTANCE_URL is not None
+            else None
+        ),
         description="location of the item",
         json_schema_extra={"nskey": "dandi", "readOnly": True},
     )
@@ -1427,7 +1612,7 @@ class Dandiset(CommonModel):
     identifier: DANDI = Field(
         title="Dandiset identifier",
         description="A Dandiset identifier that can be resolved by identifiers.org.",
-        pattern=r"^DANDI\:\d{6}$",
+        pattern=r"^DANDI:\d{6}$",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
     name: str = Field(
@@ -1438,10 +1623,12 @@ class Dandiset(CommonModel):
     )
     description: str = Field(
         description="A description of the Dandiset",
-        max_length=3000,
+        max_length=10000,
         json_schema_extra={"nskey": "schema"},
     )
-    contributor: List[Union[Person, Organization]] = Field(
+    contributor: List[
+        Annotated[Union[Person, Organization], Field(discriminator="schemaKey")]
+    ] = Field(
         title="Dandiset contributors",
         description="People or Organizations that have contributed to this Dandiset.",
         json_schema_extra={"nskey": "schema"},
@@ -1590,12 +1777,14 @@ class BareAsset(CommonModel):
             if v.get(DigestType.dandi_etag):
                 raise ValueError("Digest cannot have both etag and zarr checksums.")
             digest = v[DigestType.dandi_zarr_checksum]
-            if not re.fullmatch(ZARR_CHECKSUM_PATTERN, digest):
+            try:
+                chksum = ZarrDirectoryDigest.parse(digest)
+            except InvalidZarrChecksum:
                 raise ValueError(
-                    f"Digest must have an appropriate dandi-zarr-checksum value. "
-                    f"Got {digest}"
+                    "Digest must have an appropriate dandi-zarr-checksum value."
+                    f"  Got {digest}"
                 )
-            _checksum, _file_count, zarr_size = parse_directory_digest(digest)
+            zarr_size = chksum.size
             content_size = values.get("contentSize")
             if content_size != zarr_size:
                 raise ValueError(

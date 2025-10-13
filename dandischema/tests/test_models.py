@@ -7,7 +7,7 @@ import pydantic
 from pydantic import Field, ValidationError
 import pytest
 
-from .test_datacite import _basic_publishmeta
+from .utils import _basic_publishmeta
 from .. import models
 from ..models import (
     DANDI_INSTANCE_URL_PATTERN,
@@ -18,6 +18,7 @@ from ..models import (
     Asset,
     BaseType,
     CommonModel,
+    Contributor,
     DandiBaseModel,
     Dandiset,
     DigestType,
@@ -378,7 +379,9 @@ def test_dantimeta_1() -> None:
         "contributor": [
             {
                 "name": "last name, first name",
+                "email": "someone@dandiarchive.org",
                 "roleName": [RoleType("dcite:ContactPerson")],
+                "schemaKey": "Person",
             }
         ],
         "license": [LicenseType("spdx:CC-BY-4.0")],
@@ -575,13 +578,14 @@ def test_properties_mismatch() -> None:
     assert errors == []
 
 
-def test_schemakey_roundtrip() -> None:
-    class TempKlass(DandiBaseModel):
-        contributor: Optional[List[Union[Organization, Person]]] = None
-        schemaKey: Literal["TempKlass"] = Field(
-            "TempKlass", validate_default=True, json_schema_extra={"readOnly": True}
-        )
+class TempKlass1(DandiBaseModel):
+    contributor: Optional[List[Union[Organization, Person]]] = None
+    schemaKey: Literal["TempKlass1"] = Field(
+        "TempKlass1", validate_default=True, json_schema_extra={"readOnly": True}
+    )
 
+
+def test_schemakey_roundtrip() -> None:
     contributor = [
         {
             "name": "first",
@@ -592,6 +596,7 @@ def test_schemakey_roundtrip() -> None:
         },
         {
             "name": "last2, first2",
+            "email": "nospam@dandiarchive.org",
             "roleName": ["dcite:ContactPerson"],
             "schemaKey": "Person",
             "affiliation": [],
@@ -599,25 +604,26 @@ def test_schemakey_roundtrip() -> None:
         },
     ]
     with pytest.raises(pydantic.ValidationError):
-        TempKlass(contributor=contributor)
+        TempKlass1(contributor=contributor)
     contributor[0]["name"] = ", "
     with pytest.raises(pydantic.ValidationError):
-        TempKlass(contributor=contributor)
+        TempKlass1(contributor=contributor)
     contributor[0]["name"] = "last, first"
-    klassobj = TempKlass(contributor=contributor)
+    klassobj = TempKlass1(contributor=contributor)
     assert klassobj.contributor is not None and all(
         [isinstance(val, Person) for val in klassobj.contributor]
     )
 
 
+class TempKlass2(DandiBaseModel):
+    contributor: Person
+    schemaKey: Literal["TempKlass2"] = Field(
+        "TempKlass2", validate_default=True, json_schema_extra={"readOnly": True}
+    )
+
+
 @pytest.mark.parametrize("name", ["Mitášová, Helena", "O'Brien, Claire"])
 def test_name_regex(name: str) -> None:
-    class TempKlass(DandiBaseModel):
-        contributor: Person
-        schemaKey: Literal["TempKlass"] = Field(
-            "TempKlass", validate_default=True, json_schema_extra={"readOnly": True}
-        )
-
     contributor = {
         "name": name,
         "roleName": [],
@@ -625,7 +631,7 @@ def test_name_regex(name: str) -> None:
         "affiliation": [],
         "includeInCitation": True,
     }
-    TempKlass(contributor=contributor)
+    TempKlass2(contributor=contributor)
 
 
 def test_resource() -> None:
@@ -688,3 +694,43 @@ def test_embargoedaccess() -> None:
             )
         ]
     )
+
+
+_NON_CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
+    [],
+    [RoleType.Author, RoleType.DataCurator],
+    [RoleType.Funder],
+]
+
+_CONTACT_PERSON_ROLES_ARGS: List[List[RoleType]] = [
+    role_lst + [RoleType.ContactPerson] for role_lst in _NON_CONTACT_PERSON_ROLES_ARGS
+]
+
+
+class TestContributor:
+
+    @pytest.mark.parametrize("roles", _CONTACT_PERSON_ROLES_ARGS)
+    def test_contact_person_without_email(self, roles: List[RoleType]) -> None:
+        """
+        Test creating a `Contributor` instance as a contact person without an email
+        """
+        with pytest.raises(
+            pydantic.ValidationError, match="Contact person must have an email address"
+        ):
+            Contributor(roleName=roles)
+
+    @pytest.mark.parametrize("roles", _NON_CONTACT_PERSON_ROLES_ARGS)
+    def test_non_contact_person_without_email(self, roles: List[RoleType]) -> None:
+        """
+        Test creating a `Contributor` instance as a non-contact person without an email
+        """
+        Contributor(roleName=roles)
+
+    @pytest.mark.parametrize(
+        "roles", _NON_CONTACT_PERSON_ROLES_ARGS + _CONTACT_PERSON_ROLES_ARGS
+    )
+    def test_with_email(self, roles: List[RoleType]) -> None:
+        """
+        Test creating a `Contributor` instance with an email
+        """
+        Contributor(email="nemo@dandiarchive.org", roleName=roles)

@@ -1,16 +1,26 @@
+from contextlib import nullcontext
 from hashlib import md5, sha256
 import json
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence, Set
+from unittest.mock import MagicMock, patch
 
+from jsonschema.protocols import Validator as JsonschemaValidator
+from pydantic import BaseModel
 import pytest
+
+from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandiset
+from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validator
 
 from .utils import skipif_no_network
 from ..consts import DANDI_SCHEMA_VERSION
 from ..exceptions import JsonschemaValidationError, PydanticValidationError
 from ..metadata import (
+    _get_jsonschema_validator,
+    _get_jsonschema_validator_local,
     _validate_asset_json,
     _validate_dandiset_json,
+    _validate_obj_json,
     aggregate_assets_summary,
     migrate,
     publish_model_schemata,
@@ -156,6 +166,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
                     {
                         "schemaKey": "Person",
                         "name": "Last, first",
+                        "email": "nobody@example.com",
                         "roleName": ["dcite:ContactPerson"],
                     }
                 ],
@@ -339,17 +350,62 @@ def test_missing_ok_error() -> None:
 
 
 @pytest.mark.parametrize(
-    "obj, target",
+    "obj, target, msg",
     [
-        ({}, "0.6.0"),
-        ({"schemaVersion": "0.4.4"}, None),
-        ({"schemaVersion": "0.4.4"}, "0.4.6"),
-        ({"schemaVersion": "0.6.0"}, "0.5.2"),
+        ({}, "0.6.0", "does not have a `schemaVersion` field"),
+        # Non-string `schemaVersion` field in the instance
+        ({"schemaVersion": 42}, DANDI_SCHEMA_VERSION, "has a non-string"),
+        # `schemaVersion` field in the instance with invalid format
+        (
+            {"schemaVersion": "abc"},
+            DANDI_SCHEMA_VERSION,
+            "has an invalid `schemaVersion` field",
+        ),
+        # `schemaVersion` field in the instance is not an allowed input schema
+        (
+            {"schemaVersion": "0.4.5"},
+            DANDI_SCHEMA_VERSION,
+            "is not one of the supported versions "
+            "for input Dandiset metadata instances",
+        ),
+        # target schema with invalid format
+        (
+            {"schemaVersion": "0.4.4"},
+            "cba",
+            "target version.* is not a valid DANDI schema version",
+        ),
+        # target schema is not an allowed target schema
+        (
+            {"schemaVersion": "0.4.4"},
+            "0.4.5",
+            "Target version, .*, is not among supported target schemas",
+        ),
     ],
 )
-def test_migrate_errors(obj: Dict[str, Any], target: Optional[str]) -> None:
-    with pytest.raises(ValueError):
+def test_migrate_value_errors(obj: Dict[str, Any], target: Any, msg: str) -> None:
+    """
+    Test cases when `migrate()` is expected to raise a `ValueError` exception
+
+    :param obj: The metadata instance of `Dandiset` to migrate
+    :param target: The target DANDI schema version to migrate to
+    :param msg: The expected error message with in the raised exception
+    """
+    with pytest.raises(ValueError, match=msg):
         migrate(obj, to_version=target, skip_validation=True)
+
+
+def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    Test cases when `migrate()` is expected to raise a `ValueError` exception
+    when the target schema version is lesser than the schema version of the metadata
+    instance
+    """
+    from dandischema import metadata
+
+    monkeypatch.setattr(metadata, "ALLOWED_TARGET_SCHEMAS", ["0.6.0"])
+
+    with pytest.raises(ValueError, match="Cannot migrate from .* to lower"):
+        migrate({"schemaVersion": "0.6.7"}, to_version="0.6.0", skip_validation=True)
 
 
 @skipif_no_network
@@ -373,7 +429,14 @@ def test_migrate_044(schema_dir: Path) -> None:
     ]
 
     # if already the target version - we do not change it, and do not crash
-    newmeta_2 = migrate(newmeta, to_version=DANDI_SCHEMA_VERSION)
+    newmeta_2 = migrate(
+        newmeta,
+        to_version=DANDI_SCHEMA_VERSION,
+        # to avoid possible crash due to attempt to download not yet
+        # released schema if we are still working within yet to be
+        # released version of the schema
+        skip_validation=True,
+    )
     assert newmeta_2 == newmeta
     assert newmeta_2 is not newmeta  # but we do create a copy
 
@@ -541,13 +604,11 @@ def test_aggregation_bids() -> None:
         {
             "id": "dandiasset:6668d37f-e842-4b73-8c20-082a1dd0d31a",
             "path": "sub-MITU01/ses-20210703h01m05s04/microscopy/sub-MITU01_"
-            "run-1_sample-163_stain-YO_chunk-5_spim.h5",
+            "run-1_sample-163_stain-YO_chunk-5_spim.ome.zarr",
             "access": [
                 {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
             ],
             "digest": {
-                "dandi:sha2-256": "a91db138c2842c9d3f5bbe30497065c6293dcab0b77"
-                "f774a917ab09fb1fd8eef",
                 "dandi:dandi-etag": "7e002a08bef16abb5954d1c2a3fce0a2-574",
             },
             "@context": "https://raw.githubusercontent.com/dandi/schema/master/"
@@ -556,44 +617,23 @@ def test_aggregation_bids() -> None:
             "contentUrl": [
                 "https://api.dandiarchive.org/api/assets/6668d37f-e842-4b73-8c20"
                 "-082a1dd0d31a/download/",
-                "https://dandiarchive.s3.amazonaws.com/blobs/ace/16c/ace16cf2"
-                "-3eaf-4d64-9e3b-5c6a981cb8ec",
             ],
             "identifier": "6668d37f-e842-4b73-8c20-082a1dd0d31a",
             "repository": "https://dandiarchive.org/",
             "contentSize": 38474544973,
             "dateModified": "2021-07-22T23:59:16.060551-04:00",
             "schemaVersion": "0.4.4",
-            "encodingFormat": "application/x-hdf5",
-            "wasGeneratedBy": [
-                {
-                    "id": "urn:uuid:aef77d59-7a7f-4320-9d4b-9b03f3e25e54",
-                    "name": "Metadata generation",
-                    "schemaKey": "Activity",
-                    "description": "Metadata generated by DANDI cli",
-                    "wasAssociatedWith": [
-                        {
-                            "url": "https://github.com/dandi/dandi-cli",
-                            "name": "DANDI Command Line Interface",
-                            "version": "0.23.2",
-                            "schemaKey": "Software",
-                            "identifier": "RRID:SCR_019009",
-                        }
-                    ],
-                }
-            ],
+            "encodingFormat": "application/x-zarr",
             "blobDateModified": "2021-07-11T16:34:31-04:00",
         },
         {
             "id": "dandiasset:84dd580f-8d4a-43f8-bda3-6fb53fb5d3a2",
             "path": "sub-MITU01/ses-20210703h16m32s10/microscopy/sub-MITU01_"
-            "ses-20210703h16m32s10_run-1_sample-162_stain-LEC_chunk-5_spim.h5",
+            "ses-20210703h16m32s10_run-1_sample-162_stain-LEC_chunk-5_spim.ome.zarr",
             "access": [
                 {"status": "dandi:OpenAccess", "schemaKey": "AccessRequirements"}
             ],
             "digest": {
-                "dandi:sha2-256": "3d89ba29211c55c5a299f24ab64ac7d93750c8f7614"
-                "b360bf9a58266031b3752",
                 "dandi:dandi-etag": "954aab90c420c621cc70d17e74a65116-921",
             },
             "@context": "https://raw.githubusercontent.com/dandi/schema/master/"
@@ -602,34 +642,324 @@ def test_aggregation_bids() -> None:
             "contentUrl": [
                 "https://api.dandiarchive.org/api/assets/84dd580f-8d4a-43f8-bda3"
                 "-6fb53fb5d3a2/download/",
-                "https://dandiarchive.s3.amazonaws.com/blobs/3e4/c7f/3e4c7f03"
-                "-4280-426d-9cba-3b53d616a44c",
             ],
             "identifier": "84dd580f-8d4a-43f8-bda3-6fb53fb5d3a2",
             "repository": "https://dandiarchive.org/",
             "contentSize": 61774316916,
             "dateModified": "2021-10-01T18:28:16.038990-04:00",
             "schemaVersion": "0.6.0",
-            "encodingFormat": "application/x-hdf5",
-            "wasGeneratedBy": [
-                {
-                    "id": "urn:uuid:8f69a248-0e6a-4fa1-8369-ae1cc63d59d8",
-                    "name": "Metadata generation",
-                    "schemaKey": "Activity",
-                    "description": "Metadata generated by DANDI cli",
-                    "wasAssociatedWith": [
-                        {
-                            "url": "https://github.com/dandi/dandi-cli",
-                            "name": "DANDI Command Line Interface",
-                            "version": "0.27.3",
-                            "schemaKey": "Software",
-                            "identifier": "RRID:SCR_019009",
-                        }
-                    ],
-                }
-            ],
+            "encodingFormat": "application/x-zarr",
             "blobDateModified": "2021-07-10T18:58:25-04:00",
+        },
+        {
+            "@context": "https://raw.githubusercontent.com/dandi/shortened",
+            "schemaKey": "Asset",
+            "repository": "https://dandiarchive.org/",
+            "dateModified": "2021-10-05T13:08:07.855880-04:00",
+            "schemaVersion": "0.6.0",
+            "encodingFormat": "application/json",
+            "blobDateModified": "2021-10-04T15:58:52.266222-04:00",
+            "id": "dandiasset:34e30fa6-cf6a-4a32-90cb-b06f6f2f30a6",
+            "access": [
+                {"schemaKey": "AccessRequirements", "status": "dandi:OpenAccess"}
+            ],
+            "path": "dataset_description.json",
+            "identifier": "34e30fa6-cf6a-4a32-90cb-b06f6f2f30a6",
+            "contentUrl": [
+                "https://api.dandiarchive.org/api/assets/shortened",
+            ],
+            "contentSize": 3377,
+            "digest": {
+                "dandi:dandi-etag": "88c82d75b1119393b9ee49adc14714f3-1",
+            },
         },
     ]
     summary = aggregate_assets_summary(data)
+    assert summary["numberOfFiles"] == 3
     assert summary["numberOfSamples"] == 2
+    assert summary["numberOfSubjects"] == 1
+    assert sum("BIDS" in _.get("name", "") for _ in summary["dataStandard"]) == 1
+    assert (
+        sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
+        == 1
+    )  # only a single entry so we do not duplicate them
+
+
+class TestValidateObjJson:
+    """
+    Tests for `_validate_obj_json()`
+    """
+
+    @pytest.fixture
+    def dummy_jvalidator(self) -> JsonschemaValidator:
+        """Returns a dummy jsonschema validator initialized with a dummy schema."""
+        return jsonschema_validator(
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "required": ["name"],
+            },
+            check_format=True,
+        )
+
+    @pytest.fixture
+    def dummy_instance(self) -> dict:
+        """Returns a dummy instance"""
+        return {"name": "Example"}
+
+    def test_valid_obj_no_errors(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_jvalidator: JsonschemaValidator,
+        dummy_instance: dict,
+    ) -> None:
+        """
+        Test that `_validate_obj_json` does not raise when `validate_json` has no errors
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """Simulate successful validation with no exceptions."""
+            return  # No error raised
+
+        # Patch the validate_json function used inside `_validate_obj_json`
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # `_validate_obj_json` should succeed without raising an exception
+        _validate_obj_json(dummy_instance, dummy_jvalidator)
+
+    def test_raises_error_without_missing_ok(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_jvalidator: JsonschemaValidator,
+        dummy_instance: dict,
+    ) -> None:
+        """
+        Test that `_validate_obj_json` forwards JsonschemaValidationError
+        when `missing_ok=False`.
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """Simulate validation error."""
+            # Create a mock error that says a field is invalid
+            raise JsonschemaValidationError(
+                errors=[MagicMock(message="`name` is a required property")]
+            )
+
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # Since `missing_ok=False`, any error should be re-raised.
+        with pytest.raises(JsonschemaValidationError) as excinfo:
+            _validate_obj_json(dummy_instance, dummy_jvalidator, missing_ok=False)
+        assert "`name` is a required property" == excinfo.value.errors[0].message
+
+    @pytest.mark.parametrize(
+        ("validation_errs", "expect_raises", "expected_remaining_errs_count"),
+        [
+            pytest.param(
+                [
+                    MagicMock(message="`name` is a required property"),
+                    MagicMock(message="`title` is a required property ..."),
+                ],
+                False,
+                None,
+                id="no_remaining_errors",
+            ),
+            pytest.param(
+                [
+                    MagicMock(message="`name` is a required property"),
+                    MagicMock(message="Some other validation error"),
+                ],
+                True,
+                1,
+                id="one_remaining_error",
+            ),
+        ],
+    )
+    def test_raises_only_nonmissing_errors_with_missing_ok(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        dummy_jvalidator: JsonschemaValidator,
+        dummy_instance: dict,
+        validation_errs: list[MagicMock],
+        expect_raises: bool,
+        expected_remaining_errs_count: Optional[int],
+    ) -> None:
+        """
+        Test that `_validate_obj_json` filters out 'is a required property' errors
+        when `missing_ok=True`.
+        """
+
+        def mock_validate_json(_instance: dict, _schema: dict) -> None:
+            """
+            Simulate multiple validation errors, including missing required property.
+            """
+            raise JsonschemaValidationError(
+                errors=validation_errs  # type: ignore[arg-type]
+            )
+
+        from dandischema import metadata
+
+        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
+
+        # If expect_raises is True, we use pytest.raises(ValidationError)
+        # Otherwise, we enter a no-op context
+        ctx = (
+            pytest.raises(JsonschemaValidationError) if expect_raises else nullcontext()
+        )
+
+        with ctx as excinfo:
+            _validate_obj_json(dummy_instance, dummy_jvalidator, missing_ok=True)
+
+        if excinfo is not None:
+            filtered_errors = excinfo.value.errors
+
+            # We expect the "required property" error to be filtered out,
+            # so we should only see the "Some other validation error".
+            assert len(filtered_errors) == expected_remaining_errs_count
+
+
+class TestGetJsonschemaValidator:
+    @pytest.mark.parametrize(
+        "schema_version, schema_key, expected_error_msg",
+        [
+            pytest.param(
+                "0.5.8",
+                "Dandiset",
+                "DANDI schema version 0.5.8 is not allowed",
+                id="invalid-schema-version",
+            ),
+            pytest.param(
+                "0.6.0",
+                "Nonexistent",
+                "Schema key must be one of",
+                id="invalid-schema-key",
+            ),
+        ],
+    )
+    def test_invalid_parameters(
+        self, schema_version: str, schema_key: str, expected_error_msg: str
+    ) -> None:
+        """
+        Test that providing an invalid schema version or key raises ValueError.
+        """
+        # Clear the cache to avoid interference from previous calls
+        _get_jsonschema_validator.cache_clear()
+        with pytest.raises(ValueError, match=expected_error_msg):
+            _get_jsonschema_validator(schema_version, schema_key)
+
+    def test_valid_schema(self) -> None:
+        """
+        Test the valid case:
+          - requests.get() is patched directly using patch("requests.get")
+          - The returned JSON is a valid dict
+          - The resulting validator is produced via dandi_jsonschema_validator
+        """
+        valid_version = "0.6.0"
+        valid_key = "Dandiset"
+        expected_url = (
+            f"https://raw.githubusercontent.com/dandi/schema/master/releases/"
+            f"{valid_version}/dandiset.json"
+        )
+        dummy_validator = MagicMock(spec=JsonschemaValidator)
+        valid_schema = {"type": "object"}
+
+        with patch("requests.get") as mock_get, patch(
+            "dandischema.metadata.dandi_jsonschema_validator",
+            return_value=dummy_validator,
+        ) as mock_validator:
+            mock_response = MagicMock()
+            mock_response.raise_for_status.return_value = None
+            mock_response.json.return_value = valid_schema
+            mock_get.return_value = mock_response
+
+            # Clear the cache to avoid interference from previous calls
+            _get_jsonschema_validator.cache_clear()
+            result = _get_jsonschema_validator(valid_version, valid_key)
+
+            mock_get.assert_called_once_with(expected_url)
+            mock_response.raise_for_status.assert_called_once()
+            mock_response.json.assert_called_once()
+            mock_validator.assert_called_once_with(valid_schema)
+            assert result is dummy_validator
+
+    def test_invalid_json_schema_raises_runtime_error(self) -> None:
+        """
+        Test that if the fetched schema is not a valid JSON object,
+        then _get_jsonschema_validator() raises a RuntimeError.
+        """
+        valid_version = "0.6.0"
+        valid_key = "Dandiset"
+        expected_url = (
+            f"https://raw.githubusercontent.com/dandi/schema/master/releases/"
+            f"{valid_version}/dandiset.json"
+        )
+        # Return a list (instead of a dict) to trigger a ValidationError in json_object_adapter
+        invalid_schema = {4: 2}
+
+        with patch("requests.get") as mock_get:
+            mock_response = MagicMock()
+            mock_response.raise_for_status.return_value = None
+            mock_response.json.return_value = invalid_schema
+            mock_get.return_value = mock_response
+
+            # Clear the cache to avoid interference from previous calls
+            _get_jsonschema_validator.cache_clear()
+            with pytest.raises(RuntimeError, match="not a valid JSON object"):
+                _get_jsonschema_validator(valid_version, valid_key)
+
+            mock_get.assert_called_once_with(expected_url)
+            mock_response.raise_for_status.assert_called_once()
+            mock_response.json.assert_called_once()
+
+
+class TestGetJsonschemaValidatorLocal:
+    @pytest.mark.parametrize(
+        ("schema_key", "pydantic_model"),
+        [
+            pytest.param("Dandiset", Dandiset, id="valid-Dandiset"),
+            pytest.param(
+                "PublishedDandiset", PublishedDandiset, id="valid-PublishedDandiset"
+            ),
+            pytest.param("Asset", Asset, id="valid-Asset"),
+            pytest.param("PublishedAsset", PublishedAsset, id="valid-PublishedAsset"),
+        ],
+    )
+    def test_valid_schema_keys(
+        self, schema_key: str, pydantic_model: type[BaseModel]
+    ) -> None:
+        # Get the expected schema from the corresponding model.
+        expected_schema = pydantic_model.model_json_schema(
+            schema_generator=TransitionalGenerateJsonSchema
+        )
+
+        # Clear the cache to avoid interference from previous calls
+        _get_jsonschema_validator_local.cache_clear()
+
+        # Call the function under test.
+        validator = _get_jsonschema_validator_local(schema_key)
+
+        # Assert that the returned validator has a 'schema' attribute
+        # equal to the expected schema.
+        assert validator.schema == expected_schema, (
+            f"For schema key {schema_key!r}, expected schema:\n{expected_schema}\n"
+            f"but got:\n{validator.schema}"
+        )
+
+    @pytest.mark.parametrize(
+        "invalid_schema_key",
+        [
+            pytest.param("Nonexistent", id="invalid-Nonexistent"),
+            pytest.param("", id="invalid-empty-string"),
+            pytest.param("InvalidKey", id="invalid-Key"),
+        ],
+    )
+    def test_invalid_schema_keys(self, invalid_schema_key: str) -> None:
+        # Clear the cache to avoid interference from previous calls
+        _get_jsonschema_validator_local.cache_clear()
+
+        with pytest.raises(ValueError, match="Schema key must be one of"):
+            _get_jsonschema_validator_local(invalid_schema_key)

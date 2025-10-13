@@ -1,8 +1,23 @@
-from typing import Dict, List, Optional, Union
+from contextlib import nullcontext
+from typing import Any, Dict, List, Optional, Union, cast
+from unittest.mock import patch
 
+from jsonschema.exceptions import SchemaError, ValidationError
+from jsonschema.protocols import Validator as JsonschemaValidator
+from jsonschema.validators import Draft7Validator, Draft202012Validator
 import pytest
 
-from ..utils import _ensure_newline, name2title, strip_top_level_optional, version2tuple
+from dandischema.exceptions import JsonschemaValidationError
+from dandischema.utils import (
+    _ensure_newline,
+    dandi_jsonschema_validator,
+    jsonschema_validator,
+    name2title,
+    sanitize_value,
+    strip_top_level_optional,
+    validate_json,
+    version2tuple,
+)
 
 
 @pytest.mark.parametrize(
@@ -72,3 +87,392 @@ def test_newline() -> None:
 )
 def test_strip_top_level_optional(input_: type, expected_output: type) -> None:
     assert strip_top_level_optional(input_) == expected_output
+
+
+def test_sanitize_value() -> None:
+    # . is not sanitized in extension but elsewhere
+    assert sanitize_value("_.ext", "extension") == "-.ext"
+    assert sanitize_value("_.ext", "unrelated") == "--ext"
+    assert sanitize_value("_.ext") == "--ext"
+    assert sanitize_value("A;B") == "A-B"
+    assert sanitize_value("A\\/B") == "A--B"
+    assert sanitize_value("A\"'B") == "A--B"
+
+
+@pytest.fixture
+def draft7_schema() -> dict:
+    """
+    A minimal valid Draft 7 schema requiring a 'name' property of type 'string'.
+    """
+    return {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {"name": {"type": "string"}},
+        "required": ["name"],
+    }
+
+
+@pytest.fixture
+def draft202012_schema() -> dict:
+    """
+    A minimal valid Draft 2020-12 schema requiring a 'title' property of type 'string'.
+    """
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {"title": {"type": "string"}},
+        "required": ["title"],
+    }
+
+
+@pytest.fixture
+def draft202012_format_schema() -> dict:
+    """
+    Draft 2020-12 schema that includes a 'format' requirement (e.g., 'email').
+    Used to test the 'check_format' parameter.
+    """
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {"email": {"type": "string", "format": "email"}},
+        "required": ["email"],
+    }
+
+
+@pytest.fixture
+def schema_no_dollar_schema() -> dict:
+    """
+    Schema that lacks the '$schema' property altogether.
+    Used to test that 'default_cls' is applied.
+    """
+    return {
+        "type": "object",
+        "properties": {"foo": {"type": "string"}},
+        "required": ["foo"],
+    }
+
+
+class TestJsonschemaValidator:
+    @pytest.mark.parametrize(
+        ("fixture_name", "expected_validator_cls"),
+        [
+            pytest.param(
+                "draft202012_format_schema", Draft202012Validator, id="Draft202012"
+            ),
+            pytest.param("draft7_schema", Draft7Validator, id="Draft7"),
+        ],
+    )
+    @pytest.mark.parametrize("check_format", [True, False])
+    def test_set_by_dollar_schema(
+        self,
+        request: pytest.FixtureRequest,
+        fixture_name: str,
+        expected_validator_cls: type,
+        check_format: bool,
+    ) -> None:
+        """
+        Test that the correct validator class is returned for different '$schema' values
+        """
+        # Dynamically retrieve the appropriate fixture schema based on fixture_name
+        schema = request.getfixturevalue(fixture_name)
+
+        validator = jsonschema_validator(schema, check_format=check_format)
+
+        assert isinstance(validator, expected_validator_cls)
+
+    @pytest.mark.parametrize(
+        ("check_format", "instance", "expect_raises"),
+        [
+            (True, {"email": "test@example.com"}, False),
+            (True, {"email": "not-an-email"}, True),
+            (False, {"email": "not-an-email"}, False),
+        ],
+        ids=[
+            "check_format=True, valid email",
+            "check_format=True, invalid email",
+            "check_format=False, invalid email",
+        ],
+    )
+    def test_check_format_email_scenarios(
+        self,
+        draft202012_format_schema: dict,
+        check_format: bool,
+        instance: dict,
+        expect_raises: bool,
+    ) -> None:
+        """
+        Parametrized test for check_format usage on valid/invalid email addresses under
+        Draft202012Validator.
+        """
+        validator = jsonschema_validator(
+            draft202012_format_schema, check_format=check_format
+        )
+
+        # If expect_raises is True, we use pytest.raises(ValidationError)
+        # Otherwise, we enter a no-op context
+        ctx = pytest.raises(ValidationError) if expect_raises else nullcontext()
+
+        with ctx:
+            validator.validate(instance)  # Should raise or not raise as parametrized
+
+    @pytest.mark.parametrize(
+        ("schema_fixture", "expected_validator_cls"),
+        [
+            # Scenario 1: no $schema => we expect the default_cls=Draft7Validator is used
+            pytest.param("schema_no_dollar_schema", Draft7Validator, id="no-$schema"),
+            # Scenario 2: has $schema => draft 2020-12 overrides the default_cls
+            pytest.param("draft202012_schema", Draft202012Validator, id="with-$schema"),
+        ],
+    )
+    def test_default_cls(
+        self,
+        request: pytest.FixtureRequest,
+        schema_fixture: str,
+        expected_validator_cls: type,
+    ) -> None:
+        """
+        If the schema has no '$schema' property, and we provide a 'default_cls',
+        the returned validator should be an instance of that class.
+
+        If the schema *does* have '$schema', then the default_cls is ignored, and
+        the validator class is inferred from the schema's '$schema' field.
+        """
+        # Dynamically grab whichever fixture is specified by schema_fixture:
+        schema = request.getfixturevalue(schema_fixture)
+
+        # Provide default_cls=Draft7Validator
+        validator = jsonschema_validator(
+            schema,
+            check_format=False,
+            default_cls=cast(type[JsonschemaValidator], Draft7Validator),
+        )
+        assert isinstance(validator, expected_validator_cls)
+
+    def test_invalid_schema_raises_schema_error(self) -> None:
+        """
+        Provide an invalid schema, ensuring that 'SchemaError' is raised.
+        """
+        invalid_schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": 123,  # 'type' must be string/array, so this is invalid
+        }
+        with pytest.raises(SchemaError):
+            jsonschema_validator(invalid_schema, check_format=False)
+
+
+# ---------------------------
+# Example validator fixtures
+# ---------------------------
+@pytest.fixture
+def draft7_validator() -> JsonschemaValidator:
+    """
+    A Draft 7 validator that requires a 'name' (type string).
+    """
+    from jsonschema.validators import Draft7Validator
+
+    schema = {
+        "type": "object",
+        "properties": {"name": {"type": "string"}},
+        "required": ["name"],
+    }
+    return cast(JsonschemaValidator, Draft7Validator(schema))
+
+
+@pytest.fixture
+def draft202012_validator() -> JsonschemaValidator:
+    """
+    A Draft 2020-12 validator that requires a 'title' (type string).
+    """
+    from jsonschema.validators import Draft202012Validator
+
+    schema = {
+        "type": "object",
+        "properties": {"title": {"type": "string"}},
+        "required": ["title"],
+    }
+    return cast(JsonschemaValidator, Draft202012Validator(schema))
+
+
+@pytest.fixture
+def multiple_required_validator() -> JsonschemaValidator:
+    """
+    A Draft 7 validator that requires *two* string properties: 'name' and 'title'.
+    This enables multiple errors in a single validation if both are missing.
+    """
+    from jsonschema.validators import Draft7Validator
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "title": {"type": "string"},
+        },
+        "required": ["name", "title"],
+    }
+    return cast(JsonschemaValidator, Draft7Validator(schema))
+
+
+class TestValidateJson:
+    @pytest.mark.parametrize(
+        "validator_fixture, instance",
+        [
+            pytest.param(
+                "draft7_validator",
+                {"name": "Alice"},
+                id="draft7_valid_instance",
+            ),
+            pytest.param(
+                "draft202012_validator",
+                {"title": "My Title"},
+                id="draft202012_valid_instance",
+            ),
+            pytest.param(
+                "multiple_required_validator",
+                {"name": "Bob", "title": "Something"},
+                id="multiple_required_valid_instance",
+            ),
+        ],
+    )
+    def test_valid_instance(
+        self,
+        request: pytest.FixtureRequest,
+        validator_fixture: str,
+        instance: Dict[str, Any],
+    ) -> None:
+        """
+        Test that a valid instance does not raise any exceptions.
+        """
+        # Load the correct validator using `request.getfixturevalue`
+        validator: JsonschemaValidator = request.getfixturevalue(validator_fixture)
+        validate_json(instance, validator)  # Should not raise
+
+    @pytest.mark.parametrize(
+        "validator_fixture, instance, expected_error_count",
+        [
+            # Single error: missing "name"
+            pytest.param(
+                "draft7_validator",
+                {},
+                1,
+                id="draft7_missing_name",
+            ),
+            # Single error: "name" has wrong type
+            pytest.param(
+                "draft7_validator",
+                {"name": 123},
+                1,
+                id="draft7_wrong_type_name",
+            ),
+            # Single error: missing "title"
+            pytest.param(
+                "draft202012_validator",
+                {},
+                1,
+                id="draft202012_missing_title",
+            ),
+            # Single error: "title" has wrong type
+            pytest.param(
+                "draft202012_validator",
+                {"title": 999},
+                1,
+                id="draft202012_wrong_type_title",
+            ),
+            # Multiple errors: missing both "name" and "title"
+            pytest.param(
+                "multiple_required_validator",
+                {},
+                2,
+                id="multiple_required_missing_both",
+            ),
+            # Another multiple error scenario: 'name' wrong type, 'title' missing
+            pytest.param(
+                "multiple_required_validator",
+                {"name": 123},
+                2,
+                id="multiple_required_wrong_type_and_missing",
+            ),
+        ],
+    )
+    def test_invalid_instance(
+        self,
+        request: pytest.FixtureRequest,
+        validator_fixture: str,
+        instance: Dict[str, Any],
+        expected_error_count: int,
+    ) -> None:
+        """
+        Tests that an invalid instance raises a JsonschemaValidationError.
+        Verifies that the number of validation errors matches `expected_error_count`.
+        """
+        validator: JsonschemaValidator = request.getfixturevalue(validator_fixture)
+
+        with pytest.raises(JsonschemaValidationError) as exc_info:
+            validate_json(instance, validator)
+
+        errs = exc_info.value.errors
+        assert isinstance(errs, list), "Expected a list"
+        assert (
+            len(errs) == expected_error_count
+        ), f"Expected {expected_error_count} error(s), got {len(errs)}"
+        assert all(
+            isinstance(err, ValidationError) for err in errs
+        ), "All errors must be `jsonschema.exceptions.ValidationError`"
+
+
+class TestDandiJsonschemaValidator:
+    @pytest.mark.parametrize(
+        "version, expected_validator_cls",
+        [
+            pytest.param("0.6.5", Draft202012Validator, id="version-0.6.5"),
+            pytest.param("0.7.0", Draft202012Validator, id="version-0.7.0"),
+            pytest.param("0.6.0", Draft7Validator, id="version-0.6.0"),
+        ],
+    )
+    def test_dandi_jsonschema_validator_versions(
+        self, version: str, expected_validator_cls: JsonschemaValidator
+    ) -> None:
+        """
+        Test that dandi_jsonschema_validator() selects the correct default validator
+        class based on the version specified in the schema's "schemaVersion" default.
+        """
+        schema = {"properties": {"schemaVersion": {"default": version}}}
+        # Patch jsonschema_validator so we can intercept the call and
+        # verify the parameters.
+        with patch(
+            "dandischema.utils.jsonschema_validator", autospec=True
+        ) as mock_validator:
+            mock_validator.return_value = "dummy_validator_result"
+            result = cast(str, dandi_jsonschema_validator(schema))
+            # Verify that the dummy return value is propagated.
+            assert result == "dummy_validator_result"
+            # Assert that jsonschema_validator was called with the expected parameters.
+            mock_validator.assert_called_once_with(
+                schema,
+                check_format=True,
+                default_cls=expected_validator_cls,
+            )
+
+    @pytest.mark.parametrize(
+        "schema",
+        [
+            pytest.param({}, id="missing-properties"),
+            pytest.param(
+                {"properties": {}},
+                id="missing-schemaVersion",
+            ),
+            pytest.param(
+                {"properties": {"schemaVersion": {}}},
+                id="missing-default",
+            ),
+        ],
+    )
+    def test_dandi_jsonschema_validator_missing_keys(self, schema: dict) -> None:
+        """
+        Test that dandi_jsonschema_validator() raises a `ValueError` when the schema
+        does not have a 'schemaVersion' property that specifies the schema version with
+        a 'default' field.
+        """
+        with pytest.raises(
+            ValueError, match="schema must has a 'schemaVersion' property"
+        ):
+            dandi_jsonschema_validator(schema)

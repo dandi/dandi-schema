@@ -1,11 +1,26 @@
+"""
+Interfaces and data to interact with DataCite metadata
+"""
+
+# TODO: RF into submodules for some next "minor" taking care not to break
+
 from copy import deepcopy
+from functools import lru_cache
+import json
+from pathlib import Path
 import re
 from typing import Any, Dict, Union
 
 from jsonschema import Draft7Validator
-import requests
 
-from .models import NAME_PATTERN, Organization, Person, PublishedDandiset, RoleType
+from ..models import (
+    NAME_PATTERN,
+    LicenseType,
+    Organization,
+    Person,
+    PublishedDandiset,
+    RoleType,
+)
 
 DATACITE_CONTRTYPE = {
     "ContactPerson",
@@ -56,6 +71,46 @@ DATACITE_IDENTYPE = {
 DATACITE_MAP = {el.lower(): el for el in DATACITE_IDENTYPE}
 
 
+def _licenses_to_rights_list(licenses: list[LicenseType]) -> list[dict[str, str]]:
+    """
+    Construct the `rightsList` in DataCite metadata per given list of `LicenseType`
+    objects.
+
+    Parameters
+    ----------
+    licenses : list[LicenseType]
+        The list of `LicenseType` objects
+    """
+    rights_list = []
+    license_pattern = re.compile(r"^([^:\s]+):(\S+)$")
+    for license_ in licenses:
+        license_match = license_pattern.match(license_.value)
+        assert (
+            license_match
+        ), 'License is not of the expected format of "scheme:identifier"'
+        scheme, identifier = license_match.groups()
+        assert all(
+            [scheme, identifier]
+        ), "License scheme and identifier must both exist and be non-empty"
+
+        if scheme.upper() == "SPDX":
+            # SPDX license
+            rights_list.append(
+                {
+                    "rightsIdentifier": identifier,
+                    "rightsIdentifierScheme": "SPDX",
+                    "schemeUri": "https://spdx.org/licenses/",
+                }
+            )
+        else:
+            raise NotImplementedError(
+                f"License scheme {scheme} is not supported. "
+                "Currently only SPDX licenses are supported."
+            )
+
+    return rights_list
+
+
 def to_datacite(
     meta: Union[dict, PublishedDandiset],
     validate: bool = False,
@@ -69,25 +124,31 @@ def to_datacite(
     if publish:
         attributes["event"] = "publish"
 
-    attributes["identifiers"] = [
-        # TODO: the first element is ignored, not sure how to fix it...
-        {"identifier": f"https://doi.org/{meta.doi}", "identifierType": "DOI"},
+    attributes["alternateIdentifiers"] = [
         {
-            "identifier": f"https://identifiers.org/{meta.id}",
-            "identifierType": "URL",
+            "alternateIdentifier": f"https://identifiers.org/{meta.id}",
+            "alternateIdentifierType": "URL",
         },
         {
-            "identifier": str(meta.url),
-            "identifierType": "URL",
+            "alternateIdentifier": str(meta.url),
+            "alternateIdentifierType": "URL",
         },
     ]
 
     attributes["doi"] = meta.doi
+    if meta.version:
+        attributes["version"] = meta.version
     attributes["titles"] = [{"title": meta.name}]
     attributes["descriptions"] = [
         {"description": meta.description, "descriptionType": "Abstract"}
     ]
-    attributes["publisher"] = "DANDI Archive"
+    attributes["publisher"] = {
+        "name": "DANDI Archive",
+        "schemeUri": "https://scicrunch.org/resolver/",
+        "publisherIdentifier": "https://scicrunch.org/resolver/RRID:SCR_017571",
+        "publisherIdentifierScheme": "RRID",
+        "lang": "en",
+    }
     attributes["publicationYear"] = str(meta.datePublished.year)
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
@@ -96,15 +157,7 @@ def to_datacite(
     }
     # meta has also attribute url, but it often empty
     attributes["url"] = str(meta.url or "")
-    # assuming that all licenses are from SPDX?
-    attributes["rightsList"] = [
-        {
-            "schemeURI": "https://spdx.org/licenses/",
-            "rightsIdentifierScheme": "SPDX",
-            "rightsIdentifier": el.name,
-        }
-        for el in meta.license
-    ]
+    attributes["rightsList"] = _licenses_to_rights_list(meta.license)
     attributes["schemaVersion"] = "http://datacite.org/schema/kernel-4"
 
     contributors = []
@@ -136,7 +189,7 @@ def to_datacite(
         contr_dict: Dict[str, Any] = {
             "name": contr_el.name,
             "contributorName": contr_el.name,
-            "schemeURI": "orcid.org",
+            "schemeUri": "orcid.org",
         }
         if isinstance(contr_el, Person):
             contr_dict["nameType"] = "Personal"
@@ -152,7 +205,7 @@ def to_datacite(
                 contr_dict["affiliation"] = []
             if getattr(contr_el, "identifier"):
                 orcid_dict = {
-                    "nameIdentifier": contr_el.identifier,
+                    "nameIdentifier": f"https://orcid.org/{contr_el.identifier}",
                     "nameIdentifierScheme": "ORCID",
                     "schemeUri": "https://orcid.org/",
                 }
@@ -240,15 +293,11 @@ def to_datacite(
     return datacite_dict
 
 
-def _get_datacite_schema() -> Any:
-    sr = requests.get(
-        "https://raw.githubusercontent.com/datacite/schema/"
-        "732cc7ef29f4cad4d6adfac83544133cd57a2e5e/"
-        "source/json/kernel-4.3/datacite_4.3_schema.json"
-    )
-    sr.raise_for_status()
-    schema = sr.json()
-    return schema
+@lru_cache()
+def _get_datacite_schema(version_id: str = "inveniosoftware-4.5-81-g160250d") -> Any:
+    """Load datacite schema based on the version id provided."""
+    schema_folder = Path(__file__).parent / "schema"
+    return json.loads((schema_folder / f"{version_id}.json").read_text())
 
 
 def validate_datacite(datacite_dict: dict) -> None:

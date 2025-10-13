@@ -16,11 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - windows-2019
+          - windows-latest
           - ubuntu-latest
           - macos-latest
         python:
-          - 3.8
           - 3.9
           - '3.10'
           - '3.11'
@@ -34,7 +33,7 @@ jobs:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python }}
 
@@ -47,7 +46,7 @@ jobs:
       run: tox -e py -- -s --cov-report=xml
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: ./coverage.xml
         flags: unittests

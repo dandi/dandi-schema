@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Iterator, List, Union, get_args, get_origin
+from typing import Any, Iterator, List, Union, cast, get_args, get_origin
 
-from pydantic.json_schema import GenerateJsonSchema, JsonSchemaValue
-from pydantic_core import core_schema
+from jsonschema import Draft7Validator, Draft202012Validator
+from jsonschema.protocols import Validator as JsonschemaValidator
+from jsonschema.validators import validator_for
+from pydantic import ConfigDict, TypeAdapter
+from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode, JsonSchemaValue
+from pydantic_core import CoreSchema, core_schema
+
+from .exceptions import JsonschemaValidationError
 
 TITLE_CASE_LOWER = {
     "a",
@@ -69,6 +75,16 @@ class TransitionalGenerateJsonSchema(GenerateJsonSchema):
     schema generation process are the same as the behavior in Pydantic V1.
     """
 
+    def generate(
+        self, schema: CoreSchema, mode: JsonSchemaMode = "validation"
+    ) -> JsonSchemaValue:
+        json_schema = super().generate(schema, mode)
+
+        # Set the `$schema` key with the schema dialect
+        json_schema["$schema"] = self.schema_dialect
+
+        return json_schema
+
     def nullable_schema(self, schema: core_schema.NullableSchema) -> JsonSchemaValue:
         # Override the default behavior for handling a schema that allows null values
         # With this override, `Optional` fields will not be indicated
@@ -104,3 +120,132 @@ def strip_top_level_optional(type_: Any) -> Any:
     else:
         # `type_` is not an Optional
         return type_
+
+
+def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> str:
+    """Replace all "non-compliant" characters with -
+
+    Of particular importance is _ which we use, as in BIDS, to separate
+    _key-value entries.  It is not sanitizing to BIDS level of clarity though.
+    In BIDS only alphanumerics are allowed, and here we only replace some known
+    to be offending symbols with `sub`.
+
+    When `field` is not "extension", we also replace ".".
+
+    Based on dandi.organize._sanitize_value.
+
+    .. versionchanged:: 0.8.3
+
+            ``sanitize_value`` added
+    """
+    value = re.sub(r"[_*\\/<>:|\"'?%@;,\s]", sub, value)
+    if field != "extension":
+        value = value.replace(".", sub)
+    return value
+
+
+def dandi_jsonschema_validator(schema: dict[str, Any]) -> JsonschemaValidator:
+    """
+    Create a JSON Schema validator appropriate for validating instances against the
+    JSON schema of a DANDI model
+
+    :param schema: The JSON schema of the DANDI model to validate against
+    :return: The JSON schema validator
+    :raises ValueError: If the schema does not have a 'schemaVersion' property that
+        specifies the schema version with a 'default' field.
+    :raises jsonschema.exceptions.SchemaError: If the JSON schema is invalid
+    """
+    if (
+        "properties" not in schema
+        or "schemaVersion" not in schema["properties"]
+        or "default" not in schema["properties"]["schemaVersion"]
+    ):
+        msg = (
+            "The schema must has a 'schemaVersion' property that specifies the schema "
+            "version with a 'default' field."
+        )
+        raise ValueError(msg)
+
+    default_validator_cls = cast(
+        type[JsonschemaValidator],
+        (
+            Draft202012Validator
+            # `"schemaVersion"` 0.6.5 and above is produced with Pydantic V2
+            # which is compliant with JSON Schema Draft 2020-12
+            if (
+                version2tuple(schema["properties"]["schemaVersion"]["default"])
+                >= version2tuple("0.6.5")
+            )
+            else Draft7Validator
+        ),
+    )
+
+    return jsonschema_validator(
+        schema, check_format=True, default_cls=default_validator_cls
+    )
+
+
+def jsonschema_validator(
+    schema: dict[str, Any],
+    *,
+    check_format: bool,
+    default_cls: type[JsonschemaValidator] | None = None,
+) -> JsonschemaValidator:
+    """
+    Create a jsonschema validator appropriate for validating instances against a given
+    JSON schema
+
+    :param schema: The JSON schema to validate against
+    :param check_format: Indicates whether to check the format against format
+        specifications in the schema
+    :param default_cls: The default JSON schema validator class to use to create the
+        validator should the appropriate validator class cannot be determined based on
+        the schema (by assessing the `$schema` property). If `None`, the class
+        representing the latest JSON schema draft supported by the `jsonschema` package.
+    :return: The JSON schema validator
+    :raises jsonschema.exceptions.SchemaError: If the JSON schema is invalid
+    """
+    # Retrieve appropriate validator class for validating the given schema
+    validator_cls: type[JsonschemaValidator] = (
+        validator_for(schema, default_cls)
+        if default_cls is not None
+        else validator_for(schema)
+    )
+
+    # Ensure the schema is valid
+    validator_cls.check_schema(schema)
+
+    if check_format:
+        # Return a validator with format checking enabled
+        # TODO: Static type checking is temporarily disabled partially in the following line
+        #   because of https://github.com/python-jsonschema/jsonschema/issues/1382.
+        #   It should be re-enabled once the issue is resolved.
+        return validator_cls(
+            schema, format_checker=validator_cls.FORMAT_CHECKER
+        )  # type: ignore[call-arg]
+
+    # Return a validator with format checking disabled
+    # TODO: Static type checking is temporarily disabled partially in the following line
+    #   because of https://github.com/python-jsonschema/jsonschema/issues/1382.
+    #   It should be re-enabled once the issue is resolved.
+    return validator_cls(schema)  # type: ignore[call-arg]
+
+
+def validate_json(instance: Any, validator: JsonschemaValidator) -> None:
+    """
+    Validate a data instance using a jsonschema validator
+
+    :param instance: The data instance to validate
+    :param validator: The JSON schema validator to use
+    :raises JsonschemaValidationError: If the metadata instance is invalid, an instance
+        of this exception containing a list of `jsonschema.exceptions.ValidationError`
+        instances representing all the errors detected in the validation is raised
+    """
+    errs = sorted(validator.iter_errors(instance), key=str)
+
+    if errs:
+        raise JsonschemaValidationError(errs)
+
+
+# Pydantic type adapter for a JSON object, which is of type `dict[str, Any]`
+json_object_adapter = TypeAdapter(dict[str, Any], config=ConfigDict(strict=True))
