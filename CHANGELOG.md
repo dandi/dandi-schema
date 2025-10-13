@@ -1,3 +1,13 @@
+# 0.12.0 (upcoming)
+
+#### 🚀 Enhancement
+
+- Add support for optional releaseNotes field in PublishedDandiset model [#185](https://github.com/dandi/dandi-schema/pull/185) ([@satra](https://github.com/satra))
+
+#### Authors: 1
+
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+
 # 0.11.1 (Thu May 15 2025)
 
 #### 🐛 Bug Fix
