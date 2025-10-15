@@ -26,9 +26,11 @@ from pydantic import (
     EmailStr,
     Field,
     GetJsonSchemaHandler,
+    SerializerFunctionWrapHandler,
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
+    field_serializer,
     field_validator,
     model_validator,
 )
@@ -507,6 +509,19 @@ class DandiBaseModel(BaseModel):
             stacklevel=2,
         )
         return self.model_dump(mode="json", exclude_none=True)
+
+    @field_serializer("*", mode="wrap")
+    def preserve_anys_values(
+        self, value: Any, handler: SerializerFunctionWrapHandler
+    ) -> Any:
+        try:
+            from anys import AnyBase
+        except ImportError:
+            pass
+        else:
+            if isinstance(value, AnyBase):
+                return value
+        return handler(value)
 
     @field_validator("schemaKey")
     @classmethod
