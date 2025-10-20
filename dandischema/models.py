@@ -1846,6 +1846,11 @@ class PublishedDandiset(Dandiset, Publishable):
         description="Permalink to the Dandiset.",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
+    releaseNotes: Optional[str] = Field(
+        None,
+        description="The description of the release",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
+    )
 
     schemaKey: Literal["Dandiset"] = Field(
         "Dandiset", validate_default=True, json_schema_extra={"readOnly": True}
