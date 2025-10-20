@@ -374,7 +374,7 @@ def test_dandimeta_1() -> None:
 
     assert DOI_PREFIX is not None
 
-    # meta data without doi, datePublished and publishedBy
+    # metadata without doi, datePublished and publishedBy
     meta_dict: Dict[str, Any] = {
         "identifier": f"{INSTANCE_NAME}:999999",
         "id": f"{INSTANCE_NAME}:999999/draft",
@@ -463,7 +463,20 @@ def test_dandimeta_1() -> None:
         basic_publishmeta(INSTANCE_NAME, dandi_id="999999", prefix=DOI_PREFIX)
     )
     meta_dict["assetsSummary"].update(**{"numberOfBytes": 1, "numberOfFiles": 1})
-    PublishedDandiset(**meta_dict)
+
+    # Test that releaseNotes is optional (can be omitted)
+    dandiset_without_notes = PublishedDandiset(**meta_dict)
+    assert dandiset_without_notes.releaseNotes is None
+
+    # Test that releaseNotes can be set to a string value
+    meta_dict["releaseNotes"] = "Releasing during testing"
+    dandiset_with_notes = PublishedDandiset(**meta_dict)
+    assert dandiset_with_notes.releaseNotes == "Releasing during testing"
+
+    # Test that releaseNotes appears in model_dump
+    dumped = dandiset_with_notes.model_dump(exclude_none=True)
+    assert "releaseNotes" in dumped
+    assert dumped["releaseNotes"] == "Releasing during testing"
 
 
 def test_schemakey() -> None:
