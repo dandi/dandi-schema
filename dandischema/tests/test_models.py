@@ -3,6 +3,7 @@ from enum import Enum
 from inspect import isclass
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
 
+import anys
 import pydantic
 from pydantic import Field, ValidationError
 import pytest
@@ -34,6 +35,39 @@ from ..models import (
     RoleType,
 )
 from ..utils import TransitionalGenerateJsonSchema
+
+
+@pytest.mark.parametrize(
+    ("y_type", "anys_value"),
+    [
+        (int, anys.ANY_INT),
+        (str, anys.ANY_STR),
+        (list, anys.ANY_LIST),
+        (dict, anys.ANY_DICT),
+    ],
+)
+def test_serialize_anys_values(y_type: type, anys_value: anys.AnyBase) -> None:
+    """
+    Test the serialization invalid model instances constructed with the
+    `model_construct` method containing `anys` values.
+    """
+
+    class NewModel(DandiBaseModel):
+        x: int
+        y: y_type  # type: ignore[valid-type]
+
+    m = NewModel.model_construct(x=42, y=anys_value)
+
+    m_serialized = m.model_dump()
+    x = m_serialized["x"]
+    y = m_serialized["y"]
+
+    # Verify that `x` serialized as expected, as an int of value 42
+    assert type(x) is int
+    assert x == 42
+
+    # Verify that `y` serialized as itself
+    assert y is anys_value
 
 
 def test_dandiset() -> None:
