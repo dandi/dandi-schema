@@ -43,6 +43,13 @@ from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
 from .utils import name2title
 
+try:
+    from anys import AnyBase
+except ImportError:
+    _has_anys = False
+else:
+    _has_anys = True
+
 # Use DJANGO_DANDI_WEB_APP_URL to point to a specific deployment.
 DANDI_INSTANCE_URL: Optional[str]
 try:
@@ -510,18 +517,13 @@ class DandiBaseModel(BaseModel):
         )
         return self.model_dump(mode="json", exclude_none=True)
 
-    @field_serializer("*", mode="wrap")
-    def preserve_anys_values(
-        self, value: Any, handler: SerializerFunctionWrapHandler
-    ) -> Any:
-        try:
-            from anys import AnyBase
-        except ImportError:
-            pass
-        else:
-            if isinstance(value, AnyBase):
-                return value
-        return handler(value)
+    if _has_anys:
+
+        @field_serializer("*", mode="wrap")
+        def preserve_anys_values(
+            self, value: Any, handler: SerializerFunctionWrapHandler
+        ) -> Any:
+            return value if isinstance(value, AnyBase) else handler(value)
 
     @field_validator("schemaKey")
     @classmethod
