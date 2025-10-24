@@ -48,7 +48,7 @@ from ..utils import TransitionalGenerateJsonSchema
 )
 def test_serialize_anys_values(y_type: type, anys_value: anys.AnyBase) -> None:
     """
-    Test the serialization invalid model instances constructed with the
+    Test the serialization of invalid model instances constructed with the
     `model_construct` method containing `anys` values.
     """
 
