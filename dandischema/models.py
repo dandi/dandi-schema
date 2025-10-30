@@ -26,8 +26,10 @@ from pydantic import (
     EmailStr,
     Field,
     GetJsonSchemaHandler,
+    SerializerFunctionWrapHandler,
     StringConstraints,
     ValidationInfo,
+    field_serializer,
     field_validator,
     model_validator,
 )
@@ -46,6 +48,13 @@ from .consts import DANDI_SCHEMA_VERSION
 from .digests.dandietag import DandiETag
 from .types import ByteSizeJsonSchema
 from .utils import name2title
+
+try:
+    from anys import AnyBase
+except ImportError:
+    _has_anys = False
+else:
+    _has_anys = True
 
 # Load needed configurations into constants
 _INSTANCE_CONFIG = get_instance_config()
@@ -548,6 +557,14 @@ class DandiBaseModel(BaseModel):
             stacklevel=2,
         )
         return self.model_dump(mode="json", exclude_none=True)
+
+    if _has_anys:
+
+        @field_serializer("*", mode="wrap")
+        def preserve_anys_values(
+            self, value: Any, handler: SerializerFunctionWrapHandler
+        ) -> Any:
+            return value if isinstance(value, AnyBase) else handler(value)
 
     @field_validator("schemaKey")
     @classmethod
