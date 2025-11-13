@@ -458,12 +458,14 @@ def migrate(
     ]
     for ver_added, fields in SIMPLE_DOWNGRADES:
         # additional guards are via ALLOWED_TARGET_SCHEMAS
-        if (to_version_tuple < version2tuple(ver_added) <= obj_version_tuple):
+        if to_version_tuple < version2tuple(ver_added) <= obj_version_tuple:
             for field in fields:
                 if field in obj_migrated:
                     if val := obj_migrated.get(field):
-                        raise ValueError(f"Cannot downgrade to {to_version} from "
-                                         f"{obj_version} with {field}={val!r} present")
+                        raise ValueError(
+                            f"Cannot downgrade to {to_version} from "
+                            f"{obj_version} with {field}={val!r} present"
+                        )
                     del obj_migrated[field]
 
     obj_migrated["schemaVersion"] = to_version
