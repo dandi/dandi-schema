@@ -358,24 +358,18 @@ def migrate(
         schema version of the provided instance
     """
 
-    # ATM, we only support the latest schema version as a target. See definition of
-    # `ALLOWED_TARGET_SCHEMAS` for details
-    if len(ALLOWED_TARGET_SCHEMAS) > 1:
-        msg = f"Only migration to current version, {DANDI_SCHEMA_VERSION}, is supported"
-        raise NotImplementedError(msg)
-
     # --------------------------------------------------------------
     # Validate DANDI schema version provided in the metadata instance
     # --------------------------------------------------------------
     # DANDI schema version of the provided instance
-    obj_ver = obj.get("schemaVersion")
-    if obj_ver is None:
+    obj_version = obj.get("schemaVersion")
+    if obj_version is None:
         msg = (
-            "The provided Dandiset metadata instance does not have a "
+            "The provided metadata instance does not have a "
             "`schemaVersion` field for specifying the DANDI schema version."
         )
         raise ValueError(msg)
-    if not isinstance(obj_ver, str):
+    if not isinstance(obj_version, str):
         msg = (
             "The provided Dandiset metadata instance has a non-string "
             "`schemaVersion` field for specifying the DANDI schema version."
@@ -384,17 +378,17 @@ def migrate(
     # Check if `obj_ver` is a valid DANDI schema version
     try:
         # DANDI schema version of the provided instance in tuple form
-        obj_ver_tuple = version2tuple(obj_ver)
+        obj_version_tuple = version2tuple(obj_version)
     except ValueError as e:
         msg = (
             "The provided Dandiset metadata instance has an invalid "
             "`schemaVersion` field for specifying the DANDI schema version."
         )
         raise ValueError(msg) from e
-    if obj_ver not in ALLOWED_INPUT_SCHEMAS:
+    if obj_version not in ALLOWED_INPUT_SCHEMAS:
         msg = (
             f"The DANDI schema version of the provided Dandiset metadata instance, "
-            f"{obj_ver!r}, is not one of the supported versions for input "
+            f"{obj_version!r}, is not one of the supported versions for input "
             f"Dandiset metadata instances. The supported versions are "
             f"{ALLOWED_INPUT_SCHEMAS}."
         )
@@ -407,7 +401,7 @@ def migrate(
     # Check if `to_version` is a valid DANDI schema version
     try:
         # The target DANDI schema version in tuple form
-        target_ver_tuple = version2tuple(to_version)
+        to_version_tuple = version2tuple(to_version)
     except ValueError as e:
         msg = (
             "The provided target version, {to_version!r}, is not a valid DANDI schema "
@@ -424,22 +418,17 @@ def migrate(
         raise ValueError(msg)
     # ----------------------------------------------------------------
 
-    # Ensure the target DANDI schema version is at least the DANDI schema version
-    # of the provided instance
-    if obj_ver_tuple > target_ver_tuple:
-        raise ValueError(f"Cannot migrate from {obj_ver} to lower {to_version}.")
-
     # Optionally validate the instance against the DANDI schema it specifies
     # before migration
     if not skip_validation:
-        _validate_obj_json(obj, _get_jsonschema_validator(obj_ver, "Dandiset"))
+        _validate_obj_json(obj, _get_jsonschema_validator(obj_version, "Dandiset"))
 
     obj_migrated = deepcopy(obj)
 
-    if obj_ver_tuple == target_ver_tuple:
+    if obj_version_tuple == to_version_tuple:
         return obj_migrated
 
-    if obj_ver_tuple < version2tuple("0.6.0") <= target_ver_tuple:
+    if obj_version_tuple < version2tuple("0.6.0") <= to_version_tuple:
         for val in obj_migrated.get("about", []):
             if "schemaKey" not in val:
                 if "identifier" in val and "UBERON" in val["identifier"]:
@@ -458,7 +447,26 @@ def migrate(
             obj_migrated["assetsSummary"]["schemaKey"] = "AssetsSummary"
         if "schemaKey" not in obj_migrated:
             obj_migrated["schemaKey"] = "Dandiset"
-        obj_migrated["schemaVersion"] = to_version
+
+    # Downgrades
+
+    # Simple downgrades that just require removing fields, which is totally fine
+    # if they are empty
+    SIMPLE_DOWNGRADES = [
+        # version added, fields to remove
+        ("0.6.11", ["releaseNotes"]),
+    ]
+    for ver_added, fields in SIMPLE_DOWNGRADES:
+        # additional guards are via ALLOWED_TARGET_SCHEMAS
+        if (to_version_tuple < version2tuple(ver_added) <= obj_version_tuple):
+            for field in fields:
+                if field in obj_migrated:
+                    if val := obj_migrated.get(field):
+                        raise ValueError(f"Cannot downgrade to {to_version} from "
+                                         f"{obj_version} with {field}={val!r} present")
+                    del obj_migrated[field]
+
+    obj_migrated["schemaVersion"] = to_version
     return obj_migrated
 
 
