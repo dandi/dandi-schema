@@ -404,7 +404,7 @@ def migrate(
         to_version_tuple = version2tuple(to_version)
     except ValueError as e:
         msg = (
-            "The provided target version, {to_version!r}, is not a valid DANDI schema "
+            f"The provided target version, {to_version!r}, is not a valid DANDI schema "
             "version."
         )
         raise ValueError(msg) from e
