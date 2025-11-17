@@ -1,16 +1,47 @@
 from datetime import datetime
 import os
+from pathlib import Path
 from typing import Any, Dict
 
 import pytest
+
+from dandischema.conf import get_instance_config
+
+_INSTANCE_CONFIG = get_instance_config()
+INSTANCE_NAME = _INSTANCE_CONFIG.instance_name
+DOI_PREFIX = _INSTANCE_CONFIG.doi_prefix
+
+METADATA_DIR = Path(__file__).with_name("data") / "metadata"
+DANDISET_METADATA_DIR = METADATA_DIR / INSTANCE_NAME
+
+
+skipif_no_datacite_auth = pytest.mark.skipif(
+    not os.getenv("DATACITE_DEV_LOGIN") or not os.getenv("DATACITE_DEV_PASSWORD"),
+    reason="no non-empty datacite login and password provided",
+)
+
+skipif_no_doi_prefix = pytest.mark.skipif(
+    DOI_PREFIX is None, reason="DOI_PREFIX is not set"
+)
 
 skipif_no_network = pytest.mark.skipif(
     bool(os.environ.get("DANDI_TESTS_NONETWORK")), reason="no network settings"
 )
 
+skipif_no_test_dandiset_metadata_dir = pytest.mark.skipif(
+    not DANDISET_METADATA_DIR.is_dir(),
+    reason=f"No test Dandiset metadata directory for a DANDI instance named "
+    f"{INSTANCE_NAME} exists",
+)
 
-def _basic_publishmeta(
-    dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
+
+skipif_instance_name_not_dandi = pytest.mark.skipif(
+    INSTANCE_NAME != "DANDI", reason='The DANDI instance\'s name is not "DANDI"'
+)
+
+
+def basic_publishmeta(
+    instance_name: str, dandi_id: str, version: str = "0.0.0", prefix: str = "10.80507"
 ) -> Dict[str, Any]:
     """Return extra metadata required by PublishedDandiset
 
@@ -35,6 +66,6 @@ def _basic_publishmeta(
             "schemaKey": "PublishActivity",
         },
         "version": version,
-        "doi": f"{prefix}/dandi.{dandi_id}/{version}",
+        "doi": f"{prefix}/{instance_name.lower()}.{dandi_id}/{version}",
     }
     return publish_meta

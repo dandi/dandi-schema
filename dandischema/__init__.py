@@ -1,4 +1,3 @@
-__all__ = ["__version__", "migrate", "validate"]
+__all__ = ["__version__"]
 
 from ._version import __version__
-from .metadata import migrate, validate

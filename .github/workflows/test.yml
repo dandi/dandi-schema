@@ -9,21 +9,32 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    env:
-      NO_ET: 1
-      DATACITE_DEV_PASSWORD: ${{ secrets.DATACITE_DEV_PASSWORD }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-          - macos-latest
-        python:
-          - 3.9
-          - '3.10'
-          - '3.11'
-          - '3.12'
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        python: ['3.9', '3.10', '3.11', '3.12']
+        vendored_env: [unvendored]
+        include:
+          - os: ubuntu-latest
+            python: '3.9'
+            vendored_env: dandi
+            instance_name: DANDI
+            instance_identifier: 'RRID:SCR_017571'
+            doi_prefix: '10.80507'
+          - os: ubuntu-latest
+            python: '3.9'
+            vendored_env: ember-dandi
+            instance_name: EMBER-DANDI
+            instance_identifier: 'RRID:SCR_026700'
+            doi_prefix: '10.82754'
+          - os: ubuntu-latest
+            python: '3.9'
+            vendored_env: ember-dandi-no-doi
+            instance_name: EMBER-DANDI
     steps:
     - name: Set up environment
       uses: actions/checkout@v5
@@ -42,7 +53,36 @@ jobs:
         python -m pip install --upgrade pip wheel
         python -m pip install --upgrade tox
 
+     # Set only if matrix.instance_name is defined
+    - name: Set DANDI_INSTANCE_NAME
+      if: ${{ matrix.instance_name }}
+      run: echo "DANDI_INSTANCE_NAME=${{ matrix.instance_name }}" >> "$GITHUB_ENV"
+
+    # Set only if matrix.instance_identifier is defined
+    - name: Set DANDI_INSTANCE_IDENTIFIER
+      if: ${{ matrix.instance_identifier }}
+      run: echo "DANDI_INSTANCE_IDENTIFIER=${{ matrix.instance_identifier }}" >> "$GITHUB_ENV"
+
+    # Set only if matrix.doi_prefix is defined
+    - name: Set DANDI_DOI_PREFIX
+      if: ${{ matrix.doi_prefix }}
+      run: echo "DANDI_DOI_PREFIX=${{ matrix.doi_prefix }}" >> "$GITHUB_ENV"
+
+    - name: Set DANDI DataCite credentials
+      if: ${{ matrix.vendored_env == 'dandi' }}
+      run: |
+        echo "DATACITE_DEV_LOGIN=${{ secrets.DATACITE_DEV_DANDI_LOGIN }}" >> "$GITHUB_ENV"
+        echo "DATACITE_DEV_PASSWORD=${{ secrets.DATACITE_DEV_DANDI_PASSWORD }}" >> "$GITHUB_ENV"
+
+    - name: Set EMBER DataCite credentials
+      if: ${{ matrix.vendored_env == 'ember-dandi' }}
+      run: |
+        echo "DATACITE_DEV_LOGIN=${{ secrets.DATACITE_DEV_EMBER_LOGIN }}" >> "$GITHUB_ENV"
+        echo "DATACITE_DEV_PASSWORD=${{ secrets.DATACITE_DEV_EMBER_PASSWORD }}" >> "$GITHUB_ENV"
+
     - name: Run all tests
+      env:
+        NO_ET: 1
       run: tox -e py -- -s --cov-report=xml
 
     - name: Upload coverage to Codecov
