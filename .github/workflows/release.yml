@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 env:
   AUTO_VERSION: v11.3.6
@@ -104,12 +103,9 @@ jobs:
 
       - name: Create release
         run: |
-          echo "@${{ github.actor }} is creating a release triggered by ${{ github.event_name }}"
-          if [ "${{ github.event_name }}" = workflow_dispatch ]
-          then opts=
-          else opts=--only-publish-with-release-label
-          fi
-          ~/auto shipit -vv $opts
+          ~/auto shipit -vv
+          python -m build
+          twine upload dist/*
         env:
           GH_TOKEN: ${{ secrets.DANDI_GITHUB_TOKEN }}
           TWINE_USERNAME: __token__
