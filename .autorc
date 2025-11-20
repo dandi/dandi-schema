@@ -3,5 +3,5 @@
     "baseBranch": "master",
     "author": "DANDI Bot <team@dandiarchive.org>",
     "noVersionPrefix": true,
-    "plugins": ["git-tag"]
+    "plugins": ["git-tag", "released"]
 }
