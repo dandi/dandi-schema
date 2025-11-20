@@ -1,3 +1,69 @@
+# 0.12.0 (Thu Nov 20 2025)
+
+### Release Notes
+
+#### Vendor-Configurable Metadata Models ([#294](https://github.com/dandi/dandi-schema/pull/294))
+
+`migrate()` and `validate()` are not available at `dandischema` level. To use them, one must do `from dandischema.metadata import migrate, validate` instead of `from dandischema import migrate, validate`.
+
+#### Provide mechanism to reset instance configuration by function arguments, not env vars ([#306](https://github.com/dandi/dandi-schema/pull/306))
+
+`migrate()` and `validate()` are not available at `dandischema` level. To use them, one must do `from dandischema.metadata import migrate, validate` instead of `from dandischema import migrate, validate`.
+
+---
+
+#### 🚀 Enhancement
+
+- Release new schema 0.7.0 for addition of the releaseNotes [#344](https://github.com/dandi/dandi-schema/pull/344) ([@yarikoptic](https://github.com/yarikoptic))
+- Vendor-Configurable Metadata Models [#294](https://github.com/dandi/dandi-schema/pull/294) ([@yarikoptic](https://github.com/yarikoptic) [@candleindark](https://github.com/candleindark) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- Make instance URL part of the schema instance config [#328](https://github.com/dandi/dandi-schema/pull/328) ([@candleindark](https://github.com/candleindark))
+- Make publisher info vendor specific [#323](https://github.com/dandi/dandi-schema/pull/323) ([@yarikoptic](https://github.com/yarikoptic) [@candleindark](https://github.com/candleindark))
+- Provide environment variable aliases for setting instance config [#322](https://github.com/dandi/dandi-schema/pull/322) ([@candleindark](https://github.com/candleindark))
+
+#### 🐛 Bug Fix
+
+- Serialize anys values in `DandiBaseModel` [#341](https://github.com/dandi/dandi-schema/pull/341) ([@candleindark](https://github.com/candleindark))
+- add releaseNotes property to published dandiset [#185](https://github.com/dandi/dandi-schema/pull/185) ([@satra](https://github.com/satra) [@yarikoptic](https://github.com/yarikoptic) [@bendichter](https://github.com/bendichter) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- Workaround to allow `dandischema.conf.Config` to be initialized with field names [#336](https://github.com/dandi/dandi-schema/pull/336) ([@candleindark](https://github.com/candleindark))
+- Handle `instance_identifier` in instance config being `None` in DataCite metadata generation [#326](https://github.com/dandi/dandi-schema/pull/326) ([@candleindark](https://github.com/candleindark) [@yarikoptic](https://github.com/yarikoptic))
+- Relax various patterns defined in `dandischema.models` when DANDI Schema is not set to a vendor [#317](https://github.com/dandi/dandi-schema/pull/317) ([@candleindark](https://github.com/candleindark))
+- Allow supported licenses to be added through instance config [#312](https://github.com/dandi/dandi-schema/pull/312) ([@candleindark](https://github.com/candleindark) [@yarikoptic](https://github.com/yarikoptic) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- Correct the construction of the `rightsList` in Datacite metadata [#313](https://github.com/dandi/dandi-schema/pull/313) ([@candleindark](https://github.com/candleindark))
+- Sort allowed schema versions using packaging.version when defining [#301](https://github.com/dandi/dandi-schema/pull/301) ([@yarikoptic](https://github.com/yarikoptic) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- Provide mechanism to reset instance configuration by function arguments, not env vars [#306](https://github.com/dandi/dandi-schema/pull/306) ([@candleindark](https://github.com/candleindark))
+
+#### 🏠 Internal
+
+- Upgrade version of intuit/auto to use for releases to current 11.3.6, add use of "released" plugin, configure release action to act on dispatch event [#346](https://github.com/dandi/dandi-schema/pull/346) ([@yarikoptic](https://github.com/yarikoptic))
+- [gh-actions](deps): Bump actions/checkout from 4 to 5 [#321](https://github.com/dandi/dandi-schema/pull/321) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- Fix typos in test name and comment [#339](https://github.com/dandi/dandi-schema/pull/339) ([@candleindark](https://github.com/candleindark))
+- Remove unneeded import of `requests` in `dandischema.datacite` [#314](https://github.com/dandi/dandi-schema/pull/314) ([@candleindark](https://github.com/candleindark))
+- [gh-actions](deps): Bump actions/setup-python from 5 to 6 [#327](https://github.com/dandi/dandi-schema/pull/327) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- dandi-archive switched to use uv [#324](https://github.com/dandi/dandi-schema/pull/324) ([@yarikoptic](https://github.com/yarikoptic) [@jjnesbitt](https://github.com/jjnesbitt))
+- Temporarily disable static type checking partially for two lines involving validators from the `jsonschema` package [#315](https://github.com/dandi/dandi-schema/pull/315) ([@candleindark](https://github.com/candleindark))
+
+#### 📝 Documentation
+
+- Add information to customize metadata models with vendor information in README.md [#330](https://github.com/dandi/dandi-schema/pull/330) ([@candleindark](https://github.com/candleindark))
+- Improve `README.md` [#329](https://github.com/dandi/dandi-schema/pull/329) ([@candleindark](https://github.com/candleindark) [@yarikoptic](https://github.com/yarikoptic))
+
+#### 🧪 Tests
+
+- Remove use of `unittest.mock.ANY` in tests to pass the stricter type checking imposed by mypy 1.18.1 [#335](https://github.com/dandi/dandi-schema/pull/335) ([@candleindark](https://github.com/candleindark))
+- Replace GH runner image `windows-2019` with `windows-latest` [#305](https://github.com/dandi/dandi-schema/pull/305) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 7
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Ben Dichter ([@bendichter](https://github.com/bendichter))
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- Jacob Nesbitt ([@jjnesbitt](https://github.com/jjnesbitt))
+- Satrajit Ghosh ([@satra](https://github.com/satra))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.11.1 (Thu May 15 2025)
 
 #### 🐛 Bug Fix
