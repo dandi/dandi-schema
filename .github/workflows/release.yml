@@ -5,10 +5,10 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 env:
-  # Pin to v10.28.0, which (as of 2021-05-25) is the latest version with assets
-  AUTO_VERSION: v11.0.5
+  AUTO_VERSION: v11.3.6
 
 jobs:
   release-check:
@@ -104,9 +104,12 @@ jobs:
 
       - name: Create release
         run: |
-          ~/auto shipit -vv
-          python -m build
-          twine upload dist/*
+          echo "@${{ github.actor }} is creating a release triggered by ${{ github.event_name }}"
+          if [ "${{ github.event_name }}" = workflow_dispatch ]
+          then opts=
+          else opts=--only-publish-with-release-label
+          fi
+          ~/auto shipit -vv $opts
         env:
           GH_TOKEN: ${{ secrets.DANDI_GITHUB_TOKEN }}
           TWINE_USERNAME: __token__
