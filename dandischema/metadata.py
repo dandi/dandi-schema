@@ -451,20 +451,28 @@ def migrate(
     # Downgrades
 
     # Simple downgrades that just require removing fields, which is totally fine
-    # if they are empty
+    # if they are empty, as they are None or empty containers (list, tuple, etc).
+    # List only those for which such notion of "empty" applies.
     SIMPLE_DOWNGRADES = [
         # version added, fields to remove
         ("0.6.11", ["releaseNotes"]),
     ]
     for ver_added, fields in SIMPLE_DOWNGRADES:
         # additional guards are via ALLOWED_TARGET_SCHEMAS
-        if (to_version_tuple < version2tuple(ver_added) <= obj_version_tuple):
+        if to_version_tuple < version2tuple(ver_added) <= obj_version_tuple:
             for field in fields:
                 if field in obj_migrated:
-                    if val := obj_migrated.get(field):
-                        raise ValueError(f"Cannot downgrade to {to_version} from "
-                                         f"{obj_version} with {field}={val!r} present")
-                    del obj_migrated[field]
+                    value = obj_migrated.get(field)
+                    # Explicit check for "empty" value per above description.
+                    if value is None or (
+                        not value and isinstance(value, (list, tuple, dict, set))
+                    ):
+                        del obj_migrated[field]
+                    else:
+                        raise ValueError(
+                            f"Cannot downgrade to {to_version} from "
+                            f"{obj_version} with {field}={val!r} present"
+                        )
 
     obj_migrated["schemaVersion"] = to_version
     return obj_migrated
