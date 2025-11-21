@@ -424,20 +424,6 @@ def test_migrate_value_errors(obj: Dict[str, Any], target: Any, msg: str) -> Non
         migrate(obj, to_version=target, skip_validation=True)
 
 
-def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> None:
-    """
-    Test cases when `migrate()` is expected to raise a `ValueError` exception
-    when the target schema version is lesser than the schema version of the metadata
-    instance
-    """
-    from dandischema import metadata
-
-    monkeypatch.setattr(metadata, "ALLOWED_TARGET_SCHEMAS", ["0.6.0"])
-
-    with pytest.raises(ValueError, match="Cannot migrate from .* to lower"):
-        migrate({"schemaVersion": "0.6.7"}, to_version="0.6.0", skip_validation=True)
-
-
 @skipif_no_network
 @skipif_no_test_dandiset_metadata_dir
 # Skip for instance name not being DANDI because JSON schema version at `0.4.4`, the
@@ -474,6 +460,42 @@ def test_migrate_044(schema_dir: Path) -> None:
     )
     assert newmeta_2 == newmeta
     assert newmeta_2 is not newmeta  # but we do create a copy
+
+
+@pytest.mark.ai_generated
+def test_migrate_downgrade_releasenotes() -> None:
+    """Test downgrade from 0.6.11 to 0.6.10 handling releaseNotes field"""
+    from .utils import _basic_publishmeta
+
+    # Create a basic PublishedDandiset metadata in 0.6.11 format
+    meta_dict = {
+        "schemaVersion": "0.6.11",
+    }
+    meta_dict.update(_basic_publishmeta(dandi_id="999999"))
+
+    # Test 1: Downgrade without releaseNotes (should succeed)
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 2: Downgrade with empty releaseNotes (should succeed)
+    meta_dict["releaseNotes"] = ""
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 3: Downgrade with non-empty releaseNotes (should fail)
+    meta_dict["releaseNotes"] = "Releasing during testing"
+    with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
+        migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+
+    # Test 4: No-op migration (already at target version)
+    meta_dict_0610 = meta_dict.copy()
+    meta_dict_0610["schemaVersion"] = "0.6.10"
+    meta_dict_0610.pop("releaseNotes")
+    migrated = migrate(meta_dict_0610, to_version="0.6.10", skip_validation=True)
+    assert migrated == meta_dict_0610
+    assert migrated is not meta_dict_0610  # but we do create a copy
 
 
 @pytest.mark.parametrize(
