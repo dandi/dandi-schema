@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -eu
+
+tools_path=$(dirname "$0")
+dandi_schema_path="${tools_path}"/..
+schemata_path=${1:-.}
+
+LIBRARY_VERSION="$(git -C "${dandi_schema_path}" describe --tags --exact-match)"
+SCHEMA_VERSION="$("$tools_path"/get-schema-version)"
+
+git -C "$schemata_path" add releases
+
+if ! git -C "$schemata_path" diff --quiet --cached
+then
+    git -C "$schemata_path" commit -m "Publish model schema v$SCHEMA_VERSION as of dandischema v$LIBRARY_VERSION"
+    git -C "$schemata_path" push
+    # And tagging this
+    git -C "$dandi_schema_path" tag -m "Schema v$SCHEMA_VERSION, released in dandischema v$LIBRARY_VERSION" "schema-$SCHEMA_VERSION"
+    git -C "$dandi_schema_path" push --tags
+else
+    echo "No changes to commit"
+fi

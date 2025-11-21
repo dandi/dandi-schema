@@ -43,6 +43,11 @@ jobs:
     needs: release-check
     if: needs.release-check.outputs.auto-version != ''
     steps:
+      - name: Configure
+        run: |
+          git config --global user.email "team@dandiarchive.org"
+          git config --global user.name "DANDI Bot"
+
       - name: Checkout source
         uses: actions/checkout@v5
         with:
@@ -66,12 +71,7 @@ jobs:
 
       - name: Get schema version
         run: |
-          SCHEMA_VERSION="$(python -c 'from dandischema.consts import DANDI_SCHEMA_VERSION; print(DANDI_SCHEMA_VERSION)')"
-          if ! echo "$SCHEMA_VERSION" | grep -qP '^\d+\.\d+\.\d+$'
-          then printf "[ERROR] Invalid schema version: '%s'\n" "$SCHEMA_VERSION"
-               exit 1
-          fi
-          echo "SCHEMA_VERSION=$SCHEMA_VERSION" >> "$GITHUB_ENV"
+          tools/get-schema-version  # it will also check if schema version is ok
 
       - name: Checkout dandi/schema
         uses: actions/checkout@v5
@@ -118,19 +118,6 @@ jobs:
 
       - name: Commit schema changes and create new tag
         run: |
-          LIBRARY_VERSION="$(git -C ../dandischema describe --tags --exact-match)"
-
-          git config --global user.email "team@dandiarchive.org"
-          git config --global user.name "DANDI Bot"
-
-          git add releases
-          if ! git diff --quiet --cached
-          then git commit -m "Publish model schema v$SCHEMA_VERSION as of dandischema v$LIBRARY_VERSION"
-               git push
-               git -C ../dandischema tag -m "Schema v$SCHEMA_VERSION, released in dandischema v$LIBRARY_VERSION" schema-$SCHEMA_VERSION
-               git -C ../dandischema push --tags
-          else echo "No changes to commit"
-          fi
-        working-directory: schema
+          tools/commit-and-push-schemata ../schema
 
 # vim:set sts=2:
