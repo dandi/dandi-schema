@@ -495,7 +495,7 @@ def test_migrate_schemaversion_update() -> None:
         f"Expected schemaVersion to be {DANDI_SCHEMA_VERSION}, "
         f"but got {result['schemaVersion']}"
     )
-    
+
     # Test migrating from 0.6.4 to current version
     obj_064 = {
         "schemaKey": "Dandiset",
