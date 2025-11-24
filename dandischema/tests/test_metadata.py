@@ -480,7 +480,7 @@ def test_migrate_schemaversion_update() -> None:
     """
     Test that migrate() always updates schemaVersion to target version,
     even when migrating from 0.6.0+ to higher versions.
-    
+
     This is a regression test for the bug where schemaVersion was only
     updated for migrations from versions < 0.6.0.
     """
