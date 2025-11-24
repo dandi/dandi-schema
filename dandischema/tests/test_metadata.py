@@ -476,6 +476,39 @@ def test_migrate_044(schema_dir: Path) -> None:
     assert newmeta_2 is not newmeta  # but we do create a copy
 
 
+def test_migrate_schemaversion_update() -> None:
+    """
+    Test that migrate() always updates schemaVersion to target version,
+    even when migrating from 0.6.0+ to higher versions.
+    
+    This is a regression test for the bug where schemaVersion was only
+    updated for migrations from versions < 0.6.0.
+    """
+    # Test migrating from 0.6.0 to current version
+    obj_060 = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": "0.6.0",
+        "identifier": "DANDI:000000",
+    }
+    result = migrate(obj_060, to_version=DANDI_SCHEMA_VERSION, skip_validation=True)
+    assert result["schemaVersion"] == DANDI_SCHEMA_VERSION, (
+        f"Expected schemaVersion to be {DANDI_SCHEMA_VERSION}, "
+        f"but got {result['schemaVersion']}"
+    )
+    
+    # Test migrating from 0.6.4 to current version
+    obj_064 = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": "0.6.4",
+        "identifier": "DANDI:000000",
+    }
+    result = migrate(obj_064, to_version=DANDI_SCHEMA_VERSION, skip_validation=True)
+    assert result["schemaVersion"] == DANDI_SCHEMA_VERSION, (
+        f"Expected schemaVersion to be {DANDI_SCHEMA_VERSION}, "
+        f"but got {result['schemaVersion']}"
+    )
+
+
 @pytest.mark.parametrize(
     "files, summary",
     [

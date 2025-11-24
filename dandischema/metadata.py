@@ -458,7 +458,9 @@ def migrate(
             obj_migrated["assetsSummary"]["schemaKey"] = "AssetsSummary"
         if "schemaKey" not in obj_migrated:
             obj_migrated["schemaKey"] = "Dandiset"
-        obj_migrated["schemaVersion"] = to_version
+    
+    # Always update schemaVersion when migrating
+    obj_migrated["schemaVersion"] = to_version
     return obj_migrated
 
 
