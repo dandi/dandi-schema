@@ -18,7 +18,7 @@ then
     # Publish/release a new schema to the `schema` repo
     git -C "$schemata_path" commit -m "Publish model schema v$SCHEMA_VERSION as of dandischema v$LIBRARY_VERSION"
     git -C "$schemata_path" push
-    
+
     # Tag the `dandi-schema` repo with the new schema version
     git -C "$dandi_schema_path" tag -m "Schema v$SCHEMA_VERSION, released in dandischema v$LIBRARY_VERSION" "schema-$SCHEMA_VERSION"
     git -C "$dandi_schema_path" push --tags
