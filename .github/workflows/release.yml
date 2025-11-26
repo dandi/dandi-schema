@@ -72,6 +72,7 @@ jobs:
       - name: Get schema version
         run: |
           tools/get-schema-version  # it will also check if schema version is ok
+        working-directory: dandischema
 
       - name: Checkout dandi/schema
         uses: actions/checkout@v5
@@ -119,5 +120,6 @@ jobs:
       - name: Commit schema changes and create new tag
         run: |
           tools/commit-and-push-schemata ../schema
+        working-directory: dandischema
 
 # vim:set sts=2:
