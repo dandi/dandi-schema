@@ -1,3 +1,22 @@
+# 0.12.1 (Wed Nov 26 2025)
+
+#### 🐛 Bug Fix
+
+- Fix migrate() to update schemaVersion for all migrations, not just pre-0.6.0 [#354](https://github.com/dandi/dandi-schema/pull/354) ([@Copilot](https://github.com/Copilot))
+
+#### 🏠 Internal
+
+- fix(ci): provide workdir for scripted steps  to be within dandischema [#357](https://github.com/dandi/dandi-schema/pull/357) ([@yarikoptic](https://github.com/yarikoptic))
+- chore: refactor release action to move schemata related code into scripts [#349](https://github.com/dandi/dandi-schema/pull/349) ([@yarikoptic](https://github.com/yarikoptic) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+
+#### Authors: 3
+
+- [@Copilot](https://github.com/Copilot)
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.12.0 (Thu Nov 20 2025)
 
 ### Release Notes
