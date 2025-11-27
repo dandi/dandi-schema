@@ -18,7 +18,7 @@ jobs:
       auto-version: ${{ steps.auto-version.outputs.version }}
     steps:
       - name: Checkout source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # A full checkout is required so that auto will have access to tag
           # information.
@@ -49,7 +49,7 @@ jobs:
           git config --global user.name "DANDI Bot"
 
       - name: Checkout source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           path: dandischema
@@ -75,7 +75,7 @@ jobs:
         working-directory: dandischema
 
       - name: Checkout dandi/schema
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: dandi/schema
           path: schema
