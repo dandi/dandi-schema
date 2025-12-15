@@ -24,7 +24,6 @@ jobs:
           - macos-latest
         python:
           # Use the only Python which is ATM also used by dandi-api
-          # - 3.9
           # - '3.10'
           - '3.11'
           # - '3.12'
@@ -41,11 +40,11 @@ jobs:
           - default
         include:
           - os: ubuntu-latest
-            python: 3.9
+            python: "3.10"
             mode: dandi-devel
             version: master
           - os: ubuntu-latest
-            python: 3.9
+            python: "3.10"
             mode: dandi-devel
             version: release
           - os: ubuntu-latest
@@ -64,11 +63,6 @@ jobs:
             instance_name: EMBER-DANDI
             instance_identifier: 'RRID:SCR_026700'
             doi_prefix: '10.82754'
-        exclude:
-          # Temporarily disabled due to h5py/hdf5 dependency issue
-          # See <https://github.com/dandi/dandi-cli/pull/315>
-          - os: windows-latest
-            python: 3.9
     steps:
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v6
@@ -101,7 +95,7 @@ jobs:
         run: echo DANDI_DEVEL=1 >> "$GITHUB_ENV"
 
       - name: Check out dandischema
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # Fetch all commits so that versioningit will return something
           # compatible with semantic-version
