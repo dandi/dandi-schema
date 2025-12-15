@@ -24,7 +24,6 @@ jobs:
           - macos-latest
         python:
           # Use the only Python which is ATM also used by dandi-api
-          # - 3.9
           # - '3.10'
           - '3.11'
           # - '3.12'
@@ -35,18 +34,13 @@ jobs:
           - normal
         include:
           - os: ubuntu-latest
-            python: 3.9
+            python: "3.10"
             mode: dandi-devel
             version: master
           - os: ubuntu-latest
-            python: 3.9
+            python: "3.10"
             mode: dandi-devel
             version: release
-        exclude:
-          # Temporarily disabled due to h5py/hdf5 dependency issue
-          # See <https://github.com/dandi/dandi-cli/pull/315>
-          - os: windows-latest
-            python: 3.9
     steps:
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v6
