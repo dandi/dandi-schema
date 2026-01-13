@@ -983,3 +983,93 @@ def test_vendorization(
     # Validate the invalid vendored fields against the vendored patterns
     with pytest.raises(ValidationError):
         VendoredFieldModel.model_validate(invalid_vendored_fields)
+
+
+class TestOtherIdentifiers:
+    """Test cases for the otherIdentifiers field on Dandiset model"""
+
+    def test_default_empty_list(self) -> None:
+        """Test that otherIdentifiers defaults to an empty list when not provided"""
+        dandiset = Dandiset.model_construct(
+            id=f"{INSTANCE_NAME}:000001/draft",
+            identifier=f"{INSTANCE_NAME}:000001",
+        )
+        assert dandiset.otherIdentifiers == []
+
+    @pytest.mark.parametrize(
+        "identifier",
+        [
+            "DANDI:000001",
+            "DANDI-ADHOC:000002",
+            "EMBER-DANDI:000003",
+            "A:123456",
+            "ABC-DEF:999999",
+        ],
+    )
+    def test_valid_identifiers(self, identifier: str) -> None:
+        """Test that valid identifiers are accepted"""
+        dandiset = Dandiset.model_construct(
+            id=f"{INSTANCE_NAME}:000001/draft",
+            identifier=f"{INSTANCE_NAME}:000001",
+            otherIdentifiers=[identifier],
+        )
+        assert dandiset.otherIdentifiers == [identifier]
+
+    def test_multiple_valid_identifiers(self) -> None:
+        """Test that multiple valid identifiers can be added to the list"""
+        identifiers = [
+            "DANDI:000001",
+            "DANDI-ADHOC:000002",
+            "EMBER-DANDI:000003",
+        ]
+        dandiset = Dandiset.model_construct(
+            id=f"{INSTANCE_NAME}:000001/draft",
+            identifier=f"{INSTANCE_NAME}:000001",
+            otherIdentifiers=identifiers,
+        )
+        assert dandiset.otherIdentifiers == identifiers
+
+    @pytest.mark.parametrize(
+        "identifier",
+        [
+            "invalid:000001",  # lowercase prefix
+            "DANDI:0001",  # only 4 digits instead of 6
+            "DANDI:0000001",  # 7 digits instead of 6
+            "dandi:000001",  # lowercase prefix
+            "DANDI000001",  # missing colon
+            "DANDI:",  # missing digits
+            ":000001",  # missing prefix
+            "123:000001",  # numeric prefix
+            "-DANDI:000001",  # leading hyphen
+        ],
+    )
+    def test_invalid_identifiers(self, identifier: str) -> None:
+        """Test that invalid identifiers are rejected"""
+        with pytest.raises(ValidationError) as exc:
+            Dandiset(
+                id=f"{INSTANCE_NAME}:000001/draft",
+                identifier=f"{INSTANCE_NAME}:000001",
+                name="Test Dandiset",
+                description="Test description",
+                contributor=[
+                    {
+                        "name": "Last, First",
+                        "email": "test@example.com",
+                        "roleName": ["dcite:ContactPerson"],
+                        "schemaKey": "Person",
+                    }
+                ],
+                license=["spdx:CC-BY-4.0"],
+                assetsSummary={
+                    "numberOfBytes": 0,
+                    "numberOfFiles": 0,
+                    "schemaKey": "AssetsSummary",
+                },
+                manifestLocation=["https://example.com"],
+                url=f"https://dandiarchive.org/dandiset/000001/draft",
+                otherIdentifiers=[identifier],
+            )
+        # Verify the error is in the otherIdentifiers field
+        assert any(
+            err["loc"][0] == "otherIdentifiers" for err in exc.value.errors()
+        ), f"Expected error in otherIdentifiers field, got: {exc.value.errors()}"
