@@ -1001,3 +1001,63 @@ def test_vendorization(
     # Validate the invalid vendored fields against the vendored patterns
     with pytest.raises(ValidationError):
         VendoredFieldModel.model_validate(invalid_vendored_fields)
+
+
+class TestOtherIdentifiers:
+    def test_not_specified(self, base_dandiset_metadata: dict[str, Any]) -> None:
+        """
+        Test the case that `otherIdentifiers` is not specified
+        """
+        dandiset = Dandiset.model_validate(base_dandiset_metadata)
+        assert dandiset.otherIdentifiers == []
+
+    def test_empty_list(self, base_dandiset_metadata: dict[str, Any]) -> None:
+        """
+        Test the case that `otherIdentifiers` is an empty list
+        """
+        base_dandiset_metadata["otherIdentifiers"] = []
+        dandiset = Dandiset.model_validate(base_dandiset_metadata)
+        assert dandiset.otherIdentifiers == []
+
+    @pytest.mark.parametrize(
+        "identifiers",
+        [
+            ["DANDI-SANDBOX:123456"],
+            ["EMBER-DANDI:123456"],
+            ["DANDI-SANDBOX:123456", "EMBER-DANDI:123456"],
+            ["A:123456", "B:654321"],
+        ],
+    )
+    def test_with_valid_identifiers(
+        self, identifiers: list[str], base_dandiset_metadata: dict[str, Any]
+    ) -> None:
+        """
+        Test the case that `otherIdentifiers` is set to a list of valid identifiers
+        """
+        base_dandiset_metadata["otherIdentifiers"] = identifiers
+        dandiset = Dandiset.model_validate(base_dandiset_metadata)
+        assert dandiset.otherIdentifiers == identifiers
+
+    @pytest.mark.parametrize(
+        "identifiers",
+        [
+            # List of invalid identifiers
+            ["-A:123456"],
+            ["DANDI-SANDBOX:12345"],
+            ["DANDI-SANDBOX:123456", "EMBER-DANDI123456"],
+            [42],
+            # Value that is not a list
+            "DANDI-SANDBOX:123456",
+            42,
+        ],
+    )
+    def test_with_invalid_identifiers(
+        self, identifiers: Any, base_dandiset_metadata: dict[str, Any]
+    ) -> None:
+        """
+        Test the case that `otherIdentifiers` is set to a list of invalid identifiers
+        or a value that is not a list
+        """
+        base_dandiset_metadata["otherIdentifiers"] = identifiers
+        with pytest.raises(ValidationError):
+            Dandiset.model_validate(base_dandiset_metadata)
