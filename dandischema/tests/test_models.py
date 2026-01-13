@@ -1001,3 +1001,78 @@ def test_vendorization(
     # Validate the invalid vendored fields against the vendored patterns
     with pytest.raises(ValidationError):
         VendoredFieldModel.model_validate(invalid_vendored_fields)
+
+
+class TestDandisetSameAs:
+    def test_not_specified(self, base_dandiset_metadata: dict[str, Any]) -> None:
+        """
+        Test the case that `sameAs` is not specified in instantiating a `Dandiset`
+        """
+        dandiset = Dandiset.model_validate(base_dandiset_metadata)
+        assert dandiset.sameAs is None
+
+    def test_empty_list(self, base_dandiset_metadata: dict[str, Any]) -> None:
+        """
+        Test the case that `sameAs` in a `Dandiset` is initialized to an empty list
+        """
+        base_dandiset_metadata["sameAs"] = []
+        dandiset = Dandiset.model_validate(base_dandiset_metadata)
+        assert dandiset.sameAs == []
+
+    @pytest.mark.parametrize(
+        "dandi_urls",
+        [
+            ["dandi://DANDI-SANDBOX/123456"],
+            ["dandi://DANDI-SANDBOX/123456@draft"],
+            ["dandi://DANDI-SANDBOX/123456@1.22.33"],
+            ["dandi://DANDI-SANDBOX/123456/path"],
+            ["dandi://DANDI-SANDBOX/123456@draft/path"],
+            ["dandi://DANDI-SANDBOX/123456@1.22.33/path"],
+            ["dandi://EMBER-DANDI/123456"],
+            ["dandi://DANDI-SANDBOX/123456", "dandi://EMBER-DANDI/123456"],
+            ["dandi://A/123456", "dandi://B/654321"],
+        ],
+    )
+    def test_with_valid_dandi_urls(
+        self, dandi_urls: list[str], base_dandiset_metadata: dict[str, Any]
+    ) -> None:
+        """
+        Test the case that `sameAs` is initialized to a list of valid DANDI URLs
+        """
+        base_dandiset_metadata["sameAs"] = dandi_urls
+        dandiset = Dandiset.model_validate(base_dandiset_metadata)
+        assert dandiset.sameAs == dandi_urls
+
+    @pytest.mark.parametrize(
+        "dandi_urls",
+        [
+            # List of invalid DANDI URLs
+            ["dandi://DANDI-SANDBOX/123456@abc"],
+            ["dandi://DANDI-SANDBOX/123456@1.22.33.44"],
+            ["dandi://DANDI-SANDBOX/123456/"],
+            ["dandi://DANDI-SANDBOX/123456@draft/"],
+            ["dandi://DANDI-SANDBOX/123456@1.22.33/"],
+            ["http://DANDI-SANDBOX/123456"],  # Not dandi:// scheme
+            ["dandi://DANDI- SANDBOX/123456"],  # Containing a space
+            ["dandi://"],  # Missing instance name and dandiset id
+            ["dandi://DANDI-SANDBOX"],  # Missing dandiset id
+            ["dandi://DANDI-SANDBOX/12345"],  # Dandiset id too short
+            ["dandi://-DANDI/123456"],  # Invalid instance name
+            ["dandi://EMBER3DANDI/123456"],  # Invalid instance name
+            ["dandi://DANDI-SANDBOX/123456", "dandi://DANDI- SANDBOX/123456"],
+            [42],
+            # Value that is not a list
+            "DANDI-SANDBOX:123456",
+            42,
+        ],
+    )
+    def test_with_invalid_dandi_urls(
+        self, dandi_urls: Any, base_dandiset_metadata: dict[str, Any]
+    ) -> None:
+        """
+        Test the case that `sameAs` is initialized to an invalid list of DANDI URLs
+        or a value that is not a list
+        """
+        base_dandiset_metadata["sameAs"] = dandi_urls
+        with pytest.raises(ValidationError):
+            Dandiset.model_validate(base_dandiset_metadata)
