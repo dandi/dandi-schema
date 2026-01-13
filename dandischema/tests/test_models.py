@@ -1066,7 +1066,7 @@ class TestOtherIdentifiers:
                     "schemaKey": "AssetsSummary",
                 },
                 manifestLocation=["https://example.com"],
-                url=f"https://dandiarchive.org/dandiset/000001/draft",
+                url="https://dandiarchive.org/dandiset/000001/draft",
                 otherIdentifiers=[identifier],
             )
         # Verify the error is in the otherIdentifiers field
