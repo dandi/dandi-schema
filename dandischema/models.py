@@ -630,7 +630,6 @@ class DandiBaseModel(BaseModel):
             if value.get("format", None) == "uri":
                 value["maxLength"] = 1000
             allOf = value.get("allOf")
-            anyOf = value.get("anyOf")
             items = value.get("items")
             if allOf is not None:
                 if len(allOf) == 1 and "$ref" in allOf[0]:
@@ -640,9 +639,6 @@ class DandiBaseModel(BaseModel):
                     value["oneOf"] = value["allOf"]
                     value["type"] = "object"
                     del value["allOf"]
-            if anyOf is not None:
-                if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
-                    value["type"] = "object"
             if items is not None:
                 anyOf = items.get("anyOf")
                 if (
