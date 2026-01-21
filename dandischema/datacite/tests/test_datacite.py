@@ -2,6 +2,7 @@ from enum import Enum
 import json
 import os
 import random
+from time import sleep
 from typing import TYPE_CHECKING, Any, Dict, Tuple, cast
 
 from jsonschema import Draft7Validator
@@ -157,6 +158,10 @@ def datacite_post(datacite: dict, doi: str) -> None:
         auth=(os.environ["DATACITE_DEV_LOGIN"], os.environ["DATACITE_DEV_PASSWORD"]),
     )
     rp.raise_for_status()
+
+    # Wait for DataCite to correctly process the DOI creation
+    #   to avoid the bug documented in https://github.com/datacite/datacite/issues/2307
+    sleep(3)
 
     # checking if i'm able to get the url
     rg = requests.get(url=f"https://api.test.datacite.org/dois/{doi}/activities")
