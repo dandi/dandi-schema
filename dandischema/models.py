@@ -1678,6 +1678,28 @@ class Dandiset(CommonModel):
         pattern=rf"^{ID_PATTERN}:\d{{6}}$",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
+
+    sameAs: Annotated[
+        Optional[
+            list[
+                Annotated[
+                    str,
+                    StringConstraints(
+                        pattern=(
+                            rf"^dandi://{UNVENDORED_ID_PATTERN}/\d{{6}}"
+                            rf"(@(draft|{VERSION_NUM_PATTERN}))?(/\S+)?$"
+                        )
+                    ),
+                ]
+            ]
+        ],
+        Field(
+            default=None,
+            description="Known DANDI URLs of the Dandiset at other DANDI instances.",
+            json_schema_extra={"readOnly": True, "nskey": "schema"},
+        ),
+    ]
+
     name: str = Field(
         title="Dandiset title",
         description="A title associated with the Dandiset.",
