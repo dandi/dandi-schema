@@ -85,7 +85,8 @@ UUID_PATTERN = (
     "[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*" "[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
 )
 ASSET_UUID_PATTERN = r"^dandiasset:" + UUID_PATTERN
-VERSION_PATTERN = r"\d{6}/\d+\.\d+\.\d+"
+VERSION_NUM_PATTERN = r"\d+\.\d+\.\d+"
+VERSION_PATTERN = rf"\d{{6}}/{VERSION_NUM_PATTERN}"
 _INNER_DANDI_DOI_PATTERN = (
     rf"{DOI_PREFIX_PATTERN}/{ID_PATTERN.lower()}\.{VERSION_PATTERN}"
 )
@@ -1666,7 +1667,7 @@ class Dandiset(CommonModel):
     id: str = Field(
         description="Uniform resource identifier",
         pattern=(
-            rf"^({ID_PATTERN}|{ID_PATTERN.lower()}):\d{{6}}(/(draft|\d+\.\d+\.\d+))$"
+            rf"^({ID_PATTERN}|{ID_PATTERN.lower()}):\d{{6}}(/(draft|{VERSION_NUM_PATTERN}))$"
         ),
         json_schema_extra={"readOnly": True},
     )
@@ -1677,6 +1678,28 @@ class Dandiset(CommonModel):
         pattern=rf"^{ID_PATTERN}:\d{{6}}$",
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
+
+    sameAs: Annotated[
+        Optional[
+            list[
+                Annotated[
+                    str,
+                    StringConstraints(
+                        pattern=(
+                            rf"^dandi://{UNVENDORED_ID_PATTERN}/\d{{6}}"
+                            rf"(@(draft|{VERSION_NUM_PATTERN}))?(/\S+)?$"
+                        )
+                    ),
+                ]
+            ]
+        ],
+        Field(
+            default=None,
+            description="Known DANDI URLs of the Dandiset at other DANDI instances.",
+            json_schema_extra={"readOnly": True, "nskey": "schema"},
+        ),
+    ]
+
     name: str = Field(
         title="Dandiset title",
         description="A title associated with the Dandiset.",
