@@ -582,7 +582,12 @@ def test_duplicate_classes() -> None:
                 "RelatedParticipant",
             ):
                 return
-            if qname in "dandi:approach" and klass.__name__ in (
+            if qname == "dandi:approach" and klass.__name__ in (
+                "Asset",
+                "AssetsSummary",
+            ):
+                return
+            if qname == "dandi:dataStandard" and klass.__name__ in (
                 "Asset",
                 "AssetsSummary",
             ):

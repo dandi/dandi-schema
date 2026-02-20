@@ -459,6 +459,22 @@ def migrate(
         if "schemaKey" not in obj_migrated:
             obj_migrated["schemaKey"] = "Dandiset"
 
+    # Prune fields introduced in newer schema versions when target is older.
+    # Each entry: (version_introduced, list_of_top_level_field_paths_to_remove)
+    #
+    # Note: migrate() only processes Dandiset metadata (not Asset metadata).
+    # BareAsset.dataStandard (new in 0.7.0) does not need pruning here;
+    # AssetsSummary.dataStandard (nested in assetsSummary) pre-dates 0.7.0.
+    # StandardsType.version and .extensions are structural additions to an
+    # existing type — older consumers ignore unknown fields.
+    _FIELDS_INTRODUCED: list[tuple[str, list[str]]] = [
+        # ("0.7.0", ["field_on_dandiset"]),
+    ]
+    for ver, fields in _FIELDS_INTRODUCED:
+        if target_ver_tuple < version2tuple(ver):
+            for field_path in fields:
+                obj_migrated.pop(field_path, None)
+
     # Always update schemaVersion when migrating
     obj_migrated["schemaVersion"] = to_version
     return obj_migrated
@@ -543,9 +559,14 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
         if standard not in stats["dataStandard"]:
             stats["dataStandard"].append(standard)
 
+    # Collect per-asset dataStandard declarations populated by dandi-cli
+    for standard in assetmeta.get("dataStandard") or []:
+        add_if_missing(standard)
+
+    # DEPRECATED: path/encoding heuristic fallbacks for older clients that do not
+    # populate per-asset dataStandard.  Remove after 2026-12-01.
     if "nwb" in assetmeta["encodingFormat"]:
         add_if_missing(models.nwb_standard)
-    # TODO: RF assumption that any .json implies BIDS
     if Path(assetmeta["path"]).name == "dataset_description.json":
         add_if_missing(models.bids_standard)
     if Path(assetmeta["path"]).suffixes == [".ome", ".zarr"]:
