@@ -1696,7 +1696,7 @@ class Dandiset(CommonModel):
         Field(
             default=None,
             description="Known DANDI URLs of the Dandiset at other DANDI instances.",
-            json_schema_extra={"readOnly": True, "nskey": "schema"},
+            json_schema_extra={"nskey": "schema"},
         ),
     ]
 
