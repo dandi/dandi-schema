@@ -860,10 +860,26 @@ class MeasurementTechniqueType(BaseType):
 class StandardsType(BaseType):
     """Identifier for data standard used"""
 
+    version: Optional[str] = Field(
+        None,
+        description="Version of the standard used.",
+        json_schema_extra={"nskey": "schema"},
+    )
+    extensions: Optional[List["StandardsType"]] = Field(
+        None,
+        description="Extensions to the standard used in this dataset "
+        "(e.g. NWB extensions like ndx-*, HED library schemas).",
+    )
+    # TODO: consider how to formalize BIDS extensions (BEPs) once BIDS
+    # has a machine-readable way to declare them.
     schemaKey: Literal["StandardsType"] = Field(
         "StandardsType", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
+
+# Self-referencing model needs rebuild after class definition
+# https://docs.pydantic.dev/latest/concepts/postponed_annotations/#self-referencing-or-recursive-models
+StandardsType.model_rebuild()
 
 nwb_standard = StandardsType(
     name="Neurodata Without Borders (NWB)",
@@ -878,6 +894,11 @@ bids_standard = StandardsType(
 ome_ngff_standard = StandardsType(
     name="OME/NGFF Standard",
     identifier="DOI:10.25504/FAIRsharing.9af712",
+).model_dump(mode="json", exclude_none=True)
+
+hed_standard = StandardsType(
+    name="Hierarchical Event Descriptors (HED)",
+    identifier="RRID:SCR_014074",
 ).model_dump(mode="json", exclude_none=True)
 
 
@@ -1839,6 +1860,12 @@ class BareAsset(CommonModel):
         title="Name of the session, project or activity.",
         description="Describe the session, project or activity that generated this asset.",
         json_schema_extra={"nskey": "prov"},
+    )
+
+    dataStandard: Optional[List[StandardsType]] = Field(
+        None,
+        description="Data standard(s) applicable to this asset.",
+        json_schema_extra={"readOnly": True},
     )
 
     # Bare asset is to be just Asset.

@@ -758,6 +758,55 @@ def test_aggregation_bids() -> None:
     )  # only a single entry so we do not duplicate them
 
 
+def test_hed_standard_structure() -> None:
+    from dandischema.models import hed_standard
+
+    assert hed_standard["schemaKey"] == "StandardsType"
+    assert hed_standard["name"] == "Hierarchical Event Descriptors (HED)"
+    assert hed_standard["identifier"] == "RRID:SCR_014074"
+
+
+def test_aggregate_per_asset_datastandard() -> None:
+    """Per-asset dataStandard entries are collected into the summary."""
+    from dandischema.models import hed_standard
+
+    data = [
+        {
+            "schemaKey": "Asset",
+            "schemaVersion": "0.6.0",
+            "path": "dataset_description.json",
+            "encodingFormat": "application/json",
+            "contentSize": 512,
+            "digest": {"dandi:dandi-etag": "abc123-1"},
+            "dataStandard": [hed_standard],
+        },
+    ]
+    summary = aggregate_assets_summary(data)
+    assert hed_standard in summary["dataStandard"]
+    # dataset_description.json also triggers BIDS via deprecated heuristic
+    assert sum("BIDS" in s.get("name", "") for s in summary["dataStandard"]) == 1
+
+
+def test_aggregate_per_asset_datastandard_no_duplication() -> None:
+    """No duplication when a standard is declared both per-asset and via heuristic."""
+    from dandischema.models import bids_standard
+
+    data = [
+        {
+            "schemaKey": "Asset",
+            "schemaVersion": "0.6.0",
+            "path": "dataset_description.json",
+            "encodingFormat": "application/json",
+            "contentSize": 512,
+            "digest": {"dandi:dandi-etag": "abc123-1"},
+            "dataStandard": [bids_standard],
+        },
+    ]
+    summary = aggregate_assets_summary(data)
+    bids_count = sum("BIDS" in s.get("name", "") for s in summary["dataStandard"])
+    assert bids_count == 1, "BIDS should appear exactly once, not duplicated"
+
+
 class TestValidateObjJson:
     """
     Tests for `_validate_obj_json()`
