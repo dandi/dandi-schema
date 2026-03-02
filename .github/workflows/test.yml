@@ -16,23 +16,23 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        python: ['3.9', '3.10', '3.11', '3.12']
+        python: ['3.10', '3.11', '3.12']
         vendored_env: [unvendored]
         include:
           - os: ubuntu-latest
-            python: '3.9'
+            python: '3.10'
             vendored_env: dandi
             instance_name: DANDI
             instance_identifier: 'RRID:SCR_017571'
             doi_prefix: '10.80507'
           - os: ubuntu-latest
-            python: '3.9'
+            python: '3.10'
             vendored_env: ember-dandi
             instance_name: EMBER-DANDI
             instance_identifier: 'RRID:SCR_026700'
             doi_prefix: '10.82754'
           - os: ubuntu-latest
-            python: '3.9'
+            python: '3.10'
             vendored_env: ember-dandi-no-doi
             instance_name: EMBER-DANDI
     steps:
