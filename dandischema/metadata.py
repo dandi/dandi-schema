@@ -451,11 +451,12 @@ def migrate(
     # Downgrades
 
     # Simple downgrades that just require removing fields, which is totally fine
-    # if they are empty, as they are None or empty containers (list, tuple, etc).
+    # if they are empty, as they are None or empty containers (list, tuple, etc)
+    # or empty strings.
     # List only those for which such notion of "empty" applies.
     SIMPLE_DOWNGRADES = [
         # version added, fields to remove
-        ("0.6.11", ["releaseNotes"]),
+        ("0.7.0", ["sameAs", "releaseNotes"]),
     ]
     for ver_added, fields in SIMPLE_DOWNGRADES:
         # additional guards are via ALLOWED_TARGET_SCHEMAS
@@ -465,7 +466,7 @@ def migrate(
                     value = obj_migrated.get(field)
                     # Explicit check for "empty" value per above description.
                     if value is None or (
-                        not value and isinstance(value, (list, tuple, dict, set))
+                        not value and isinstance(value, (list, tuple, dict, set, str))
                     ):
                         del obj_migrated[field]
                     else:

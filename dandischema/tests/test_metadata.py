@@ -17,7 +17,6 @@ from .utils import (
     DOI_PREFIX,
     INSTANCE_NAME,
     METADATA_DIR,
-    basic_publishmeta,
     skipif_instance_name_not_dandi,
     skipif_no_network,
     skipif_no_test_dandiset_metadata_dir,
@@ -497,19 +496,21 @@ def test_migrate_schemaversion_update() -> None:
 
 
 @pytest.mark.ai_generated
-def test_migrate_downgrade_releasenotes() -> None:
-    """Test downgrade from 0.6.11 to 0.6.10 handling releaseNotes field"""
+def test_migrate_downgrade() -> None:
+    """Test downgrade from 0.7.0 to 0.6.10 handling releaseNotes and sameAs fields"""
 
-    # Create a basic PublishedDandiset metadata in 0.6.11 format
-    meta_dict = {
-        "schemaVersion": "0.6.11",
+    # Minimal metadata at current (0.7.0) version
+    meta_dict: dict = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "identifier": "DANDI:000000",
     }
-    meta_dict.update(basic_publishmeta(dandi_id="999999"))
 
-    # Test 1: Downgrade without releaseNotes (should succeed)
+    # Test 1: Downgrade without new fields (should succeed)
     downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
     assert downgraded["schemaVersion"] == "0.6.10"
     assert "releaseNotes" not in downgraded
+    assert "sameAs" not in downgraded
 
     # Test 2: Downgrade with empty releaseNotes (should succeed)
     meta_dict["releaseNotes"] = ""
@@ -517,15 +518,37 @@ def test_migrate_downgrade_releasenotes() -> None:
     assert downgraded["schemaVersion"] == "0.6.10"
     assert "releaseNotes" not in downgraded
 
-    # Test 3: Downgrade with non-empty releaseNotes (should fail)
+    # Test 3: Downgrade with None releaseNotes (should succeed)
+    meta_dict["releaseNotes"] = None
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 4: Downgrade with empty sameAs list (should succeed)
+    meta_dict.pop("releaseNotes")
+    meta_dict["sameAs"] = []
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "sameAs" not in downgraded
+
+    # Test 5: Downgrade with non-empty releaseNotes (should fail)
+    meta_dict.pop("sameAs")
     meta_dict["releaseNotes"] = "Releasing during testing"
     with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
         migrate(meta_dict, to_version="0.6.10", skip_validation=True)
 
-    # Test 4: No-op migration (already at target version)
-    meta_dict_0610 = meta_dict.copy()
-    meta_dict_0610["schemaVersion"] = "0.6.10"
-    meta_dict_0610.pop("releaseNotes")
+    # Test 6: Downgrade with non-empty sameAs (should fail)
+    meta_dict.pop("releaseNotes")
+    meta_dict["sameAs"] = ["dandi://DANDI-SANDBOX/123456"]
+    with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
+        migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+
+    # Test 7: No-op migration (already at target version)
+    meta_dict_0610 = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": "0.6.10",
+        "identifier": "DANDI:000000",
+    }
     migrated = migrate(meta_dict_0610, to_version="0.6.10", skip_validation=True)
     assert migrated == meta_dict_0610
     assert migrated is not meta_dict_0610  # but we do create a copy
