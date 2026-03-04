@@ -22,7 +22,7 @@ ALLOWED_INPUT_SCHEMAS = [
 
 # We establish migrations (back) to only a few recent versions.
 # When adding changes, please consider whether a migration path should be added.
-ALLOWED_TARGET_SCHEMAS = ["0.6.10", DANDI_SCHEMA_VERSION]
+ALLOWED_TARGET_SCHEMAS = ["0.6.10", "0.7.0", DANDI_SCHEMA_VERSION]
 
 # This allows multiple schemas for validation, whereas target schemas focus on
 # migration.
