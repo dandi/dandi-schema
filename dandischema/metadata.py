@@ -456,7 +456,8 @@ def migrate(
     # List only those for which such notion of "empty" applies.
     SIMPLE_DOWNGRADES = [
         # version added, fields to remove
-        ("0.7.0", ["sameAs", "releaseNotes"]),
+        ("0.7.0", ["releaseNotes"]),
+        ("0.8.0", ["sameAs"]),
     ]
     for ver_added, fields in SIMPLE_DOWNGRADES:
         # additional guards are via ALLOWED_TARGET_SCHEMAS
