@@ -457,7 +457,7 @@ def migrate(
     SIMPLE_DOWNGRADES = [
         # version added, fields to remove
         ("0.7.0", ["releaseNotes"]),
-        ("0.8.0", ["sameAs"]),
+        ("0.7.1", ["sameAs"]),
     ]
     for ver_added, fields in SIMPLE_DOWNGRADES:
         # additional guards are via ALLOWED_TARGET_SCHEMAS
