@@ -1,6 +1,6 @@
 from packaging.version import Version as _Version
 
-DANDI_SCHEMA_VERSION = "0.8.0"
+DANDI_SCHEMA_VERSION = "0.7.1"
 ALLOWED_INPUT_SCHEMAS = [
     "0.4.4",
     "0.5.1",
