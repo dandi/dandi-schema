@@ -1,0 +1,2304 @@
+name: dandi-schema
+status: eunal:concept-status/DRAFT
+id: https://schema.dandiarchive.org/s/dandi/v0.7
+version: 0.7.0
+imports:
+- linkml:types
+prefixes:
+  linkml:
+    prefix_prefix: linkml
+    prefix_reference: https://w3id.org/linkml/
+  test_schema:
+    prefix_prefix: test_schema
+    prefix_reference: http://example.org/test-schema/
+default_prefix: test_schema
+default_range: string
+enums:
+  AccessType:
+    name: AccessType
+    description: An enumeration of access status options
+    permissible_values:
+      dandi:OpenAccess:
+        text: dandi:OpenAccess
+        meaning: dandi:OpenAccess
+      dandi:EmbargoedAccess:
+        text: dandi:EmbargoedAccess
+        meaning: dandi:EmbargoedAccess
+  AgeReferenceType:
+    name: AgeReferenceType
+    description: An enumeration of age reference
+    permissible_values:
+      dandi:BirthReference:
+        text: dandi:BirthReference
+        meaning: dandi:BirthReference
+      dandi:GestationalReference:
+        text: dandi:GestationalReference
+        meaning: dandi:GestationalReference
+  DigestType:
+    name: DigestType
+    description: An enumeration of checksum types
+    permissible_values:
+      dandi:md5:
+        text: dandi:md5
+        meaning: dandi:md5
+      dandi:sha1:
+        text: dandi:sha1
+        meaning: dandi:sha1
+      dandi:sha2-256:
+        text: dandi:sha2-256
+        meaning: dandi:sha2-256
+      dandi:sha3-256:
+        text: dandi:sha3-256
+        meaning: dandi:sha3-256
+      dandi:blake2b-256:
+        text: dandi:blake2b-256
+        meaning: dandi:blake2b-256
+      dandi:blake3:
+        text: dandi:blake3
+        meaning: dandi:blake3
+      dandi:dandi-etag:
+        text: dandi:dandi-etag
+        meaning: dandi:dandi-etag
+      dandi:dandi-zarr-checksum:
+        text: dandi:dandi-zarr-checksum
+        meaning: dandi:dandi-zarr-checksum
+  IdentifierType:
+    name: IdentifierType
+    description: An enumeration of identifiers
+    permissible_values:
+      dandi:doi:
+        text: dandi:doi
+        meaning: dandi:doi
+      dandi:orcid:
+        text: dandi:orcid
+        meaning: dandi:orcid
+      dandi:ror:
+        text: dandi:ror
+        meaning: dandi:ror
+      dandi:dandi:
+        text: dandi:dandi
+        meaning: dandi:dandi
+      dandi:rrid:
+        text: dandi:rrid
+        meaning: dandi:rrid
+  LicenseType:
+    name: LicenseType
+    description: An enumeration.
+    permissible_values:
+      spdx:CC0-1.0:
+        text: spdx:CC0-1.0
+        meaning: spdx:CC0-1.0
+      spdx:CC-BY-4.0:
+        text: spdx:CC-BY-4.0
+        meaning: spdx:CC-BY-4.0
+  ParticipantRelationType:
+    name: ParticipantRelationType
+    description: An enumeration of participant relations
+    permissible_values:
+      dandi:isChildOf:
+        text: dandi:isChildOf
+        meaning: dandi:isChildOf
+      dandi:isParentOf:
+        text: dandi:isParentOf
+        meaning: dandi:isParentOf
+      dandi:isSiblingOf:
+        text: dandi:isSiblingOf
+        meaning: dandi:isSiblingOf
+      dandi:isMonozygoticTwinOf:
+        text: dandi:isMonozygoticTwinOf
+        meaning: dandi:isMonozygoticTwinOf
+      dandi:isDizygoticTwinOf:
+        text: dandi:isDizygoticTwinOf
+        meaning: dandi:isDizygoticTwinOf
+  RelationType:
+    name: RelationType
+    description: An enumeration of resource relations
+    permissible_values:
+      dcite:IsCitedBy:
+        text: dcite:IsCitedBy
+        meaning: dcite:IsCitedBy
+      dcite:Cites:
+        text: dcite:Cites
+        meaning: dcite:Cites
+      dcite:IsSupplementTo:
+        text: dcite:IsSupplementTo
+        meaning: dcite:IsSupplementTo
+      dcite:IsSupplementedBy:
+        text: dcite:IsSupplementedBy
+        meaning: dcite:IsSupplementedBy
+      dcite:IsContinuedBy:
+        text: dcite:IsContinuedBy
+        meaning: dcite:IsContinuedBy
+      dcite:Continues:
+        text: dcite:Continues
+        meaning: dcite:Continues
+      dcite:Describes:
+        text: dcite:Describes
+        meaning: dcite:Describes
+      dcite:IsDescribedBy:
+        text: dcite:IsDescribedBy
+        meaning: dcite:IsDescribedBy
+      dcite:HasMetadata:
+        text: dcite:HasMetadata
+        meaning: dcite:HasMetadata
+      dcite:IsMetadataFor:
+        text: dcite:IsMetadataFor
+        meaning: dcite:IsMetadataFor
+      dcite:HasVersion:
+        text: dcite:HasVersion
+        meaning: dcite:HasVersion
+      dcite:IsVersionOf:
+        text: dcite:IsVersionOf
+        meaning: dcite:IsVersionOf
+      dcite:IsNewVersionOf:
+        text: dcite:IsNewVersionOf
+        meaning: dcite:IsNewVersionOf
+      dcite:IsPreviousVersionOf:
+        text: dcite:IsPreviousVersionOf
+        meaning: dcite:IsPreviousVersionOf
+      dcite:IsPartOf:
+        text: dcite:IsPartOf
+        meaning: dcite:IsPartOf
+      dcite:HasPart:
+        text: dcite:HasPart
+        meaning: dcite:HasPart
+      dcite:IsReferencedBy:
+        text: dcite:IsReferencedBy
+        meaning: dcite:IsReferencedBy
+      dcite:References:
+        text: dcite:References
+        meaning: dcite:References
+      dcite:IsDocumentedBy:
+        text: dcite:IsDocumentedBy
+        meaning: dcite:IsDocumentedBy
+      dcite:Documents:
+        text: dcite:Documents
+        meaning: dcite:Documents
+      dcite:IsCompiledBy:
+        text: dcite:IsCompiledBy
+        meaning: dcite:IsCompiledBy
+      dcite:Compiles:
+        text: dcite:Compiles
+        meaning: dcite:Compiles
+      dcite:IsVariantFormOf:
+        text: dcite:IsVariantFormOf
+        meaning: dcite:IsVariantFormOf
+      dcite:IsOriginalFormOf:
+        text: dcite:IsOriginalFormOf
+        meaning: dcite:IsOriginalFormOf
+      dcite:IsIdenticalTo:
+        text: dcite:IsIdenticalTo
+        meaning: dcite:IsIdenticalTo
+      dcite:IsReviewedBy:
+        text: dcite:IsReviewedBy
+        meaning: dcite:IsReviewedBy
+      dcite:Reviews:
+        text: dcite:Reviews
+        meaning: dcite:Reviews
+      dcite:IsDerivedFrom:
+        text: dcite:IsDerivedFrom
+        meaning: dcite:IsDerivedFrom
+      dcite:IsSourceOf:
+        text: dcite:IsSourceOf
+        meaning: dcite:IsSourceOf
+      dcite:IsRequiredBy:
+        text: dcite:IsRequiredBy
+        meaning: dcite:IsRequiredBy
+      dcite:Requires:
+        text: dcite:Requires
+        meaning: dcite:Requires
+      dcite:Obsoletes:
+        text: dcite:Obsoletes
+        meaning: dcite:Obsoletes
+      dcite:IsObsoletedBy:
+        text: dcite:IsObsoletedBy
+        meaning: dcite:IsObsoletedBy
+      dcite:IsPublishedIn:
+        text: dcite:IsPublishedIn
+        meaning: dcite:IsPublishedIn
+  ResourceType:
+    name: ResourceType
+    description: An enumeration of resource types
+    permissible_values:
+      dcite:Audiovisual:
+        text: dcite:Audiovisual
+        meaning: dcite:Audiovisual
+      dcite:Book:
+        text: dcite:Book
+        meaning: dcite:Book
+      dcite:BookChapter:
+        text: dcite:BookChapter
+        meaning: dcite:BookChapter
+      dcite:Collection:
+        text: dcite:Collection
+        meaning: dcite:Collection
+      dcite:ComputationalNotebook:
+        text: dcite:ComputationalNotebook
+        meaning: dcite:ComputationalNotebook
+      dcite:ConferencePaper:
+        text: dcite:ConferencePaper
+        meaning: dcite:ConferencePaper
+      dcite:ConferenceProceeding:
+        text: dcite:ConferenceProceeding
+        meaning: dcite:ConferenceProceeding
+      dcite:DataPaper:
+        text: dcite:DataPaper
+        meaning: dcite:DataPaper
+      dcite:Dataset:
+        text: dcite:Dataset
+        meaning: dcite:Dataset
+      dcite:Dissertation:
+        text: dcite:Dissertation
+        meaning: dcite:Dissertation
+      dcite:Event:
+        text: dcite:Event
+        meaning: dcite:Event
+      dcite:Image:
+        text: dcite:Image
+        meaning: dcite:Image
+      dcite:Instrument:
+        text: dcite:Instrument
+        meaning: dcite:Instrument
+      dcite:InteractiveResource:
+        text: dcite:InteractiveResource
+        meaning: dcite:InteractiveResource
+      dcite:Journal:
+        text: dcite:Journal
+        meaning: dcite:Journal
+      dcite:JournalArticle:
+        text: dcite:JournalArticle
+        meaning: dcite:JournalArticle
+      dcite:Model:
+        text: dcite:Model
+        meaning: dcite:Model
+      dcite:OutputManagementPlan:
+        text: dcite:OutputManagementPlan
+        meaning: dcite:OutputManagementPlan
+      dcite:PeerReview:
+        text: dcite:PeerReview
+        meaning: dcite:PeerReview
+      dcite:PhysicalObject:
+        text: dcite:PhysicalObject
+        meaning: dcite:PhysicalObject
+      dcite:Preprint:
+        text: dcite:Preprint
+        meaning: dcite:Preprint
+      dcite:Report:
+        text: dcite:Report
+        meaning: dcite:Report
+      dcite:Service:
+        text: dcite:Service
+        meaning: dcite:Service
+      dcite:Software:
+        text: dcite:Software
+        meaning: dcite:Software
+      dcite:Sound:
+        text: dcite:Sound
+        meaning: dcite:Sound
+      dcite:Standard:
+        text: dcite:Standard
+        meaning: dcite:Standard
+      dcite:StudyRegistration:
+        text: dcite:StudyRegistration
+        meaning: dcite:StudyRegistration
+      dcite:Text:
+        text: dcite:Text
+        meaning: dcite:Text
+      dcite:Workflow:
+        text: dcite:Workflow
+        meaning: dcite:Workflow
+      dcite:Other:
+        text: dcite:Other
+        meaning: dcite:Other
+  RoleType:
+    name: RoleType
+    description: An enumeration of roles
+    permissible_values:
+      dcite:Author:
+        text: dcite:Author
+        meaning: dcite:Author
+      dcite:Conceptualization:
+        text: dcite:Conceptualization
+        meaning: dcite:Conceptualization
+      dcite:ContactPerson:
+        text: dcite:ContactPerson
+        meaning: dcite:ContactPerson
+      dcite:DataCollector:
+        text: dcite:DataCollector
+        meaning: dcite:DataCollector
+      dcite:DataCurator:
+        text: dcite:DataCurator
+        meaning: dcite:DataCurator
+      dcite:DataManager:
+        text: dcite:DataManager
+        meaning: dcite:DataManager
+      dcite:FormalAnalysis:
+        text: dcite:FormalAnalysis
+        meaning: dcite:FormalAnalysis
+      dcite:FundingAcquisition:
+        text: dcite:FundingAcquisition
+        meaning: dcite:FundingAcquisition
+      dcite:Investigation:
+        text: dcite:Investigation
+        meaning: dcite:Investigation
+      dcite:Maintainer:
+        text: dcite:Maintainer
+        meaning: dcite:Maintainer
+      dcite:Methodology:
+        text: dcite:Methodology
+        meaning: dcite:Methodology
+      dcite:Producer:
+        text: dcite:Producer
+        meaning: dcite:Producer
+      dcite:ProjectLeader:
+        text: dcite:ProjectLeader
+        meaning: dcite:ProjectLeader
+      dcite:ProjectManager:
+        text: dcite:ProjectManager
+        meaning: dcite:ProjectManager
+      dcite:ProjectMember:
+        text: dcite:ProjectMember
+        meaning: dcite:ProjectMember
+      dcite:ProjectAdministration:
+        text: dcite:ProjectAdministration
+        meaning: dcite:ProjectAdministration
+      dcite:Researcher:
+        text: dcite:Researcher
+        meaning: dcite:Researcher
+      dcite:Resources:
+        text: dcite:Resources
+        meaning: dcite:Resources
+      dcite:Software:
+        text: dcite:Software
+        meaning: dcite:Software
+      dcite:Supervision:
+        text: dcite:Supervision
+        meaning: dcite:Supervision
+      dcite:Validation:
+        text: dcite:Validation
+        meaning: dcite:Validation
+      dcite:Visualization:
+        text: dcite:Visualization
+        meaning: dcite:Visualization
+      dcite:Funder:
+        text: dcite:Funder
+        meaning: dcite:Funder
+      dcite:Sponsor:
+        text: dcite:Sponsor
+        meaning: dcite:Sponsor
+      dcite:StudyParticipant:
+        text: dcite:StudyParticipant
+        meaning: dcite:StudyParticipant
+      dcite:Affiliation:
+        text: dcite:Affiliation
+        meaning: dcite:Affiliation
+      dcite:EthicsApproval:
+        text: dcite:EthicsApproval
+        meaning: dcite:EthicsApproval
+      dcite:Other:
+        text: dcite:Other
+        meaning: dcite:Other
+slots:
+  about:
+    name: about
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. Tagged union types
+      are yet to be supported.'
+    required: false
+    multivalued: true
+  access:
+    name: access
+    notes:
+    - 'pydantic2linkml: Unable to express the default factory, <function CommonModel.<lambda>
+      at 0x7f8c96c35ea0>, in LinkML.'
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <function AccessRequirements.open_or_embargoed at 0x7f8c96c34820>.'
+    range: AccessRequirements
+    required: false
+    multivalued: true
+  acknowledgement:
+    name: acknowledgement
+    range: string
+    required: false
+  affiliation:
+    name: affiliation
+    range: Affiliation
+    required: false
+    multivalued: true
+  age:
+    name: age
+    range: PropertyValue
+    required: false
+  alleles:
+    name: alleles
+    range: Allele
+    required: true
+    multivalued: true
+  alleleSymbol:
+    name: alleleSymbol
+    range: string
+    required: false
+  alleleType:
+    name: alleleType
+    range: string
+    required: false
+  altName:
+    name: altName
+    range: string
+    required: false
+    multivalued: true
+  anatomy:
+    name: anatomy
+    range: Anatomy
+    required: false
+    multivalued: true
+  approach:
+    name: approach
+    range: ApproachType
+    required: false
+    multivalued: true
+  assayType:
+    name: assayType
+    range: AssayType
+    required: false
+    multivalued: true
+  assetsSummary:
+    name: assetsSummary
+    range: AssetsSummary
+    required: true
+  awardNumber:
+    name: awardNumber
+    range: string
+    required: false
+  blobDateModified:
+    name: blobDateModified
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  cellLine:
+    name: cellLine
+    range: string
+    required: false
+  citation:
+    name: citation
+    range: string
+    required: true
+  contactPoint:
+    name: contactPoint
+    range: ContactPoint
+    required: false
+  contentSize:
+    name: contentSize
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method ByteSize._validate of <class ''pydantic.types.ByteSize''>>.'
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type str. The choice type is yet to be supported. (core
+      schema: {''type'': ''union'', ''choices'': [{''type'': ''str'', ''pattern'':
+      ''^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?''}, {''type'': ''int'', ''ge'': 0}], ''custom_error_type'':
+      ''byte_size'', ''custom_error_message'': ''could not parse value and unit from
+      byte string''}).'
+    required: true
+  contentUrl:
+    name: contentUrl
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c967983a0>.'
+    range: uri
+    required: true
+    multivalued: true
+    pattern: ^(?i:http|https)://[^\s]+$
+  contributor:
+    name: contributor
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. Tagged union types
+      are yet to be supported.'
+    required: false
+    multivalued: true
+  dataStandard:
+    name: dataStandard
+    range: StandardsType
+    required: false
+    multivalued: true
+  dataType:
+    name: dataType
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c370a0>.'
+    range: uri
+    required: false
+    pattern: ^(?i:http|https)://[^\s]+$
+  dateCreated:
+    name: dateCreated
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  dateModified:
+    name: dateModified
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  datePublished:
+    name: datePublished
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: true
+  description:
+    name: description
+    range: string
+    required: false
+  digest:
+    name: digest
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method BareAsset.digest_check of <class ''dandischema.models.BareAsset''>>.'
+    - 'pydantic2linkml: Warning: The translation is incomplete. `dict` types are yet
+      to be supported.'
+    required: true
+  disorder:
+    name: disorder
+    range: Disorder
+    required: false
+    multivalued: true
+  doi:
+    name: doi
+    ifabsent: string()
+    range: string
+    required: false
+    pattern: ^(10\.\d{4,}/[a-z][-a-z]*\.\d{6}/\d+\.\d+\.\d+|)$
+  dxdate:
+    name: dxdate
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type date. The choice type is yet to be supported. (core
+      schema: {''type'': ''union'', ''choices'': [{''type'': ''date''}, {''type'':
+      ''datetime'', ''microseconds_precision'': ''truncate''}]}).'
+    required: false
+    multivalued: true
+  email:
+    name: email
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method EmailStr._validate of <class ''pydantic.networks.EmailStr''>>.'
+    range: string
+    required: false
+  embargoedUntil:
+    name: embargoedUntil
+    range: date
+    required: false
+  encodingFormat:
+    name: encodingFormat
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type function-wrap. The choice type is yet to be supported.
+      (core schema: {''type'': ''union'', ''choices'': [{''type'': ''function-wrap'',
+      ''function'': {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c372e0>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}, {''type'': ''str''}]}).'
+    required: true
+  endDate:
+    name: endDate
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  ethicsApproval:
+    name: ethicsApproval
+    range: EthicsApproval
+    required: false
+    multivalued: true
+  genotype:
+    name: genotype
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type list. The choice type is yet to be supported. (core
+      schema: {''type'': ''union'', ''choices'': [{''type'': ''list'', ''items_schema'':
+      {''type'': ''model'', ''cls'': <class ''dandischema.models.GenotypeInfo''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.GenotypeInfo''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''GenotypeInfo'']}, ''type'':
+      ''function-after''}, ''default'': ''GenotypeInfo'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''locus'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Locus''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Locus''>>}, ''schema'':
+      {''type'': ''literal'', ''expected'': [''Locus'']}, ''type'': ''function-after''},
+      ''default'': ''Locus'', ''validate_default'': True}, ''metadata'': {''pydantic_js_extra'':
+      {''readOnly'': True}}}, ''identifier'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''union'', ''choices'': [{''type'': ''str''}, {''type'': ''list'',
+      ''items_schema'': {''type'': ''str''}}]}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Identifier for genotyping locus.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''locusType'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str''}}, ''default'': None}, ''metadata'': {}}}, ''model_name'': ''Locus'',
+      ''computed_fields'': []}, ''custom_init'': False, ''root_model'': False, ''post_init'':
+      ''model_post_init'', ''config'': {''title'': ''Locus''}, ''ref'': ''dandischema.models.Locus:94399352651488'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.Locus''>>]}}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Locus at which information was extracted.''}}}, ''alleles'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''list'', ''items_schema'':
+      {''type'': ''model'', ''cls'': <class ''dandischema.models.Allele''>, ''schema'':
+      {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Allele''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Allele'']}, ''type'': ''function-after''},
+      ''default'': ''Allele'', ''validate_default'': True}, ''metadata'': {''pydantic_js_extra'':
+      {''readOnly'': True}}}, ''identifier'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''union'', ''choices'': [{''type'': ''str''}, {''type'': ''list'',
+      ''items_schema'': {''type'': ''str''}}]}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Identifier for genotyping allele.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''alleleSymbol'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str''}}, ''default'': None}, ''metadata'': {}}, ''alleleType'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None}, ''metadata'':
+      {}}}, ''model_name'': ''Allele'', ''computed_fields'': []}, ''custom_init'':
+      False, ''root_model'': False, ''post_init'': ''model_post_init'', ''config'':
+      {''title'': ''Allele''}, ''ref'': ''dandischema.models.Allele:94399352775296'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.Allele''>>]}}}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Information about alleles at the locus.''}}}, ''wasGeneratedBy'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''list'', ''items_schema'':
+      {''type'': ''model'', ''cls'': <class ''dandischema.models.Session''>, ''schema'':
+      {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Session''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Session'']}, ''type'':
+      ''function-after''}, ''default'': ''Session'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''str'', ''max_length'': 150}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Name of session'', ''description'':
+      ''The name of the logical session associated with the asset.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''description'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''description'':
+      ''A brief description of the session.''}, ''pydantic_js_extra'': {''nskey'':
+      ''schema''}}}, ''startDate'': {''type'': ''model-field'', ''schema'': {''type'':
+      ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'': ''datetime'',
+      ''microseconds_precision'': ''truncate''}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''endDate'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''datetime'', ''microseconds_precision'': ''truncate''}}, ''default'':
+      None}, ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''wasAssociatedWith'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''list'', ''items_schema'':
+      {''type'': ''tagged-union'', ''choices'': {''Person'': {''function'': {''type'':
+      ''no-info'', ''function'': <function Contributor.ensure_contact_person_has_email
+      at 0x7f8c96c340d0>}, ''schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Person''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Person''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Person'']}, ''type'': ''function-after''},
+      ''default'': ''Person'', ''validate_default'': True}, ''metadata'': {''pydantic_js_extra'':
+      {''readOnly'': True}}}, ''identifier'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str'', ''pattern'': ''^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$''}}, ''default'':
+      None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''An ORCID identifier'',
+      ''description'': ''An ORCID (orcid.org) identifier for an individual.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''str'', ''pattern'': "^([\\w\\s\\-\\.'']+),\\s+([\\w\\s\\-\\.'']+)$"},
+      ''metadata'': {''pydantic_js_updates'': {''title'': ''Use Last, First. Example:
+      Lovelace, Augusta Ada'', ''description'': ''Use the format: familyname, given
+      names ...''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''email'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''function'': {''type'': ''no-info'', ''function'':
+      <bound method EmailStr._validate of <class ''pydantic.networks.EmailStr''>>},
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_functions'': [<bound
+      method EmailStr.__get_pydantic_json_schema__ of <class ''pydantic.networks.EmailStr''>>]},
+      ''type'': ''function-after''}}, ''default'': None}, ''metadata'': {''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''url'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''function-wrap'', ''function'': {''type'': ''no-info'', ''function'': <function
+      _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0x7f8c96c36320>},
+      ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'', ''https'']},
+      ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''roleName'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''list'', ''items_schema'':
+      {''type'': ''definition-ref'', ''schema_ref'': ''dandischema.models.RoleType:94399351385504''}}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''Role'',
+      ''description'': ''Role(s) of the contributor. Multiple roles can be selected.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''includeInCitation'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''bool''}, ''default'': True}, ''metadata'': {''pydantic_js_updates'': {''title'':
+      ''Include contributor in citation'', ''description'': ''A flag to indicate whether
+      a contributor should be included when generating a citation for the item.''},
+      ''pydantic_js_extra'': {''nskey'': ''dandi''}}}, ''awardNumber'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Identifier for an award'', ''description'':
+      ''Identifier associated with a sponsored or gift award.''}, ''pydantic_js_extra'':
+      {''nskey'': ''dandi''}}}, ''affiliation'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''list'', ''items_schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Affiliation''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Affiliation''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Affiliation'']}, ''type'':
+      ''function-after''}, ''default'': ''Affiliation'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str'', ''pattern'': ''^https://ror.org/[a-z0-9]+$''}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''A
+      ror.org identifier'', ''description'': ''Use an ror.org identifier for institutions.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_updates'': {''description'':
+      ''Name of organization''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}},
+      ''model_name'': ''Affiliation'', ''computed_fields'': []}, ''custom_init'':
+      False, ''root_model'': False, ''post_init'': ''model_post_init'', ''config'':
+      {''title'': ''Affiliation''}, ''ref'': ''dandischema.models.Affiliation:94399351361968'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.Affiliation''>>]}}}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''description'': ''An organization that this person
+      is affiliated with.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Person'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Person''}},
+      ''ref'': ''dandischema.models.Person:94399351924672'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Person''>>]},
+      ''type'': ''function-after''}, ''Organization'': {''type'': ''definition-ref'',
+      ''schema_ref'': ''dandischema.models.Organization:94399348768928''}, ''Software'':
+      {''type'': ''model'', ''cls'': <class ''dandischema.models.Software''>, ''schema'':
+      {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Software''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Software'']}, ''type'':
+      ''function-after''}, ''default'': ''Software'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str'', ''pattern'': ''^RRID:.*''}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''Research
+      resource identifier'', ''description'': ''RRID of the software from scicrunch.org.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_extra'': {''nskey'':
+      ''schema''}}}, ''version'': {''type'': ''model-field'', ''schema'': {''type'':
+      ''str''}, ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''url'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''function-wrap'', ''function'':
+      {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c36a70>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_updates'': {''description'': ''Web page for the
+      software.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Software'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Software''},
+      ''ref'': ''dandischema.models.Software:94399351823024'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Software''>>]}},
+      ''Agent'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Agent''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Agent''>>}, ''schema'':
+      {''type'': ''literal'', ''expected'': [''Agent'']}, ''type'': ''function-after''},
+      ''default'': ''Agent'', ''validate_default'': True}, ''metadata'': {''pydantic_js_extra'':
+      {''readOnly'': True}}}, ''identifier'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'':
+      ''Identifier'', ''description'': ''Identifier for an agent.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''str''}, ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}},
+      ''url'': {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''function-wrap'', ''function'':
+      {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c368c0>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Agent'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Agent''},
+      ''ref'': ''dandischema.models.Agent:94399351861984'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Agent''>>]}}},
+      ''discriminator'': ''schemaKey'', ''strict'': False, ''from_attributes'': True,
+      ''metadata'': {}}}}, ''default'': None}, ''metadata'': {''pydantic_js_extra'':
+      {''nskey'': ''prov''}}}, ''used'': {''type'': ''model-field'', ''schema'': {''type'':
+      ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'': ''list'',
+      ''items_schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Equipment''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Equipment''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Equipment'']}, ''type'':
+      ''function-after''}, ''default'': ''Equipment'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''str'', ''max_length'': 150}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Title'', ''description'': ''A name for
+      the equipment.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''description'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_updates'': {''description'': ''The description
+      of the equipment.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Equipment'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Equipment''},
+      ''ref'': ''dandischema.models.Equipment:94399352248096'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Equipment''>>]}}}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''description'':
+      ''A listing of equipment used for the activity.''}, ''pydantic_js_extra'': {''nskey'':
+      ''prov''}}}}, ''model_name'': ''Session'', ''computed_fields'': []}, ''custom_init'':
+      False, ''root_model'': False, ''post_init'': ''model_post_init'', ''config'':
+      {''title'': ''Session''}, ''ref'': ''dandischema.models.Session:94399352644368'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.Session''>>]}}}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''description'': ''Information about session activity
+      used to determine genotype.''}, ''pydantic_js_extra'': {''nskey'': ''prov''}}}},
+      ''model_name'': ''GenotypeInfo'', ''computed_fields'': []}, ''custom_init'':
+      False, ''root_model'': False, ''post_init'': ''model_post_init'', ''config'':
+      {''title'': ''GenotypeInfo''}, ''ref'': ''dandischema.models.GenotypeInfo:94399353584960'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.GenotypeInfo''>>]}}}, {''type'': ''str''}]}).'
+    required: false
+  hasMember:
+    name: hasMember
+    range: string
+    required: false
+    multivalued: true
+  id:
+    name: id
+    range: string
+    required: false
+  identifier:
+    name: identifier
+  includeInCitation:
+    name: includeInCitation
+    ifabsent: 'True'
+    range: boolean
+    required: false
+  keywords:
+    name: keywords
+    range: string
+    required: false
+    multivalued: true
+  license:
+    name: license
+    range: LicenseType
+    required: false
+    multivalued: true
+  locus:
+    name: locus
+    range: Locus
+    required: true
+  locusType:
+    name: locusType
+    range: string
+    required: false
+  manifestLocation:
+    name: manifestLocation
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c36830>.'
+    range: uri
+    required: true
+    multivalued: true
+    pattern: ^(?i:http|https)://[^\s]+$
+    minimum_cardinality: 1
+  maxValue:
+    name: maxValue
+    notes:
+    - 'pydantic2linkml: LinkML does not have support for `''+inf''`, `''-inf''`, and
+      `''NaN''` values. Support for these values is not translated.'
+    range: float
+    required: false
+  measurementTechnique:
+    name: measurementTechnique
+    range: MeasurementTechniqueType
+    required: false
+    multivalued: true
+  minValue:
+    name: minValue
+    notes:
+    - 'pydantic2linkml: LinkML does not have support for `''+inf''`, `''-inf''`, and
+      `''NaN''` values. Support for these values is not translated.'
+    range: float
+    required: false
+  name:
+    name: name
+    range: string
+  numberOfBytes:
+    name: numberOfBytes
+    range: integer
+    required: true
+  numberOfCells:
+    name: numberOfCells
+    range: integer
+    required: false
+  numberOfFiles:
+    name: numberOfFiles
+    range: integer
+    required: true
+  numberOfSamples:
+    name: numberOfSamples
+    range: integer
+    required: false
+  numberOfSubjects:
+    name: numberOfSubjects
+    range: integer
+    required: false
+  path:
+    name: path
+    range: string
+    required: true
+  propertyID:
+    name: propertyID
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type definition-ref. The choice type is yet to be supported.
+      (core schema: {''type'': ''union'', ''choices'': [{''type'': ''definition-ref'',
+      ''schema_ref'': ''dandischema.models.IdentifierType:94399351374048''}, {''type'':
+      ''function-wrap'', ''function'': {''type'': ''no-info'', ''function'': <function
+      _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0x7f8c96c17c70>},
+      ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'', ''https'']},
+      ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}]}).'
+    required: false
+  protocol:
+    name: protocol
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c36f80>.'
+    range: uri
+    required: false
+    multivalued: true
+    pattern: ^(?i:http|https)://[^\s]+$
+  publishedBy:
+    name: publishedBy
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type function-wrap. The choice type is yet to be supported.
+      (core schema: {''type'': ''union'', ''choices'': [{''type'': ''function-wrap'',
+      ''function'': {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c37a30>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}, {''type'': ''model'',
+      ''cls'': <class ''dandischema.models.PublishActivity''>, ''schema'': {''type'':
+      ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''description'':
+      ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'': True}}},
+      ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.PublishActivity''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''PublishActivity'']}, ''type'':
+      ''function-after''}, ''default'': ''PublishActivity'', ''validate_default'':
+      True}, ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''str'', ''max_length'': 150}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Title'', ''description'': ''The name
+      of the activity.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''description'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_updates'': {''description'': ''The description
+      of the activity.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''startDate'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''datetime'', ''microseconds_precision'':
+      ''truncate''}}, ''default'': None}, ''metadata'': {''pydantic_js_extra'': {''nskey'':
+      ''schema''}}}, ''endDate'': {''type'': ''model-field'', ''schema'': {''type'':
+      ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'': ''datetime'',
+      ''microseconds_precision'': ''truncate''}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''wasAssociatedWith'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''type'': ''list'', ''items_schema'': {''type'':
+      ''tagged-union'', ''choices'': {''Person'': {''function'': {''type'': ''no-info'',
+      ''function'': <function Contributor.ensure_contact_person_has_email at 0x7f8c96c340d0>},
+      ''schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Person''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Person''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Person'']}, ''type'': ''function-after''},
+      ''default'': ''Person'', ''validate_default'': True}, ''metadata'': {''pydantic_js_extra'':
+      {''readOnly'': True}}}, ''identifier'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str'', ''pattern'': ''^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$''}}, ''default'':
+      None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''An ORCID identifier'',
+      ''description'': ''An ORCID (orcid.org) identifier for an individual.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''str'', ''pattern'': "^([\\w\\s\\-\\.'']+),\\s+([\\w\\s\\-\\.'']+)$"},
+      ''metadata'': {''pydantic_js_updates'': {''title'': ''Use Last, First. Example:
+      Lovelace, Augusta Ada'', ''description'': ''Use the format: familyname, given
+      names ...''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''email'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''function'': {''type'': ''no-info'', ''function'':
+      <bound method EmailStr._validate of <class ''pydantic.networks.EmailStr''>>},
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_functions'': [<bound
+      method EmailStr.__get_pydantic_json_schema__ of <class ''pydantic.networks.EmailStr''>>]},
+      ''type'': ''function-after''}}, ''default'': None}, ''metadata'': {''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''url'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''function-wrap'', ''function'': {''type'': ''no-info'', ''function'': <function
+      _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0x7f8c96c36320>},
+      ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'', ''https'']},
+      ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''roleName'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''list'', ''items_schema'':
+      {''type'': ''definition-ref'', ''schema_ref'': ''dandischema.models.RoleType:94399351385504''}}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''Role'',
+      ''description'': ''Role(s) of the contributor. Multiple roles can be selected.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''includeInCitation'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''bool''}, ''default'': True}, ''metadata'': {''pydantic_js_updates'': {''title'':
+      ''Include contributor in citation'', ''description'': ''A flag to indicate whether
+      a contributor should be included when generating a citation for the item.''},
+      ''pydantic_js_extra'': {''nskey'': ''dandi''}}}, ''awardNumber'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Identifier for an award'', ''description'':
+      ''Identifier associated with a sponsored or gift award.''}, ''pydantic_js_extra'':
+      {''nskey'': ''dandi''}}}, ''affiliation'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''list'', ''items_schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Affiliation''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Affiliation''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Affiliation'']}, ''type'':
+      ''function-after''}, ''default'': ''Affiliation'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str'', ''pattern'': ''^https://ror.org/[a-z0-9]+$''}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''A
+      ror.org identifier'', ''description'': ''Use an ror.org identifier for institutions.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_updates'': {''description'':
+      ''Name of organization''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}},
+      ''model_name'': ''Affiliation'', ''computed_fields'': []}, ''custom_init'':
+      False, ''root_model'': False, ''post_init'': ''model_post_init'', ''config'':
+      {''title'': ''Affiliation''}, ''ref'': ''dandischema.models.Affiliation:94399351361968'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.Affiliation''>>]}}}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''description'': ''An organization that this person
+      is affiliated with.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Person'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Person''}},
+      ''ref'': ''dandischema.models.Person:94399351924672'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Person''>>]},
+      ''type'': ''function-after''}, ''Organization'': {''function'': {''type'': ''no-info'',
+      ''function'': <function Contributor.ensure_contact_person_has_email at 0x7f8c96c340d0>},
+      ''schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Organization''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Organization''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Organization'']}, ''type'':
+      ''function-after''}, ''default'': ''Organization'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str'', ''pattern'': ''^https://ror.org/[a-z0-9]+$''}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''A
+      ror.org identifier'', ''description'': ''Use an ror.org identifier for institutions.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''email'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''function'':
+      {''type'': ''no-info'', ''function'': <bound method EmailStr._validate of <class
+      ''pydantic.networks.EmailStr''>>}, ''schema'': {''type'': ''str''}, ''metadata'':
+      {''pydantic_js_functions'': [<bound method EmailStr.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.EmailStr''>>]}, ''type'': ''function-after''}},
+      ''default'': None}, ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}},
+      ''url'': {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''function-wrap'', ''function'':
+      {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c36560>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''roleName'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''list'', ''items_schema'':
+      {''type'': ''definition-ref'', ''schema_ref'': ''dandischema.models.RoleType:94399351385504''}}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''Role'',
+      ''description'': ''Role(s) of the contributor. Multiple roles can be selected.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''includeInCitation'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''bool''}, ''default'': False}, ''metadata'': {''pydantic_js_updates'': {''title'':
+      ''Include contributor in citation'', ''description'': ''A flag to indicate whether
+      a contributor should be included when generating a citation for the item''},
+      ''pydantic_js_extra'': {''nskey'': ''dandi''}}}, ''awardNumber'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Identifier for an award'', ''description'':
+      ''Identifier associated with a sponsored or gift award.''}, ''pydantic_js_extra'':
+      {''nskey'': ''dandi''}}}, ''contactPoint'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''list'', ''items_schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.ContactPoint''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.ContactPoint''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''ContactPoint'']}, ''type'':
+      ''function-after''}, ''default'': ''ContactPoint'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''email'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''default'', ''schema'': {''type'':
+      ''nullable'', ''schema'': {''function'': {''type'': ''no-info'', ''function'':
+      <bound method EmailStr._validate of <class ''pydantic.networks.EmailStr''>>},
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_functions'': [<bound
+      method EmailStr.__get_pydantic_json_schema__ of <class ''pydantic.networks.EmailStr''>>]},
+      ''type'': ''function-after''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Email address of contact.''}, ''pydantic_js_extra'': {''nskey'':
+      ''schema''}}}, ''url'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''type'': ''nullable'', ''schema'': {''type'': ''function-wrap'',
+      ''function'': {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c34940>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_updates'': {''description'': ''A Web page to find
+      information on how to contact.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}},
+      ''model_name'': ''ContactPoint'', ''computed_fields'': []}, ''custom_init'':
+      False, ''root_model'': False, ''post_init'': ''model_post_init'', ''config'':
+      {''title'': ''ContactPoint''}, ''ref'': ''dandischema.models.ContactPoint:94399351740384'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.ContactPoint''>>]}}}}, ''default'': None}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Organization contact information'',
+      ''description'': ''Contact for the organization''}, ''pydantic_js_extra'': {''nskey'':
+      ''schema''}}}}, ''model_name'': ''Organization'', ''computed_fields'': []},
+      ''custom_init'': False, ''root_model'': False, ''post_init'': ''model_post_init'',
+      ''config'': {''title'': ''Organization''}}, ''ref'': ''dandischema.models.Organization:94399348768928'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.Organization''>>]}, ''type'': ''function-after''},
+      ''Software'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Software''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Software''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Software'']}, ''type'':
+      ''function-after''}, ''default'': ''Software'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str'', ''pattern'': ''^RRID:.*''}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'': ''Research
+      resource identifier'', ''description'': ''RRID of the software from scicrunch.org.''},
+      ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''str''}, ''metadata'': {''pydantic_js_extra'': {''nskey'':
+      ''schema''}}}, ''version'': {''type'': ''model-field'', ''schema'': {''type'':
+      ''str''}, ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''url'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''function-wrap'', ''function'':
+      {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c36a70>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_updates'': {''description'': ''Web page for the
+      software.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Software'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Software''},
+      ''ref'': ''dandischema.models.Software:94399351823024'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Software''>>]}},
+      ''Agent'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Agent''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Agent''>>}, ''schema'':
+      {''type'': ''literal'', ''expected'': [''Agent'']}, ''type'': ''function-after''},
+      ''default'': ''Agent'', ''validate_default'': True}, ''metadata'': {''pydantic_js_extra'':
+      {''readOnly'': True}}}, ''identifier'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'':
+      ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''title'':
+      ''Identifier'', ''description'': ''Identifier for an agent.''}, ''pydantic_js_extra'':
+      {''nskey'': ''schema''}}}, ''name'': {''type'': ''model-field'', ''schema'':
+      {''type'': ''str''}, ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}},
+      ''url'': {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''function-wrap'', ''function'':
+      {''type'': ''no-info'', ''function'': <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0x7f8c96c368c0>}, ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'',
+      ''https'']}, ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+      of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+      ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of <class
+      ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Agent'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Agent''},
+      ''ref'': ''dandischema.models.Agent:94399351861984'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Agent''>>]}}},
+      ''discriminator'': ''schemaKey'', ''strict'': False, ''from_attributes'': True,
+      ''metadata'': {}}}}, ''default'': None}, ''metadata'': {''pydantic_js_extra'':
+      {''nskey'': ''prov''}}}, ''used'': {''type'': ''model-field'', ''schema'': {''type'':
+      ''default'', ''schema'': {''type'': ''nullable'', ''schema'': {''type'': ''list'',
+      ''items_schema'': {''type'': ''model'', ''cls'': <class ''dandischema.models.Equipment''>,
+      ''schema'': {''type'': ''model-fields'', ''fields'': {''id'': {''type'': ''model-field'',
+      ''schema'': {''type'': ''default'', ''schema'': {''type'': ''nullable'', ''schema'':
+      {''type'': ''str''}}, ''default'': None}, ''metadata'': {''pydantic_js_updates'':
+      {''description'': ''Uniform resource identifier''}, ''pydantic_js_extra'': {''readOnly'':
+      True}}}, ''schemaKey'': {''type'': ''model-field'', ''schema'': {''type'': ''default'',
+      ''schema'': {''function'': {''type'': ''no-info'', ''function'': <bound method
+      DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Equipment''>>},
+      ''schema'': {''type'': ''literal'', ''expected'': [''Equipment'']}, ''type'':
+      ''function-after''}, ''default'': ''Equipment'', ''validate_default'': True},
+      ''metadata'': {''pydantic_js_extra'': {''readOnly'': True}}}, ''identifier'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''name'': {''type'':
+      ''model-field'', ''schema'': {''type'': ''str'', ''max_length'': 150}, ''metadata'':
+      {''pydantic_js_updates'': {''title'': ''Title'', ''description'': ''A name for
+      the equipment.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}, ''description'':
+      {''type'': ''model-field'', ''schema'': {''type'': ''default'', ''schema'':
+      {''type'': ''nullable'', ''schema'': {''type'': ''str''}}, ''default'': None},
+      ''metadata'': {''pydantic_js_updates'': {''description'': ''The description
+      of the equipment.''}, ''pydantic_js_extra'': {''nskey'': ''schema''}}}}, ''model_name'':
+      ''Equipment'', ''computed_fields'': []}, ''custom_init'': False, ''root_model'':
+      False, ''post_init'': ''model_post_init'', ''config'': {''title'': ''Equipment''},
+      ''ref'': ''dandischema.models.Equipment:94399352248096'', ''metadata'': {''pydantic_js_functions'':
+      [<bound method DandiBaseModel.__get_pydantic_json_schema__ of <class ''dandischema.models.Equipment''>>]}}}},
+      ''default'': None}, ''metadata'': {''pydantic_js_updates'': {''description'':
+      ''A listing of equipment used for the activity.''}, ''pydantic_js_extra'': {''nskey'':
+      ''prov''}}}}, ''model_name'': ''PublishActivity'', ''computed_fields'': []},
+      ''custom_init'': False, ''root_model'': False, ''post_init'': ''model_post_init'',
+      ''config'': {''title'': ''PublishActivity''}, ''ref'': ''dandischema.models.PublishActivity:94399352646832'',
+      ''metadata'': {''pydantic_js_functions'': [<bound method DandiBaseModel.__get_pydantic_json_schema__
+      of <class ''dandischema.models.PublishActivity''>>]}}]}).'
+    required: true
+  relatedParticipant:
+    name: relatedParticipant
+    range: RelatedParticipant
+    required: false
+    multivalued: true
+  relatedResource:
+    name: relatedResource
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <function Resource.identifier_or_url at 0x7f8c96c34430>.'
+    range: Resource
+    required: false
+    multivalued: true
+  relation:
+    name: relation
+    required: true
+  releaseNotes:
+    name: releaseNotes
+    range: string
+    required: false
+  repository:
+    name: repository
+    required: false
+  resourceType:
+    name: resourceType
+    range: ResourceType
+    required: false
+  roleName:
+    name: roleName
+    range: RoleType
+    required: false
+    multivalued: true
+  sameAs:
+    name: sameAs
+    required: false
+    multivalued: true
+  sampleType:
+    name: sampleType
+    range: SampleType
+    required: true
+  schemaKey:
+    name: schemaKey
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
+    ifabsent: string(DandiBaseModel)
+    range: string
+    required: false
+  schemaVersion:
+    name: schemaVersion
+    ifabsent: string(0.7.0)
+    range: string
+    required: false
+  sex:
+    name: sex
+    range: SexType
+    required: false
+  species:
+    name: species
+    range: SpeciesType
+    required: false
+  startDate:
+    name: startDate
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  status:
+    name: status
+    range: AccessType
+    required: true
+  strain:
+    name: strain
+    range: StrainType
+    required: false
+  studyTarget:
+    name: studyTarget
+    range: string
+    required: false
+    multivalued: true
+  unitText:
+    name: unitText
+    range: string
+    required: false
+  url:
+    name: url
+    range: uri
+    required: false
+    pattern: ^(?i:http|https)://[^\s]+$
+  used:
+    name: used
+    range: Equipment
+    required: false
+    multivalued: true
+  value:
+    name: value
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method PropertyValue.ensure_value of <class ''dandischema.models.PropertyValue''>>.'
+    - 'pydantic2linkml: Warning: The translation is incomplete. The union core schema
+      contains a choice of type any. The choice type is yet to be supported. (core
+      schema: {''type'': ''union'', ''choices'': [{''type'': ''any''}, {''type'':
+      ''list'', ''items_schema'': {''type'': ''any''}}]}).'
+    required: false
+  valueReference:
+    name: valueReference
+    range: PropertyValue
+    required: false
+  variableMeasured:
+    name: variableMeasured
+    required: false
+    multivalued: true
+  vendor:
+    name: vendor
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <function Contributor.ensure_contact_person_has_email at 0x7f8c96c340d0>.'
+    range: Organization
+    required: false
+  version:
+    name: version
+    range: string
+    required: true
+  wasAssociatedWith:
+    name: wasAssociatedWith
+    notes:
+    - 'pydantic2linkml: Warning: The translation is incomplete. Tagged union types
+      are yet to be supported.'
+    required: false
+    multivalued: true
+  wasAttributedTo:
+    name: wasAttributedTo
+    range: Participant
+    required: false
+    multivalued: true
+  wasDerivedFrom:
+    name: wasDerivedFrom
+    range: BioSample
+    required: false
+    multivalued: true
+  wasGeneratedBy:
+    name: wasGeneratedBy
+    required: false
+    multivalued: true
+classes:
+  Any:
+    name: Any
+    description: Any object
+    class_uri: linkml:Any
+  AccessRequirements:
+    name: AccessRequirements
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the AccessRequirements
+      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
+      ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - contactPoint
+    - description
+    - embargoedUntil
+    - status
+  Activity:
+    name: Activity
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Activity Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - description
+    - endDate
+    - identifier
+    - name
+    - startDate
+    - used
+    - wasAssociatedWith
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+      name:
+        name: name
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: true
+        pattern: ^(?=.{,150}$)
+  Affiliation:
+    name: Affiliation
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Affiliation Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+        pattern: ^https://ror.org/[a-z0-9]+$
+      name:
+        name: name
+        required: true
+  Agent:
+    name: Agent
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Agent Pydantic model
+      has changes in value in meta slots: [''ifabsent'', ''notes'', ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+      name:
+        name: name
+        required: true
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c368c0>.'
+  Allele:
+    name: Allele
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Allele Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - alleleSymbol
+    - alleleType
+    - identifier
+    slot_usage:
+      identifier:
+        name: identifier
+        notes:
+        - 'pydantic2linkml: Warning: The translation is incomplete. The union core
+          schema contains a choice of type str. The choice type is yet to be supported.
+          (core schema: {''type'': ''union'', ''choices'': [{''type'': ''str''}, {''type'':
+          ''list'', ''items_schema'': {''type'': ''str''}}]}).'
+        required: true
+  Anatomy:
+    name: Anatomy
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Anatomy Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  ApproachType:
+    name: ApproachType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the ApproachType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  AssayType:
+    name: AssayType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the AssayType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  Asset:
+    name: Asset
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
+      slot representation of the id field in the Asset Pydantic model has changes
+      in value in meta slots: [''required''] .'
+    is_a: BareAsset
+    slots:
+    - contentUrl
+    - identifier
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: true
+        pattern: ^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$
+  AssetsSummary:
+    name: AssetsSummary
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the AssetsSummary Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - approach
+    - dataStandard
+    - measurementTechnique
+    - numberOfBytes
+    - numberOfCells
+    - numberOfFiles
+    - numberOfSamples
+    - numberOfSubjects
+    - species
+    - variableMeasured
+    slot_usage:
+      species:
+        name: species
+        multivalued: true
+      variableMeasured:
+        name: variableMeasured
+        range: string
+  BareAsset:
+    name: BareAsset
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
+      The slot representation of the access field in the BareAsset Pydantic model
+      has changes in value in meta slots: [''notes''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the BareAsset Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
+      slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
+      model lacks meta slots: [''range''] .'
+    is_a: CommonModel
+    slots:
+    - approach
+    - blobDateModified
+    - contentSize
+    - dataType
+    - dateModified
+    - digest
+    - encodingFormat
+    - measurementTechnique
+    - path
+    - sameAs
+    - variableMeasured
+    - wasAttributedTo
+    - wasDerivedFrom
+    slot_usage:
+      sameAs:
+        name: sameAs
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c37ac0>.'
+        range: uri
+        pattern: ^(?i:http|https)://[^\s]+$
+      variableMeasured:
+        name: variableMeasured
+        range: PropertyValue
+  BaseType:
+    name: BaseType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the BaseType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    slot_usage:
+      identifier:
+        name: identifier
+        notes:
+        - 'pydantic2linkml: Warning: The translation is incomplete. The union core
+          schema contains a choice of type function-wrap. The choice type is yet to
+          be supported. (core schema: {''type'': ''union'', ''choices'': [{''type'':
+          ''function-wrap'', ''function'': {''type'': ''no-info'', ''function'': <function
+          _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0x7f8c96c15d80>},
+          ''schema'': {''type'': ''url'', ''allowed_schemes'': [''http'', ''https'']},
+          ''metadata'': {''pydantic_js_functions'': [<bound method _BaseUrl.__get_pydantic_json_schema__
+          of <class ''pydantic.networks.AnyHttpUrl''>>]}, ''serialization'': {''type'':
+          ''function-plain'', ''function'': <bound method _BaseUrl.serialize_url of
+          <class ''pydantic.networks.AnyHttpUrl''>>, ''info_arg'': True}}, {''type'':
+          ''str'', ''pattern'': ''^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$''}], ''mode'':
+          ''left_to_right'', ''metadata'': {}}).'
+        required: false
+      name:
+        name: name
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: false
+        pattern: ^(?=.{,150}$)
+  BioSample:
+    name: BioSample
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the BioSample Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - anatomy
+    - assayType
+    - hasMember
+    - identifier
+    - sameAs
+    - sampleType
+    - wasAttributedTo
+    - wasDerivedFrom
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: true
+      sameAs:
+        name: sameAs
+        range: string
+  CommonModel:
+    name: CommonModel
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the CommonModel Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes''] .'
+    is_a: DandiBaseModel
+    slots:
+    - about
+    - access
+    - acknowledgement
+    - contributor
+    - description
+    - ethicsApproval
+    - keywords
+    - license
+    - name
+    - protocol
+    - relatedResource
+    - repository
+    - schemaVersion
+    - studyTarget
+    - url
+    - wasGeneratedBy
+    slot_usage:
+      name:
+        name: name
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: false
+        pattern: ^(?=.{,150}$)
+      repository:
+        name: repository
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c369e0>.'
+        range: uri
+        pattern: ^(?i:http|https)://[^\s]+$
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c34a60>.'
+      wasGeneratedBy:
+        name: wasGeneratedBy
+        range: Activity
+  ContactPoint:
+    name: ContactPoint
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the ContactPoint Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - email
+    - url
+    slot_usage:
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c34940>.'
+  Contributor:
+    name: Contributor
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Contributor Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - awardNumber
+    - email
+    - identifier
+    - includeInCitation
+    - name
+    - roleName
+    - url
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+      name:
+        name: name
+        required: false
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c35f30>.'
+  DandiBaseModel:
+    name: DandiBaseModel
+    slots:
+    - id
+    - schemaKey
+  Dandiset:
+    name: Dandiset
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
+      slot. The slot representation of the contributor field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''notes'', ''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
+      slot representation of the id field in the Dandiset Pydantic model has changes
+      in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Dandiset Pydantic model has
+      changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the license slot.
+      The slot representation of the license field in the Dandiset Pydantic model
+      has changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
+      slot. The slot representation of the description field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
+      slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''range''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: CommonModel
+    slots:
+    - assetsSummary
+    - citation
+    - dateCreated
+    - dateModified
+    - identifier
+    - manifestLocation
+    - sameAs
+    - version
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: true
+        pattern: ^[A-Z][-A-Z]*:\d{6}$
+      sameAs:
+        name: sameAs
+        range: string
+        pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
+  Disorder:
+    name: Disorder
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Disorder Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+    slots:
+    - dxdate
+  Equipment:
+    name: Equipment
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Equipment Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - description
+    - identifier
+    - name
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+      name:
+        name: name
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: true
+        pattern: ^(?=.{,150}$)
+  EthicsApproval:
+    name: EthicsApproval
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the EthicsApproval Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - contactPoint
+    - identifier
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: true
+  GenericType:
+    name: GenericType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the GenericType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  GenotypeInfo:
+    name: GenotypeInfo
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the GenotypeInfo Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - alleles
+    - locus
+    - wasGeneratedBy
+    slot_usage:
+      wasGeneratedBy:
+        name: wasGeneratedBy
+        range: Session
+  Locus:
+    name: Locus
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Locus Pydantic model
+      has changes in value in meta slots: [''ifabsent'', ''notes'', ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - locusType
+    slot_usage:
+      identifier:
+        name: identifier
+        notes:
+        - 'pydantic2linkml: Warning: The translation is incomplete. The union core
+          schema contains a choice of type str. The choice type is yet to be supported.
+          (core schema: {''type'': ''union'', ''choices'': [{''type'': ''str''}, {''type'':
+          ''list'', ''items_schema'': {''type'': ''str''}}]}).'
+        required: true
+  MeasurementTechniqueType:
+    name: MeasurementTechniqueType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the MeasurementTechniqueType
+      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
+      ''range''] .'
+    is_a: BaseType
+  Organization:
+    name: Organization
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Organization Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the includeInCitation
+      slot. The slot representation of the includeInCitation field in the Organization
+      Pydantic model has changes in value in meta slots: [''ifabsent''] .'
+    is_a: Contributor
+    slots:
+    - contactPoint
+    slot_usage:
+      contactPoint:
+        name: contactPoint
+        multivalued: true
+      identifier:
+        name: identifier
+        pattern: ^https://ror.org/[a-z0-9]+$
+  Participant:
+    name: Participant
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Participant Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - age
+    - altName
+    - cellLine
+    - disorder
+    - genotype
+    - identifier
+    - relatedParticipant
+    - sameAs
+    - sex
+    - species
+    - strain
+    - vendor
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: true
+      sameAs:
+        name: sameAs
+        range: string
+  Person:
+    name: Person
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Person Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Person Pydantic model has changes
+      in value in meta slots: [''required''] .'
+    is_a: Contributor
+    slots:
+    - affiliation
+    slot_usage:
+      identifier:
+        name: identifier
+        pattern: ^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$
+  Project:
+    name: Project
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Project Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    is_a: Activity
+  PropertyValue:
+    name: PropertyValue
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PropertyValue Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - maxValue
+    - minValue
+    - propertyID
+    - unitText
+    - value
+    - valueReference
+  Publishable:
+    name: Publishable
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Publishable Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - datePublished
+    - publishedBy
+  PublishActivity:
+    name: PublishActivity
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PublishActivity
+      Pydantic model has changes in value in meta slots: [''any_of'', ''ifabsent'',
+      ''notes''] .'
+    is_a: Activity
+  PublishedAsset:
+    name: PublishedAsset
+    notes:
+    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
+      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PublishedAsset Pydantic
+      model has changes in value in meta slots: [''notes''] .'
+    is_a: Asset
+    mixins:
+    - Publishable
+    slot_usage:
+      id:
+        name: id
+        pattern: ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
+  PublishedDandiset:
+    name: PublishedDandiset
+    notes:
+    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
+      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
+      slot representation of the id field in the PublishedDandiset Pydantic model
+      has changes in value in meta slots: [''pattern''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PublishedDandiset
+      Pydantic model has changes in value in meta slots: [''notes''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
+      The slot representation of the url field in the PublishedDandiset Pydantic model
+      has changes in value in meta slots: [''notes'', ''required''] .'
+    is_a: Dandiset
+    mixins:
+    - Publishable
+    slots:
+    - doi
+    - releaseNotes
+  RelatedParticipant:
+    name: RelatedParticipant
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the RelatedParticipant
+      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
+      ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - relation
+    - url
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+      name:
+        name: name
+        required: false
+      relation:
+        name: relation
+        range: ParticipantRelationType
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c376d0>.'
+  Resource:
+    name: Resource
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Resource Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - relation
+    - repository
+    - resourceType
+    - url
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+      name:
+        name: name
+        required: false
+      relation:
+        name: relation
+        range: RelationType
+      repository:
+        name: repository
+        range: string
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c34040>.'
+  SampleType:
+    name: SampleType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the SampleType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  Session:
+    name: Session
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Session Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    is_a: Activity
+  SexType:
+    name: SexType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the SexType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  Software:
+    name: Software
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Software Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    - version
+    slot_usage:
+      identifier:
+        name: identifier
+        range: string
+        required: false
+        pattern: ^RRID:.*
+      name:
+        name: name
+        required: true
+      url:
+        name: url
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0x7f8c96c36a70>.'
+  SpeciesType:
+    name: SpeciesType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the SpeciesType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  StandardsType:
+    name: StandardsType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the StandardsType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  StrainType:
+    name: StrainType
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the StrainType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
