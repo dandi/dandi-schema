@@ -65,10 +65,12 @@ python = "3.10"
 # Env for auto converting `dandischema.models` to LinkML schema and back to Pydantic models
 [tool.hatch.envs.linkml-auto-converted]
 dependencies = [
+    "black",  # This allows `gen-pydantic` to format the generated Pydantic models with Black formatting
     "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git"
 ]
 [tool.hatch.envs.linkml-auto-converted.scripts]
 2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml -o dandischema/models.yaml dandischema.models"
+2pydantic = "gen-pydantic --black dandischema/models.yaml > dandischema/models.py"
 
 [tool.setuptools.packages.find]
 namespaces = true
