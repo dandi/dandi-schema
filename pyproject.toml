@@ -62,6 +62,12 @@ all = [
 installer = "uv"
 python = "3.10"
 
+# Env for auto converting `dandischema.models` to LinkML schema and back to Pydantic models
+[tool.hatch.envs.linkml-auto-converted]
+dependencies = [
+    "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git"
+]
+
 [tool.setuptools.packages.find]
 namespaces = true
 include = ["dandischema*"]
