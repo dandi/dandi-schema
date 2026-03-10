@@ -940,10 +940,13 @@ class TestGetJsonschemaValidator:
         dummy_validator = MagicMock(spec=JsonschemaValidator)
         valid_schema = {"type": "object"}
 
-        with patch("requests.get") as mock_get, patch(
-            "dandischema.metadata.dandi_jsonschema_validator",
-            return_value=dummy_validator,
-        ) as mock_validator:
+        with (
+            patch("requests.get") as mock_get,
+            patch(
+                "dandischema.metadata.dandi_jsonschema_validator",
+                return_value=dummy_validator,
+            ) as mock_validator,
+        ):
             mock_response = MagicMock()
             mock_response.raise_for_status.return_value = None
             mock_response.json.return_value = valid_schema
