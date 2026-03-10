@@ -67,6 +67,8 @@ python = "3.10"
 dependencies = [
     "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git"
 ]
+[tool.hatch.envs.linkml-auto-converted.scripts]
+2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml -o dandischema/models.yaml dandischema.models"
 
 [tool.setuptools.packages.find]
 namespaces = true
