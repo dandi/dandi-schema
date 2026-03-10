@@ -1,0 +1,4 @@
+name: dandi-schema
+id: https://schema.dandiarchive.org/s/dandi/v0.7
+version: 0.7.0
+status: eunal:concept-status/DRAFT
