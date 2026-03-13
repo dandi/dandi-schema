@@ -27,3 +27,5 @@ prefixes:
   spdx: http://spdx.org/licenses/
   uuid: http://uuid.repronim.org/
   xsd: http://www.w3.org/2001/XMLSchema#
+
+default_prefix: dandi_default
