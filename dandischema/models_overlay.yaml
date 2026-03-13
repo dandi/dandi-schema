@@ -4,25 +4,26 @@ version: 0.7.0
 status: eunal:concept-status/DRAFT
 
 prefixes:
-  dandi: http://schema.dandiarchive.org/
-  dcite: http://schema.dandiarchive.org/datacite/
   dandiasset: http://dandiarchive.org/asset/
   DANDI: http://dandiarchive.org/dandiset/
+  dandi: http://schema.dandiarchive.org/
+  dcite: http://schema.dandiarchive.org/datacite/
   dct: http://purl.org/dc/terms/
-  owl: http://www.w3.org/2002/07/owl#
-  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-  rdfa: http://www.w3.org/ns/rdfa#
-  rdfs: http://www.w3.org/2000/01/rdf-schema#
-  schema: http://schema.org/
-  xsd: http://www.w3.org/2001/XMLSchema#
-  skos: http://www.w3.org/2004/02/skos/core#
-  prov: http://www.w3.org/ns/prov#
-  pav: http://purl.org/pav/
+  linkml: https://w3id.org/linkml/
   nidm: http://purl.org/nidash/nidm#
-  uuid: http://uuid.repronim.org/
-  rs: http://schema.repronim.org/
-  RRID: "https://scicrunch.org/resolver/RRID:"
   ORCID: https://orcid.org/
-  ROR: https://ror.org/
+  owl: http://www.w3.org/2002/07/owl#
   PATO: http://purl.obolibrary.org/obo/PATO_
+  pav: http://purl.org/pav/
+  prov: http://www.w3.org/ns/prov#
+  rdfa: http://www.w3.org/ns/rdfa#
+  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
+  ROR: https://ror.org/
+  RRID: "https://scicrunch.org/resolver/RRID:"
+  rs: http://schema.repronim.org/
+  schema: http://schema.org/
+  skos: http://www.w3.org/2004/02/skos/core#
   spdx: http://spdx.org/licenses/
+  uuid: http://uuid.repronim.org/
+  xsd: http://www.w3.org/2001/XMLSchema#
