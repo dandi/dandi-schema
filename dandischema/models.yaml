@@ -5,13 +5,30 @@ version: 0.7.0
 imports:
 - linkml:types
 prefixes:
-  linkml:
-    prefix_prefix: linkml
-    prefix_reference: https://w3id.org/linkml/
-  test_schema:
-    prefix_prefix: test_schema
-    prefix_reference: http://example.org/test-schema/
-default_prefix: test_schema
+  dandiasset: http://dandiarchive.org/asset/
+  DANDI: http://dandiarchive.org/dandiset/
+  dandi: http://schema.dandiarchive.org/
+  dcite: http://schema.dandiarchive.org/datacite/
+  dct: http://purl.org/dc/terms/
+  linkml: https://w3id.org/linkml/
+  nidm: http://purl.org/nidash/nidm#
+  ORCID: https://orcid.org/
+  owl: http://www.w3.org/2002/07/owl#
+  PATO: http://purl.obolibrary.org/obo/PATO_
+  pav: http://purl.org/pav/
+  prov: http://www.w3.org/ns/prov#
+  rdfa: http://www.w3.org/ns/rdfa#
+  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
+  ROR: https://ror.org/
+  RRID: 'https://scicrunch.org/resolver/RRID:'
+  rs: http://schema.repronim.org/
+  schema: http://schema.org/
+  skos: http://www.w3.org/2004/02/skos/core#
+  spdx: http://spdx.org/licenses/
+  uuid: http://uuid.repronim.org/
+  xsd: http://www.w3.org/2001/XMLSchema#
+default_prefix: dandi_default
 default_range: string
 
 enums:
@@ -1447,13 +1464,13 @@ classes:
     description: Metadata used to describe an asset anywhere (local or server). Derived
       from C2M2 (Level 0 and 1) and schema.org
     notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
+      The slot representation of the access field in the BareAsset Pydantic model
+      has changes in value in meta slots: [''notes''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
       slot. The slot representation of the schemaKey field in the BareAsset Pydantic
       model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
       .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
-      The slot representation of the access field in the BareAsset Pydantic model
-      has changes in value in meta slots: [''notes''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
       model lacks meta slots: [''range''] .'
@@ -1632,25 +1649,25 @@ classes:
   Dandiset:
     description: A body of structured information describing a DANDI dataset.
     notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
+      slot. The slot representation of the contributor field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''notes'', ''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the description
       slot. The slot representation of the description field in the Dandiset Pydantic
       model has changes in value in meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the Dandiset Pydantic model has changes
       in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the license slot.
+      The slot representation of the license field in the Dandiset Pydantic model
+      has changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Dandiset Pydantic model has
+      changes in value in meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
       slot. The slot representation of the schemaKey field in the Dandiset Pydantic
       model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
       .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
-      slot. The slot representation of the contributor field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''notes'', ''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
-      The slot representation of the name field in the Dandiset Pydantic model has
-      changes in value in meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the license slot.
-      The slot representation of the license field in the Dandiset Pydantic model
-      has changes in value in meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
       model has changes in value in meta slots: [''range''] .'
@@ -1815,13 +1832,13 @@ classes:
         range: string
   Person:
     notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Person Pydantic model has changes
+      in value in meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
       slot. The slot representation of the schemaKey field in the Person Pydantic
       model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
       .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
-      The slot representation of the name field in the Person Pydantic model has changes
-      in value in meta slots: [''required''] .'
     is_a: Contributor
     slots:
     - affiliation
@@ -1868,11 +1885,11 @@ classes:
     is_a: Activity
   PublishedAsset:
     notes:
-    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
-      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
       slot. The slot representation of the schemaKey field in the PublishedAsset Pydantic
       model has changes in value in meta slots: [''notes''] .'
+    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
+      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     is_a: Asset
     mixins:
     - Publishable
@@ -1881,8 +1898,6 @@ classes:
         pattern: ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
   PublishedDandiset:
     notes:
-    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
-      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the PublishedDandiset Pydantic model
       has changes in value in meta slots: [''pattern''] .'
@@ -1892,6 +1907,8 @@ classes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
       The slot representation of the url field in the PublishedDandiset Pydantic model
       has changes in value in meta slots: [''notes'', ''required''] .'
+    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
+      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     is_a: Dandiset
     mixins:
     - Publishable
