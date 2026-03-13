@@ -69,7 +69,7 @@ dependencies = [
     "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git"
 ]
 [tool.hatch.envs.linkml-auto-converted.scripts]
-2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml -o dandischema/models.yaml dandischema.models"
+2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml dandischema.models | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' > dandischema/models.yaml "
 2pydantic = "gen-pydantic --black dandischema/models.yaml > dandischema/models.py"
 
 [tool.setuptools.packages.find]
