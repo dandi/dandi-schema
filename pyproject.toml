@@ -63,6 +63,9 @@ installer = "uv"
 python = "3.10"
 
 # Env for auto converting `dandischema.models` to LinkML schema and back to Pydantic models
+# To invoke conversion scripts provided by the environment, execute the following respective commands:
+#   `hatch run linkml-auto-converted:2linkml`    # Convert dandischema.models_orig -> dandischema/models.yaml
+#   `hatch run linkml-auto-converted:2pydantic`  # Convert dandischema/models.yaml -> dandischema/models_linkml.py
 [tool.hatch.envs.linkml-auto-converted]
 dependencies = [
     "black",  # This allows `gen-pydantic` to format the generated Pydantic models with Black formatting
