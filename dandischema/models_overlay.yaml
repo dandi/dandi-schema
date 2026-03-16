@@ -28,4 +28,4 @@ prefixes:
   uuid: http://uuid.repronim.org/
   xsd: http://www.w3.org/2001/XMLSchema#
 
-default_prefix: dandi_default
+default_prefix: dandi
