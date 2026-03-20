@@ -1,0 +1,31 @@
+name: dandi-schema
+id: https://schema.dandiarchive.org/s/dandi/v0.7
+version: 0.7.0
+status: eunal:concept-status/DRAFT
+
+prefixes:
+  dandiasset: http://dandiarchive.org/asset/
+  DANDI: http://dandiarchive.org/dandiset/
+  dandi: http://schema.dandiarchive.org/
+  dcite: http://schema.dandiarchive.org/datacite/
+  dct: http://purl.org/dc/terms/
+  linkml: https://w3id.org/linkml/
+  nidm: http://purl.org/nidash/nidm#
+  ORCID: https://orcid.org/
+  owl: http://www.w3.org/2002/07/owl#
+  PATO: http://purl.obolibrary.org/obo/PATO_
+  pav: http://purl.org/pav/
+  prov: http://www.w3.org/ns/prov#
+  rdfa: http://www.w3.org/ns/rdfa#
+  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
+  ROR: https://ror.org/
+  RRID: "https://scicrunch.org/resolver/RRID:"
+  rs: http://schema.repronim.org/
+  schema: http://schema.org/
+  skos: http://www.w3.org/2004/02/skos/core#
+  spdx: http://spdx.org/licenses/
+  uuid: http://uuid.repronim.org/
+  xsd: http://www.w3.org/2001/XMLSchema#
+
+default_prefix: dandi
