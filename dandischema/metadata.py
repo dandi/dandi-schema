@@ -546,9 +546,14 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
         if standard not in stats["dataStandard"]:
             stats["dataStandard"].append(standard)
 
+    # Collect per-asset dataStandard declarations populated by dandi-cli
+    for standard in assetmeta.get("dataStandard") or []:
+        add_if_missing(standard)
+
+    # DEPRECATED: path/encoding heuristic fallbacks for older clients that do not
+    # populate per-asset dataStandard.  Remove after 2026-12-01.
     if "nwb" in assetmeta["encodingFormat"]:
         add_if_missing(models.nwb_standard)
-    # TODO: RF assumption that any .json implies BIDS
     if Path(assetmeta["path"]).name == "dataset_description.json":
         add_if_missing(models.bids_standard)
     if Path(assetmeta["path"]).suffixes == [".ome", ".zarr"]:
