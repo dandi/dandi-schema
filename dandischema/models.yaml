@@ -1,0 +1,1469 @@
+name: dandi-schema
+status: eunal:concept-status/DRAFT
+id: https://schema.dandiarchive.org/s/dandi/v0.7
+version: 0.7.0
+imports:
+- linkml:types
+prefixes:
+  dandiasset: http://dandiarchive.org/asset/
+  DANDI: http://dandiarchive.org/dandiset/
+  dandi: http://schema.dandiarchive.org/
+  dcite: http://schema.dandiarchive.org/datacite/
+  dct: http://purl.org/dc/terms/
+  linkml: https://w3id.org/linkml/
+  nidm: http://purl.org/nidash/nidm#
+  ORCID: https://orcid.org/
+  owl: http://www.w3.org/2002/07/owl#
+  PATO: http://purl.obolibrary.org/obo/PATO_
+  pav: http://purl.org/pav/
+  prov: http://www.w3.org/ns/prov#
+  rdfa: http://www.w3.org/ns/rdfa#
+  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
+  ROR: https://ror.org/
+  RRID: 'https://scicrunch.org/resolver/RRID:'
+  rs: http://schema.repronim.org/
+  schema: http://schema.org/
+  skos: http://www.w3.org/2004/02/skos/core#
+  spdx: http://spdx.org/licenses/
+  uuid: http://uuid.repronim.org/
+  xsd: http://www.w3.org/2001/XMLSchema#
+default_prefix: dandi
+default_range: string
+
+enums:
+  AccessType:
+    description: An enumeration of access status options
+    permissible_values:
+      dandi:OpenAccess:
+        meaning: dandi:OpenAccess
+      dandi:EmbargoedAccess:
+        meaning: dandi:EmbargoedAccess
+  AgeReferenceType:
+    description: An enumeration of age reference
+    permissible_values:
+      dandi:BirthReference:
+        meaning: dandi:BirthReference
+      dandi:GestationalReference:
+        meaning: dandi:GestationalReference
+  DigestType:
+    description: An enumeration of checksum types
+    permissible_values:
+      dandi:md5:
+        meaning: dandi:md5
+      dandi:sha1:
+        meaning: dandi:sha1
+      dandi:sha2-256:
+        meaning: dandi:sha2-256
+      dandi:sha3-256:
+        meaning: dandi:sha3-256
+      dandi:blake2b-256:
+        meaning: dandi:blake2b-256
+      dandi:blake3:
+        meaning: dandi:blake3
+      dandi:dandi-etag:
+        meaning: dandi:dandi-etag
+      dandi:dandi-zarr-checksum:
+        meaning: dandi:dandi-zarr-checksum
+  IdentifierType:
+    description: An enumeration of identifiers
+    permissible_values:
+      dandi:doi:
+        meaning: dandi:doi
+      dandi:orcid:
+        meaning: dandi:orcid
+      dandi:ror:
+        meaning: dandi:ror
+      dandi:dandi:
+        meaning: dandi:dandi
+      dandi:rrid:
+        meaning: dandi:rrid
+  LicenseType:
+    description: An enumeration.
+    permissible_values:
+      spdx:CC-BY-4.0:
+        meaning: spdx:CC-BY-4.0
+      spdx:CC0-1.0:
+        meaning: spdx:CC0-1.0
+  ParticipantRelationType:
+    description: An enumeration of participant relations
+    permissible_values:
+      dandi:isChildOf:
+        meaning: dandi:isChildOf
+      dandi:isParentOf:
+        meaning: dandi:isParentOf
+      dandi:isSiblingOf:
+        meaning: dandi:isSiblingOf
+      dandi:isMonozygoticTwinOf:
+        meaning: dandi:isMonozygoticTwinOf
+      dandi:isDizygoticTwinOf:
+        meaning: dandi:isDizygoticTwinOf
+  RelationType:
+    description: An enumeration of resource relations
+    permissible_values:
+      dcite:IsCitedBy:
+        meaning: dcite:IsCitedBy
+      dcite:Cites:
+        meaning: dcite:Cites
+      dcite:IsSupplementTo:
+        meaning: dcite:IsSupplementTo
+      dcite:IsSupplementedBy:
+        meaning: dcite:IsSupplementedBy
+      dcite:IsContinuedBy:
+        meaning: dcite:IsContinuedBy
+      dcite:Continues:
+        meaning: dcite:Continues
+      dcite:Describes:
+        meaning: dcite:Describes
+      dcite:IsDescribedBy:
+        meaning: dcite:IsDescribedBy
+      dcite:HasMetadata:
+        meaning: dcite:HasMetadata
+      dcite:IsMetadataFor:
+        meaning: dcite:IsMetadataFor
+      dcite:HasVersion:
+        meaning: dcite:HasVersion
+      dcite:IsVersionOf:
+        meaning: dcite:IsVersionOf
+      dcite:IsNewVersionOf:
+        meaning: dcite:IsNewVersionOf
+      dcite:IsPreviousVersionOf:
+        meaning: dcite:IsPreviousVersionOf
+      dcite:IsPartOf:
+        meaning: dcite:IsPartOf
+      dcite:HasPart:
+        meaning: dcite:HasPart
+      dcite:IsReferencedBy:
+        meaning: dcite:IsReferencedBy
+      dcite:References:
+        meaning: dcite:References
+      dcite:IsDocumentedBy:
+        meaning: dcite:IsDocumentedBy
+      dcite:Documents:
+        meaning: dcite:Documents
+      dcite:IsCompiledBy:
+        meaning: dcite:IsCompiledBy
+      dcite:Compiles:
+        meaning: dcite:Compiles
+      dcite:IsVariantFormOf:
+        meaning: dcite:IsVariantFormOf
+      dcite:IsOriginalFormOf:
+        meaning: dcite:IsOriginalFormOf
+      dcite:IsIdenticalTo:
+        meaning: dcite:IsIdenticalTo
+      dcite:IsReviewedBy:
+        meaning: dcite:IsReviewedBy
+      dcite:Reviews:
+        meaning: dcite:Reviews
+      dcite:IsDerivedFrom:
+        meaning: dcite:IsDerivedFrom
+      dcite:IsSourceOf:
+        meaning: dcite:IsSourceOf
+      dcite:IsRequiredBy:
+        meaning: dcite:IsRequiredBy
+      dcite:Requires:
+        meaning: dcite:Requires
+      dcite:Obsoletes:
+        meaning: dcite:Obsoletes
+      dcite:IsObsoletedBy:
+        meaning: dcite:IsObsoletedBy
+      dcite:IsPublishedIn:
+        meaning: dcite:IsPublishedIn
+  ResourceType:
+    description: An enumeration of resource types
+    permissible_values:
+      dcite:Audiovisual:
+        meaning: dcite:Audiovisual
+      dcite:Book:
+        meaning: dcite:Book
+      dcite:BookChapter:
+        meaning: dcite:BookChapter
+      dcite:Collection:
+        meaning: dcite:Collection
+      dcite:ComputationalNotebook:
+        meaning: dcite:ComputationalNotebook
+      dcite:ConferencePaper:
+        meaning: dcite:ConferencePaper
+      dcite:ConferenceProceeding:
+        meaning: dcite:ConferenceProceeding
+      dcite:DataPaper:
+        meaning: dcite:DataPaper
+      dcite:Dataset:
+        meaning: dcite:Dataset
+      dcite:Dissertation:
+        meaning: dcite:Dissertation
+      dcite:Event:
+        meaning: dcite:Event
+      dcite:Image:
+        meaning: dcite:Image
+      dcite:Instrument:
+        meaning: dcite:Instrument
+      dcite:InteractiveResource:
+        meaning: dcite:InteractiveResource
+      dcite:Journal:
+        meaning: dcite:Journal
+      dcite:JournalArticle:
+        meaning: dcite:JournalArticle
+      dcite:Model:
+        meaning: dcite:Model
+      dcite:OutputManagementPlan:
+        meaning: dcite:OutputManagementPlan
+      dcite:PeerReview:
+        meaning: dcite:PeerReview
+      dcite:PhysicalObject:
+        meaning: dcite:PhysicalObject
+      dcite:Preprint:
+        meaning: dcite:Preprint
+      dcite:Report:
+        meaning: dcite:Report
+      dcite:Service:
+        meaning: dcite:Service
+      dcite:Software:
+        meaning: dcite:Software
+      dcite:Sound:
+        meaning: dcite:Sound
+      dcite:Standard:
+        meaning: dcite:Standard
+      dcite:StudyRegistration:
+        meaning: dcite:StudyRegistration
+      dcite:Text:
+        meaning: dcite:Text
+      dcite:Workflow:
+        meaning: dcite:Workflow
+      dcite:Other:
+        meaning: dcite:Other
+  RoleType:
+    description: An enumeration of roles
+    permissible_values:
+      dcite:Author:
+        meaning: dcite:Author
+      dcite:Conceptualization:
+        meaning: dcite:Conceptualization
+      dcite:ContactPerson:
+        meaning: dcite:ContactPerson
+      dcite:DataCollector:
+        meaning: dcite:DataCollector
+      dcite:DataCurator:
+        meaning: dcite:DataCurator
+      dcite:DataManager:
+        meaning: dcite:DataManager
+      dcite:FormalAnalysis:
+        meaning: dcite:FormalAnalysis
+      dcite:FundingAcquisition:
+        meaning: dcite:FundingAcquisition
+      dcite:Investigation:
+        meaning: dcite:Investigation
+      dcite:Maintainer:
+        meaning: dcite:Maintainer
+      dcite:Methodology:
+        meaning: dcite:Methodology
+      dcite:Producer:
+        meaning: dcite:Producer
+      dcite:ProjectLeader:
+        meaning: dcite:ProjectLeader
+      dcite:ProjectManager:
+        meaning: dcite:ProjectManager
+      dcite:ProjectMember:
+        meaning: dcite:ProjectMember
+      dcite:ProjectAdministration:
+        meaning: dcite:ProjectAdministration
+      dcite:Researcher:
+        meaning: dcite:Researcher
+      dcite:Resources:
+        meaning: dcite:Resources
+      dcite:Software:
+        meaning: dcite:Software
+      dcite:Supervision:
+        meaning: dcite:Supervision
+      dcite:Validation:
+        meaning: dcite:Validation
+      dcite:Visualization:
+        meaning: dcite:Visualization
+      dcite:Funder:
+        meaning: dcite:Funder
+      dcite:Sponsor:
+        meaning: dcite:Sponsor
+      dcite:StudyParticipant:
+        meaning: dcite:StudyParticipant
+      dcite:Affiliation:
+        meaning: dcite:Affiliation
+      dcite:EthicsApproval:
+        meaning: dcite:EthicsApproval
+      dcite:Other:
+        meaning: dcite:Other
+
+slots:
+  about:
+    range: Any
+    required: false
+    multivalued: true
+    any_of:
+    - range: Disorder
+    - range: Anatomy
+    - range: GenericType
+  access:
+    notes:
+    - 'pydantic2linkml: Unable to express the default factory, <function CommonModel.<lambda>
+      at 0xADDRESS>, in LinkML.'
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
+    range: AccessRequirements
+    required: false
+    multivalued: true
+  acknowledgement:
+    range: string
+    required: false
+  affiliation:
+    range: Affiliation
+    required: false
+    multivalued: true
+  age:
+    range: PropertyValue
+    required: false
+  alleles:
+    range: Allele
+    required: true
+    multivalued: true
+  alleleSymbol:
+    range: string
+    required: false
+  alleleType:
+    range: string
+    required: false
+  altName:
+    range: string
+    required: false
+    multivalued: true
+  anatomy:
+    range: Anatomy
+    required: false
+    multivalued: true
+  approach:
+    range: ApproachType
+    required: false
+    multivalued: true
+  assayType:
+    range: AssayType
+    required: false
+    multivalued: true
+  assetsSummary:
+    range: AssetsSummary
+    required: true
+  awardNumber:
+    range: string
+    required: false
+  blobDateModified:
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  cellLine:
+    range: string
+    required: false
+  citation:
+    range: string
+    required: true
+  contactPoint:
+    range: ContactPoint
+    required: false
+  contentSize:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method ByteSize._validate of <class ''pydantic.types.ByteSize''>>.'
+    range: Any
+    required: true
+    any_of:
+    - range: string
+      pattern: ^\s*(\d*\.?\d+)\s*(\w+)?
+    - range: integer
+      minimum_value: 0
+  contentUrl:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0xADDRESS>.'
+    range: uri
+    required: true
+    multivalued: true
+    pattern: ^(?i:http|https)://[^\s]+$
+  contributor:
+    range: Any
+    required: false
+    multivalued: true
+    any_of:
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+        function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>.'
+      range: Person
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+        function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>.'
+      range: Organization
+  dataStandard:
+    range: StandardsType
+    required: false
+    multivalued: true
+  dataType:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0xADDRESS>.'
+    range: uri
+    required: false
+    pattern: ^(?i:http|https)://[^\s]+$
+  dateCreated:
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  dateModified:
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  datePublished:
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: true
+  description:
+    range: string
+    required: false
+  digest:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method BareAsset.digest_check of <class ''dandischema.models.BareAsset''>>.'
+    - 'pydantic2linkml: Warning: The translation is incomplete. `dict` types are yet
+      to be supported.'
+    required: true
+  disorder:
+    range: Disorder
+    required: false
+    multivalued: true
+  doi:
+    ifabsent: string()
+    range: string
+    required: false
+    pattern: ^(10\.\d{4,}/[a-z][-a-z]*\.\d{6}/\d+\.\d+\.\d+|)$
+  dxdate:
+    range: Any
+    required: false
+    multivalued: true
+    any_of:
+    - range: date
+    - notes:
+      - 'pydantic2linkml: Unable to express the microseconds precision constraint
+        of truncate. LinkML lacks direct support for this restriction.'
+      range: datetime
+  email:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method EmailStr._validate of <class ''pydantic.networks.EmailStr''>>.'
+    range: string
+    required: false
+  embargoedUntil:
+    range: date
+    required: false
+  encodingFormat:
+    range: Any
+    required: true
+    any_of:
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+        function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+        at 0xADDRESS>.'
+      range: uri
+      pattern: ^(?i:http|https)://[^\s]+$
+    - range: string
+  endDate:
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  ethicsApproval:
+    range: EthicsApproval
+    required: false
+    multivalued: true
+  genotype:
+    range: Any
+    required: false
+    any_of:
+    - range: GenotypeInfo
+      multivalued: true
+    - range: string
+  hasMember:
+    range: string
+    required: false
+    multivalued: true
+  id:
+    range: string
+    required: false
+  identifier: {}
+  includeInCitation:
+    ifabsent: 'True'
+    range: boolean
+    required: false
+  keywords:
+    range: string
+    required: false
+    multivalued: true
+  license:
+    range: LicenseType
+    required: false
+    multivalued: true
+  locus:
+    range: Locus
+    required: true
+  locusType:
+    range: string
+    required: false
+  manifestLocation:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0xADDRESS>.'
+    range: uri
+    required: true
+    multivalued: true
+    pattern: ^(?i:http|https)://[^\s]+$
+    minimum_cardinality: 1
+  maxValue:
+    notes:
+    - 'pydantic2linkml: LinkML does not have support for `''+inf''`, `''-inf''`, and
+      `''NaN''` values. Support for these values is not translated.'
+    range: float
+    required: false
+  measurementTechnique:
+    range: MeasurementTechniqueType
+    required: false
+    multivalued: true
+  minValue:
+    notes:
+    - 'pydantic2linkml: LinkML does not have support for `''+inf''`, `''-inf''`, and
+      `''NaN''` values. Support for these values is not translated.'
+    range: float
+    required: false
+  name:
+    range: string
+  numberOfBytes:
+    range: integer
+    required: true
+  numberOfCells:
+    range: integer
+    required: false
+  numberOfFiles:
+    range: integer
+    required: true
+  numberOfSamples:
+    range: integer
+    required: false
+  numberOfSubjects:
+    range: integer
+    required: false
+  path:
+    range: string
+    required: true
+  propertyID:
+    range: Any
+    required: false
+    any_of:
+    - range: IdentifierType
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+        function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+        at 0xADDRESS>.'
+      range: uri
+      pattern: ^(?i:http|https)://[^\s]+$
+  protocol:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+      function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+      at 0xADDRESS>.'
+    range: uri
+    required: false
+    multivalued: true
+    pattern: ^(?i:http|https)://[^\s]+$
+  publishedBy:
+    range: Any
+    required: true
+    any_of:
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+        function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+        at 0xADDRESS>.'
+      range: uri
+      pattern: ^(?i:http|https)://[^\s]+$
+    - range: PublishActivity
+  relatedParticipant:
+    range: RelatedParticipant
+    required: false
+    multivalued: true
+  relatedResource:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <function Resource.identifier_or_url at 0xADDRESS>.'
+    range: Resource
+    required: false
+    multivalued: true
+  relation:
+    required: true
+  releaseNotes:
+    range: string
+    required: false
+  repository:
+    required: false
+  resourceType:
+    range: ResourceType
+    required: false
+  roleName:
+    range: RoleType
+    required: false
+    multivalued: true
+  sameAs:
+    required: false
+    multivalued: true
+  sampleType:
+    range: SampleType
+    required: true
+  schemaKey:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
+    ifabsent: string(DandiBaseModel)
+    range: string
+    required: false
+  schemaVersion:
+    ifabsent: string(0.7.0)
+    range: string
+    required: false
+  sex:
+    range: SexType
+    required: false
+  species:
+    range: SpeciesType
+    required: false
+  startDate:
+    notes:
+    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
+      truncate. LinkML lacks direct support for this restriction.'
+    range: datetime
+    required: false
+  status:
+    range: AccessType
+    required: true
+  strain:
+    range: StrainType
+    required: false
+  studyTarget:
+    range: string
+    required: false
+    multivalued: true
+  unitText:
+    range: string
+    required: false
+  url:
+    range: uri
+    required: false
+    pattern: ^(?i:http|https)://[^\s]+$
+  used:
+    range: Equipment
+    required: false
+    multivalued: true
+  value:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <bound method PropertyValue.ensure_value of <class ''dandischema.models.PropertyValue''>>.'
+    range: Any
+    required: false
+    any_of:
+    - range: Any
+    - range: Any
+      multivalued: true
+  valueReference:
+    range: PropertyValue
+    required: false
+  variableMeasured:
+    required: false
+    multivalued: true
+  vendor:
+    notes:
+    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+      function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>.'
+    range: Organization
+    required: false
+  version:
+    range: string
+    required: true
+  wasAssociatedWith:
+    range: Any
+    required: false
+    multivalued: true
+    any_of:
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+        function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>.'
+      range: Person
+    - notes:
+      - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+        function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>.'
+      range: Organization
+    - range: Software
+    - range: Agent
+  wasAttributedTo:
+    range: Participant
+    required: false
+    multivalued: true
+  wasDerivedFrom:
+    range: BioSample
+    required: false
+    multivalued: true
+  wasGeneratedBy:
+    required: false
+    multivalued: true
+
+classes:
+  Any:
+    description: Any object
+    class_uri: linkml:Any
+  AccessRequirements:
+    description: Information about access options for the dataset
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the AccessRequirements
+      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
+      ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - contactPoint
+    - description
+    - embargoedUntil
+    - status
+  Activity:
+    description: Information about the Project activity
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Activity Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - description
+    - endDate
+    - identifier
+    - name
+    - startDate
+    - used
+    - wasAssociatedWith
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+      name:
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: true
+        pattern: ^(?=.{,150}$)
+  Affiliation:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Affiliation Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+        pattern: ^https://ror.org/[a-z0-9]+$
+      name:
+        required: true
+  Agent:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Agent Pydantic model
+      has changes in value in meta slots: [''ifabsent'', ''notes'', ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+      name:
+        required: true
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+  Allele:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Allele Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - alleleSymbol
+    - alleleType
+    - identifier
+    slot_usage:
+      identifier:
+        range: Any
+        required: true
+        any_of:
+        - range: string
+        - range: string
+          multivalued: true
+  Anatomy:
+    description: UBERON or other identifier for anatomical part studied
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Anatomy Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  ApproachType:
+    description: Identifier for approach used
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the ApproachType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  AssayType:
+    description: OBI based identifier for the assay(s) used
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the AssayType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  Asset:
+    description: Metadata used to describe an asset on the server.
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
+      slot representation of the id field in the Asset Pydantic model has changes
+      in value in meta slots: [''required''] .'
+    is_a: BareAsset
+    slots:
+    - contentUrl
+    - identifier
+    slot_usage:
+      identifier:
+        range: string
+        required: true
+        pattern: ^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$
+  AssetsSummary:
+    description: Summary over assets contained in a dandiset (published or not)
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the AssetsSummary Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - approach
+    - dataStandard
+    - measurementTechnique
+    - numberOfBytes
+    - numberOfCells
+    - numberOfFiles
+    - numberOfSamples
+    - numberOfSubjects
+    - species
+    - variableMeasured
+    slot_usage:
+      species:
+        multivalued: true
+      variableMeasured:
+        range: string
+  BareAsset:
+    description: Metadata used to describe an asset anywhere (local or server). Derived
+      from C2M2 (Level 0 and 1) and schema.org
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
+      The slot representation of the access field in the BareAsset Pydantic model
+      has changes in value in meta slots: [''notes''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the BareAsset Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
+      slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
+      model has changes in value in meta slots: [''range''] .'
+    is_a: CommonModel
+    slots:
+    - approach
+    - blobDateModified
+    - contentSize
+    - dataType
+    - dateModified
+    - digest
+    - encodingFormat
+    - measurementTechnique
+    - path
+    - sameAs
+    - variableMeasured
+    - wasAttributedTo
+    - wasDerivedFrom
+    slot_usage:
+      sameAs:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+        range: uri
+        pattern: ^(?i:http|https)://[^\s]+$
+      variableMeasured:
+        range: PropertyValue
+  BaseType:
+    description: Base class for enumerated types
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the BaseType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    slot_usage:
+      identifier:
+        range: Any
+        required: false
+        any_of:
+        - notes:
+          - 'pydantic2linkml: Unable to translate the logic contained in the wrap
+            validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+            at 0xADDRESS>.'
+          range: uri
+          pattern: ^(?i:http|https)://[^\s]+$
+        - range: string
+          pattern: ^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$
+      name:
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: false
+        pattern: ^(?=.{,150}$)
+  BioSample:
+    description: Description of the sample that was studied
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the BioSample Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - anatomy
+    - assayType
+    - hasMember
+    - identifier
+    - sameAs
+    - sampleType
+    - wasAttributedTo
+    - wasDerivedFrom
+    slot_usage:
+      identifier:
+        range: string
+        required: true
+      sameAs:
+        range: string
+  CommonModel:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the CommonModel Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes''] .'
+    is_a: DandiBaseModel
+    slots:
+    - about
+    - access
+    - acknowledgement
+    - contributor
+    - description
+    - ethicsApproval
+    - keywords
+    - license
+    - name
+    - protocol
+    - relatedResource
+    - repository
+    - schemaVersion
+    - studyTarget
+    - url
+    - wasGeneratedBy
+    slot_usage:
+      name:
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: false
+        pattern: ^(?=.{,150}$)
+      repository:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+        range: uri
+        pattern: ^(?i:http|https)://[^\s]+$
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+      wasGeneratedBy:
+        range: Activity
+  ContactPoint:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the ContactPoint Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - email
+    - url
+    slot_usage:
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+  Contributor:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Contributor Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - awardNumber
+    - email
+    - identifier
+    - includeInCitation
+    - name
+    - roleName
+    - url
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+      name:
+        required: false
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+  DandiBaseModel:
+    slots:
+    - id
+    - schemaKey
+  Dandiset:
+    description: A body of structured information describing a DANDI dataset.
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
+      slot. The slot representation of the contributor field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
+      slot. The slot representation of the description field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
+      slot representation of the id field in the Dandiset Pydantic model has changes
+      in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the license slot.
+      The slot representation of the license field in the Dandiset Pydantic model
+      has changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Dandiset Pydantic model has
+      changes in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
+      slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
+      model has changes in value in meta slots: [''range''] .'
+    is_a: CommonModel
+    slots:
+    - assetsSummary
+    - citation
+    - dateCreated
+    - dateModified
+    - identifier
+    - manifestLocation
+    - sameAs
+    - version
+    slot_usage:
+      identifier:
+        range: string
+        required: true
+        pattern: ^[A-Z][-A-Z]*:\d{6}$
+      sameAs:
+        range: string
+        pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
+  Disorder:
+    description: Biolink, SNOMED, or other identifier for disorder studied
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Disorder Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+    slots:
+    - dxdate
+  Equipment:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Equipment Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - description
+    - identifier
+    - name
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+      name:
+        notes:
+        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
+          The max length constraint of 150 is incorporated into the pattern of the
+          slot.'
+        required: true
+        pattern: ^(?=.{,150}$)
+  EthicsApproval:
+    description: Information about ethics committee approval for project
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the EthicsApproval Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - contactPoint
+    - identifier
+    slot_usage:
+      identifier:
+        range: string
+        required: true
+  GenericType:
+    description: An object to capture any type for about
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the GenericType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  GenotypeInfo:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the GenotypeInfo Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - alleles
+    - locus
+    - wasGeneratedBy
+    slot_usage:
+      wasGeneratedBy:
+        range: Session
+  Locus:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Locus Pydantic model
+      has changes in value in meta slots: [''ifabsent'', ''notes'', ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - locusType
+    slot_usage:
+      identifier:
+        range: Any
+        required: true
+        any_of:
+        - range: string
+        - range: string
+          multivalued: true
+  MeasurementTechniqueType:
+    description: Identifier for measurement technique used
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the MeasurementTechniqueType
+      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
+      ''range''] .'
+    is_a: BaseType
+  Organization:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the includeInCitation
+      slot. The slot representation of the includeInCitation field in the Organization
+      Pydantic model has changes in value in meta slots: [''ifabsent''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Organization Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    is_a: Contributor
+    slots:
+    - contactPoint
+    slot_usage:
+      contactPoint:
+        multivalued: true
+      identifier:
+        pattern: ^https://ror.org/[a-z0-9]+$
+  Participant:
+    description: Description about the Participant or Subject studied. The Participant
+      or Subject can be any individual or synthesized Agent. The properties of the
+      Participant or Subject refers to information at the timepoint when the Participant
+      or Subject engaged in the production of data being described.
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Participant Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - age
+    - altName
+    - cellLine
+    - disorder
+    - genotype
+    - identifier
+    - relatedParticipant
+    - sameAs
+    - sex
+    - species
+    - strain
+    - vendor
+    slot_usage:
+      identifier:
+        range: string
+        required: true
+      sameAs:
+        range: string
+  Person:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Person Pydantic model has changes
+      in value in meta slots: [''required''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Person Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    is_a: Contributor
+    slots:
+    - affiliation
+    slot_usage:
+      identifier:
+        pattern: ^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$
+  Project:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Project Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    is_a: Activity
+  PropertyValue:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PropertyValue Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - maxValue
+    - minValue
+    - propertyID
+    - unitText
+    - value
+    - valueReference
+  Publishable:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Publishable Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - datePublished
+    - publishedBy
+  PublishActivity:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PublishActivity
+      Pydantic model has changes in value in meta slots: [''any_of'', ''ifabsent'',
+      ''notes''] .'
+    is_a: Activity
+  PublishedAsset:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PublishedAsset Pydantic
+      model has changes in value in meta slots: [''notes''] .'
+    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
+      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
+    is_a: Asset
+    mixins:
+    - Publishable
+    slot_usage:
+      id:
+        pattern: ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
+  PublishedDandiset:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
+      slot representation of the id field in the PublishedDandiset Pydantic model
+      has changes in value in meta slots: [''pattern''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the PublishedDandiset
+      Pydantic model has changes in value in meta slots: [''notes''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
+      The slot representation of the url field in the PublishedDandiset Pydantic model
+      has changes in value in meta slots: [''notes'', ''required''] .'
+    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
+      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
+    is_a: Dandiset
+    mixins:
+    - Publishable
+    slots:
+    - doi
+    - releaseNotes
+  RelatedParticipant:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the RelatedParticipant
+      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
+      ''range''] .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - relation
+    - url
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+      name:
+        required: false
+      relation:
+        range: ParticipantRelationType
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+  Resource:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Resource Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - relation
+    - repository
+    - resourceType
+    - url
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+      name:
+        required: false
+      relation:
+        range: RelationType
+      repository:
+        range: string
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+  SampleType:
+    description: OBI based identifier for the sample type used
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the SampleType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  Session:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Session Pydantic
+      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
+      .'
+    is_a: Activity
+  SexType:
+    description: Identifier for the sex of the sample
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the SexType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  Software:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the Software Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: DandiBaseModel
+    slots:
+    - identifier
+    - name
+    - url
+    - version
+    slot_usage:
+      identifier:
+        range: string
+        required: false
+        pattern: ^RRID:.*
+      name:
+        required: true
+      url:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+  SpeciesType:
+    description: Identifier for species of the sample
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the SpeciesType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  StandardsType:
+    description: Identifier for data standard used
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the StandardsType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
+  StrainType:
+    description: Identifier for the strain of the sample
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
+      slot. The slot representation of the schemaKey field in the StrainType Pydantic
+      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
+      .'
+    is_a: BaseType
