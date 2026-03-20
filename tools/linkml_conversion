@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Script which will force us to apply the changes we have
+#
+
+set -eu
+
+ver=$(git describe linkml-conversion)
+
+# ensure we are clean to no side effects and are in
+test -z "$(git status --porcelain)" || { echo "Git tree is dirty, aborting."; exit 1; }
+
+git checkout linkml-auto-converted
+
+git merge -s ours --no-commit linkml-conversion
+
+git read-tree -m -u linkml-conversion
+
+hatch run linkml-auto-converted:2linkml
+hatch run linkml-auto-converted:2pydantic
+
+# add (re)generated files
+git add dandischema/models_linkml.py dandischema/models.yaml
+
+# add our stab
+git mv dandischema/models_importstab.py dandischema/models.py
+
+git commit -m '"Merged" with reconversion linkml-conversion $ver' -a
