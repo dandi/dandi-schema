@@ -64,7 +64,7 @@ python = "3.10"
 
 # Env for auto converting `dandischema.models` to LinkML schema and back to Pydantic models
 # To invoke conversion scripts provided by the environment, execute the following respective commands:
-#   `hatch run linkml-auto-converted:2linkml`    # Convert dandischema.models_orig -> dandischema/models.yaml
+#   `hatch run linkml-auto-converted:2linkml`    # Convert dandischema.models -> dandischema/models.yaml
 #   `hatch run linkml-auto-converted:2pydantic`  # Convert dandischema/models.yaml -> dandischema/models_linkml.py
 [tool.hatch.envs.linkml-auto-converted]
 dependencies = [
@@ -72,7 +72,7 @@ dependencies = [
     "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git"
 ]
 [tool.hatch.envs.linkml-auto-converted.scripts]
-2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml dandischema.models_orig | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' -E -e 's,([^[:space:]]+):[0-9]+,\\1:NUMBER,g' > dandischema/models.yaml"
+2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml dandischema.models | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' -E -e 's,([^[:space:]]+):[0-9]+,\\1:NUMBER,g' > dandischema/models.yaml"
 2pydantic = "gen-pydantic --black dandischema/models.yaml > dandischema/models_linkml.py"
 
 [tool.setuptools.packages.find]

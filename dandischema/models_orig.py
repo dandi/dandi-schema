@@ -1277,14 +1277,9 @@ class Activity(DandiBaseModel):
 
     # isPartOf: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
     # hasPart: Optional["Activity"] = Field(None, json_schema_extra={"nskey": "schema"})
-    wasAssociatedWith: Optional[
-        List[
-            Annotated[
-                Union[Person, Organization, Software, Agent],
-                Field(discriminator="schemaKey"),
-            ]
-        ]
-    ] = Field(None, json_schema_extra={"nskey": "prov"})
+    wasAssociatedWith: Optional[List[Union[Person, Organization, Software, Agent],]] = (
+        Field(None, json_schema_extra={"nskey": "prov"})
+    )
     used: Optional[List[Equipment]] = Field(
         None,
         description="A listing of equipment used for the activity.",
@@ -1566,21 +1561,13 @@ class CommonModel(DandiBaseModel):
         description="A description of the item.",
         json_schema_extra={"nskey": "schema"},
     )
-    contributor: Optional[
-        List[Annotated[Union[Person, Organization], Field(discriminator="schemaKey")]]
-    ] = Field(
+    contributor: Optional[List[Union[Person, Organization]]] = Field(
         None,
         title="Contributors",
         description="Contributors to this item: persons or organizations.",
         json_schema_extra={"nskey": "schema"},
     )
-    about: Optional[
-        List[
-            Annotated[
-                Union[Disorder, Anatomy, GenericType], Field(discriminator="schemaKey")
-            ]
-        ]
-    ] = Field(
+    about: Optional[List[Union[Disorder, Anatomy, GenericType]]] = Field(
         None,
         title="Subject matter of the dataset",
         description="The subject matter of the content, such as disorders, brain anatomy.",
@@ -1711,9 +1698,7 @@ class Dandiset(CommonModel):
         max_length=10000,
         json_schema_extra={"nskey": "schema"},
     )
-    contributor: List[
-        Annotated[Union[Person, Organization], Field(discriminator="schemaKey")]
-    ] = Field(
+    contributor: List[Union[Person, Organization]] = Field(
         title="Dandiset contributors",
         description="People or Organizations that have contributed to this Dandiset.",
         json_schema_extra={"nskey": "schema"},
