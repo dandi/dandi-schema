@@ -25,4 +25,4 @@ git add dandischema/models_linkml.py dandischema/models.yaml
 # add our stab
 git mv dandischema/models_importstab.py dandischema/models.py
 
-git commit -m '"Merged" with reconversion linkml-conversion $ver' -a --no-verify
+git commit -m "'Merged' with reconversion linkml-conversion $ver" -a --no-verify
