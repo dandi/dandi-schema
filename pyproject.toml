@@ -73,7 +73,7 @@ dependencies = [
 ]
 [tool.hatch.envs.linkml-auto-converted.scripts]
 2linkml = "pydantic2linkml -l INFO -O dandischema/models_overlay.yaml dandischema.models | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' -E -e 's,([^[:space:]]+):[0-9]+,\\1:NUMBER,g' > dandischema/models.yaml"
-2pydantic = "gen-pydantic --black dandischema/models.yaml > dandischema/models_linkml.py"
+2pydantic = "gen-pydantic --black dandischema/models.yaml | sed -e 's,dciteCOLON,,g' > dandischema/models_linkml.py"
 
 [tool.setuptools.packages.find]
 namespaces = true
