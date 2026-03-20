@@ -16,6 +16,19 @@ git merge -s ours --no-commit linkml-conversion
 
 git read-tree -m -u linkml-conversion
 
+# Poor man patch queue implementation
+# Edit this list if you want to merge or drop PRs branches to be patched with.
+# Order matters
+branches_to_merge=( remove-discriminated-unions )
+
+# determine remote name based on what remote linkml-conversion is
+# tracked from which should correspond to our main repo!
+remote=$(git config branch.linkml-conversion.remote)
+
+for b in $"{branches_to_merge[@]}"; do
+    git diff "$remote"/master...$b | patch -p1
+done
+
 hatch run linkml-auto-converted:2linkml
 hatch run linkml-auto-converted:2pydantic
 
@@ -25,4 +38,7 @@ git add dandischema/models_linkml.py dandischema/models.yaml
 # add our stab
 git mv dandischema/models_importstab.py dandischema/models.py
 
-git commit -m "'Merged' with reconversion linkml-conversion $ver" -a --no-verify
+git commit -m "'Merged' with linkml-conversion $ver and ${#branches_to_merge[@]} branches
+
+branches merged: ${branches_to_merge[@]}
+" -a --no-verify
