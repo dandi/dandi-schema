@@ -25,8 +25,12 @@ branches_to_merge=( remove-discriminated-unions )
 # tracked from which should correspond to our main repo!
 remote=$(git config branch.linkml-conversion.remote)
 
-for b in $"{branches_to_merge[@]}"; do
-    git diff "$remote"/master...$b | patch -p1
+for b in ${branches_to_merge[@]}; do
+    b_ver=$(git describe "$remote"/$b)
+    echo "Applying branch $b with following differences"
+    git diff --stat "$remote"/master..."$remote"/$b
+
+    git diff "$remote"/master..."$remote"/$b | patch -p1
 done
 
 hatch run linkml-auto-converted:2linkml
