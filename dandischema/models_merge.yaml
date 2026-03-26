@@ -1,0 +1,7 @@
+# This file specifies a partial schema to be merged with the auto LinkML translation
+# `dandischema.models`. It is a place to specify elements of the target dandischema
+# LinkML schema that are not translatable from or not available in `dandischema.models`
+
+slots:
+  schemaKey:
+    designates_type: true

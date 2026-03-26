@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    spdxCOLONCC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
     spdxCOLONCC0_1FULL_STOP0 = "spdx:CC0-1.0"
+    spdxCOLONCC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
 
 
 class ParticipantRelationType(str, Enum):
@@ -341,10 +341,11 @@ class DandiBaseModel(ConfiguredBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
+    schemaKey: Literal["DandiBaseModel"] = Field(
         default="DandiBaseModel",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -408,10 +409,11 @@ class AccessRequirements(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["AccessRequirements"] = Field(
+        default="AccessRequirements",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -588,10 +590,11 @@ class Activity(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Activity"] = Field(
+        default="Activity",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -688,10 +691,11 @@ class Affiliation(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Affiliation"] = Field(
+        default="Affiliation",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -819,10 +823,11 @@ class Agent(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Agent"] = Field(
+        default="Agent",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -912,10 +917,11 @@ class Allele(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Allele"] = Field(
+        default="Allele",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1000,10 +1006,11 @@ class AssetsSummary(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["AssetsSummary"] = Field(
+        default="AssetsSummary",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1141,10 +1148,11 @@ class BaseType(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["BaseType"] = Field(
+        default="BaseType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1257,10 +1265,11 @@ class Anatomy(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Anatomy"] = Field(
+        default="Anatomy",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1373,10 +1382,11 @@ class ApproachType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["ApproachType"] = Field(
+        default="ApproachType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1489,10 +1499,11 @@ class AssayType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["AssayType"] = Field(
+        default="AssayType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1601,10 +1612,11 @@ class BioSample(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["BioSample"] = Field(
+        default="BioSample",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -1845,7 +1857,9 @@ class CommonModel(DandiBaseModel):
             }
         },
     )
-    wasGeneratedBy: Optional[list[Activity]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         default=None,
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
@@ -1855,10 +1869,11 @@ class CommonModel(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["CommonModel"] = Field(
+        default="CommonModel",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -2280,7 +2295,9 @@ class BareAsset(CommonModel):
             }
         },
     )
-    wasGeneratedBy: Optional[list[Activity]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         default=None,
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
@@ -2290,10 +2307,11 @@ class BareAsset(CommonModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["BareAsset"] = Field(
+        default="BareAsset",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -2761,7 +2779,9 @@ class Asset(BareAsset):
             }
         },
     )
-    wasGeneratedBy: Optional[list[Activity]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         default=None,
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
@@ -2771,10 +2791,11 @@ class Asset(BareAsset):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Asset"] = Field(
+        default="Asset",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -2958,10 +2979,11 @@ class ContactPoint(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["ContactPoint"] = Field(
+        default="ContactPoint",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -3114,10 +3136,11 @@ class Contributor(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Contributor"] = Field(
+        default="Contributor",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -3458,7 +3481,9 @@ class Dandiset(CommonModel):
             }
         },
     )
-    wasGeneratedBy: Optional[list[Activity]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         default=None,
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
@@ -3468,10 +3493,11 @@ class Dandiset(CommonModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Dandiset"] = Field(
+        default="Dandiset",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -3683,10 +3709,11 @@ class Disorder(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Disorder"] = Field(
+        default="Disorder",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -3811,10 +3838,11 @@ class Equipment(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Equipment"] = Field(
+        default="Equipment",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -3902,10 +3930,11 @@ class EthicsApproval(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["EthicsApproval"] = Field(
+        default="EthicsApproval",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4005,10 +4034,11 @@ class GenericType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["GenericType"] = Field(
+        default="GenericType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4067,10 +4097,11 @@ class GenotypeInfo(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["GenotypeInfo"] = Field(
+        default="GenotypeInfo",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4144,10 +4175,11 @@ class Locus(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Locus"] = Field(
+        default="Locus",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4247,10 +4279,11 @@ class MeasurementTechniqueType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["MeasurementTechniqueType"] = Field(
+        default="MeasurementTechniqueType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4404,10 +4437,11 @@ class Organization(Contributor):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Organization"] = Field(
+        default="Organization",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4561,10 +4595,11 @@ class Participant(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Participant"] = Field(
+        default="Participant",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4698,10 +4733,11 @@ class Person(Contributor):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Person"] = Field(
+        default="Person",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4881,10 +4917,11 @@ class Project(Activity):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Project"] = Field(
+        default="Project",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -4998,10 +5035,11 @@ class PropertyValue(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["PropertyValue"] = Field(
+        default="PropertyValue",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -5066,10 +5104,11 @@ class Publishable(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Publishable"] = Field(
+        default="Publishable",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -5223,10 +5262,11 @@ class PublishActivity(Activity):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["PublishActivity"] = Field(
+        default="PublishActivity",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -5662,7 +5702,9 @@ class PublishedAsset(Publishable, Asset):
             }
         },
     )
-    wasGeneratedBy: Optional[list[Activity]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         default=None,
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
@@ -5672,10 +5714,11 @@ class PublishedAsset(Publishable, Asset):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["PublishedAsset"] = Field(
+        default="PublishedAsset",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -6140,7 +6183,9 @@ class PublishedDandiset(Publishable, Dandiset):
             }
         },
     )
-    wasGeneratedBy: Optional[list[Activity]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         default=None,
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
@@ -6150,10 +6195,11 @@ class PublishedDandiset(Publishable, Dandiset):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["PublishedDandiset"] = Field(
+        default="PublishedDandiset",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -6381,10 +6427,11 @@ class RelatedParticipant(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["RelatedParticipant"] = Field(
+        default="RelatedParticipant",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -6527,10 +6574,11 @@ class Resource(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Resource"] = Field(
+        default="Resource",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -6643,10 +6691,11 @@ class SampleType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["SampleType"] = Field(
+        default="SampleType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -6813,10 +6862,11 @@ class Session(Activity):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Session"] = Field(
+        default="Session",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -6929,10 +6979,11 @@ class SexType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["SexType"] = Field(
+        default="SexType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -7065,10 +7116,11 @@ class Software(DandiBaseModel):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["Software"] = Field(
+        default="Software",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -7194,10 +7246,11 @@ class SpeciesType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["SpeciesType"] = Field(
+        default="SpeciesType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -7310,10 +7363,11 @@ class StandardsType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["StandardsType"] = Field(
+        default="StandardsType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [
@@ -7426,10 +7480,11 @@ class StrainType(BaseType):
         default=None,
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
-    schemaKey: Optional[str] = Field(
-        default="DandiBaseModel",
+    schemaKey: Literal["StrainType"] = Field(
+        default="StrainType",
         json_schema_extra={
             "linkml_meta": {
+                "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
                 "ifabsent": "string(DandiBaseModel)",
                 "notes": [

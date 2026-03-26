@@ -5,29 +5,52 @@ version: 0.7.0
 imports:
 - linkml:types
 prefixes:
-  dandiasset: http://dandiarchive.org/asset/
-  DANDI: http://dandiarchive.org/dandiset/
-  dandi: http://schema.dandiarchive.org/
-  dcite: http://schema.dandiarchive.org/datacite/
-  dct: http://purl.org/dc/terms/
-  linkml: https://w3id.org/linkml/
-  nidm: http://purl.org/nidash/nidm#
-  ORCID: https://orcid.org/
-  owl: http://www.w3.org/2002/07/owl#
-  PATO: http://purl.obolibrary.org/obo/PATO_
-  pav: http://purl.org/pav/
-  prov: http://www.w3.org/ns/prov#
-  rdfa: http://www.w3.org/ns/rdfa#
-  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-  rdfs: http://www.w3.org/2000/01/rdf-schema#
-  ROR: https://ror.org/
-  RRID: 'https://scicrunch.org/resolver/RRID:'
-  rs: http://schema.repronim.org/
-  schema: http://schema.org/
-  skos: http://www.w3.org/2004/02/skos/core#
-  spdx: http://spdx.org/licenses/
-  uuid: http://uuid.repronim.org/
-  xsd: http://www.w3.org/2001/XMLSchema#
+  dandiasset:
+    prefix_reference: http://dandiarchive.org/asset/
+  DANDI:
+    prefix_reference: http://dandiarchive.org/dandiset/
+  dandi:
+    prefix_reference: http://schema.dandiarchive.org/
+  dcite:
+    prefix_reference: http://schema.dandiarchive.org/datacite/
+  dct:
+    prefix_reference: http://purl.org/dc/terms/
+  linkml:
+    prefix_reference: https://w3id.org/linkml/
+  nidm:
+    prefix_reference: http://purl.org/nidash/nidm#
+  ORCID:
+    prefix_reference: https://orcid.org/
+  owl:
+    prefix_reference: http://www.w3.org/2002/07/owl#
+  PATO:
+    prefix_reference: http://purl.obolibrary.org/obo/PATO_
+  pav:
+    prefix_reference: http://purl.org/pav/
+  prov:
+    prefix_reference: http://www.w3.org/ns/prov#
+  rdfa:
+    prefix_reference: http://www.w3.org/ns/rdfa#
+  rdf:
+    prefix_reference: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  rdfs:
+    prefix_reference: http://www.w3.org/2000/01/rdf-schema#
+  ROR:
+    prefix_reference: https://ror.org/
+  RRID:
+    prefix_reference: 'https://scicrunch.org/resolver/RRID:'
+  rs:
+    prefix_reference: http://schema.repronim.org/
+  schema:
+    prefix_reference: http://schema.org/
+  skos:
+    prefix_reference: http://www.w3.org/2004/02/skos/core#
+  spdx:
+    prefix_reference: http://spdx.org/licenses/
+  uuid:
+    prefix_reference: http://uuid.repronim.org/
+  xsd:
+    prefix_reference: http://www.w3.org/2001/XMLSchema#
 default_prefix: dandi
 default_range: string
 
@@ -81,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC-BY-4.0:
-        meaning: spdx:CC-BY-4.0
       spdx:CC0-1.0:
         meaning: spdx:CC0-1.0
+      spdx:CC-BY-4.0:
+        meaning: spdx:CC-BY-4.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
@@ -635,6 +658,7 @@ slots:
     - 'pydantic2linkml: Unable to translate the logic contained in the after validation
       function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
     ifabsent: string(DandiBaseModel)
+    designates_type: true
     range: string
     required: false
   schemaVersion:
