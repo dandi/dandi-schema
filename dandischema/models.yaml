@@ -104,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC0-1.0:
-        meaning: spdx:CC0-1.0
       spdx:CC-BY-4.0:
         meaning: spdx:CC-BY-4.0
+      spdx:CC0-1.0:
+        meaning: spdx:CC0-1.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
@@ -376,9 +376,6 @@ slots:
     range: string
     required: false
   blobDateModified:
-    notes:
-    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
-      truncate. LinkML lacks direct support for this restriction.'
     range: datetime
     required: false
   cellLine:
@@ -436,21 +433,12 @@ slots:
     required: false
     pattern: ^(?i:http|https)://[^\s]+$
   dateCreated:
-    notes:
-    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
-      truncate. LinkML lacks direct support for this restriction.'
     range: datetime
     required: false
   dateModified:
-    notes:
-    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
-      truncate. LinkML lacks direct support for this restriction.'
     range: datetime
     required: false
   datePublished:
-    notes:
-    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
-      truncate. LinkML lacks direct support for this restriction.'
     range: datetime
     required: true
   description:
@@ -478,10 +466,7 @@ slots:
     multivalued: true
     any_of:
     - range: date
-    - notes:
-      - 'pydantic2linkml: Unable to express the microseconds precision constraint
-        of truncate. LinkML lacks direct support for this restriction.'
-      range: datetime
+    - range: datetime
   email:
     notes:
     - 'pydantic2linkml: Unable to translate the logic contained in the after validation
@@ -503,9 +488,6 @@ slots:
       pattern: ^(?i:http|https)://[^\s]+$
     - range: string
   endDate:
-    notes:
-    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
-      truncate. LinkML lacks direct support for this restriction.'
     range: datetime
     required: false
   ethicsApproval:
@@ -672,9 +654,6 @@ slots:
     range: SpeciesType
     required: false
   startDate:
-    notes:
-    - 'pydantic2linkml: Unable to express the microseconds precision constraint of
-      truncate. LinkML lacks direct support for this restriction.'
     range: datetime
     required: false
   status:

@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    spdxCOLONCC0_1FULL_STOP0 = "spdx:CC0-1.0"
     spdxCOLONCC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
+    spdxCOLONCC0_1FULL_STOP0 = "spdx:CC0-1.0"
 
 
 class ParticipantRelationType(str, Enum):
@@ -477,17 +477,7 @@ class Activity(DandiBaseModel):
         },
     )
     endDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     identifier: Optional[str] = Field(
         default=None,
@@ -539,17 +529,7 @@ class Activity(DandiBaseModel):
         },
     )
     startDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
@@ -1989,17 +1969,7 @@ class BareAsset(CommonModel):
         },
     )
     blobDateModified: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
     )
     contentSize: Union[int, str] = Field(
         default=...,
@@ -2034,16 +2004,7 @@ class BareAsset(CommonModel):
     )
     dateModified: Optional[datetime] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     digest: str = Field(
         default=...,
@@ -2473,17 +2434,7 @@ class Asset(BareAsset):
         },
     )
     blobDateModified: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
     )
     contentSize: Union[int, str] = Field(
         default=...,
@@ -2518,16 +2469,7 @@ class Asset(BareAsset):
     )
     dateModified: Optional[datetime] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     digest: str = Field(
         default=...,
@@ -3227,30 +3169,11 @@ class Dandiset(CommonModel):
         default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
     )
     dateCreated: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
     )
     dateModified: Optional[datetime] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     identifier: str = Field(
         default=...,
@@ -3625,17 +3548,7 @@ class Disorder(BaseType):
         default=None,
         json_schema_extra={
             "linkml_meta": {
-                "any_of": [
-                    {"range": "date"},
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to express the microseconds "
-                            "precision constraint of truncate. LinkML lacks direct "
-                            "support for this restriction."
-                        ],
-                        "range": "datetime",
-                    },
-                ],
+                "any_of": [{"range": "date"}, {"range": "datetime"}],
                 "domain_of": ["Disorder"],
             }
         },
@@ -4804,17 +4717,7 @@ class Project(Activity):
         },
     )
     endDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     identifier: Optional[str] = Field(
         default=None,
@@ -4866,17 +4769,7 @@ class Project(Activity):
         },
     )
     startDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
@@ -5067,17 +4960,7 @@ class Publishable(DandiBaseModel):
     )
 
     datePublished: datetime = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Publishable"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Publishable"]}}
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
@@ -5149,17 +5032,7 @@ class PublishActivity(Activity):
         },
     )
     endDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     identifier: Optional[str] = Field(
         default=None,
@@ -5211,17 +5084,7 @@ class PublishActivity(Activity):
         },
     )
     startDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
@@ -5317,17 +5180,7 @@ class PublishedAsset(Publishable, Asset):
     )
 
     datePublished: datetime = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Publishable"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Publishable"]}}
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
@@ -5396,17 +5249,7 @@ class PublishedAsset(Publishable, Asset):
         },
     )
     blobDateModified: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
     )
     contentSize: Union[int, str] = Field(
         default=...,
@@ -5441,16 +5284,7 @@ class PublishedAsset(Publishable, Asset):
     )
     dateModified: Optional[datetime] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     digest: str = Field(
         default=...,
@@ -5889,17 +5723,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={"linkml_meta": {"domain_of": ["PublishedDandiset"]}},
     )
     datePublished: datetime = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Publishable"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Publishable"]}}
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
@@ -5929,30 +5753,11 @@ class PublishedDandiset(Publishable, Dandiset):
         default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
     )
     dateCreated: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
     )
     dateModified: Optional[datetime] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     identifier: str = Field(
         default=...,
@@ -6749,17 +6554,7 @@ class Session(Activity):
         },
     )
     endDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     identifier: Optional[str] = Field(
         default=None,
@@ -6811,17 +6606,7 @@ class Session(Activity):
         },
     )
     startDate: Optional[datetime] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Activity"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the microseconds precision "
-                    "constraint of truncate. LinkML lacks direct support for this "
-                    "restriction."
-                ],
-            }
-        },
+        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
