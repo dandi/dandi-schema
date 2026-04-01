@@ -104,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC-BY-4.0:
-        meaning: spdx:CC-BY-4.0
       spdx:CC0-1.0:
         meaning: spdx:CC0-1.0
+      spdx:CC-BY-4.0:
+        meaning: spdx:CC-BY-4.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
@@ -641,7 +641,7 @@ slots:
       function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
     designates_type: true
     range: string
-    required: false
+    required: true
   schemaVersion:
     ifabsent: string(0.7.0)
     range: string

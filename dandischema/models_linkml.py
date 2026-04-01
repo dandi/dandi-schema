@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    spdxCOLONCC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
     spdxCOLONCC0_1FULL_STOP0 = "spdx:CC0-1.0"
+    spdxCOLONCC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
 
 
 class ParticipantRelationType(str, Enum):
