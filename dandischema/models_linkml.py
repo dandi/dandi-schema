@@ -158,8 +158,8 @@ class AccessType(str, Enum):
     An enumeration of access status options
     """
 
-    dandiCOLONOpenAccess = "dandi:OpenAccess"
-    dandiCOLONEmbargoedAccess = "dandi:EmbargoedAccess"
+    OpenAccess = "dandi:OpenAccess"
+    EmbargoedAccess = "dandi:EmbargoedAccess"
 
 
 class AgeReferenceType(str, Enum):
@@ -167,8 +167,8 @@ class AgeReferenceType(str, Enum):
     An enumeration of age reference
     """
 
-    dandiCOLONBirthReference = "dandi:BirthReference"
-    dandiCOLONGestationalReference = "dandi:GestationalReference"
+    BirthReference = "dandi:BirthReference"
+    GestationalReference = "dandi:GestationalReference"
 
 
 class DigestType(str, Enum):
@@ -176,14 +176,14 @@ class DigestType(str, Enum):
     An enumeration of checksum types
     """
 
-    dandiCOLONmd5 = "dandi:md5"
-    dandiCOLONsha1 = "dandi:sha1"
-    dandiCOLONsha2_256 = "dandi:sha2-256"
-    dandiCOLONsha3_256 = "dandi:sha3-256"
-    dandiCOLONblake2b_256 = "dandi:blake2b-256"
-    dandiCOLONblake3 = "dandi:blake3"
-    dandiCOLONdandi_etag = "dandi:dandi-etag"
-    dandiCOLONdandi_zarr_checksum = "dandi:dandi-zarr-checksum"
+    md5 = "dandi:md5"
+    sha1 = "dandi:sha1"
+    sha2_256 = "dandi:sha2-256"
+    sha3_256 = "dandi:sha3-256"
+    blake2b_256 = "dandi:blake2b-256"
+    blake3 = "dandi:blake3"
+    dandi_etag = "dandi:dandi-etag"
+    dandi_zarr_checksum = "dandi:dandi-zarr-checksum"
 
 
 class IdentifierType(str, Enum):
@@ -191,11 +191,11 @@ class IdentifierType(str, Enum):
     An enumeration of identifiers
     """
 
-    dandiCOLONdoi = "dandi:doi"
-    dandiCOLONorcid = "dandi:orcid"
-    dandiCOLONror = "dandi:ror"
-    dandiCOLONdandi = "dandi:dandi"
-    dandiCOLONrrid = "dandi:rrid"
+    doi = "dandi:doi"
+    orcid = "dandi:orcid"
+    ror = "dandi:ror"
+    dandi = "dandi:dandi"
+    rrid = "dandi:rrid"
 
 
 class LicenseType(str, Enum):
@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    spdxCOLONCC0_1FULL_STOP0 = "spdx:CC0-1.0"
-    spdxCOLONCC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
+    CC0_1FULL_STOP0 = "spdx:CC0-1.0"
+    CC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
 
 
 class ParticipantRelationType(str, Enum):
@@ -212,11 +212,11 @@ class ParticipantRelationType(str, Enum):
     An enumeration of participant relations
     """
 
-    dandiCOLONisChildOf = "dandi:isChildOf"
-    dandiCOLONisParentOf = "dandi:isParentOf"
-    dandiCOLONisSiblingOf = "dandi:isSiblingOf"
-    dandiCOLONisMonozygoticTwinOf = "dandi:isMonozygoticTwinOf"
-    dandiCOLONisDizygoticTwinOf = "dandi:isDizygoticTwinOf"
+    isChildOf = "dandi:isChildOf"
+    isParentOf = "dandi:isParentOf"
+    isSiblingOf = "dandi:isSiblingOf"
+    isMonozygoticTwinOf = "dandi:isMonozygoticTwinOf"
+    isDizygoticTwinOf = "dandi:isDizygoticTwinOf"
 
 
 class RelationType(str, Enum):
