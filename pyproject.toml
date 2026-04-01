@@ -69,10 +69,11 @@ python = "3.10"
 [tool.hatch.envs.linkml-auto-converted]
 dependencies = [
     "black",  # This allows `gen-pydantic` to format the generated Pydantic models with Black formatting
-    "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git"
+    "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git",
+    "ruamel.yaml"
 ]
 [tool.hatch.envs.linkml-auto-converted.scripts]
-2linkml = "pydantic2linkml -l INFO -M dandischema/models_merge.yaml -O dandischema/models_overlay.yaml dandischema.models | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' -E -e 's,([^[:space:]]+):[0-9]+,\\1:NUMBER,g' > dandischema/models.yaml"
+2linkml = "pydantic2linkml -l INFO -M dandischema/models_merge.yaml -O dandischema/models_overlay.yaml dandischema.models | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' -E -e 's,([^[:space:]]+):[0-9]+,\\1:NUMBER,g' | tools/sanitize-yaml > dandischema/models.yaml"
 2pydantic = "gen-pydantic --black dandischema/models.yaml | sed -e 's,dciteCOLON,,g' > dandischema/models_linkml.py"
 
 [tool.setuptools.packages.find]

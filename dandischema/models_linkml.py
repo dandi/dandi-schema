@@ -347,7 +347,6 @@ class DandiBaseModel(ConfiguredBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -365,15 +364,7 @@ class AccessRequirements(DandiBaseModel):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the AccessRequirements Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     contactPoint: Optional[ContactPoint] = Field(
@@ -415,7 +406,6 @@ class AccessRequirements(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -435,12 +425,6 @@ class Activity(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Activity Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -576,7 +560,6 @@ class Activity(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -605,12 +588,6 @@ class Affiliation(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Affiliation Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -677,7 +654,6 @@ class Affiliation(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -706,12 +682,6 @@ class Agent(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Agent Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -809,7 +779,6 @@ class Agent(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -838,12 +807,6 @@ class Allele(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Allele Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "any_of": [
@@ -903,7 +866,6 @@ class Allele(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -923,12 +885,6 @@ class AssetsSummary(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the AssetsSummary Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "species": {"multivalued": True, "name": "species"},
                 "variableMeasured": {"name": "variableMeasured", "range": "string"},
@@ -992,7 +948,6 @@ class AssetsSummary(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1012,12 +967,6 @@ class BaseType(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the BaseType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "any_of": [
@@ -1134,7 +1083,6 @@ class BaseType(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1165,15 +1113,7 @@ class Anatomy(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Anatomy Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -1251,7 +1191,6 @@ class Anatomy(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1282,15 +1221,7 @@ class ApproachType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the ApproachType Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -1368,7 +1299,6 @@ class ApproachType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1399,15 +1329,7 @@ class AssayType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the AssayType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -1485,7 +1407,6 @@ class AssayType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1518,12 +1439,6 @@ class BioSample(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the BioSample Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -1598,7 +1513,6 @@ class BioSample(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1614,12 +1528,6 @@ class CommonModel(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the CommonModel Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes'] ."
-            ],
             "slot_usage": {
                 "name": {
                     "name": "name",
@@ -1855,7 +1763,6 @@ class CommonModel(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1932,10 +1839,6 @@ class BareAsset(CommonModel):
                 "access slot. The slot representation of the access field in the "
                 "BareAsset Pydantic model has changes in value in meta slots: "
                 "['notes'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the BareAsset Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
                 "field in the BareAsset Pydantic model has changes in value in meta "
@@ -2274,7 +2177,6 @@ class BareAsset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2739,7 +2641,6 @@ class Asset(BareAsset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2861,12 +2762,6 @@ class ContactPoint(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the ContactPoint Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "url": {
                     "name": "url",
@@ -2927,7 +2822,6 @@ class ContactPoint(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2956,12 +2850,6 @@ class Contributor(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Contributor Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -3084,7 +2972,6 @@ class Contributor(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3137,10 +3024,6 @@ class Dandiset(CommonModel):
                 "name slot. The slot representation of the name field in the "
                 "Dandiset Pydantic model has changes in value in meta slots: "
                 "['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Dandiset Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
                 "field in the Dandiset Pydantic model has changes in value in meta "
@@ -3422,7 +3305,6 @@ class Dandiset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3533,15 +3415,7 @@ class Disorder(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Disorder Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     dxdate: Optional[list[Union[date, datetime]]] = Field(
@@ -3628,7 +3502,6 @@ class Disorder(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3657,12 +3530,6 @@ class Equipment(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Equipment Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -3757,7 +3624,6 @@ class Equipment(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3790,12 +3656,6 @@ class EthicsApproval(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the EthicsApproval Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -3849,7 +3709,6 @@ class EthicsApproval(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3867,15 +3726,7 @@ class GenericType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the GenericType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -3953,7 +3804,6 @@ class GenericType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3982,12 +3832,6 @@ class GenotypeInfo(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the GenotypeInfo Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "wasGeneratedBy": {"name": "wasGeneratedBy", "range": "Session"}
             },
@@ -4016,7 +3860,6 @@ class GenotypeInfo(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4032,12 +3875,6 @@ class Locus(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Locus Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "any_of": [
@@ -4094,7 +3931,6 @@ class Locus(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4112,15 +3948,7 @@ class MeasurementTechniqueType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the MeasurementTechniqueType Pydantic model has changes in value "
-                "in meta slots: ['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -4198,7 +4026,6 @@ class MeasurementTechniqueType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4231,11 +4058,7 @@ class Organization(Contributor):
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "includeInCitation slot. The slot representation of the "
                 "includeInCitation field in the Organization Pydantic model has "
-                "changes in value in meta slots: ['ifabsent'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Organization Pydantic model has changes in value in meta "
-                "slots: ['any_of', 'ifabsent', 'notes'] .",
+                "changes in value in meta slots: ['ifabsent'] ."
             ],
             "slot_usage": {
                 "contactPoint": {"multivalued": True, "name": "contactPoint"},
@@ -4356,7 +4179,6 @@ class Organization(Contributor):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4402,12 +4224,6 @@ class Participant(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Participant Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -4514,7 +4330,6 @@ class Participant(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4533,11 +4348,7 @@ class Person(Contributor):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "name slot. The slot representation of the name field in the Person "
-                "Pydantic model has changes in value in meta slots: ['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Person Pydantic model has changes in value in meta slots: "
-                "['any_of', 'ifabsent', 'notes'] .",
+                "Pydantic model has changes in value in meta slots: ['required'] ."
             ],
             "slot_usage": {
                 "identifier": {
@@ -4652,7 +4463,6 @@ class Person(Contributor):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4692,15 +4502,7 @@ class Person(Contributor):
 
 class Project(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Project Pydantic model has changes in value in meta slots: "
-                "['any_of', 'ifabsent', 'notes'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     description: Optional[str] = Field(
@@ -4816,7 +4618,6 @@ class Project(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4843,15 +4644,7 @@ class Project(Activity):
 
 class PropertyValue(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the PropertyValue Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     maxValue: Optional[float] = Field(
@@ -4934,7 +4727,6 @@ class PropertyValue(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4948,15 +4740,7 @@ class PropertyValue(DandiBaseModel):
 
 class Publishable(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Publishable Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     datePublished: datetime = Field(
@@ -4993,7 +4777,6 @@ class Publishable(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5007,15 +4790,7 @@ class Publishable(DandiBaseModel):
 
 class PublishActivity(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the PublishActivity Pydantic model has changes in value in meta "
-                "slots: ['any_of', 'ifabsent', 'notes'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     description: Optional[str] = Field(
@@ -5131,7 +4906,6 @@ class PublishActivity(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5162,13 +4936,9 @@ class PublishedAsset(Publishable, Asset):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "mixins": ["Publishable"],
             "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the PublishedAsset Pydantic model has changes in value in meta "
-                "slots: ['notes'] .",
                 "pydantic2linkml: Warning: LinkML does not support multiple "
                 "inheritance. Publishable is not specified as a parent, through the "
-                "`is_a` meta slot, but as a mixin.",
+                "`is_a` meta slot, but as a mixin."
             ],
             "slot_usage": {
                 "id": {
@@ -5554,7 +5324,6 @@ class PublishedAsset(Publishable, Asset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5697,10 +5466,6 @@ class PublishedDandiset(Publishable, Dandiset):
                 "id slot. The slot representation of the id field in the "
                 "PublishedDandiset Pydantic model has changes in value in meta "
                 "slots: ['pattern'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the PublishedDandiset Pydantic model has changes in value in meta "
-                "slots: ['notes'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "url slot. The slot representation of the url field in the "
                 "PublishedDandiset Pydantic model has changes in value in meta "
@@ -6006,7 +5771,6 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6128,12 +5892,6 @@ class RelatedParticipant(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the RelatedParticipant Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -6238,7 +5996,6 @@ class RelatedParticipant(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6267,12 +6024,6 @@ class Resource(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Resource Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -6385,7 +6136,6 @@ class Resource(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6416,15 +6166,7 @@ class SampleType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the SampleType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -6502,7 +6244,6 @@ class SampleType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6529,15 +6270,7 @@ class SampleType(BaseType):
 
 class Session(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Session Pydantic model has changes in value in meta slots: "
-                "['any_of', 'ifabsent', 'notes'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     description: Optional[str] = Field(
@@ -6653,7 +6386,6 @@ class Session(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6684,15 +6416,7 @@ class SexType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the SexType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -6770,7 +6494,6 @@ class SexType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6799,12 +6522,6 @@ class Software(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the Software Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "name": "identifier",
@@ -6907,7 +6624,6 @@ class Software(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6951,15 +6667,7 @@ class SpeciesType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the SpeciesType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7037,7 +6745,6 @@ class SpeciesType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -7068,15 +6775,7 @@ class StandardsType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the StandardsType Pydantic model has changes in value in meta "
-                "slots: ['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7154,7 +6853,6 @@ class StandardsType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -7185,15 +6883,7 @@ class StrainType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "schemaKey slot. The slot representation of the schemaKey field in "
-                "the StrainType Pydantic model has changes in value in meta slots: "
-                "['ifabsent', 'notes', 'range'] ."
-            ],
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7271,7 +6961,6 @@ class StrainType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "

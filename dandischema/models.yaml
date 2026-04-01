@@ -639,7 +639,6 @@ slots:
     notes:
     - 'pydantic2linkml: Unable to translate the logic contained in the after validation
       function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
-    ifabsent: string(DandiBaseModel)
     designates_type: true
     range: string
     required: false
@@ -735,11 +734,6 @@ classes:
     class_uri: linkml:Any
   AccessRequirements:
     description: Information about access options for the dataset
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the AccessRequirements
-      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
-      ''range''] .'
     is_a: DandiBaseModel
     slots:
     - contactPoint
@@ -748,11 +742,6 @@ classes:
     - status
   Activity:
     description: Information about the Project activity
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Activity Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - description
@@ -774,11 +763,6 @@ classes:
         required: true
         pattern: ^(?=.{,150}$)
   Affiliation:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Affiliation Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -791,10 +775,6 @@ classes:
       name:
         required: true
   Agent:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Agent Pydantic model
-      has changes in value in meta slots: [''ifabsent'', ''notes'', ''range''] .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -812,11 +792,6 @@ classes:
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
   Allele:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Allele Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - alleleSymbol
@@ -832,27 +807,12 @@ classes:
           multivalued: true
   Anatomy:
     description: UBERON or other identifier for anatomical part studied
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Anatomy Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   ApproachType:
     description: Identifier for approach used
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the ApproachType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   AssayType:
     description: OBI based identifier for the assay(s) used
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the AssayType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   Asset:
     description: Metadata used to describe an asset on the server.
@@ -868,14 +828,10 @@ classes:
       identifier:
         range: string
         required: true
-        pattern: ^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$
+        pattern:
+          ^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$
   AssetsSummary:
     description: Summary over assets contained in a dandiset (published or not)
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the AssetsSummary Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - approach
@@ -894,16 +850,12 @@ classes:
       variableMeasured:
         range: string
   BareAsset:
-    description: Metadata used to describe an asset anywhere (local or server). Derived
-      from C2M2 (Level 0 and 1) and schema.org
+    description: Metadata used to describe an asset anywhere (local or server).
+      Derived from C2M2 (Level 0 and 1) and schema.org
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
       The slot representation of the access field in the BareAsset Pydantic model
       has changes in value in meta slots: [''notes''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the BareAsset Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
       model has changes in value in meta slots: [''range''] .'
@@ -934,10 +886,6 @@ classes:
         range: PropertyValue
   BaseType:
     description: Base class for enumerated types
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the BaseType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes''] .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -964,11 +912,6 @@ classes:
         pattern: ^(?=.{,150}$)
   BioSample:
     description: Description of the sample that was studied
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the BioSample Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - anatomy
@@ -986,10 +929,6 @@ classes:
       sameAs:
         range: string
   CommonModel:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the CommonModel Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes''] .'
     is_a: DandiBaseModel
     slots:
     - about
@@ -1031,11 +970,6 @@ classes:
       wasGeneratedBy:
         range: Activity
   ContactPoint:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the ContactPoint Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - email
@@ -1047,11 +981,6 @@ classes:
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
   Contributor:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Contributor Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - awardNumber
@@ -1094,10 +1023,6 @@ classes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
       The slot representation of the name field in the Dandiset Pydantic model has
       changes in value in meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
       model has changes in value in meta slots: [''range''] .'
@@ -1121,20 +1046,10 @@ classes:
         pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
   Disorder:
     description: Biolink, SNOMED, or other identifier for disorder studied
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Disorder Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
     slots:
     - dxdate
   Equipment:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Equipment Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - description
@@ -1153,11 +1068,6 @@ classes:
         pattern: ^(?=.{,150}$)
   EthicsApproval:
     description: Information about ethics committee approval for project
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the EthicsApproval Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - contactPoint
@@ -1168,18 +1078,8 @@ classes:
         required: true
   GenericType:
     description: An object to capture any type for about
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the GenericType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   GenotypeInfo:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the GenotypeInfo Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - alleles
@@ -1189,10 +1089,6 @@ classes:
       wasGeneratedBy:
         range: Session
   Locus:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Locus Pydantic model
-      has changes in value in meta slots: [''ifabsent'', ''notes'', ''range''] .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -1207,21 +1103,12 @@ classes:
           multivalued: true
   MeasurementTechniqueType:
     description: Identifier for measurement technique used
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the MeasurementTechniqueType
-      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
-      ''range''] .'
     is_a: BaseType
   Organization:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the includeInCitation
       slot. The slot representation of the includeInCitation field in the Organization
       Pydantic model has changes in value in meta slots: [''ifabsent''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Organization Pydantic
-      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
-      .'
     is_a: Contributor
     slots:
     - contactPoint
@@ -1231,15 +1118,11 @@ classes:
       identifier:
         pattern: ^https://ror.org/[a-z0-9]+$
   Participant:
-    description: Description about the Participant or Subject studied. The Participant
-      or Subject can be any individual or synthesized Agent. The properties of the
-      Participant or Subject refers to information at the timepoint when the Participant
-      or Subject engaged in the production of data being described.
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Participant Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
+    description: Description about the Participant or Subject studied. The
+      Participant or Subject can be any individual or synthesized Agent. The
+      properties of the Participant or Subject refers to information at the
+      timepoint when the Participant or Subject engaged in the production of
+      data being described.
     is_a: DandiBaseModel
     slots:
     - age
@@ -1265,10 +1148,6 @@ classes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
       The slot representation of the name field in the Person Pydantic model has changes
       in value in meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Person Pydantic
-      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
-      .'
     is_a: Contributor
     slots:
     - affiliation
@@ -1276,18 +1155,8 @@ classes:
       identifier:
         pattern: ^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$
   Project:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Project Pydantic
-      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
-      .'
     is_a: Activity
   PropertyValue:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the PropertyValue Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - maxValue
@@ -1297,27 +1166,14 @@ classes:
     - value
     - valueReference
   Publishable:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Publishable Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - datePublished
     - publishedBy
   PublishActivity:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the PublishActivity
-      Pydantic model has changes in value in meta slots: [''any_of'', ''ifabsent'',
-      ''notes''] .'
     is_a: Activity
   PublishedAsset:
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the PublishedAsset Pydantic
-      model has changes in value in meta slots: [''notes''] .'
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     is_a: Asset
@@ -1325,15 +1181,13 @@ classes:
     - Publishable
     slot_usage:
       id:
-        pattern: ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
+        pattern:
+          ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
   PublishedDandiset:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the PublishedDandiset Pydantic model
       has changes in value in meta slots: [''pattern''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the PublishedDandiset
-      Pydantic model has changes in value in meta slots: [''notes''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
       The slot representation of the url field in the PublishedDandiset Pydantic model
       has changes in value in meta slots: [''notes'', ''required''] .'
@@ -1346,11 +1200,6 @@ classes:
     - doi
     - releaseNotes
   RelatedParticipant:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the RelatedParticipant
-      Pydantic model has changes in value in meta slots: [''ifabsent'', ''notes'',
-      ''range''] .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -1371,11 +1220,6 @@ classes:
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
   Resource:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Resource Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -1401,33 +1245,13 @@ classes:
           at 0xADDRESS>.'
   SampleType:
     description: OBI based identifier for the sample type used
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the SampleType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   Session:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Session Pydantic
-      model has changes in value in meta slots: [''any_of'', ''ifabsent'', ''notes'']
-      .'
     is_a: Activity
   SexType:
     description: Identifier for the sex of the sample
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the SexType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   Software:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the Software Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: DandiBaseModel
     slots:
     - identifier
@@ -1448,25 +1272,10 @@ classes:
           at 0xADDRESS>.'
   SpeciesType:
     description: Identifier for species of the sample
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the SpeciesType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   StandardsType:
     description: Identifier for data standard used
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the StandardsType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
   StrainType:
     description: Identifier for the strain of the sample
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the schemaKey
-      slot. The slot representation of the schemaKey field in the StrainType Pydantic
-      model has changes in value in meta slots: [''ifabsent'', ''notes'', ''range'']
-      .'
     is_a: BaseType
