@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    CC0_1FULL_STOP0 = "spdx:CC0-1.0"
     CC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
+    CC0_1FULL_STOP0 = "spdx:CC0-1.0"
 
 
 class ParticipantRelationType(str, Enum):
@@ -431,18 +431,7 @@ class Activity(DandiBaseModel):
                     "range": "string",
                     "required": False,
                 },
-                "name": {
-                    "name": "name",
-                    "notes": [
-                        "pydantic2linkml: LinkML does not have "
-                        "direct support for max length constraints. "
-                        "The max length constraint of 150 is "
-                        "incorporated into the pattern of the "
-                        "slot."
-                    ],
-                    "pattern": "^(?=.{,150}$)",
-                    "required": True,
-                },
+                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": True},
             },
         }
     )
@@ -503,12 +492,7 @@ class Activity(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -992,18 +976,7 @@ class BaseType(DandiBaseModel):
                     "range": "Any",
                     "required": False,
                 },
-                "name": {
-                    "name": "name",
-                    "notes": [
-                        "pydantic2linkml: LinkML does not have "
-                        "direct support for max length constraints. "
-                        "The max length constraint of 150 is "
-                        "incorporated into the pattern of the "
-                        "slot."
-                    ],
-                    "pattern": "^(?=.{,150}$)",
-                    "required": False,
-                },
+                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": False},
             },
         }
     )
@@ -1064,12 +1037,7 @@ class BaseType(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -1172,12 +1140,7 @@ class Anatomy(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -1280,12 +1243,7 @@ class ApproachType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -1388,12 +1346,7 @@ class AssayType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -1529,18 +1482,7 @@ class CommonModel(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "name": {
-                    "name": "name",
-                    "notes": [
-                        "pydantic2linkml: LinkML does not have "
-                        "direct support for max length constraints. "
-                        "The max length constraint of 150 is "
-                        "incorporated into the pattern of the "
-                        "slot."
-                    ],
-                    "pattern": "^(?=.{,150}$)",
-                    "required": False,
-                },
+                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": False},
                 "repository": {
                     "name": "repository",
                     "notes": [
@@ -1664,12 +1606,7 @@ class CommonModel(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -2082,12 +2019,7 @@ class BareAsset(CommonModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -2546,12 +2478,7 @@ class Asset(BareAsset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -3210,12 +3137,7 @@ class Dandiset(CommonModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -3487,12 +3409,7 @@ class Disorder(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -3540,18 +3457,7 @@ class Equipment(DandiBaseModel):
                     "range": "string",
                     "required": False,
                 },
-                "name": {
-                    "name": "name",
-                    "notes": [
-                        "pydantic2linkml: LinkML does not have "
-                        "direct support for max length constraints. "
-                        "The max length constraint of 150 is "
-                        "incorporated into the pattern of the "
-                        "slot."
-                    ],
-                    "pattern": "^(?=.{,150}$)",
-                    "required": True,
-                },
+                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": True},
             },
         }
     )
@@ -3609,12 +3515,7 @@ class Equipment(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -3789,12 +3690,7 @@ class GenericType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -4011,12 +3907,7 @@ class MeasurementTechniqueType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -4565,12 +4456,7 @@ class Project(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -4853,12 +4739,7 @@ class PublishActivity(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -5233,12 +5114,7 @@ class PublishedAsset(Publishable, Asset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -5684,12 +5560,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -6237,12 +6108,7 @@ class SampleType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -6341,12 +6207,7 @@ class Session(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -6487,12 +6348,7 @@ class SexType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -6738,12 +6594,7 @@ class SpeciesType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -6846,12 +6697,7 @@ class StandardsType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )
@@ -6954,12 +6800,7 @@ class StrainType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have direct support for max "
-                    "length constraints. The max length constraint of 150 is "
-                    "incorporated into the pattern of the slot."
-                ],
+                ]
             }
         },
     )

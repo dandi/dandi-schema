@@ -104,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC0-1.0:
-        meaning: spdx:CC0-1.0
       spdx:CC-BY-4.0:
         meaning: spdx:CC-BY-4.0
+      spdx:CC0-1.0:
+        meaning: spdx:CC0-1.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
@@ -756,10 +756,6 @@ classes:
         range: string
         required: false
       name:
-        notes:
-        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
-          The max length constraint of 150 is incorporated into the pattern of the
-          slot.'
         required: true
         pattern: ^(?=.{,150}$)
   Affiliation:
@@ -907,10 +903,6 @@ classes:
         - range: string
           pattern: ^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$
       name:
-        notes:
-        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
-          The max length constraint of 150 is incorporated into the pattern of the
-          slot.'
         required: false
         pattern: ^(?=.{,150}$)
   BioSample:
@@ -952,10 +944,6 @@ classes:
     - wasGeneratedBy
     slot_usage:
       name:
-        notes:
-        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
-          The max length constraint of 150 is incorporated into the pattern of the
-          slot.'
         required: false
         pattern: ^(?=.{,150}$)
       repository:
@@ -1063,10 +1051,6 @@ classes:
         range: string
         required: false
       name:
-        notes:
-        - 'pydantic2linkml: LinkML does not have direct support for max length constraints.
-          The max length constraint of 150 is incorporated into the pattern of the
-          slot.'
         required: true
         pattern: ^(?=.{,150}$)
   EthicsApproval:
