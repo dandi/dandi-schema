@@ -8,6 +8,8 @@ from ruamel.yaml import YAML
 
 PATTERNS = [
     r"pydantic2linkml: Impossible to generate slot usage entry for the schemaKey",
+    r"LinkML does not have direct support for max length constraints\. "
+    r"The max length constraint .+ is incorporated into the pattern",
 ]
 
 
