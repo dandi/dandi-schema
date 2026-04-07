@@ -7,3 +7,20 @@ slots:
     ifabsent: null
     designates_type: true
     required: true
+
+classes:
+  BareAsset:
+    notes:
+      - "The default of the `schemaKey` field in the corresponding Pydantic model in
+      `dandischema.models` is not the model's name. Adjustment to the inherited
+      `schemaKey` slot may be needed."
+  PublishedAsset:
+    notes:
+      - "The default of the `schemaKey` field in the corresponding Pydantic model in
+      `dandischema.models` is not the model's name. Adjustment to the inherited
+      `schemaKey` slot may be needed."
+  PublishedDandiset:
+    notes:
+      - "The default of the `schemaKey` field in the corresponding Pydantic model in
+      `dandischema.models` is not the model's name. Adjustment to the inherited
+      `schemaKey` slot may be needed."

@@ -1843,6 +1843,9 @@ class BareAsset(CommonModel):
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
                 "field in the BareAsset Pydantic model has changes in value in meta "
                 "slots: ['range'] .",
+                "The default of the `schemaKey` field in the corresponding Pydantic "
+                "model in `dandischema.models` is not the model's name. Adjustment "
+                "to the inherited `schemaKey` slot may be needed.",
             ],
             "slot_usage": {
                 "sameAs": {
@@ -4938,7 +4941,10 @@ class PublishedAsset(Publishable, Asset):
             "notes": [
                 "pydantic2linkml: Warning: LinkML does not support multiple "
                 "inheritance. Publishable is not specified as a parent, through the "
-                "`is_a` meta slot, but as a mixin."
+                "`is_a` meta slot, but as a mixin.",
+                "The default of the `schemaKey` field in the corresponding Pydantic "
+                "model in `dandischema.models` is not the model's name. Adjustment "
+                "to the inherited `schemaKey` slot may be needed.",
             ],
             "slot_usage": {
                 "id": {
@@ -5473,6 +5479,9 @@ class PublishedDandiset(Publishable, Dandiset):
                 "pydantic2linkml: Warning: LinkML does not support multiple "
                 "inheritance. Publishable is not specified as a parent, through the "
                 "`is_a` meta slot, but as a mixin.",
+                "The default of the `schemaKey` field in the corresponding Pydantic "
+                "model in `dandischema.models` is not the model's name. Adjustment "
+                "to the inherited `schemaKey` slot may be needed.",
             ],
         }
     )
