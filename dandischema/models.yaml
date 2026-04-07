@@ -859,9 +859,9 @@ classes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
       model has changes in value in meta slots: [''range''] .'
-    - The default of the `schemaKey` field in the corresponding Pydantic model
-      in `dandischema.models` is not the model's name. Adjustment to the
-      inherited `schemaKey` slot may be needed.
+    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
+      `schemaKey` slot may be needed.'
     is_a: CommonModel
     slots:
     - approach
@@ -1179,9 +1179,9 @@ classes:
     notes:
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
-    - The default of the `schemaKey` field in the corresponding Pydantic model
-      in `dandischema.models` is not the model's name. Adjustment to the
-      inherited `schemaKey` slot may be needed.
+    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
+      `schemaKey` slot may be needed.'
     is_a: Asset
     mixins:
     - Publishable
@@ -1199,9 +1199,9 @@ classes:
       has changes in value in meta slots: [''notes'', ''required''] .'
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
-    - The default of the `schemaKey` field in the corresponding Pydantic model
-      in `dandischema.models` is not the model's name. Adjustment to the
-      inherited `schemaKey` slot may be needed.
+    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
+      `schemaKey` slot may be needed.'
     is_a: Dandiset
     mixins:
     - Publishable
