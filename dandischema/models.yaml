@@ -104,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC-BY-4.0:
-        meaning: spdx:CC-BY-4.0
       spdx:CC0-1.0:
         meaning: spdx:CC0-1.0
+      spdx:CC-BY-4.0:
+        meaning: spdx:CC-BY-4.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
@@ -325,11 +325,6 @@ slots:
     - range: Anatomy
     - range: GenericType
   access:
-    notes:
-    - 'pydantic2linkml: Unable to express the default factory, <function CommonModel.<lambda>
-      at 0xADDRESS>, in LinkML.'
-    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-      function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
     range: AccessRequirements
     required: false
     multivalued: true
@@ -409,7 +404,6 @@ slots:
     pattern: ^(?i:http|https)://[^\s]+$
   contributor:
     range: Any
-    required: false
     multivalued: true
     any_of:
     - notes:
@@ -443,7 +437,6 @@ slots:
     required: true
   description:
     range: string
-    required: false
   digest:
     notes:
     - 'pydantic2linkml: Unable to translate the logic contained in the after validation
@@ -507,10 +500,8 @@ slots:
     multivalued: true
   id:
     range: string
-    required: false
   identifier: {}
   includeInCitation:
-    ifabsent: 'True'
     range: boolean
     required: false
   keywords:
@@ -519,7 +510,6 @@ slots:
     multivalued: true
   license:
     range: LicenseType
-    required: false
     multivalued: true
   locus:
     range: Locus
@@ -636,11 +626,7 @@ slots:
     range: SampleType
     required: true
   schemaKey:
-    notes:
-    - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-      function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
     designates_type: true
-    range: string
     required: true
   schemaVersion:
     ifabsent: string(0.7.0)
@@ -670,7 +656,6 @@ slots:
     required: false
   url:
     range: uri
-    required: false
     pattern: ^(?i:http|https)://[^\s]+$
   used:
     range: Equipment
@@ -740,6 +725,9 @@ classes:
     - description
     - embargoedUntil
     - status
+    slot_usage:
+      description:
+        required: false
   Activity:
     description: Information about the Project activity
     is_a: DandiBaseModel
@@ -752,6 +740,8 @@ classes:
     - used
     - wasAssociatedWith
     slot_usage:
+      description:
+        required: false
       identifier:
         range: string
         required: false
@@ -787,6 +777,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
   Allele:
     is_a: DandiBaseModel
     slots:
@@ -943,6 +934,18 @@ classes:
     - url
     - wasGeneratedBy
     slot_usage:
+      access:
+        notes:
+        - 'pydantic2linkml: Unable to express the default factory, <function CommonModel.<lambda>
+          at 0xADDRESS>, in LinkML.'
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
+      contributor:
+        required: false
+      description:
+        required: false
+      license:
+        required: false
       name:
         required: false
         pattern: ^(?=.{,150}$)
@@ -958,6 +961,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
       wasGeneratedBy:
         range: Activity
   ContactPoint:
@@ -971,6 +975,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
   Contributor:
     is_a: DandiBaseModel
     slots:
@@ -985,6 +990,8 @@ classes:
       identifier:
         range: string
         required: false
+      includeInCitation:
+        ifabsent: 'True'
       name:
         required: false
       url:
@@ -992,10 +999,20 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
   DandiBaseModel:
     slots:
     - id
     - schemaKey
+    slot_usage:
+      id:
+        required: false
+      schemaKey:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
+        ifabsent: string(DandiBaseModel)
+        range: string
   Dandiset:
     description: A body of structured information describing a DANDI dataset.
     notes:
@@ -1047,6 +1064,8 @@ classes:
     - identifier
     - name
     slot_usage:
+      description:
+        required: false
       identifier:
         range: string
         required: false
@@ -1212,6 +1231,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
   Resource:
     is_a: DandiBaseModel
     slots:
@@ -1236,6 +1256,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
   SampleType:
     description: OBI based identifier for the sample type used
     is_a: BaseType
@@ -1263,6 +1284,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
+        required: false
   SpeciesType:
     description: Identifier for species of the sample
     is_a: BaseType

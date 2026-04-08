@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    CC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
     CC0_1FULL_STOP0 = "spdx:CC0-1.0"
+    CC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
 
 
 class ParticipantRelationType(str, Enum):
@@ -334,7 +334,25 @@ class RoleType(str, Enum):
 
 class DandiBaseModel(ConfiguredBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
+        {
+            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
+            "slot_usage": {
+                "id": {"name": "id", "required": False},
+                "schemaKey": {
+                    "ifabsent": "string(DandiBaseModel)",
+                    "name": "schemaKey",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate "
+                        "the logic contained in the after "
+                        "validation function, <bound method "
+                        "DandiBaseModel.ensure_schemakey of "
+                        "<class "
+                        "'dandischema.models.DandiBaseModel'>>."
+                    ],
+                    "range": "string",
+                },
+            },
+        }
     )
 
     id: Optional[str] = Field(
@@ -347,6 +365,7 @@ class DandiBaseModel(ConfiguredBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -364,7 +383,10 @@ class AccessRequirements(DandiBaseModel):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
+        {
+            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
+            "slot_usage": {"description": {"name": "description", "required": False}},
+        }
     )
 
     contactPoint: Optional[ContactPoint] = Field(
@@ -406,6 +428,7 @@ class AccessRequirements(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -426,6 +449,7 @@ class Activity(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
+                "description": {"name": "description", "required": False},
                 "identifier": {
                     "name": "identifier",
                     "range": "string",
@@ -544,6 +568,7 @@ class Activity(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -638,6 +663,7 @@ class Affiliation(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -682,6 +708,7 @@ class Agent(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 },
             },
         }
@@ -763,6 +790,7 @@ class Agent(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -850,6 +878,7 @@ class Allele(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -932,6 +961,7 @@ class AssetsSummary(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1051,6 +1081,7 @@ class BaseType(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1154,6 +1185,7 @@ class Anatomy(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1257,6 +1289,7 @@ class ApproachType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1360,6 +1393,7 @@ class AssayType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1466,6 +1500,7 @@ class BioSample(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -1482,6 +1517,23 @@ class CommonModel(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
+                "access": {
+                    "name": "access",
+                    "notes": [
+                        "pydantic2linkml: Unable to express the "
+                        "default factory, <function "
+                        "CommonModel.<lambda> at 0xADDRESS>, in "
+                        "LinkML.",
+                        "pydantic2linkml: Unable to translate the "
+                        "logic contained in the after validation "
+                        "function, <function "
+                        "AccessRequirements.open_or_embargoed at "
+                        "0xADDRESS>.",
+                    ],
+                },
+                "contributor": {"name": "contributor", "required": False},
+                "description": {"name": "description", "required": False},
+                "license": {"name": "license", "required": False},
                 "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": False},
                 "repository": {
                     "name": "repository",
@@ -1504,6 +1556,7 @@ class CommonModel(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 },
                 "wasGeneratedBy": {"name": "wasGeneratedBy", "range": "Activity"},
             },
@@ -1700,6 +1753,7 @@ class CommonModel(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2113,6 +2167,7 @@ class BareAsset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2572,6 +2627,7 @@ class Asset(BareAsset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2703,6 +2759,7 @@ class ContactPoint(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 }
             },
         }
@@ -2753,6 +2810,7 @@ class ContactPoint(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -2787,6 +2845,7 @@ class Contributor(DandiBaseModel):
                     "range": "string",
                     "required": False,
                 },
+                "includeInCitation": {"ifabsent": "True", "name": "includeInCitation"},
                 "name": {"name": "name", "required": False},
                 "url": {
                     "name": "url",
@@ -2797,6 +2856,7 @@ class Contributor(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 },
             },
         }
@@ -2903,6 +2963,7 @@ class Contributor(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3231,6 +3292,7 @@ class Dandiset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3423,6 +3485,7 @@ class Disorder(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3452,6 +3515,7 @@ class Equipment(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
+                "description": {"name": "description", "required": False},
                 "identifier": {
                     "name": "identifier",
                     "range": "string",
@@ -3529,6 +3593,7 @@ class Equipment(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3614,6 +3679,7 @@ class EthicsApproval(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3704,6 +3770,7 @@ class GenericType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3760,6 +3827,7 @@ class GenotypeInfo(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3831,6 +3899,7 @@ class Locus(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -3921,6 +3990,7 @@ class MeasurementTechniqueType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4074,6 +4144,7 @@ class Organization(Contributor):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4225,6 +4296,7 @@ class Participant(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4358,6 +4430,7 @@ class Person(Contributor):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4508,6 +4581,7 @@ class Project(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4617,6 +4691,7 @@ class PropertyValue(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4667,6 +4742,7 @@ class Publishable(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -4791,6 +4867,7 @@ class PublishActivity(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5208,6 +5285,7 @@ class PublishedAsset(Publishable, Asset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5654,6 +5732,7 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5792,6 +5871,7 @@ class RelatedParticipant(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 },
             },
         }
@@ -5879,6 +5959,7 @@ class RelatedParticipant(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -5925,6 +6006,7 @@ class Resource(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 },
             },
         }
@@ -6019,6 +6101,7 @@ class Resource(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6122,6 +6205,7 @@ class SampleType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6259,6 +6343,7 @@ class Session(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6362,6 +6447,7 @@ class SexType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6407,6 +6493,7 @@ class Software(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "required": False,
                 },
             },
         }
@@ -6492,6 +6579,7 @@ class Software(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6608,6 +6696,7 @@ class SpeciesType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6711,6 +6800,7 @@ class StandardsType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
@@ -6814,6 +6904,7 @@ class StrainType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
+                "ifabsent": "string(DandiBaseModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
