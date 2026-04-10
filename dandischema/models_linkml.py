@@ -337,7 +337,11 @@ class DandiBaseModel(ConfiguredBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "id": {"name": "id", "required": False},
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "name": "id",
+                    "required": False,
+                },
                 "schemaKey": {
                     "ifabsent": "string(DandiBaseModel)",
                     "name": "schemaKey",
@@ -357,6 +361,7 @@ class DandiBaseModel(ConfiguredBaseModel):
 
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["DandiBaseModel"] = Field(
@@ -385,12 +390,26 @@ class AccessRequirements(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {"description": {"name": "description", "required": False}},
+            "slot_usage": {
+                "contactPoint": {
+                    "description": "Who or where to look for "
+                    "information about access.",
+                    "name": "contactPoint",
+                },
+                "description": {
+                    "description": "Information about access "
+                    "requirements when embargoed or "
+                    "restricted",
+                    "name": "description",
+                    "required": False,
+                },
+            },
         }
     )
 
     contactPoint: Optional[ContactPoint] = Field(
         default=None,
+        description="""Who or where to look for information about access.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AccessRequirements", "EthicsApproval", "Organization"]
@@ -399,6 +418,7 @@ class AccessRequirements(DandiBaseModel):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""Information about access requirements when embargoed or restricted""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -412,14 +432,19 @@ class AccessRequirements(DandiBaseModel):
     )
     embargoedUntil: Optional[date] = Field(
         default=None,
+        title="Embargo end date",
+        description="""Date on which embargo ends.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["AccessRequirements"]}},
     )
     status: AccessType = Field(
         default=...,
+        title="Access status",
+        description="""The access status of the item.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["AccessRequirements"]}},
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["AccessRequirements"] = Field(
@@ -449,19 +474,30 @@ class Activity(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "description": {"name": "description", "required": False},
+                "description": {
+                    "description": "The description of the " "activity.",
+                    "name": "description",
+                    "required": False,
+                },
                 "identifier": {
                     "name": "identifier",
                     "range": "string",
                     "required": False,
                 },
-                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": True},
+                "name": {
+                    "description": "The name of the activity.",
+                    "name": "name",
+                    "pattern": "^(?=.{,150}$)",
+                    "required": True,
+                    "title": "Title",
+                },
             },
         }
     )
 
     description: Optional[str] = Field(
         default=None,
+        description="""The description of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -503,6 +539,8 @@ class Activity(DandiBaseModel):
     )
     name: str = Field(
         default=...,
+        title="Title",
+        description="""The name of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -524,7 +562,9 @@ class Activity(DandiBaseModel):
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
+        default=None,
+        description="""A listing of equipment used for the activity.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}},
     )
     wasAssociatedWith: Optional[list[Union[Agent, Organization, Person, Software]]] = (
         Field(
@@ -560,6 +600,7 @@ class Activity(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Activity"] = Field(
@@ -599,18 +640,26 @@ class Affiliation(DandiBaseModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
                 "identifier": {
+                    "description": "Use an ror.org identifier for " "institutions.",
                     "name": "identifier",
                     "pattern": "^https://ror.org/[a-z0-9]+$",
                     "range": "string",
                     "required": False,
+                    "title": "A ror.org identifier",
                 },
-                "name": {"name": "name", "required": True},
+                "name": {
+                    "description": "Name of organization",
+                    "name": "name",
+                    "required": True,
+                },
             },
         }
     )
 
     identifier: Optional[str] = Field(
         default=None,
+        title="A ror.org identifier",
+        description="""Use an ror.org identifier for institutions.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -636,6 +685,7 @@ class Affiliation(DandiBaseModel):
     )
     name: str = Field(
         default=...,
+        description="""Name of organization""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -655,6 +705,7 @@ class Affiliation(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Affiliation"] = Field(
@@ -694,9 +745,11 @@ class Agent(DandiBaseModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
                 "identifier": {
+                    "description": "Identifier for an agent.",
                     "name": "identifier",
                     "range": "string",
                     "required": False,
+                    "title": "Identifier",
                 },
                 "name": {"name": "name", "required": True},
                 "url": {
@@ -716,6 +769,8 @@ class Agent(DandiBaseModel):
 
     identifier: Optional[str] = Field(
         default=None,
+        title="Identifier",
+        description="""Identifier for an agent.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -782,6 +837,7 @@ class Agent(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Agent"] = Field(
@@ -825,6 +881,7 @@ class Allele(DandiBaseModel):
                         {"range": "string"},
                         {"multivalued": True, "range": "string"},
                     ],
+                    "description": "Identifier for genotyping " "allele.",
                     "name": "identifier",
                     "range": "Any",
                     "required": True,
@@ -841,6 +898,7 @@ class Allele(DandiBaseModel):
     )
     identifier: str = Field(
         default=...,
+        description="""Identifier for genotyping allele.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -870,6 +928,7 @@ class Allele(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Allele"] = Field(
@@ -953,6 +1012,7 @@ class AssetsSummary(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["AssetsSummary"] = Field(
@@ -1002,17 +1062,26 @@ class BaseType(DandiBaseModel):
                             "range": "string",
                         },
                     ],
+                    "description": "The identifier can be any url "
+                    "or a compact URI, preferably "
+                    "supported by identifiers.org.",
                     "name": "identifier",
                     "range": "Any",
                     "required": False,
                 },
-                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": False},
+                "name": {
+                    "description": "The name of the item.",
+                    "name": "name",
+                    "pattern": "^(?=.{,150}$)",
+                    "required": False,
+                },
             },
         }
     )
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1054,6 +1123,7 @@ class BaseType(DandiBaseModel):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1073,6 +1143,7 @@ class BaseType(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["BaseType"] = Field(
@@ -1117,6 +1188,7 @@ class Anatomy(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1158,6 +1230,7 @@ class Anatomy(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1177,6 +1250,7 @@ class Anatomy(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Anatomy"] = Field(
@@ -1221,6 +1295,7 @@ class ApproachType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1262,6 +1337,7 @@ class ApproachType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1281,6 +1357,7 @@ class ApproachType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["ApproachType"] = Field(
@@ -1325,6 +1402,7 @@ class AssayType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1366,6 +1444,7 @@ class AssayType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1385,6 +1464,7 @@ class AssayType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["AssayType"] = Field(
@@ -1433,15 +1513,31 @@ class BioSample(DandiBaseModel):
                     "required": True,
                 },
                 "sameAs": {"name": "sameAs", "range": "string"},
+                "wasAttributedTo": {
+                    "description": "Participant(s) or "
+                    "Subject(s) associated with "
+                    "this sample.",
+                    "name": "wasAttributedTo",
+                },
+                "wasDerivedFrom": {
+                    "description": "Describes the hierarchy of "
+                    "sample derivation or "
+                    "aggregation.",
+                    "name": "wasDerivedFrom",
+                },
             },
         }
     )
 
     anatomy: Optional[list[Anatomy]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}}
+        default=None,
+        description="""Identifier for what organ the sample belongs to. Use the most specific descriptor from sources such as UBERON.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}},
     )
     assayType: Optional[list[AssayType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}}
+        default=None,
+        description="""Identifier for the assay(s) used (e.g., OBI).""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}},
     )
     hasMember: Optional[list[str]] = Field(
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}}
@@ -1480,18 +1576,23 @@ class BioSample(DandiBaseModel):
         },
     )
     sampleType: SampleType = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}}
+        default=...,
+        description="""Identifier for the sample characteristics (e.g., from OBI, Encode).""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["BioSample"]}},
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
         default=None,
+        description="""Participant(s) or Subject(s) associated with this sample.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
     )
     wasDerivedFrom: Optional[list[BioSample]] = Field(
         default=None,
+        description="""Describes the hierarchy of sample derivation or aggregation.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["BioSample"] = Field(
@@ -1531,11 +1632,28 @@ class CommonModel(DandiBaseModel):
                         "0xADDRESS>.",
                     ],
                 },
-                "contributor": {"name": "contributor", "required": False},
-                "description": {"name": "description", "required": False},
+                "contributor": {
+                    "description": "Contributors to this item: "
+                    "persons or organizations.",
+                    "name": "contributor",
+                    "required": False,
+                    "title": "Contributors",
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "name": "description",
+                    "required": False,
+                },
                 "license": {"name": "license", "required": False},
-                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": False},
+                "name": {
+                    "description": "The name of the item.",
+                    "name": "name",
+                    "pattern": "^(?=.{,150}$)",
+                    "required": False,
+                    "title": "Title",
+                },
                 "repository": {
+                    "description": "location of the item",
                     "name": "repository",
                     "notes": [
                         "pydantic2linkml: Unable to translate "
@@ -1548,6 +1666,7 @@ class CommonModel(DandiBaseModel):
                     "range": "uri",
                 },
                 "url": {
+                    "description": "permalink to the item",
                     "name": "url",
                     "notes": [
                         "pydantic2linkml: Unable to translate the "
@@ -1565,6 +1684,8 @@ class CommonModel(DandiBaseModel):
 
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
+        title="Subject matter of the dataset",
+        description="""The subject matter of the content, such as disorders, brain anatomy.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1578,6 +1699,7 @@ class CommonModel(DandiBaseModel):
     )
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
+        title="Access information",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -1592,10 +1714,14 @@ class CommonModel(DandiBaseModel):
         },
     )
     acknowledgement: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Any acknowledgments not covered by contributors or external resources.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     contributor: Optional[list[Union[Organization, Person]]] = Field(
         default=None,
+        title="Contributors",
+        description="""Contributors to this item: persons or organizations.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1624,6 +1750,7 @@ class CommonModel(DandiBaseModel):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""A description of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1636,16 +1763,24 @@ class CommonModel(DandiBaseModel):
         },
     )
     ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        title="Ethics approvals",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     keywords: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Keywords used to describe this content.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     license: Optional[list[LicenseType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     name: Optional[str] = Field(
         default=None,
+        title="Title",
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1665,6 +1800,7 @@ class CommonModel(DandiBaseModel):
     )
     protocol: Optional[list[str]] = Field(
         default=None,
+        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -1692,6 +1828,7 @@ class CommonModel(DandiBaseModel):
     )
     repository: Optional[str] = Field(
         default=None,
+        description="""location of the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel", "Resource"],
@@ -1711,10 +1848,13 @@ class CommonModel(DandiBaseModel):
         },
     )
     studyTarget: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Objectives or specific questions of the study.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        description="""permalink to the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -1745,6 +1885,7 @@ class CommonModel(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["CommonModel"] = Field(
@@ -1840,6 +1981,10 @@ class BareAsset(CommonModel):
                 "needed.",
             ],
             "slot_usage": {
+                "dateModified": {
+                    "name": "dateModified",
+                    "title": "Asset (file or metadata) " "modification date and time",
+                },
                 "sameAs": {
                     "name": "sameAs",
                     "notes": [
@@ -1856,6 +2001,10 @@ class BareAsset(CommonModel):
                     "name": "variableMeasured",
                     "range": "PropertyValue",
                 },
+                "wasAttributedTo": {
+                    "description": "Associated participant(s) " "or subject(s).",
+                    "name": "wasAttributedTo",
+                },
             },
         }
     )
@@ -1867,7 +2016,9 @@ class BareAsset(CommonModel):
         },
     )
     blobDateModified: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
+        default=None,
+        title="Asset file modification date and time.",
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}},
     )
     contentSize: Union[int, str] = Field(
         default=...,
@@ -1902,10 +2053,12 @@ class BareAsset(CommonModel):
     )
     dateModified: Optional[datetime] = Field(
         default=None,
+        title="Asset (file or metadata) modification date and time",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     digest: str = Field(
         default=...,
+        title="A map of dandi digests to their values",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset"],
@@ -1921,6 +2074,7 @@ class BareAsset(CommonModel):
     )
     encodingFormat: str = Field(
         default=...,
+        title="File encoding format",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1971,6 +2125,7 @@ class BareAsset(CommonModel):
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
         default=None,
+        description="""Associated participant(s) or subject(s).""",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
     )
     wasDerivedFrom: Optional[list[BioSample]] = Field(
@@ -1979,6 +2134,8 @@ class BareAsset(CommonModel):
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
+        title="Subject matter of the dataset",
+        description="""The subject matter of the content, such as disorders, brain anatomy.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -1992,6 +2149,7 @@ class BareAsset(CommonModel):
     )
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
+        title="Access information",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -2006,10 +2164,14 @@ class BareAsset(CommonModel):
         },
     )
     acknowledgement: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Any acknowledgments not covered by contributors or external resources.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     contributor: Optional[list[Union[Organization, Person]]] = Field(
         default=None,
+        title="Contributors",
+        description="""Contributors to this item: persons or organizations.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -2038,6 +2200,7 @@ class BareAsset(CommonModel):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""A description of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2050,16 +2213,24 @@ class BareAsset(CommonModel):
         },
     )
     ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        title="Ethics approvals",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     keywords: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Keywords used to describe this content.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     license: Optional[list[LicenseType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     name: Optional[str] = Field(
         default=None,
+        title="Title",
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2079,6 +2250,7 @@ class BareAsset(CommonModel):
     )
     protocol: Optional[list[str]] = Field(
         default=None,
+        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -2106,6 +2278,7 @@ class BareAsset(CommonModel):
     )
     repository: Optional[str] = Field(
         default=None,
+        description="""location of the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel", "Resource"],
@@ -2125,10 +2298,13 @@ class BareAsset(CommonModel):
         },
     )
     studyTarget: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Objectives or specific questions of the study.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        description="""permalink to the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2159,6 +2335,7 @@ class BareAsset(CommonModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["BareAsset"] = Field(
@@ -2268,7 +2445,8 @@ class Asset(BareAsset):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the Asset "
-                "Pydantic model has changes in value in meta slots: ['required'] ."
+                "Pydantic model has changes in value in meta slots: ['description', "
+                "'required'] ."
             ],
             "slot_usage": {
                 "identifier": {
@@ -2327,7 +2505,9 @@ class Asset(BareAsset):
         },
     )
     blobDateModified: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
+        default=None,
+        title="Asset file modification date and time.",
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}},
     )
     contentSize: Union[int, str] = Field(
         default=...,
@@ -2362,10 +2542,12 @@ class Asset(BareAsset):
     )
     dateModified: Optional[datetime] = Field(
         default=None,
+        title="Asset (file or metadata) modification date and time",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     digest: str = Field(
         default=...,
+        title="A map of dandi digests to their values",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset"],
@@ -2381,6 +2563,7 @@ class Asset(BareAsset):
     )
     encodingFormat: str = Field(
         default=...,
+        title="File encoding format",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -2431,6 +2614,7 @@ class Asset(BareAsset):
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
         default=None,
+        description="""Associated participant(s) or subject(s).""",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
     )
     wasDerivedFrom: Optional[list[BioSample]] = Field(
@@ -2439,6 +2623,8 @@ class Asset(BareAsset):
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
+        title="Subject matter of the dataset",
+        description="""The subject matter of the content, such as disorders, brain anatomy.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -2452,6 +2638,7 @@ class Asset(BareAsset):
     )
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
+        title="Access information",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -2466,10 +2653,14 @@ class Asset(BareAsset):
         },
     )
     acknowledgement: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Any acknowledgments not covered by contributors or external resources.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     contributor: Optional[list[Union[Organization, Person]]] = Field(
         default=None,
+        title="Contributors",
+        description="""Contributors to this item: persons or organizations.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -2498,6 +2689,7 @@ class Asset(BareAsset):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""A description of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2510,16 +2702,24 @@ class Asset(BareAsset):
         },
     )
     ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        title="Ethics approvals",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     keywords: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Keywords used to describe this content.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     license: Optional[list[LicenseType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     name: Optional[str] = Field(
         default=None,
+        title="Title",
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2539,6 +2739,7 @@ class Asset(BareAsset):
     )
     protocol: Optional[list[str]] = Field(
         default=None,
+        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -2566,6 +2767,7 @@ class Asset(BareAsset):
     )
     repository: Optional[str] = Field(
         default=None,
+        description="""location of the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel", "Resource"],
@@ -2585,10 +2787,13 @@ class Asset(BareAsset):
         },
     )
     studyTarget: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Objectives or specific questions of the study.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        description="""permalink to the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2619,6 +2824,7 @@ class Asset(BareAsset):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Asset"] = Field(
@@ -2750,7 +2956,10 @@ class ContactPoint(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
+                "email": {"description": "Email address of contact.", "name": "email"},
                 "url": {
+                    "description": "A Web page to find information on how "
+                    "to contact.",
                     "name": "url",
                     "notes": [
                         "pydantic2linkml: Unable to translate the "
@@ -2760,13 +2969,14 @@ class ContactPoint(DandiBaseModel):
                         "at 0xADDRESS>."
                     ],
                     "required": False,
-                }
+                },
             },
         }
     )
 
     email: Optional[str] = Field(
         default=None,
+        description="""Email address of contact.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["ContactPoint", "Contributor"],
@@ -2780,6 +2990,7 @@ class ContactPoint(DandiBaseModel):
     )
     url: Optional[str] = Field(
         default=None,
+        description="""A Web page to find information on how to contact.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2802,6 +3013,7 @@ class ContactPoint(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["ContactPoint"] = Field(
@@ -2841,11 +3053,23 @@ class Contributor(DandiBaseModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
                 "identifier": {
+                    "description": "Use a common identifier such as "
+                    "ORCID (orcid.org) for people or "
+                    "ROR (ror.org) for institutions.",
                     "name": "identifier",
                     "range": "string",
                     "required": False,
+                    "title": "A common identifier",
                 },
-                "includeInCitation": {"ifabsent": "True", "name": "includeInCitation"},
+                "includeInCitation": {
+                    "description": "A flag to indicate "
+                    "whether a contributor "
+                    "should be included when "
+                    "generating a citation "
+                    "for the item.",
+                    "ifabsent": "True",
+                    "name": "includeInCitation",
+                },
                 "name": {"name": "name", "required": False},
                 "url": {
                     "name": "url",
@@ -2863,7 +3087,10 @@ class Contributor(DandiBaseModel):
     )
 
     awardNumber: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}}
+        default=None,
+        title="Identifier for an award",
+        description="""Identifier associated with a sponsored or gift award.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}},
     )
     email: Optional[str] = Field(
         default=None,
@@ -2880,6 +3107,8 @@ class Contributor(DandiBaseModel):
     )
     identifier: Optional[str] = Field(
         default=None,
+        title="A common identifier",
+        description="""Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -2905,6 +3134,8 @@ class Contributor(DandiBaseModel):
     )
     includeInCitation: Optional[bool] = Field(
         default=True,
+        title="Include contributor in citation",
+        description="""A flag to indicate whether a contributor should be included when generating a citation for the item.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["Contributor"], "ifabsent": "True"}
         },
@@ -2929,7 +3160,10 @@ class Contributor(DandiBaseModel):
         },
     )
     roleName: Optional[list[RoleType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}}
+        default=None,
+        title="Role",
+        description="""Role(s) of the contributor. Multiple roles can be selected.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}},
     )
     url: Optional[str] = Field(
         default=None,
@@ -2955,6 +3189,7 @@ class Contributor(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Contributor"] = Field(
@@ -3000,11 +3235,11 @@ class Dandiset(CommonModel):
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "contributor slot. The slot representation of the contributor field "
                 "in the Dandiset Pydantic model has changes in value in meta slots: "
-                "['required'] .",
+                "['description', 'required', 'title'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "description slot. The slot representation of the description field "
                 "in the Dandiset Pydantic model has changes in value in meta slots: "
-                "['required'] .",
+                "['description', 'required'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the Dandiset "
                 "Pydantic model has changes in value in meta slots: ['required'] .",
@@ -3015,20 +3250,29 @@ class Dandiset(CommonModel):
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "name slot. The slot representation of the name field in the "
                 "Dandiset Pydantic model has changes in value in meta slots: "
-                "['required'] .",
+                "['description', 'required', 'title'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
                 "field in the Dandiset Pydantic model has changes in value in meta "
                 "slots: ['range'] .",
             ],
             "slot_usage": {
+                "dateModified": {
+                    "name": "dateModified",
+                    "title": "Last modification date and time.",
+                },
                 "identifier": {
+                    "description": "A Dandiset identifier that can "
+                    "be resolved by identifiers.org.",
                     "name": "identifier",
                     "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
                     "range": "string",
                     "required": True,
+                    "title": "Dandiset identifier",
                 },
                 "sameAs": {
+                    "description": "Known DANDI URLs of the Dandiset at "
+                    "other DANDI instances.",
                     "name": "sameAs",
                     "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
                     "range": "string",
@@ -3044,14 +3288,19 @@ class Dandiset(CommonModel):
         default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
     )
     dateCreated: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
+        default=None,
+        title="Dandiset creation date and time.",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}},
     )
     dateModified: Optional[datetime] = Field(
         default=None,
+        title="Last modification date and time.",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     identifier: str = Field(
         default=...,
+        title="Dandiset identifier",
+        description="""A Dandiset identifier that can be resolved by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3092,6 +3341,7 @@ class Dandiset(CommonModel):
     )
     sameAs: Optional[list[str]] = Field(
         default=None,
+        description="""Known DANDI URLs of the Dandiset at other DANDI instances.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset", "BioSample", "Dandiset", "Participant"]
@@ -3104,6 +3354,8 @@ class Dandiset(CommonModel):
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
+        title="Subject matter of the dataset",
+        description="""The subject matter of the content, such as disorders, brain anatomy.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3117,6 +3369,7 @@ class Dandiset(CommonModel):
     )
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
+        title="Access information",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -3131,10 +3384,14 @@ class Dandiset(CommonModel):
         },
     )
     acknowledgement: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Any acknowledgments not covered by contributors or external resources.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     contributor: Optional[list[Union[Organization, Person]]] = Field(
         default=None,
+        title="Contributors",
+        description="""Contributors to this item: persons or organizations.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3163,6 +3420,7 @@ class Dandiset(CommonModel):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""A description of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3175,16 +3433,24 @@ class Dandiset(CommonModel):
         },
     )
     ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        title="Ethics approvals",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     keywords: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Keywords used to describe this content.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     license: Optional[list[LicenseType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     name: Optional[str] = Field(
         default=None,
+        title="Title",
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3204,6 +3470,7 @@ class Dandiset(CommonModel):
     )
     protocol: Optional[list[str]] = Field(
         default=None,
+        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -3231,6 +3498,7 @@ class Dandiset(CommonModel):
     )
     repository: Optional[str] = Field(
         default=None,
+        description="""location of the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel", "Resource"],
@@ -3250,10 +3518,13 @@ class Dandiset(CommonModel):
         },
     )
     studyTarget: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Objectives or specific questions of the study.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        description="""permalink to the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3284,6 +3555,7 @@ class Dandiset(CommonModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Dandiset"] = Field(
@@ -3408,6 +3680,8 @@ class Disorder(BaseType):
 
     dxdate: Optional[list[Union[date, datetime]]] = Field(
         default=None,
+        title="Dates of diagnosis",
+        description="""Dates of diagnosis""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [{"range": "date"}, {"range": "datetime"}],
@@ -3417,6 +3691,7 @@ class Disorder(BaseType):
     )
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3458,6 +3733,7 @@ class Disorder(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3477,6 +3753,7 @@ class Disorder(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Disorder"] = Field(
@@ -3515,19 +3792,30 @@ class Equipment(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "description": {"name": "description", "required": False},
+                "description": {
+                    "description": "The description of the " "equipment.",
+                    "name": "description",
+                    "required": False,
+                },
                 "identifier": {
                     "name": "identifier",
                     "range": "string",
                     "required": False,
                 },
-                "name": {"name": "name", "pattern": "^(?=.{,150}$)", "required": True},
+                "name": {
+                    "description": "A name for the equipment.",
+                    "name": "name",
+                    "pattern": "^(?=.{,150}$)",
+                    "required": True,
+                    "title": "Title",
+                },
             },
         }
     )
 
     description: Optional[str] = Field(
         default=None,
+        description="""The description of the equipment.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3566,6 +3854,8 @@ class Equipment(DandiBaseModel):
     )
     name: str = Field(
         default=...,
+        title="Title",
+        description="""A name for the equipment.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3585,6 +3875,7 @@ class Equipment(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Equipment"] = Field(
@@ -3627,17 +3918,27 @@ class EthicsApproval(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
+                "contactPoint": {
+                    "description": "Information about the ethics "
+                    "approval committee.",
+                    "name": "contactPoint",
+                },
                 "identifier": {
+                    "description": "Approved Protocol identifier, "
+                    "often a number or alphanumeric "
+                    "string.",
                     "name": "identifier",
                     "range": "string",
                     "required": True,
-                }
+                    "title": "Approved protocol identifier",
+                },
             },
         }
     )
 
     contactPoint: Optional[ContactPoint] = Field(
         default=None,
+        description="""Information about the ethics approval committee.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AccessRequirements", "EthicsApproval", "Organization"]
@@ -3646,6 +3947,8 @@ class EthicsApproval(DandiBaseModel):
     )
     identifier: str = Field(
         default=...,
+        title="Approved protocol identifier",
+        description="""Approved Protocol identifier, often a number or alphanumeric string.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3671,6 +3974,7 @@ class EthicsApproval(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["EthicsApproval"] = Field(
@@ -3702,6 +4006,7 @@ class GenericType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3743,6 +4048,7 @@ class GenericType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3762,6 +4068,7 @@ class GenericType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["GenericType"] = Field(
@@ -3800,25 +4107,37 @@ class GenotypeInfo(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "wasGeneratedBy": {"name": "wasGeneratedBy", "range": "Session"}
+                "wasGeneratedBy": {
+                    "description": "Information about session "
+                    "activity used to determine "
+                    "genotype.",
+                    "name": "wasGeneratedBy",
+                    "range": "Session",
+                }
             },
         }
     )
 
     alleles: list[Allele] = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["GenotypeInfo"]}}
+        default=...,
+        description="""Information about alleles at the locus.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["GenotypeInfo"]}},
     )
     locus: Locus = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["GenotypeInfo"]}}
+        default=...,
+        description="""Locus at which information was extracted.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["GenotypeInfo"]}},
     )
     wasGeneratedBy: Optional[list[Session]] = Field(
         default=None,
+        description="""Information about session activity used to determine genotype.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["GenotypeInfo"] = Field(
@@ -3849,6 +4168,7 @@ class Locus(DandiBaseModel):
                         {"range": "string"},
                         {"multivalued": True, "range": "string"},
                     ],
+                    "description": "Identifier for genotyping " "locus.",
                     "name": "identifier",
                     "range": "Any",
                     "required": True,
@@ -3859,6 +4179,7 @@ class Locus(DandiBaseModel):
 
     identifier: str = Field(
         default=...,
+        description="""Identifier for genotyping locus.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3891,6 +4212,7 @@ class Locus(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Locus"] = Field(
@@ -3922,6 +4244,7 @@ class MeasurementTechniqueType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3963,6 +4286,7 @@ class MeasurementTechniqueType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3982,6 +4306,7 @@ class MeasurementTechniqueType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["MeasurementTechniqueType"] = Field(
@@ -4021,22 +4346,29 @@ class Organization(Contributor):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "identifier slot. The slot representation of the identifier field "
+                "in the Organization Pydantic model has changes in value in meta "
+                "slots: ['description', 'title'] .",
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "includeInCitation slot. The slot representation of the "
                 "includeInCitation field in the Organization Pydantic model has "
-                "changes in value in meta slots: ['ifabsent'] ."
+                "changes in value in meta slots: ['description', 'ifabsent'] .",
             ],
             "slot_usage": {
-                "contactPoint": {"multivalued": True, "name": "contactPoint"},
-                "identifier": {
-                    "name": "identifier",
-                    "pattern": "^https://ror.org/[a-z0-9]+$",
-                },
+                "contactPoint": {
+                    "description": "Contact for the organization",
+                    "multivalued": True,
+                    "name": "contactPoint",
+                    "title": "Organization contact information",
+                }
             },
         }
     )
 
     contactPoint: Optional[list[ContactPoint]] = Field(
         default=None,
+        title="Organization contact information",
+        description="""Contact for the organization""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AccessRequirements", "EthicsApproval", "Organization"]
@@ -4044,7 +4376,10 @@ class Organization(Contributor):
         },
     )
     awardNumber: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}}
+        default=None,
+        title="Identifier for an award",
+        description="""Identifier associated with a sponsored or gift award.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}},
     )
     email: Optional[str] = Field(
         default=None,
@@ -4061,6 +4396,8 @@ class Organization(Contributor):
     )
     identifier: Optional[str] = Field(
         default=None,
+        title="A common identifier",
+        description="""Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4086,6 +4423,8 @@ class Organization(Contributor):
     )
     includeInCitation: Optional[bool] = Field(
         default=True,
+        title="Include contributor in citation",
+        description="""A flag to indicate whether a contributor should be included when generating a citation for the item.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["Contributor"], "ifabsent": "True"}
         },
@@ -4110,7 +4449,10 @@ class Organization(Contributor):
         },
     )
     roleName: Optional[list[RoleType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}}
+        default=None,
+        title="Role",
+        description="""Role(s) of the contributor. Multiple roles can be selected.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}},
     )
     url: Optional[str] = Field(
         default=None,
@@ -4136,6 +4478,7 @@ class Organization(Contributor):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Organization"] = Field(
@@ -4154,19 +4497,6 @@ class Organization(Contributor):
             }
         },
     )
-
-    @field_validator("identifier")
-    def pattern_identifier(cls, v):
-        pattern = re.compile(r"^https://ror.org/[a-z0-9]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid identifier format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid identifier format: {v}"
-            raise ValueError(err_msg)
-        return v
 
     @field_validator("url")
     def pattern_url(cls, v):
@@ -4196,25 +4526,43 @@ class Participant(DandiBaseModel):
                     "range": "string",
                     "required": True,
                 },
-                "sameAs": {"name": "sameAs", "range": "string"},
+                "sameAs": {
+                    "description": "An identifier to link participants "
+                    "or subjects across datasets.",
+                    "name": "sameAs",
+                    "range": "string",
+                },
+                "species": {
+                    "description": "An identifier indicating the "
+                    "taxonomic classification of the "
+                    "participant or subject.",
+                    "name": "species",
+                },
             },
         }
     )
 
     age: Optional[PropertyValue] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
+        default=None,
+        description="""A representation of age using ISO 8601 duration. This should include a valueReference if anything other than date of birth is used.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}},
     )
     altName: Optional[list[str]] = Field(
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
     )
     cellLine: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
+        default=None,
+        description="""Cell line associated with the participant or subject.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}},
     )
     disorder: Optional[list[Disorder]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
+        default=None,
+        description="""Any current diagnosed disease or disorder associated with the participant or subject.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}},
     )
     genotype: Optional[Union[GenotypeInfo, str]] = Field(
         default=None,
+        description="""Genotype descriptor of participant or subject if available""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -4251,10 +4599,13 @@ class Participant(DandiBaseModel):
         },
     )
     relatedParticipant: Optional[list[RelatedParticipant]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
+        default=None,
+        description="""Information about related participants or subjects in a study or across studies.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}},
     )
     sameAs: Optional[list[str]] = Field(
         default=None,
+        description="""An identifier to link participants or subjects across datasets.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset", "BioSample", "Dandiset", "Participant"]
@@ -4262,16 +4613,21 @@ class Participant(DandiBaseModel):
         },
     )
     sex: Optional[SexType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
+        default=None,
+        description="""Identifier for sex of the participant or subject if available. (e.g. from OBI)""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}},
     )
     species: Optional[SpeciesType] = Field(
         default=None,
+        description="""An identifier indicating the taxonomic classification of the participant or subject.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["AssetsSummary", "Participant"]}
         },
     )
     strain: Optional[StrainType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}}
+        default=None,
+        description="""Identifier for the strain of the participant or subject.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Participant"]}},
     )
     vendor: Optional[Organization] = Field(
         default=None,
@@ -4288,6 +4644,7 @@ class Participant(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Participant"] = Field(
@@ -4314,23 +4671,26 @@ class Person(Contributor):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "identifier slot. The slot representation of the identifier field "
+                "in the Person Pydantic model has changes in value in meta slots: "
+                "['description', 'title'] .",
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "name slot. The slot representation of the name field in the Person "
-                "Pydantic model has changes in value in meta slots: ['required'] ."
+                "Pydantic model has changes in value in meta slots: ['required'] .",
             ],
-            "slot_usage": {
-                "identifier": {
-                    "name": "identifier",
-                    "pattern": "^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$",
-                }
-            },
         }
     )
 
     affiliation: Optional[list[Affiliation]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Person"]}}
+        default=None,
+        description="""An organization that this person is affiliated with.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Person"]}},
     )
     awardNumber: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}}
+        default=None,
+        title="Identifier for an award",
+        description="""Identifier associated with a sponsored or gift award.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}},
     )
     email: Optional[str] = Field(
         default=None,
@@ -4347,6 +4707,8 @@ class Person(Contributor):
     )
     identifier: Optional[str] = Field(
         default=None,
+        title="A common identifier",
+        description="""Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4372,6 +4734,8 @@ class Person(Contributor):
     )
     includeInCitation: Optional[bool] = Field(
         default=True,
+        title="Include contributor in citation",
+        description="""A flag to indicate whether a contributor should be included when generating a citation for the item.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["Contributor"], "ifabsent": "True"}
         },
@@ -4396,7 +4760,10 @@ class Person(Contributor):
         },
     )
     roleName: Optional[list[RoleType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}}
+        default=None,
+        title="Role",
+        description="""Role(s) of the contributor. Multiple roles can be selected.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Contributor"]}},
     )
     url: Optional[str] = Field(
         default=None,
@@ -4422,6 +4789,7 @@ class Person(Contributor):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Person"] = Field(
@@ -4441,19 +4809,6 @@ class Person(Contributor):
         },
     )
 
-    @field_validator("identifier")
-    def pattern_identifier(cls, v):
-        pattern = re.compile(r"^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid identifier format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid identifier format: {v}"
-            raise ValueError(err_msg)
-        return v
-
     @field_validator("url")
     def pattern_url(cls, v):
         pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
@@ -4470,11 +4825,24 @@ class Person(Contributor):
 
 class Project(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
+        {
+            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
+            "notes": [
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "description slot. The slot representation of the description field "
+                "in the Project Pydantic model has changes in value in meta slots: "
+                "['description'] .",
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "name slot. The slot representation of the name field in the "
+                "Project Pydantic model has changes in value in meta slots: "
+                "['description', 'title'] .",
+            ],
+        }
     )
 
     description: Optional[str] = Field(
         default=None,
+        description="""The description of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4516,6 +4884,8 @@ class Project(Activity):
     )
     name: str = Field(
         default=...,
+        title="Title",
+        description="""The name of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4537,7 +4907,9 @@ class Project(Activity):
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
+        default=None,
+        description="""A listing of equipment used for the activity.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}},
     )
     wasAssociatedWith: Optional[list[Union[Agent, Organization, Person, Software]]] = (
         Field(
@@ -4573,6 +4945,7 @@ class Project(Activity):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Project"] = Field(
@@ -4639,6 +5012,7 @@ class PropertyValue(DandiBaseModel):
     )
     propertyID: Optional[Union[IdentifierType, str]] = Field(
         default=None,
+        description="""A commonly used identifier for the characteristic represented by the property. For example, a known prefix like DOI or a full URL.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -4664,6 +5038,7 @@ class PropertyValue(DandiBaseModel):
     )
     value: Optional[Any] = Field(
         default=None,
+        description="""The value associated with this property.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [{"range": "Any"}, {"multivalued": True, "range": "Any"}],
@@ -4683,6 +5058,7 @@ class PropertyValue(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["PropertyValue"] = Field(
@@ -4713,6 +5089,7 @@ class Publishable(DandiBaseModel):
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
+        description="""The URL should contain the provenance of the publishing process.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -4734,6 +5111,7 @@ class Publishable(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Publishable"] = Field(
@@ -4761,6 +5139,7 @@ class PublishActivity(Activity):
 
     description: Optional[str] = Field(
         default=None,
+        description="""The description of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4802,6 +5181,8 @@ class PublishActivity(Activity):
     )
     name: str = Field(
         default=...,
+        title="Title",
+        description="""The name of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4823,7 +5204,9 @@ class PublishActivity(Activity):
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
+        default=None,
+        description="""A listing of equipment used for the activity.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}},
     )
     wasAssociatedWith: Optional[list[Union[Agent, Organization, Person, Software]]] = (
         Field(
@@ -4859,6 +5242,7 @@ class PublishActivity(Activity):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["PublishActivity"] = Field(
@@ -4920,6 +5304,7 @@ class PublishedAsset(Publishable, Asset):
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
+        description="""The URL should contain the provenance of the publishing process.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -4985,7 +5370,9 @@ class PublishedAsset(Publishable, Asset):
         },
     )
     blobDateModified: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
+        default=None,
+        title="Asset file modification date and time.",
+        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}},
     )
     contentSize: Union[int, str] = Field(
         default=...,
@@ -5020,10 +5407,12 @@ class PublishedAsset(Publishable, Asset):
     )
     dateModified: Optional[datetime] = Field(
         default=None,
+        title="Asset (file or metadata) modification date and time",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     digest: str = Field(
         default=...,
+        title="A map of dandi digests to their values",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset"],
@@ -5039,6 +5428,7 @@ class PublishedAsset(Publishable, Asset):
     )
     encodingFormat: str = Field(
         default=...,
+        title="File encoding format",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5089,6 +5479,7 @@ class PublishedAsset(Publishable, Asset):
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
         default=None,
+        description="""Associated participant(s) or subject(s).""",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
     )
     wasDerivedFrom: Optional[list[BioSample]] = Field(
@@ -5097,6 +5488,8 @@ class PublishedAsset(Publishable, Asset):
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
+        title="Subject matter of the dataset",
+        description="""The subject matter of the content, such as disorders, brain anatomy.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5110,6 +5503,7 @@ class PublishedAsset(Publishable, Asset):
     )
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
+        title="Access information",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -5124,10 +5518,14 @@ class PublishedAsset(Publishable, Asset):
         },
     )
     acknowledgement: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Any acknowledgments not covered by contributors or external resources.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     contributor: Optional[list[Union[Organization, Person]]] = Field(
         default=None,
+        title="Contributors",
+        description="""Contributors to this item: persons or organizations.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5156,6 +5554,7 @@ class PublishedAsset(Publishable, Asset):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""A description of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5168,16 +5567,24 @@ class PublishedAsset(Publishable, Asset):
         },
     )
     ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        title="Ethics approvals",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     keywords: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Keywords used to describe this content.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     license: Optional[list[LicenseType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     name: Optional[str] = Field(
         default=None,
+        title="Title",
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5197,6 +5604,7 @@ class PublishedAsset(Publishable, Asset):
     )
     protocol: Optional[list[str]] = Field(
         default=None,
+        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -5224,6 +5632,7 @@ class PublishedAsset(Publishable, Asset):
     )
     repository: Optional[str] = Field(
         default=None,
+        description="""location of the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel", "Resource"],
@@ -5243,10 +5652,13 @@ class PublishedAsset(Publishable, Asset):
         },
     )
     studyTarget: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Objectives or specific questions of the study.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        description="""permalink to the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5277,6 +5689,7 @@ class PublishedAsset(Publishable, Asset):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["PublishedAsset"] = Field(
@@ -5427,11 +5840,11 @@ class PublishedDandiset(Publishable, Dandiset):
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the "
                 "PublishedDandiset Pydantic model has changes in value in meta "
-                "slots: ['pattern'] .",
+                "slots: ['description', 'pattern'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "url slot. The slot representation of the url field in the "
                 "PublishedDandiset Pydantic model has changes in value in meta "
-                "slots: ['notes', 'required'] .",
+                "slots: ['description', 'notes', 'required'] .",
                 "pydantic2linkml: Warning: LinkML does not support multiple "
                 "inheritance. Publishable is not specified as a parent, through the "
                 "`is_a` meta slot, but as a mixin.",
@@ -5445,12 +5858,14 @@ class PublishedDandiset(Publishable, Dandiset):
 
     doi: Optional[str] = Field(
         default="",
+        title="DOI",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["PublishedDandiset"], "ifabsent": "string()"}
         },
     )
     releaseNotes: Optional[str] = Field(
         default=None,
+        description="""The description of the release""",
         json_schema_extra={"linkml_meta": {"domain_of": ["PublishedDandiset"]}},
     )
     datePublished: datetime = Field(
@@ -5458,6 +5873,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
+        description="""The URL should contain the provenance of the publishing process.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5484,14 +5900,19 @@ class PublishedDandiset(Publishable, Dandiset):
         default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
     )
     dateCreated: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
+        default=None,
+        title="Dandiset creation date and time.",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}},
     )
     dateModified: Optional[datetime] = Field(
         default=None,
+        title="Last modification date and time.",
         json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
     )
     identifier: str = Field(
         default=...,
+        title="Dandiset identifier",
+        description="""A Dandiset identifier that can be resolved by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5532,6 +5953,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     sameAs: Optional[list[str]] = Field(
         default=None,
+        description="""Known DANDI URLs of the Dandiset at other DANDI instances.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset", "BioSample", "Dandiset", "Participant"]
@@ -5544,6 +5966,8 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
+        title="Subject matter of the dataset",
+        description="""The subject matter of the content, such as disorders, brain anatomy.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5557,6 +5981,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
+        title="Access information",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -5571,10 +5996,14 @@ class PublishedDandiset(Publishable, Dandiset):
         },
     )
     acknowledgement: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Any acknowledgments not covered by contributors or external resources.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     contributor: Optional[list[Union[Organization, Person]]] = Field(
         default=None,
+        title="Contributors",
+        description="""Contributors to this item: persons or organizations.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5603,6 +6032,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     description: Optional[str] = Field(
         default=None,
+        description="""A description of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5615,16 +6045,24 @@ class PublishedDandiset(Publishable, Dandiset):
         },
     )
     ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        title="Ethics approvals",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     keywords: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Keywords used to describe this content.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     license: Optional[list[LicenseType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     name: Optional[str] = Field(
         default=None,
+        title="Title",
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5644,6 +6082,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     protocol: Optional[list[str]] = Field(
         default=None,
+        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
@@ -5671,6 +6110,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     repository: Optional[str] = Field(
         default=None,
+        description="""location of the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel", "Resource"],
@@ -5690,10 +6130,13 @@ class PublishedDandiset(Publishable, Dandiset):
         },
     )
     studyTarget: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}}
+        default=None,
+        description="""Objectives or specific questions of the study.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        description="""permalink to the item""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5724,6 +6167,7 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["PublishedDandiset"] = Field(
@@ -5860,8 +6304,23 @@ class RelatedParticipant(DandiBaseModel):
                     "range": "string",
                     "required": False,
                 },
-                "name": {"name": "name", "required": False},
-                "relation": {"name": "relation", "range": "ParticipantRelationType"},
+                "name": {
+                    "name": "name",
+                    "required": False,
+                    "title": "Name of the participant or subject",
+                },
+                "relation": {
+                    "description": "Indicates how the current "
+                    "participant or subject is related "
+                    "to the other participant or "
+                    "subject. This relation should "
+                    "satisfy: Participant/Subject "
+                    "<relation> "
+                    "relatedParticipant/Subject.",
+                    "name": "relation",
+                    "range": "ParticipantRelationType",
+                    "title": "Participant or subject relation",
+                },
                 "url": {
                     "name": "url",
                     "notes": [
@@ -5872,6 +6331,7 @@ class RelatedParticipant(DandiBaseModel):
                         "at 0xADDRESS>."
                     ],
                     "required": False,
+                    "title": "URL of the related participant or subject",
                 },
             },
         }
@@ -5904,6 +6364,7 @@ class RelatedParticipant(DandiBaseModel):
     )
     name: Optional[str] = Field(
         default=None,
+        title="Name of the participant or subject",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5923,12 +6384,15 @@ class RelatedParticipant(DandiBaseModel):
     )
     relation: ParticipantRelationType = Field(
         default=...,
+        title="Participant or subject relation",
+        description="""Indicates how the current participant or subject is related to the other participant or subject. This relation should satisfy: Participant/Subject <relation> relatedParticipant/Subject.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["RelatedParticipant", "Resource"]}
         },
     )
     url: Optional[str] = Field(
         default=None,
+        title="URL of the related participant or subject",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5951,6 +6415,7 @@ class RelatedParticipant(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["RelatedParticipant"] = Field(
@@ -5994,9 +6459,27 @@ class Resource(DandiBaseModel):
                     "range": "string",
                     "required": False,
                 },
-                "name": {"name": "name", "required": False},
-                "relation": {"name": "relation", "range": "RelationType"},
-                "repository": {"name": "repository", "range": "string"},
+                "name": {
+                    "name": "name",
+                    "required": False,
+                    "title": "A title of the resource",
+                },
+                "relation": {
+                    "description": "Indicates how the resource is "
+                    "related to the dataset. This "
+                    "relation should satisfy: dandiset "
+                    "<relation> resource.",
+                    "name": "relation",
+                    "range": "RelationType",
+                    "title": "Resource relation",
+                },
+                "repository": {
+                    "description": "Name of the repository in which "
+                    "the resource is housed.",
+                    "name": "repository",
+                    "range": "string",
+                    "title": "Name of the repository",
+                },
                 "url": {
                     "name": "url",
                     "notes": [
@@ -6007,6 +6490,7 @@ class Resource(DandiBaseModel):
                         "at 0xADDRESS>."
                     ],
                     "required": False,
+                    "title": "URL of the resource",
                 },
             },
         }
@@ -6039,6 +6523,7 @@ class Resource(DandiBaseModel):
     )
     name: Optional[str] = Field(
         default=None,
+        title="A title of the resource",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6058,19 +6543,27 @@ class Resource(DandiBaseModel):
     )
     relation: RelationType = Field(
         default=...,
+        title="Resource relation",
+        description="""Indicates how the resource is related to the dataset. This relation should satisfy: dandiset <relation> resource.""",
         json_schema_extra={
             "linkml_meta": {"domain_of": ["RelatedParticipant", "Resource"]}
         },
     )
     repository: Optional[str] = Field(
         default=None,
+        title="Name of the repository",
+        description="""Name of the repository in which the resource is housed.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel", "Resource"]}},
     )
     resourceType: Optional[ResourceType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Resource"]}}
+        default=None,
+        title="Resource type",
+        description="""The type of resource.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Resource"]}},
     )
     url: Optional[str] = Field(
         default=None,
+        title="URL of the resource",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6093,6 +6586,7 @@ class Resource(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Resource"] = Field(
@@ -6137,6 +6631,7 @@ class SampleType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -6178,6 +6673,7 @@ class SampleType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6197,6 +6693,7 @@ class SampleType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["SampleType"] = Field(
@@ -6232,11 +6729,24 @@ class SampleType(BaseType):
 
 class Session(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
+        {
+            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
+            "notes": [
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "description slot. The slot representation of the description field "
+                "in the Session Pydantic model has changes in value in meta slots: "
+                "['description'] .",
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "name slot. The slot representation of the name field in the "
+                "Session Pydantic model has changes in value in meta slots: "
+                "['description', 'title'] .",
+            ],
+        }
     )
 
     description: Optional[str] = Field(
         default=None,
+        description="""The description of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6278,6 +6788,8 @@ class Session(Activity):
     )
     name: str = Field(
         default=...,
+        title="Title",
+        description="""The name of the activity.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6299,7 +6811,9 @@ class Session(Activity):
         default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
     )
     used: Optional[list[Equipment]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}}
+        default=None,
+        description="""A listing of equipment used for the activity.""",
+        json_schema_extra={"linkml_meta": {"domain_of": ["Activity"]}},
     )
     wasAssociatedWith: Optional[list[Union[Agent, Organization, Person, Software]]] = (
         Field(
@@ -6335,6 +6849,7 @@ class Session(Activity):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Session"] = Field(
@@ -6379,6 +6894,7 @@ class SexType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -6420,6 +6936,7 @@ class SexType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6439,6 +6956,7 @@ class SexType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["SexType"] = Field(
@@ -6478,13 +6996,16 @@ class Software(DandiBaseModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
                 "identifier": {
+                    "description": "RRID of the software from " "scicrunch.org.",
                     "name": "identifier",
                     "pattern": "^RRID:.*",
                     "range": "string",
                     "required": False,
+                    "title": "Research resource identifier",
                 },
                 "name": {"name": "name", "required": True},
                 "url": {
+                    "description": "Web page for the software.",
                     "name": "url",
                     "notes": [
                         "pydantic2linkml: Unable to translate the "
@@ -6501,6 +7022,8 @@ class Software(DandiBaseModel):
 
     identifier: Optional[str] = Field(
         default=None,
+        title="Research resource identifier",
+        description="""RRID of the software from scicrunch.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6545,6 +7068,7 @@ class Software(DandiBaseModel):
     )
     url: Optional[str] = Field(
         default=None,
+        description="""Web page for the software.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6571,6 +7095,7 @@ class Software(DandiBaseModel):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Software"] = Field(
@@ -6628,6 +7153,7 @@ class SpeciesType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -6669,6 +7195,7 @@ class SpeciesType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6688,6 +7215,7 @@ class SpeciesType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["SpeciesType"] = Field(
@@ -6732,6 +7260,7 @@ class StandardsType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -6773,6 +7302,7 @@ class StandardsType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6792,6 +7322,7 @@ class StandardsType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["StandardsType"] = Field(
@@ -6836,6 +7367,7 @@ class StrainType(BaseType):
 
     identifier: Optional[str] = Field(
         default=None,
+        description="""The identifier can be any url or a compact URI, preferably supported by identifiers.org.""",
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -6877,6 +7409,7 @@ class StrainType(BaseType):
     )
     name: Optional[str] = Field(
         default=None,
+        description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6896,6 +7429,7 @@ class StrainType(BaseType):
     )
     id: Optional[str] = Field(
         default=None,
+        description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["StrainType"] = Field(

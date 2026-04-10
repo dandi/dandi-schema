@@ -317,6 +317,9 @@ enums:
 
 slots:
   about:
+    description: The subject matter of the content, such as disorders, brain
+      anatomy.
+    title: Subject matter of the dataset
     range: Any
     required: false
     multivalued: true
@@ -325,20 +328,27 @@ slots:
     - range: Anatomy
     - range: GenericType
   access:
+    title: Access information
     range: AccessRequirements
     required: false
     multivalued: true
   acknowledgement:
+    description: Any acknowledgments not covered by contributors or external
+      resources.
     range: string
     required: false
   affiliation:
+    description: An organization that this person is affiliated with.
     range: Affiliation
     required: false
     multivalued: true
   age:
+    description: A representation of age using ISO 8601 duration. This should
+      include a valueReference if anything other than date of birth is used.
     range: PropertyValue
     required: false
   alleles:
+    description: Information about alleles at the locus.
     range: Allele
     required: true
     multivalued: true
@@ -353,6 +363,8 @@ slots:
     required: false
     multivalued: true
   anatomy:
+    description: Identifier for what organ the sample belongs to. Use the most
+      specific descriptor from sources such as UBERON.
     range: Anatomy
     required: false
     multivalued: true
@@ -361,6 +373,7 @@ slots:
     required: false
     multivalued: true
   assayType:
+    description: Identifier for the assay(s) used (e.g., OBI).
     range: AssayType
     required: false
     multivalued: true
@@ -368,12 +381,16 @@ slots:
     range: AssetsSummary
     required: true
   awardNumber:
+    description: Identifier associated with a sponsored or gift award.
+    title: Identifier for an award
     range: string
     required: false
   blobDateModified:
+    title: Asset file modification date and time.
     range: datetime
     required: false
   cellLine:
+    description: Cell line associated with the participant or subject.
     range: string
     required: false
   citation:
@@ -427,6 +444,7 @@ slots:
     required: false
     pattern: ^(?i:http|https)://[^\s]+$
   dateCreated:
+    title: Dandiset creation date and time.
     range: datetime
     required: false
   dateModified:
@@ -438,6 +456,7 @@ slots:
   description:
     range: string
   digest:
+    title: A map of dandi digests to their values
     notes:
     - 'pydantic2linkml: Unable to translate the logic contained in the after validation
       function, <bound method BareAsset.digest_check of <class ''dandischema.models.BareAsset''>>.'
@@ -445,15 +464,20 @@ slots:
       to be supported.'
     required: true
   disorder:
+    description: Any current diagnosed disease or disorder associated with the
+      participant or subject.
     range: Disorder
     required: false
     multivalued: true
   doi:
+    title: DOI
     ifabsent: string()
     range: string
     required: false
     pattern: ^(10\.\d{4,}/[a-z][-a-z]*\.\d{6}/\d+\.\d+\.\d+|)$
   dxdate:
+    description: Dates of diagnosis
+    title: Dates of diagnosis
     range: Any
     required: false
     multivalued: true
@@ -467,9 +491,12 @@ slots:
     range: string
     required: false
   embargoedUntil:
+    description: Date on which embargo ends.
+    title: Embargo end date
     range: date
     required: false
   encodingFormat:
+    title: File encoding format
     range: Any
     required: true
     any_of:
@@ -484,10 +511,12 @@ slots:
     range: datetime
     required: false
   ethicsApproval:
+    title: Ethics approvals
     range: EthicsApproval
     required: false
     multivalued: true
   genotype:
+    description: Genotype descriptor of participant or subject if available
     range: Any
     required: false
     any_of:
@@ -502,16 +531,21 @@ slots:
     range: string
   identifier: {}
   includeInCitation:
+    title: Include contributor in citation
     range: boolean
     required: false
   keywords:
+    description: Keywords used to describe this content.
     range: string
     required: false
     multivalued: true
   license:
+    description: Licenses associated with the item. DANDI only supports a subset
+      of Creative Commons Licenses (creativecommons.org) applicable to datasets.
     range: LicenseType
     multivalued: true
   locus:
+    description: Locus at which information was extracted.
     range: Locus
     required: true
   locusType:
@@ -564,6 +598,8 @@ slots:
     range: string
     required: true
   propertyID:
+    description: A commonly used identifier for the characteristic represented
+      by the property. For example, a known prefix like DOI or a full URL.
     range: Any
     required: false
     any_of:
@@ -575,6 +611,8 @@ slots:
       range: uri
       pattern: ^(?i:http|https)://[^\s]+$
   protocol:
+    description: A list of persistent URLs describing the protocol (e.g.
+      protocols.io, or other DOIs).
     notes:
     - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
       function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
@@ -584,6 +622,8 @@ slots:
     multivalued: true
     pattern: ^(?i:http|https)://[^\s]+$
   publishedBy:
+    description: The URL should contain the provenance of the publishing
+      process.
     range: Any
     required: true
     any_of:
@@ -595,6 +635,8 @@ slots:
       pattern: ^(?i:http|https)://[^\s]+$
     - range: PublishActivity
   relatedParticipant:
+    description: Information about related participants or subjects in a study
+      or across studies.
     range: RelatedParticipant
     required: false
     multivalued: true
@@ -608,14 +650,19 @@ slots:
   relation:
     required: true
   releaseNotes:
+    description: The description of the release
     range: string
     required: false
   repository:
     required: false
   resourceType:
+    description: The type of resource.
+    title: Resource type
     range: ResourceType
     required: false
   roleName:
+    description: Role(s) of the contributor. Multiple roles can be selected.
+    title: Role
     range: RoleType
     required: false
     multivalued: true
@@ -623,6 +670,8 @@ slots:
     required: false
     multivalued: true
   sampleType:
+    description: Identifier for the sample characteristics (e.g., from OBI,
+      Encode).
     range: SampleType
     required: true
   schemaKey:
@@ -633,6 +682,8 @@ slots:
     range: string
     required: false
   sex:
+    description: Identifier for sex of the participant or subject if available.
+      (e.g. from OBI)
     range: SexType
     required: false
   species:
@@ -642,12 +693,16 @@ slots:
     range: datetime
     required: false
   status:
+    description: The access status of the item.
+    title: Access status
     range: AccessType
     required: true
   strain:
+    description: Identifier for the strain of the participant or subject.
     range: StrainType
     required: false
   studyTarget:
+    description: Objectives or specific questions of the study.
     range: string
     required: false
     multivalued: true
@@ -658,10 +713,12 @@ slots:
     range: uri
     pattern: ^(?i:http|https)://[^\s]+$
   used:
+    description: A listing of equipment used for the activity.
     range: Equipment
     required: false
     multivalued: true
   value:
+    description: The value associated with this property.
     notes:
     - 'pydantic2linkml: Unable to translate the logic contained in the after validation
       function, <bound method PropertyValue.ensure_value of <class ''dandischema.models.PropertyValue''>>.'
@@ -726,7 +783,11 @@ classes:
     - embargoedUntil
     - status
     slot_usage:
+      contactPoint:
+        description: Who or where to look for information about access.
       description:
+        description: Information about access requirements when embargoed or
+          restricted
         required: false
   Activity:
     description: Information about the Project activity
@@ -741,11 +802,14 @@ classes:
     - wasAssociatedWith
     slot_usage:
       description:
+        description: The description of the activity.
         required: false
       identifier:
         range: string
         required: false
       name:
+        description: The name of the activity.
+        title: Title
         required: true
         pattern: ^(?=.{,150}$)
   Affiliation:
@@ -755,10 +819,13 @@ classes:
     - name
     slot_usage:
       identifier:
+        description: Use an ror.org identifier for institutions.
+        title: A ror.org identifier
         range: string
         required: false
         pattern: ^https://ror.org/[a-z0-9]+$
       name:
+        description: Name of organization
         required: true
   Agent:
     is_a: DandiBaseModel
@@ -768,6 +835,8 @@ classes:
     - url
     slot_usage:
       identifier:
+        description: Identifier for an agent.
+        title: Identifier
         range: string
         required: false
       name:
@@ -786,6 +855,7 @@ classes:
     - identifier
     slot_usage:
       identifier:
+        description: Identifier for genotyping allele.
         range: Any
         required: true
         any_of:
@@ -806,7 +876,7 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the Asset Pydantic model has changes
-      in value in meta slots: [''required''] .'
+      in value in meta slots: [''description'', ''required''] .'
     is_a: BareAsset
     slots:
     - contentUrl
@@ -865,6 +935,8 @@ classes:
     - wasAttributedTo
     - wasDerivedFrom
     slot_usage:
+      dateModified:
+        title: Asset (file or metadata) modification date and time
       sameAs:
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
@@ -874,6 +946,8 @@ classes:
         pattern: ^(?i:http|https)://[^\s]+$
       variableMeasured:
         range: PropertyValue
+      wasAttributedTo:
+        description: Associated participant(s) or subject(s).
   BaseType:
     description: Base class for enumerated types
     is_a: DandiBaseModel
@@ -882,6 +956,8 @@ classes:
     - name
     slot_usage:
       identifier:
+        description: The identifier can be any url or a compact URI, preferably
+          supported by identifiers.org.
         range: Any
         required: false
         any_of:
@@ -894,6 +970,7 @@ classes:
         - range: string
           pattern: ^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$
       name:
+        description: The name of the item.
         required: false
         pattern: ^(?=.{,150}$)
   BioSample:
@@ -914,6 +991,11 @@ classes:
         required: true
       sameAs:
         range: string
+      wasAttributedTo:
+        description: Participant(s) or Subject(s) associated with this sample.
+      wasDerivedFrom:
+        description: Describes the hierarchy of sample derivation or
+          aggregation.
   CommonModel:
     is_a: DandiBaseModel
     slots:
@@ -941,15 +1023,21 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the after validation
           function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
       contributor:
+        description: 'Contributors to this item: persons or organizations.'
+        title: Contributors
         required: false
       description:
+        description: A description of the item.
         required: false
       license:
         required: false
       name:
+        description: The name of the item.
+        title: Title
         required: false
         pattern: ^(?=.{,150}$)
       repository:
+        description: location of the item
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
@@ -957,6 +1045,7 @@ classes:
         range: uri
         pattern: ^(?i:http|https)://[^\s]+$
       url:
+        description: permalink to the item
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
@@ -970,7 +1059,10 @@ classes:
     - email
     - url
     slot_usage:
+      email:
+        description: Email address of contact.
       url:
+        description: A Web page to find information on how to contact.
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
@@ -988,9 +1080,14 @@ classes:
     - url
     slot_usage:
       identifier:
+        description: Use a common identifier such as ORCID (orcid.org) for
+          people or ROR (ror.org) for institutions.
+        title: A common identifier
         range: string
         required: false
       includeInCitation:
+        description: A flag to indicate whether a contributor should be included
+          when generating a citation for the item.
         ifabsent: 'True'
       name:
         required: false
@@ -1006,6 +1103,7 @@ classes:
     - schemaKey
     slot_usage:
       id:
+        description: Uniform resource identifier
         required: false
       schemaKey:
         notes:
@@ -1018,10 +1116,11 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
       slot. The slot representation of the contributor field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''required''] .'
+      model has changes in value in meta slots: [''description'', ''required'', ''title'']
+      .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the description
       slot. The slot representation of the description field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''required''] .'
+      model has changes in value in meta slots: [''description'', ''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the Dandiset Pydantic model has changes
       in value in meta slots: [''required''] .'
@@ -1030,7 +1129,7 @@ classes:
       has changes in value in meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
       The slot representation of the name field in the Dandiset Pydantic model has
-      changes in value in meta slots: [''required''] .'
+      changes in value in meta slots: [''description'', ''required'', ''title''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
       model has changes in value in meta slots: [''range''] .'
@@ -1045,11 +1144,17 @@ classes:
     - sameAs
     - version
     slot_usage:
+      dateModified:
+        title: Last modification date and time.
       identifier:
+        description: A Dandiset identifier that can be resolved by
+          identifiers.org.
+        title: Dandiset identifier
         range: string
         required: true
         pattern: ^[A-Z][-A-Z]*:\d{6}$
       sameAs:
+        description: Known DANDI URLs of the Dandiset at other DANDI instances.
         range: string
         pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
   Disorder:
@@ -1065,11 +1170,14 @@ classes:
     - name
     slot_usage:
       description:
+        description: The description of the equipment.
         required: false
       identifier:
         range: string
         required: false
       name:
+        description: A name for the equipment.
+        title: Title
         required: true
         pattern: ^(?=.{,150}$)
   EthicsApproval:
@@ -1079,7 +1187,12 @@ classes:
     - contactPoint
     - identifier
     slot_usage:
+      contactPoint:
+        description: Information about the ethics approval committee.
       identifier:
+        description: Approved Protocol identifier, often a number or
+          alphanumeric string.
+        title: Approved protocol identifier
         range: string
         required: true
   GenericType:
@@ -1093,6 +1206,8 @@ classes:
     - wasGeneratedBy
     slot_usage:
       wasGeneratedBy:
+        description: Information about session activity used to determine
+          genotype.
         range: Session
   Locus:
     is_a: DandiBaseModel
@@ -1101,6 +1216,7 @@ classes:
     - locusType
     slot_usage:
       identifier:
+        description: Identifier for genotyping locus.
         range: Any
         required: true
         any_of:
@@ -1112,17 +1228,21 @@ classes:
     is_a: BaseType
   Organization:
     notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the identifier
+      slot. The slot representation of the identifier field in the Organization Pydantic
+      model has changes in value in meta slots: [''description'', ''title''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the includeInCitation
       slot. The slot representation of the includeInCitation field in the Organization
-      Pydantic model has changes in value in meta slots: [''ifabsent''] .'
+      Pydantic model has changes in value in meta slots: [''description'', ''ifabsent'']
+      .'
     is_a: Contributor
     slots:
     - contactPoint
     slot_usage:
       contactPoint:
+        description: Contact for the organization
+        title: Organization contact information
         multivalued: true
-      identifier:
-        pattern: ^https://ror.org/[a-z0-9]+$
   Participant:
     description: Description about the Participant or Subject studied. The
       Participant or Subject can be any individual or synthesized Agent. The
@@ -1148,19 +1268,31 @@ classes:
         range: string
         required: true
       sameAs:
+        description: An identifier to link participants or subjects across
+          datasets.
         range: string
+      species:
+        description: An identifier indicating the taxonomic classification of
+          the participant or subject.
   Person:
     notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the identifier
+      slot. The slot representation of the identifier field in the Person Pydantic
+      model has changes in value in meta slots: [''description'', ''title''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
       The slot representation of the name field in the Person Pydantic model has changes
       in value in meta slots: [''required''] .'
     is_a: Contributor
     slots:
     - affiliation
-    slot_usage:
-      identifier:
-        pattern: ^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$
   Project:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
+      slot. The slot representation of the description field in the Project Pydantic
+      model has changes in value in meta slots: [''description''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Project Pydantic model has
+      changes in value in meta slots: [''description'', ''title''] .'
     is_a: Activity
   PropertyValue:
     is_a: DandiBaseModel
@@ -1196,10 +1328,11 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the PublishedDandiset Pydantic model
-      has changes in value in meta slots: [''pattern''] .'
+      has changes in value in meta slots: [''description'', ''pattern''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
       The slot representation of the url field in the PublishedDandiset Pydantic model
-      has changes in value in meta slots: [''notes'', ''required''] .'
+      has changes in value in meta slots: [''description'', ''notes'', ''required'']
+      .'
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
@@ -1223,10 +1356,16 @@ classes:
         range: string
         required: false
       name:
+        title: Name of the participant or subject
         required: false
       relation:
+        description: 'Indicates how the current participant or subject is related
+          to the other participant or subject. This relation should satisfy: Participant/Subject
+          <relation> relatedParticipant/Subject.'
+        title: Participant or subject relation
         range: ParticipantRelationType
       url:
+        title: URL of the related participant or subject
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
@@ -1246,12 +1385,19 @@ classes:
         range: string
         required: false
       name:
+        title: A title of the resource
         required: false
       relation:
+        description: 'Indicates how the resource is related to the dataset. This relation
+          should satisfy: dandiset <relation> resource.'
+        title: Resource relation
         range: RelationType
       repository:
+        description: Name of the repository in which the resource is housed.
+        title: Name of the repository
         range: string
       url:
+        title: URL of the resource
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
@@ -1261,6 +1407,13 @@ classes:
     description: OBI based identifier for the sample type used
     is_a: BaseType
   Session:
+    notes:
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
+      slot. The slot representation of the description field in the Session Pydantic
+      model has changes in value in meta slots: [''description''] .'
+    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
+      The slot representation of the name field in the Session Pydantic model has
+      changes in value in meta slots: [''description'', ''title''] .'
     is_a: Activity
   SexType:
     description: Identifier for the sex of the sample
@@ -1274,12 +1427,15 @@ classes:
     - version
     slot_usage:
       identifier:
+        description: RRID of the software from scicrunch.org.
+        title: Research resource identifier
         range: string
         required: false
         pattern: ^RRID:.*
       name:
         required: true
       url:
+        description: Web page for the software.
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
