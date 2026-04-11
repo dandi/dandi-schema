@@ -1,0 +1,26 @@
+# This file specifies a partial schema to be merged with the auto LinkML translation
+# `dandischema.models`. It is a place to specify elements of the target dandischema
+# LinkML schema that are not translatable from or not available in `dandischema.models`
+
+slots:
+  schemaKey:
+    ifabsent: null
+    designates_type: true
+    required: true
+
+classes:
+  BareAsset:
+    notes:
+      - "MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model's name. Adjustment to the inherited
+      `schemaKey` slot may be needed."
+  PublishedAsset:
+    notes:
+      - "MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model's name. Adjustment to the inherited
+      `schemaKey` slot may be needed."
+  PublishedDandiset:
+    notes:
+      - "MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model's name. Adjustment to the inherited
+      `schemaKey` slot may be needed."
