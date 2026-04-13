@@ -1075,6 +1075,18 @@ class BaseType(DandiBaseModel):
                     "pattern": "^(?=.{,150}$)",
                     "required": False,
                 },
+                "schemaKey": {
+                    "ifabsent": "string(BaseType)",
+                    "name": "schemaKey",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate "
+                        "the logic contained in the after "
+                        "validation function, <bound method "
+                        "DandiBaseModel.ensure_schemakey of "
+                        "<class "
+                        "'dandischema.models.BaseType'>>."
+                    ],
+                },
             },
         }
     )
@@ -1152,12 +1164,12 @@ class BaseType(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -1259,12 +1271,12 @@ class Anatomy(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -1366,12 +1378,12 @@ class ApproachType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -1473,12 +1485,12 @@ class AssayType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -1664,6 +1676,18 @@ class CommonModel(DandiBaseModel):
                     ],
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "range": "uri",
+                },
+                "schemaKey": {
+                    "ifabsent": "string(CommonModel)",
+                    "name": "schemaKey",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate "
+                        "the logic contained in the after "
+                        "validation function, <bound method "
+                        "DandiBaseModel.ensure_schemakey of "
+                        "<class "
+                        "'dandischema.models.CommonModel'>>."
+                    ],
                 },
                 "url": {
                     "description": "permalink to the item",
@@ -1894,12 +1918,12 @@ class CommonModel(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(CommonModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.CommonModel'>>."
                 ],
             }
         },
@@ -1968,19 +1992,30 @@ class BareAsset(CommonModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "access slot. The slot representation of the access field in the "
-                "BareAsset Pydantic model has changes in value in meta slots: "
-                "['notes'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
-                "field in the BareAsset Pydantic model has changes in value in meta "
-                "slots: ['range'] .",
+                "field in the BareAsset Pydantic model has changes in value in "
+                "constraint meta slots: ['range'] .",
                 "MANUAL_NOTE: The default of the `schemaKey` field in the "
                 "corresponding Pydantic model in `dandischema.models` is not the "
                 "model's name. Adjustment to the inherited `schemaKey` slot may be "
                 "needed.",
             ],
             "slot_usage": {
+                "access": {
+                    "maximum_cardinality": 1,
+                    "name": "access",
+                    "notes": [
+                        "pydantic2linkml: Unable to express the "
+                        "default factory, <function "
+                        "BareAsset.<lambda> at 0xADDRESS>, in "
+                        "LinkML.",
+                        "pydantic2linkml: Unable to translate the "
+                        "logic contained in the after validation "
+                        "function, <function "
+                        "AccessRequirements.open_or_embargoed at "
+                        "0xADDRESS>.",
+                    ],
+                },
                 "dateModified": {
                     "name": "dateModified",
                     "title": "Asset (file or metadata) " "modification date and time",
@@ -2150,12 +2185,13 @@ class BareAsset(CommonModel):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
+        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
+                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
@@ -2344,12 +2380,12 @@ class BareAsset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(CommonModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.CommonModel'>>."
                 ],
             }
         },
@@ -2445,8 +2481,8 @@ class Asset(BareAsset):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the Asset "
-                "Pydantic model has changes in value in meta slots: ['description', "
-                "'required'] ."
+                "Pydantic model has changes in value in constraint meta slots: "
+                "['required'] ."
             ],
             "slot_usage": {
                 "identifier": {
@@ -2639,12 +2675,13 @@ class Asset(BareAsset):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
+        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
+                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
@@ -2833,12 +2870,12 @@ class Asset(BareAsset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(CommonModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.CommonModel'>>."
                 ],
             }
         },
@@ -3234,27 +3271,28 @@ class Dandiset(CommonModel):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "contributor slot. The slot representation of the contributor field "
-                "in the Dandiset Pydantic model has changes in value in meta slots: "
-                "['description', 'required', 'title'] .",
+                "in the Dandiset Pydantic model has changes in value in constraint "
+                "meta slots: ['required'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "description slot. The slot representation of the description field "
-                "in the Dandiset Pydantic model has changes in value in meta slots: "
-                "['description', 'required'] .",
+                "in the Dandiset Pydantic model has changes in value in constraint "
+                "meta slots: ['required'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the Dandiset "
-                "Pydantic model has changes in value in meta slots: ['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "license slot. The slot representation of the license field in the "
-                "Dandiset Pydantic model has changes in value in meta slots: "
+                "Pydantic model has changes in value in constraint meta slots: "
                 "['required'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "license slot. The slot representation of the license field in the "
+                "Dandiset Pydantic model has changes in value in constraint meta "
+                "slots: ['required'] .",
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "name slot. The slot representation of the name field in the "
-                "Dandiset Pydantic model has changes in value in meta slots: "
-                "['description', 'required', 'title'] .",
+                "Dandiset Pydantic model has changes in value in constraint meta "
+                "slots: ['required'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
-                "field in the Dandiset Pydantic model has changes in value in meta "
-                "slots: ['range'] .",
+                "field in the Dandiset Pydantic model has changes in value in "
+                "constraint meta slots: ['range'] .",
             ],
             "slot_usage": {
                 "dateModified": {
@@ -3564,12 +3602,12 @@ class Dandiset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(CommonModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.CommonModel'>>."
                 ],
             }
         },
@@ -3762,12 +3800,12 @@ class Disorder(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -4077,12 +4115,12 @@ class GenericType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -4315,12 +4353,12 @@ class MeasurementTechniqueType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -4344,23 +4382,28 @@ class Organization(Contributor):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "identifier slot. The slot representation of the identifier field "
-                "in the Organization Pydantic model has changes in value in meta "
-                "slots: ['description', 'title'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "includeInCitation slot. The slot representation of the "
-                "includeInCitation field in the Organization Pydantic model has "
-                "changes in value in meta slots: ['description', 'ifabsent'] .",
-            ],
             "slot_usage": {
                 "contactPoint": {
                     "description": "Contact for the organization",
                     "multivalued": True,
                     "name": "contactPoint",
                     "title": "Organization contact information",
-                }
+                },
+                "identifier": {
+                    "description": "Use an ror.org identifier for " "institutions.",
+                    "name": "identifier",
+                    "pattern": "^https://ror.org/[a-z0-9]+$",
+                    "title": "A ror.org identifier",
+                },
+                "includeInCitation": {
+                    "description": "A flag to indicate "
+                    "whether a contributor "
+                    "should be included when "
+                    "generating a citation "
+                    "for the item",
+                    "ifabsent": "False",
+                    "name": "includeInCitation",
+                },
             },
         }
     )
@@ -4396,8 +4439,8 @@ class Organization(Contributor):
     )
     identifier: Optional[str] = Field(
         default=None,
-        title="A common identifier",
-        description="""Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.""",
+        title="A ror.org identifier",
+        description="""Use an ror.org identifier for institutions.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4422,11 +4465,11 @@ class Organization(Contributor):
         },
     )
     includeInCitation: Optional[bool] = Field(
-        default=True,
+        default=False,
         title="Include contributor in citation",
-        description="""A flag to indicate whether a contributor should be included when generating a citation for the item.""",
+        description="""A flag to indicate whether a contributor should be included when generating a citation for the item""",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["Contributor"], "ifabsent": "True"}
+            "linkml_meta": {"domain_of": ["Contributor"], "ifabsent": "False"}
         },
     )
     name: Optional[str] = Field(
@@ -4497,6 +4540,19 @@ class Organization(Contributor):
             }
         },
     )
+
+    @field_validator("identifier")
+    def pattern_identifier(cls, v):
+        pattern = re.compile(r"^https://ror.org/[a-z0-9]+$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.match(element):
+                    err_msg = f"Invalid identifier format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.match(v):
+            err_msg = f"Invalid identifier format: {v}"
+            raise ValueError(err_msg)
+        return v
 
     @field_validator("url")
     def pattern_url(cls, v):
@@ -4671,13 +4727,19 @@ class Person(Contributor):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "identifier slot. The slot representation of the identifier field "
-                "in the Person Pydantic model has changes in value in meta slots: "
-                "['description', 'title'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "name slot. The slot representation of the name field in the Person "
-                "Pydantic model has changes in value in meta slots: ['required'] .",
+                "Pydantic model has changes in value in constraint meta slots: "
+                "['required'] ."
             ],
+            "slot_usage": {
+                "identifier": {
+                    "description": "An ORCID (orcid.org) identifier "
+                    "for an individual.",
+                    "name": "identifier",
+                    "pattern": "^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$",
+                    "title": "An ORCID identifier",
+                }
+            },
         }
     )
 
@@ -4707,8 +4769,8 @@ class Person(Contributor):
     )
     identifier: Optional[str] = Field(
         default=None,
-        title="A common identifier",
-        description="""Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.""",
+        title="An ORCID identifier",
+        description="""An ORCID (orcid.org) identifier for an individual.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4809,6 +4871,19 @@ class Person(Contributor):
         },
     )
 
+    @field_validator("identifier")
+    def pattern_identifier(cls, v):
+        pattern = re.compile(r"^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.match(element):
+                    err_msg = f"Invalid identifier format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.match(v):
+            err_msg = f"Invalid identifier format: {v}"
+            raise ValueError(err_msg)
+        return v
+
     @field_validator("url")
     def pattern_url(cls, v):
         pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
@@ -4827,22 +4902,24 @@ class Project(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "description slot. The slot representation of the description field "
-                "in the Project Pydantic model has changes in value in meta slots: "
-                "['description'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "name slot. The slot representation of the name field in the "
-                "Project Pydantic model has changes in value in meta slots: "
-                "['description', 'title'] .",
-            ],
+            "slot_usage": {
+                "description": {
+                    "description": "A brief description of the " "project.",
+                    "name": "description",
+                },
+                "name": {
+                    "description": "The name of the project that "
+                    "generated this Dandiset or asset.",
+                    "name": "name",
+                    "title": "Name of project",
+                },
+            },
         }
     )
 
     description: Optional[str] = Field(
         default=None,
-        description="""The description of the activity.""",
+        description="""A brief description of the project.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4884,8 +4961,8 @@ class Project(Activity):
     )
     name: str = Field(
         default=...,
-        title="Title",
-        description="""The name of the activity.""",
+        title="Name of project",
+        description="""The name of the project that generated this Dandiset or asset.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5294,7 +5371,18 @@ class PublishedAsset(Publishable, Asset):
                 "id": {
                     "name": "id",
                     "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
-                }
+                },
+                "schemaKey": {
+                    "name": "schemaKey",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate "
+                        "the logic contained in the after "
+                        "validation function, <bound method "
+                        "DandiBaseModel.ensure_schemakey of "
+                        "<class "
+                        "'dandischema.models.PublishedAsset'>>."
+                    ],
+                },
             },
         }
     )
@@ -5504,12 +5592,13 @@ class PublishedAsset(Publishable, Asset):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
+        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
+                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
@@ -5698,12 +5787,12 @@ class PublishedAsset(Publishable, Asset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(CommonModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.PublishedAsset'>>."
                 ],
             }
         },
@@ -5839,12 +5928,12 @@ class PublishedDandiset(Publishable, Dandiset):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the "
-                "PublishedDandiset Pydantic model has changes in value in meta "
-                "slots: ['description', 'pattern'] .",
+                "PublishedDandiset Pydantic model has changes in value in "
+                "constraint meta slots: ['pattern'] .",
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "url slot. The slot representation of the url field in the "
-                "PublishedDandiset Pydantic model has changes in value in meta "
-                "slots: ['description', 'notes', 'required'] .",
+                "PublishedDandiset Pydantic model has changes in value in "
+                "constraint meta slots: ['required'] .",
                 "pydantic2linkml: Warning: LinkML does not support multiple "
                 "inheritance. Publishable is not specified as a parent, through the "
                 "`is_a` meta slot, but as a mixin.",
@@ -5853,6 +5942,19 @@ class PublishedDandiset(Publishable, Dandiset):
                 "model's name. Adjustment to the inherited `schemaKey` slot may be "
                 "needed.",
             ],
+            "slot_usage": {
+                "schemaKey": {
+                    "name": "schemaKey",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate "
+                        "the logic contained in the after "
+                        "validation function, <bound method "
+                        "DandiBaseModel.ensure_schemakey of "
+                        "<class "
+                        "'dandischema.models.PublishedDandiset'>>."
+                    ],
+                }
+            },
         }
     )
 
@@ -6176,12 +6278,12 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(CommonModel)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.PublishedDandiset'>>."
                 ],
             }
         },
@@ -6702,12 +6804,12 @@ class SampleType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -6731,22 +6833,24 @@ class Session(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "description slot. The slot representation of the description field "
-                "in the Session Pydantic model has changes in value in meta slots: "
-                "['description'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "name slot. The slot representation of the name field in the "
-                "Session Pydantic model has changes in value in meta slots: "
-                "['description', 'title'] .",
-            ],
+            "slot_usage": {
+                "description": {
+                    "description": "A brief description of the " "session.",
+                    "name": "description",
+                },
+                "name": {
+                    "description": "The name of the logical session "
+                    "associated with the asset.",
+                    "name": "name",
+                    "title": "Name of session",
+                },
+            },
         }
     )
 
     description: Optional[str] = Field(
         default=None,
-        description="""The description of the activity.""",
+        description="""A brief description of the session.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6788,8 +6892,8 @@ class Session(Activity):
     )
     name: str = Field(
         default=...,
-        title="Title",
-        description="""The name of the activity.""",
+        title="Name of session",
+        description="""The name of the logical session associated with the asset.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -6965,12 +7069,12 @@ class SexType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -7224,12 +7328,12 @@ class SpeciesType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -7331,12 +7435,12 @@ class StandardsType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },
@@ -7438,12 +7542,12 @@ class StrainType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
+                "ifabsent": "string(BaseType)",
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <bound method "
                     "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
+                    "'dandischema.models.BaseType'>>."
                 ],
             }
         },

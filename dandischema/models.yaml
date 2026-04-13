@@ -876,7 +876,7 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the Asset Pydantic model has changes
-      in value in meta slots: [''description'', ''required''] .'
+      in value in constraint meta slots: [''required''] .'
     is_a: BareAsset
     slots:
     - contentUrl
@@ -910,12 +910,9 @@ classes:
     description: Metadata used to describe an asset anywhere (local or server).
       Derived from C2M2 (Level 0 and 1) and schema.org
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
-      The slot representation of the access field in the BareAsset Pydantic model
-      has changes in value in meta slots: [''notes''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
-      model has changes in value in meta slots: [''range''] .'
+      model has changes in value in constraint meta slots: [''range''] .'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
       model in `dandischema.models` is not the model''s name. Adjustment to the inherited
       `schemaKey` slot may be needed.'
@@ -935,6 +932,13 @@ classes:
     - wasAttributedTo
     - wasDerivedFrom
     slot_usage:
+      access:
+        notes:
+        - 'pydantic2linkml: Unable to express the default factory, <function BareAsset.<lambda>
+          at 0xADDRESS>, in LinkML.'
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
+        maximum_cardinality: 1
       dateModified:
         title: Asset (file or metadata) modification date and time
       sameAs:
@@ -973,6 +977,11 @@ classes:
         description: The name of the item.
         required: false
         pattern: ^(?=.{,150}$)
+      schemaKey:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.BaseType''>>.'
+        ifabsent: string(BaseType)
   BioSample:
     description: Description of the sample that was studied
     is_a: DandiBaseModel
@@ -1044,6 +1053,11 @@ classes:
           at 0xADDRESS>.'
         range: uri
         pattern: ^(?i:http|https)://[^\s]+$
+      schemaKey:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.CommonModel''>>.'
+        ifabsent: string(CommonModel)
       url:
         description: permalink to the item
         notes:
@@ -1116,23 +1130,22 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
       slot. The slot representation of the contributor field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''description'', ''required'', ''title'']
-      .'
+      model has changes in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the description
       slot. The slot representation of the description field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''description'', ''required''] .'
+      model has changes in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the Dandiset Pydantic model has changes
-      in value in meta slots: [''required''] .'
+      in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the license slot.
       The slot representation of the license field in the Dandiset Pydantic model
-      has changes in value in meta slots: [''required''] .'
+      has changes in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
       The slot representation of the name field in the Dandiset Pydantic model has
-      changes in value in meta slots: [''description'', ''required'', ''title''] .'
+      changes in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
-      model has changes in value in meta slots: [''range''] .'
+      model has changes in value in constraint meta slots: [''range''] .'
     is_a: CommonModel
     slots:
     - assetsSummary
@@ -1227,14 +1240,6 @@ classes:
     description: Identifier for measurement technique used
     is_a: BaseType
   Organization:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the identifier
-      slot. The slot representation of the identifier field in the Organization Pydantic
-      model has changes in value in meta slots: [''description'', ''title''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the includeInCitation
-      slot. The slot representation of the includeInCitation field in the Organization
-      Pydantic model has changes in value in meta slots: [''description'', ''ifabsent'']
-      .'
     is_a: Contributor
     slots:
     - contactPoint
@@ -1243,6 +1248,14 @@ classes:
         description: Contact for the organization
         title: Organization contact information
         multivalued: true
+      identifier:
+        description: Use an ror.org identifier for institutions.
+        title: A ror.org identifier
+        pattern: ^https://ror.org/[a-z0-9]+$
+      includeInCitation:
+        description: A flag to indicate whether a contributor should be included
+          when generating a citation for the item
+        ifabsent: 'False'
   Participant:
     description: Description about the Participant or Subject studied. The
       Participant or Subject can be any individual or synthesized Agent. The
@@ -1276,24 +1289,26 @@ classes:
           the participant or subject.
   Person:
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the identifier
-      slot. The slot representation of the identifier field in the Person Pydantic
-      model has changes in value in meta slots: [''description'', ''title''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
       The slot representation of the name field in the Person Pydantic model has changes
-      in value in meta slots: [''required''] .'
+      in value in constraint meta slots: [''required''] .'
     is_a: Contributor
     slots:
     - affiliation
+    slot_usage:
+      identifier:
+        description: An ORCID (orcid.org) identifier for an individual.
+        title: An ORCID identifier
+        pattern: ^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$
   Project:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
-      slot. The slot representation of the description field in the Project Pydantic
-      model has changes in value in meta slots: [''description''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
-      The slot representation of the name field in the Project Pydantic model has
-      changes in value in meta slots: [''description'', ''title''] .'
     is_a: Activity
+    slot_usage:
+      description:
+        description: A brief description of the project.
+      name:
+        description: The name of the project that generated this Dandiset or
+          asset.
+        title: Name of project
   PropertyValue:
     is_a: DandiBaseModel
     slots:
@@ -1324,15 +1339,18 @@ classes:
       id:
         pattern:
           ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
+      schemaKey:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.PublishedAsset''>>.'
   PublishedDandiset:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the PublishedDandiset Pydantic model
-      has changes in value in meta slots: [''description'', ''pattern''] .'
+      has changes in value in constraint meta slots: [''pattern''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
       The slot representation of the url field in the PublishedDandiset Pydantic model
-      has changes in value in meta slots: [''description'', ''notes'', ''required'']
-      .'
+      has changes in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
@@ -1344,6 +1362,11 @@ classes:
     slots:
     - doi
     - releaseNotes
+    slot_usage:
+      schemaKey:
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.PublishedDandiset''>>.'
   RelatedParticipant:
     is_a: DandiBaseModel
     slots:
@@ -1407,14 +1430,13 @@ classes:
     description: OBI based identifier for the sample type used
     is_a: BaseType
   Session:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
-      slot. The slot representation of the description field in the Session Pydantic
-      model has changes in value in meta slots: [''description''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
-      The slot representation of the name field in the Session Pydantic model has
-      changes in value in meta slots: [''description'', ''title''] .'
     is_a: Activity
+    slot_usage:
+      description:
+        description: A brief description of the session.
+      name:
+        description: The name of the logical session associated with the asset.
+        title: Name of session
   SexType:
     description: Identifier for the sex of the sample
     is_a: BaseType
