@@ -865,10 +865,11 @@ class StandardsType(BaseType):
         description="Version of the standard used.",
         json_schema_extra={"nskey": "schema"},
     )
-    extensions: Optional[List["StandardsType"]] = Field(
+    extensions: Optional[List[StandardsType]] = Field(
         None,
-        description="Extensions to the standard used in this dataset "
+        description="Extensions to the standard used "
         "(e.g. NWB extensions like ndx-*, HED library schemas).",
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
     # TODO: consider how to formalize BIDS extensions (BEPs) once BIDS
     # has a machine-readable way to declare them.
@@ -1865,7 +1866,7 @@ class BareAsset(CommonModel):
     dataStandard: Optional[List[StandardsType]] = Field(
         None,
         description="Data standard(s) applicable to this asset.",
-        json_schema_extra={"readOnly": True},
+        json_schema_extra={"nskey": DANDI_NSKEY},
     )
 
     # Bare asset is to be just Asset.
