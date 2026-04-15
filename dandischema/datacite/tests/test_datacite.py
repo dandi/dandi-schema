@@ -32,6 +32,20 @@ from .. import _get_datacite_schema, _licenses_to_rights_list, to_datacite
 
 _INSTANCE_CONFIG = get_instance_config()
 
+_EXPECTED_PUBLISHER: dict[str, str] = {
+    "name": f"{_INSTANCE_CONFIG.instance_name} Archive",
+    "lang": "en",
+}
+if _INSTANCE_CONFIG.instance_identifier:
+    _EXPECTED_PUBLISHER.update(
+        {
+            "publisherIdentifier": f"https://scicrunch.org/resolver/"
+            f"{_INSTANCE_CONFIG.instance_identifier}",
+            "publisherIdentifierScheme": "RRID",
+            "schemeUri": "https://scicrunch.org/resolver/",
+        }
+    )
+
 
 class TestLicensesToRightsList:
     """
@@ -279,17 +293,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                     1,
                     {"description": "testing", "descriptionType": "Abstract"},
                 ),
-                "publisher": (
-                    None,
-                    {
-                        "name": f"{_INSTANCE_CONFIG.instance_name} Archive",
-                        "publisherIdentifier": f"https://scicrunch.org/resolver/"
-                        f"{_INSTANCE_CONFIG.instance_identifier}",
-                        "publisherIdentifierScheme": "RRID",
-                        "schemeUri": "https://scicrunch.org/resolver/",
-                        "lang": "en",
-                    },
-                ),
+                "publisher": (None, _EXPECTED_PUBLISHER),
                 "rightsList": (
                     1,
                     {"rightsIdentifierScheme": "SPDX", "rightsIdentifier": "CC-BY-4.0"},
@@ -301,6 +305,9 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
             },
         ),
         # additional contributor with dandi:Author, and one without roleName
+        # All three have includeInCitation=True (Person default), so all are creators.
+        # A_last also has ContactPerson role, so appears in contributors too.
+        # C_last has no roleName, so only appears in creators.
         (
             {
                 "contributor": [
@@ -322,9 +329,9 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                 ],
             },
             {
-                "creators": (1, {"name": "B_last, B_first"}),
+                "creators": (3, {"name": "A_last, A_first"}),
                 "contributors": (
-                    2,
+                    1,
                     {"name": "A_last, A_first", "contributorType": "ContactPerson"},
                 ),
             },
@@ -436,7 +443,7 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
             },
             {
                 "creators": (
-                    1,
+                    2,
                     {
                         "name": "A_last, A_first",
                         "nameIdentifiers": [
@@ -489,10 +496,69 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
                 ),
             },
         ),
+        # Organization with includeInCitation=True becomes a creator even without
+        # dcite:Author role (mirrors dandiset 000020: Allen Institute for Brain Science)
+        (
+            {
+                "contributor": [
+                    {
+                        "name": "A_last, A_first",
+                        "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "includeInCitation": False,
+                        "schemaKey": "Person",
+                    },
+                    {
+                        "name": "Allen Institute for Brain Science",
+                        "roleName": [],
+                        "includeInCitation": True,
+                        "schemaKey": "Organization",
+                    },
+                ],
+            },
+            {
+                "creators": (
+                    1,
+                    {
+                        "name": "Allen Institute for Brain Science",
+                        "nameType": "Organizational",
+                    },
+                ),
+                "contributors": (
+                    1,
+                    {"name": "A_last, A_first", "contributorType": "ContactPerson"},
+                ),
+            },
+        ),
+        # Person with includeInCitation=False and no dcite:Author role
+        # should NOT be a creator, only a contributor
+        (
+            {
+                "contributor": [
+                    {
+                        "name": "A_last, A_first",
+                        "roleName": [RoleType("dcite:Author")],
+                        "schemaKey": "Person",
+                    },
+                    {
+                        "name": "B_last, B_first",
+                        "roleName": [RoleType("dcite:ContactPerson")],
+                        "email": "nemo@example.com",
+                        "includeInCitation": False,
+                        "schemaKey": "Person",
+                    },
+                ],
+            },
+            {
+                "creators": (1, {"name": "A_last, A_first"}),
+                "contributors": (
+                    1,
+                    {"name": "B_last, B_first", "contributorType": "ContactPerson"},
+                ),
+            },
+        ),
     ],
 )
-@skipif_no_datacite_auth
-@skipif_no_doi_prefix
 def test_dandimeta_datacite(
     schema: Any,
     metadata_basic: Dict[str, Any],
@@ -500,18 +566,16 @@ def test_dandimeta_datacite(
     datacite_checks: Dict[str, Any],
 ) -> None:
     """
-    checking datacite objects for specific metadata dictionaries,
-    posting datacite object and checking the status code
-    """
+    Checking datacite objects for specific metadata dictionaries.
 
-    assert DOI_PREFIX is not None
+    Validates locally (schema + field checks) without needing datacite auth.
+    Posts to datacite only when credentials are available.
+    """
 
     dandi_id = metadata_basic["identifier"]
     dandi_id_noprefix = dandi_id.split(":")[1]
 
-    metadata_basic.update(
-        basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
-    )
+    metadata_basic.update(basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix))
     metadata_basic.update(additional_meta)
 
     # creating and validating datacite objects
@@ -536,8 +600,19 @@ def test_dandimeta_datacite(
             else:
                 assert attr[key] == el_flds
 
-    # trying to post to datacite
-    datacite_post(datacite, metadata_basic["doi"])
+    # posting to datacite requires auth credentials and DOI prefix
+    if (
+        os.getenv("DATACITE_DEV_LOGIN")
+        and os.getenv("DATACITE_DEV_PASSWORD")
+        and DOI_PREFIX is not None
+    ):
+        # re-generate with the real DOI prefix for posting
+        metadata_basic["doi"] = (
+            f"{DOI_PREFIX}/{INSTANCE_NAME.lower()}.{dandi_id_noprefix}"
+            f"/{metadata_basic['version']}"
+        )
+        datacite = to_datacite(metadata_basic)
+        datacite_post(datacite, metadata_basic["doi"])
 
 
 @skipif_no_doi_prefix
