@@ -7,4 +7,5 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-hatch run linkml-auto-converted:python "$SCRIPT_DIR/remove_notes_by_pattern.py"
+hatch run linkml-auto-converted:python "$SCRIPT_DIR/remove_notes_by_pattern.py" |
+hatch run linkml-auto-converted:python "$SCRIPT_DIR/remove_slot_usage_schemakey.py"
