@@ -104,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC-BY-4.0:
-        meaning: spdx:CC-BY-4.0
       spdx:CC0-1.0:
         meaning: spdx:CC0-1.0
+      spdx:CC-BY-4.0:
+        meaning: spdx:CC-BY-4.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
@@ -790,12 +790,6 @@ classes:
         description: Information about access requirements when embargoed or
           restricted
         required: false
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.AccessRequirements''>>.'
-        ifabsent: string(AccessRequirements)
-        equals_string: AccessRequirements
   Activity:
     description: Information about the Project activity
     is_a: DandiBaseModel
@@ -819,16 +813,6 @@ classes:
         title: Title
         required: true
         pattern: ^(?=.{,150}$)
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Activity''>>.'
-        ifabsent: string(Activity)
-        any_of:
-        - equals_string: Activity
-        - equals_string: Project
-        - equals_string: Session
-        - equals_string: PublishActivity
   Affiliation:
     is_a: DandiBaseModel
     slots:
@@ -844,12 +828,6 @@ classes:
       name:
         description: Name of organization
         required: true
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Affiliation''>>.'
-        ifabsent: string(Affiliation)
-        equals_string: Affiliation
   Agent:
     is_a: DandiBaseModel
     slots:
@@ -864,12 +842,6 @@ classes:
         required: false
       name:
         required: true
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Agent''>>.'
-        ifabsent: string(Agent)
-        equals_string: Agent
       url:
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
@@ -891,42 +863,15 @@ classes:
         - range: string
         - range: string
           multivalued: true
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Allele''>>.'
-        ifabsent: string(Allele)
-        equals_string: Allele
   Anatomy:
     description: UBERON or other identifier for anatomical part studied
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Anatomy''>>.'
-        ifabsent: string(Anatomy)
-        equals_string: Anatomy
   ApproachType:
     description: Identifier for approach used
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.ApproachType''>>.'
-        ifabsent: string(ApproachType)
-        equals_string: ApproachType
   AssayType:
     description: OBI based identifier for the assay(s) used
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.AssayType''>>.'
-        ifabsent: string(AssayType)
-        equals_string: AssayType
   Asset:
     description: Metadata used to describe an asset on the server.
     notes:
@@ -958,12 +903,6 @@ classes:
     - species
     - variableMeasured
     slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.AssetsSummary''>>.'
-        ifabsent: string(AssetsSummary)
-        equals_string: AssetsSummary
       species:
         multivalued: true
       variableMeasured:
@@ -1010,12 +949,6 @@ classes:
           at 0xADDRESS>.'
         range: uri
         pattern: ^(?i:http|https)://[^\s]+$
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.BareAsset''>>.'
-        ifabsent: string(Asset)
-        equals_string: Asset
       variableMeasured:
         range: PropertyValue
       wasAttributedTo:
@@ -1045,11 +978,6 @@ classes:
         description: The name of the item.
         required: false
         pattern: ^(?=.{,150}$)
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.BaseType''>>.'
-        ifabsent: string(BaseType)
   BioSample:
     description: Description of the sample that was studied
     is_a: DandiBaseModel
@@ -1068,12 +996,6 @@ classes:
         required: true
       sameAs:
         range: string
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.BioSample''>>.'
-        ifabsent: string(BioSample)
-        equals_string: BioSample
       wasAttributedTo:
         description: Participant(s) or Subject(s) associated with this sample.
       wasDerivedFrom:
@@ -1127,11 +1049,6 @@ classes:
           at 0xADDRESS>.'
         range: uri
         pattern: ^(?i:http|https)://[^\s]+$
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.CommonModel''>>.'
-        ifabsent: string(CommonModel)
       url:
         description: permalink to the item
         notes:
@@ -1149,12 +1066,6 @@ classes:
     slot_usage:
       email:
         description: Email address of contact.
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.ContactPoint''>>.'
-        ifabsent: string(ContactPoint)
-        equals_string: ContactPoint
       url:
         description: A Web page to find information on how to contact.
         notes:
@@ -1185,15 +1096,6 @@ classes:
         ifabsent: 'True'
       name:
         required: false
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Contributor''>>.'
-        ifabsent: string(Contributor)
-        any_of:
-        - equals_string: Contributor
-        - equals_string: Organization
-        - equals_string: Person
       url:
         notes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
@@ -1208,11 +1110,6 @@ classes:
       id:
         description: Uniform resource identifier
         required: false
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.DandiBaseModel''>>.'
-        ifabsent: string(DandiBaseModel)
   Dandiset:
     description: A body of structured information describing a DANDI dataset.
     notes:
@@ -1258,24 +1155,11 @@ classes:
         description: Known DANDI URLs of the Dandiset at other DANDI instances.
         range: string
         pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Dandiset''>>.'
-        ifabsent: string(Dandiset)
-        equals_string: Dandiset
   Disorder:
     description: Biolink, SNOMED, or other identifier for disorder studied
     is_a: BaseType
     slots:
     - dxdate
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Disorder''>>.'
-        ifabsent: string(Disorder)
-        equals_string: Disorder
   Equipment:
     is_a: DandiBaseModel
     slots:
@@ -1294,12 +1178,6 @@ classes:
         title: Title
         required: true
         pattern: ^(?=.{,150}$)
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Equipment''>>.'
-        ifabsent: string(Equipment)
-        equals_string: Equipment
   EthicsApproval:
     description: Information about ethics committee approval for project
     is_a: DandiBaseModel
@@ -1315,22 +1193,9 @@ classes:
         title: Approved protocol identifier
         range: string
         required: true
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.EthicsApproval''>>.'
-        ifabsent: string(EthicsApproval)
-        equals_string: EthicsApproval
   GenericType:
     description: An object to capture any type for about
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.GenericType''>>.'
-        ifabsent: string(GenericType)
-        equals_string: GenericType
   GenotypeInfo:
     is_a: DandiBaseModel
     slots:
@@ -1338,12 +1203,6 @@ classes:
     - locus
     - wasGeneratedBy
     slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.GenotypeInfo''>>.'
-        ifabsent: string(GenotypeInfo)
-        equals_string: GenotypeInfo
       wasGeneratedBy:
         description: Information about session activity used to determine
           genotype.
@@ -1362,22 +1221,9 @@ classes:
         - range: string
         - range: string
           multivalued: true
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Locus''>>.'
-        ifabsent: string(Locus)
-        equals_string: Locus
   MeasurementTechniqueType:
     description: Identifier for measurement technique used
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.MeasurementTechniqueType''>>.'
-        ifabsent: string(MeasurementTechniqueType)
-        equals_string: MeasurementTechniqueType
   Organization:
     is_a: Contributor
     slots:
@@ -1423,12 +1269,6 @@ classes:
         description: An identifier to link participants or subjects across
           datasets.
         range: string
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Participant''>>.'
-        ifabsent: string(Participant)
-        equals_string: Participant
       species:
         description: An identifier indicating the taxonomic classification of
           the participant or subject.
@@ -1463,28 +1303,11 @@ classes:
     - unitText
     - value
     - valueReference
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.PropertyValue''>>.'
-        ifabsent: string(PropertyValue)
-        equals_string: PropertyValue
   Publishable:
     is_a: DandiBaseModel
     slots:
     - datePublished
     - publishedBy
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Publishable''>>.'
-        ifabsent: string(Publishable)
-        any_of:
-        - equals_string: Publishable
-        - equals_string: Dandiset
-        - equals_string: Asset
   PublishActivity:
     is_a: Activity
   PublishedAsset:
@@ -1501,10 +1324,6 @@ classes:
       id:
         pattern:
           ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.PublishedAsset''>>.'
   PublishedDandiset:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
@@ -1524,11 +1343,6 @@ classes:
     slots:
     - doi
     - releaseNotes
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.PublishedDandiset''>>.'
   RelatedParticipant:
     is_a: DandiBaseModel
     slots:
@@ -1549,12 +1363,6 @@ classes:
           <relation> relatedParticipant/Subject.'
         title: Participant or subject relation
         range: ParticipantRelationType
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.RelatedParticipant''>>.'
-        ifabsent: string(RelatedParticipant)
-        equals_string: RelatedParticipant
       url:
         title: URL of the related participant or subject
         notes:
@@ -1587,12 +1395,6 @@ classes:
         description: Name of the repository in which the resource is housed.
         title: Name of the repository
         range: string
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Resource''>>.'
-        ifabsent: string(Resource)
-        equals_string: Resource
       url:
         title: URL of the resource
         notes:
@@ -1603,13 +1405,6 @@ classes:
   SampleType:
     description: OBI based identifier for the sample type used
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.SampleType''>>.'
-        ifabsent: string(SampleType)
-        equals_string: SampleType
   Session:
     is_a: Activity
     slot_usage:
@@ -1621,13 +1416,6 @@ classes:
   SexType:
     description: Identifier for the sex of the sample
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.SexType''>>.'
-        ifabsent: string(SexType)
-        equals_string: SexType
   Software:
     is_a: DandiBaseModel
     slots:
@@ -1644,12 +1432,6 @@ classes:
         pattern: ^RRID:.*
       name:
         required: true
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.Software''>>.'
-        ifabsent: string(Software)
-        equals_string: Software
       url:
         description: Web page for the software.
         notes:
@@ -1660,30 +1442,9 @@ classes:
   SpeciesType:
     description: Identifier for species of the sample
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.SpeciesType''>>.'
-        ifabsent: string(SpeciesType)
-        equals_string: SpeciesType
   StandardsType:
     description: Identifier for data standard used
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.StandardsType''>>.'
-        ifabsent: string(StandardsType)
-        equals_string: StandardsType
   StrainType:
     description: Identifier for the strain of the sample
     is_a: BaseType
-    slot_usage:
-      schemaKey:
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method DandiBaseModel.ensure_schemakey of <class ''dandischema.models.StrainType''>>.'
-        ifabsent: string(StrainType)
-        equals_string: StrainType

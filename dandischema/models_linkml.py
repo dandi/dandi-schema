@@ -203,8 +203,8 @@ class LicenseType(str, Enum):
     An enumeration.
     """
 
-    CC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
     CC0_1FULL_STOP0 = "spdx:CC0-1.0"
+    CC_BY_4FULL_STOP0 = "spdx:CC-BY-4.0"
 
 
 class ParticipantRelationType(str, Enum):
@@ -341,19 +341,7 @@ class DandiBaseModel(ConfiguredBaseModel):
                     "description": "Uniform resource identifier",
                     "name": "id",
                     "required": False,
-                },
-                "schemaKey": {
-                    "ifabsent": "string(DandiBaseModel)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.DandiBaseModel'>>."
-                    ],
-                },
+                }
             },
         }
     )
@@ -366,17 +354,7 @@ class DandiBaseModel(ConfiguredBaseModel):
     schemaKey: Literal["DandiBaseModel"] = Field(
         default="DandiBaseModel",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(DandiBaseModel)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.DandiBaseModel'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -401,19 +379,6 @@ class AccessRequirements(DandiBaseModel):
                     "restricted",
                     "name": "description",
                     "required": False,
-                },
-                "schemaKey": {
-                    "equals_string": "AccessRequirements",
-                    "ifabsent": "string(AccessRequirements)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.AccessRequirements'>>."
-                    ],
                 },
             },
         }
@@ -462,18 +427,7 @@ class AccessRequirements(DandiBaseModel):
     schemaKey: Literal["AccessRequirements"] = Field(
         default="AccessRequirements",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "AccessRequirements",
-                "ifabsent": "string(AccessRequirements)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.AccessRequirements'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -503,24 +457,6 @@ class Activity(DandiBaseModel):
                     "pattern": "^(?=.{,150}$)",
                     "required": True,
                     "title": "Title",
-                },
-                "schemaKey": {
-                    "any_of": [
-                        {"equals_string": "Activity"},
-                        {"equals_string": "Project"},
-                        {"equals_string": "Session"},
-                        {"equals_string": "PublishActivity"},
-                    ],
-                    "ifabsent": "string(Activity)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Activity'>>."
-                    ],
                 },
             },
         }
@@ -637,23 +573,7 @@ class Activity(DandiBaseModel):
     schemaKey: Literal["Activity"] = Field(
         default="Activity",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Activity"},
-                    {"equals_string": "Project"},
-                    {"equals_string": "Session"},
-                    {"equals_string": "PublishActivity"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Activity)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Activity'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -688,19 +608,6 @@ class Affiliation(DandiBaseModel):
                     "description": "Name of organization",
                     "name": "name",
                     "required": True,
-                },
-                "schemaKey": {
-                    "equals_string": "Affiliation",
-                    "ifabsent": "string(Affiliation)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Affiliation'>>."
-                    ],
                 },
             },
         }
@@ -761,18 +668,7 @@ class Affiliation(DandiBaseModel):
     schemaKey: Literal["Affiliation"] = Field(
         default="Affiliation",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Affiliation",
-                "ifabsent": "string(Affiliation)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Affiliation'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -803,19 +699,6 @@ class Agent(DandiBaseModel):
                     "title": "Identifier",
                 },
                 "name": {"name": "name", "required": True},
-                "schemaKey": {
-                    "equals_string": "Agent",
-                    "ifabsent": "string(Agent)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Agent'>>."
-                    ],
-                },
                 "url": {
                     "name": "url",
                     "notes": [
@@ -907,18 +790,7 @@ class Agent(DandiBaseModel):
     schemaKey: Literal["Agent"] = Field(
         default="Agent",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Agent",
-                "ifabsent": "string(Agent)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Agent'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -950,20 +822,7 @@ class Allele(DandiBaseModel):
                     "name": "identifier",
                     "range": "Any",
                     "required": True,
-                },
-                "schemaKey": {
-                    "equals_string": "Allele",
-                    "ifabsent": "string(Allele)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Allele'>>."
-                    ],
-                },
+                }
             },
         }
     )
@@ -1012,18 +871,7 @@ class Allele(DandiBaseModel):
     schemaKey: Literal["Allele"] = Field(
         default="Allele",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Allele",
-                "ifabsent": "string(Allele)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Allele'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1037,19 +885,6 @@ class AssetsSummary(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "AssetsSummary",
-                    "ifabsent": "string(AssetsSummary)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.AssetsSummary'>>."
-                    ],
-                },
                 "species": {"multivalued": True, "name": "species"},
                 "variableMeasured": {"name": "variableMeasured", "range": "string"},
             },
@@ -1110,18 +945,7 @@ class AssetsSummary(DandiBaseModel):
     schemaKey: Literal["AssetsSummary"] = Field(
         default="AssetsSummary",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "AssetsSummary",
-                "ifabsent": "string(AssetsSummary)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.AssetsSummary'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1167,18 +991,6 @@ class BaseType(DandiBaseModel):
                     "name": "name",
                     "pattern": "^(?=.{,150}$)",
                     "required": False,
-                },
-                "schemaKey": {
-                    "ifabsent": "string(BaseType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.BaseType'>>."
-                    ],
                 },
             },
         }
@@ -1254,17 +1066,7 @@ class BaseType(DandiBaseModel):
     schemaKey: Literal["BaseType"] = Field(
         default="BaseType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(BaseType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.BaseType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1288,24 +1090,7 @@ class Anatomy(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "Anatomy",
-                    "ifabsent": "string(Anatomy)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Anatomy'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -1378,18 +1163,7 @@ class Anatomy(BaseType):
     schemaKey: Literal["Anatomy"] = Field(
         default="Anatomy",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Anatomy",
-                "ifabsent": "string(Anatomy)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Anatomy'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1413,24 +1187,7 @@ class ApproachType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "ApproachType",
-                    "ifabsent": "string(ApproachType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.ApproachType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -1503,18 +1260,7 @@ class ApproachType(BaseType):
     schemaKey: Literal["ApproachType"] = Field(
         default="ApproachType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "ApproachType",
-                "ifabsent": "string(ApproachType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.ApproachType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1538,24 +1284,7 @@ class AssayType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "AssayType",
-                    "ifabsent": "string(AssayType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.AssayType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -1628,18 +1357,7 @@ class AssayType(BaseType):
     schemaKey: Literal["AssayType"] = Field(
         default="AssayType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "AssayType",
-                "ifabsent": "string(AssayType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.AssayType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1672,19 +1390,6 @@ class BioSample(DandiBaseModel):
                     "required": True,
                 },
                 "sameAs": {"name": "sameAs", "range": "string"},
-                "schemaKey": {
-                    "equals_string": "BioSample",
-                    "ifabsent": "string(BioSample)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.BioSample'>>."
-                    ],
-                },
                 "wasAttributedTo": {
                     "description": "Participant(s) or "
                     "Subject(s) associated with "
@@ -1770,18 +1475,7 @@ class BioSample(DandiBaseModel):
     schemaKey: Literal["BioSample"] = Field(
         default="BioSample",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "BioSample",
-                "ifabsent": "string(BioSample)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.BioSample'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -1837,18 +1531,6 @@ class CommonModel(DandiBaseModel):
                     ],
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "range": "uri",
-                },
-                "schemaKey": {
-                    "ifabsent": "string(CommonModel)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.CommonModel'>>."
-                    ],
                 },
                 "url": {
                     "description": "permalink to the item",
@@ -2076,17 +1758,7 @@ class CommonModel(DandiBaseModel):
     schemaKey: Literal["CommonModel"] = Field(
         default="CommonModel",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(CommonModel)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.CommonModel'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -2192,19 +1864,6 @@ class BareAsset(CommonModel):
                     ],
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "range": "uri",
-                },
-                "schemaKey": {
-                    "equals_string": "Asset",
-                    "ifabsent": "string(Asset)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.BareAsset'>>."
-                    ],
                 },
                 "variableMeasured": {
                     "name": "variableMeasured",
@@ -2551,18 +2210,7 @@ class BareAsset(CommonModel):
     schemaKey: Literal["BareAsset"] = Field(
         default="BareAsset",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Asset",
-                "ifabsent": "string(Asset)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.BareAsset'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -3042,18 +2690,7 @@ class Asset(BareAsset):
     schemaKey: Literal["Asset"] = Field(
         default="Asset",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Asset",
-                "ifabsent": "string(Asset)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.BareAsset'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -3170,19 +2807,6 @@ class ContactPoint(DandiBaseModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
                 "email": {"description": "Email address of contact.", "name": "email"},
-                "schemaKey": {
-                    "equals_string": "ContactPoint",
-                    "ifabsent": "string(ContactPoint)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.ContactPoint'>>."
-                    ],
-                },
                 "url": {
                     "description": "A Web page to find information on how "
                     "to contact.",
@@ -3245,18 +2869,7 @@ class ContactPoint(DandiBaseModel):
     schemaKey: Literal["ContactPoint"] = Field(
         default="ContactPoint",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "ContactPoint",
-                "ifabsent": "string(ContactPoint)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.ContactPoint'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -3298,23 +2911,6 @@ class Contributor(DandiBaseModel):
                     "name": "includeInCitation",
                 },
                 "name": {"name": "name", "required": False},
-                "schemaKey": {
-                    "any_of": [
-                        {"equals_string": "Contributor"},
-                        {"equals_string": "Organization"},
-                        {"equals_string": "Person"},
-                    ],
-                    "ifabsent": "string(Contributor)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Contributor'>>."
-                    ],
-                },
                 "url": {
                     "name": "url",
                     "notes": [
@@ -3439,22 +3035,7 @@ class Contributor(DandiBaseModel):
     schemaKey: Literal["Contributor"] = Field(
         default="Contributor",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Contributor"},
-                    {"equals_string": "Organization"},
-                    {"equals_string": "Person"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Contributor)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Contributor'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -3526,19 +3107,6 @@ class Dandiset(CommonModel):
                     "name": "sameAs",
                     "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
                     "range": "string",
-                },
-                "schemaKey": {
-                    "equals_string": "Dandiset",
-                    "ifabsent": "string(Dandiset)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Dandiset'>>."
-                    ],
                 },
             },
         }
@@ -3824,18 +3392,7 @@ class Dandiset(CommonModel):
     schemaKey: Literal["Dandiset"] = Field(
         default="Dandiset",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Dandiset",
-                "ifabsent": "string(Dandiset)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Dandiset'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -3939,24 +3496,7 @@ class Disorder(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "Disorder",
-                    "ifabsent": "string(Disorder)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Disorder'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     dxdate: Optional[list[Union[date, datetime]]] = Field(
@@ -4040,18 +3580,7 @@ class Disorder(BaseType):
     schemaKey: Literal["Disorder"] = Field(
         default="Disorder",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Disorder",
-                "ifabsent": "string(Disorder)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Disorder'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4090,19 +3619,6 @@ class Equipment(DandiBaseModel):
                     "pattern": "^(?=.{,150}$)",
                     "required": True,
                     "title": "Title",
-                },
-                "schemaKey": {
-                    "equals_string": "Equipment",
-                    "ifabsent": "string(Equipment)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Equipment'>>."
-                    ],
                 },
             },
         }
@@ -4176,18 +3692,7 @@ class Equipment(DandiBaseModel):
     schemaKey: Literal["Equipment"] = Field(
         default="Equipment",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Equipment",
-                "ifabsent": "string(Equipment)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Equipment'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4227,19 +3732,6 @@ class EthicsApproval(DandiBaseModel):
                     "range": "string",
                     "required": True,
                     "title": "Approved protocol identifier",
-                },
-                "schemaKey": {
-                    "equals_string": "EthicsApproval",
-                    "ifabsent": "string(EthicsApproval)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.EthicsApproval'>>."
-                    ],
                 },
             },
         }
@@ -4289,18 +3781,7 @@ class EthicsApproval(DandiBaseModel):
     schemaKey: Literal["EthicsApproval"] = Field(
         default="EthicsApproval",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "EthicsApproval",
-                "ifabsent": "string(EthicsApproval)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.EthicsApproval'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4311,24 +3792,7 @@ class GenericType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "GenericType",
-                    "ifabsent": "string(GenericType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.GenericType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -4401,18 +3865,7 @@ class GenericType(BaseType):
     schemaKey: Literal["GenericType"] = Field(
         default="GenericType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "GenericType",
-                "ifabsent": "string(GenericType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.GenericType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4435,26 +3888,13 @@ class GenotypeInfo(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "GenotypeInfo",
-                    "ifabsent": "string(GenotypeInfo)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.GenotypeInfo'>>."
-                    ],
-                },
                 "wasGeneratedBy": {
                     "description": "Information about session "
                     "activity used to determine "
                     "genotype.",
                     "name": "wasGeneratedBy",
                     "range": "Session",
-                },
+                }
             },
         }
     )
@@ -4484,18 +3924,7 @@ class GenotypeInfo(DandiBaseModel):
     schemaKey: Literal["GenotypeInfo"] = Field(
         default="GenotypeInfo",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "GenotypeInfo",
-                "ifabsent": "string(GenotypeInfo)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.GenotypeInfo'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4514,20 +3943,7 @@ class Locus(DandiBaseModel):
                     "name": "identifier",
                     "range": "Any",
                     "required": True,
-                },
-                "schemaKey": {
-                    "equals_string": "Locus",
-                    "ifabsent": "string(Locus)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Locus'>>."
-                    ],
-                },
+                }
             },
         }
     )
@@ -4573,18 +3989,7 @@ class Locus(DandiBaseModel):
     schemaKey: Literal["Locus"] = Field(
         default="Locus",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Locus",
-                "ifabsent": "string(Locus)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Locus'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4595,24 +4000,7 @@ class MeasurementTechniqueType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "MeasurementTechniqueType",
-                    "ifabsent": "string(MeasurementTechniqueType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.MeasurementTechniqueType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -4685,18 +4073,7 @@ class MeasurementTechniqueType(BaseType):
     schemaKey: Literal["MeasurementTechniqueType"] = Field(
         default="MeasurementTechniqueType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "MeasurementTechniqueType",
-                "ifabsent": "string(MeasurementTechniqueType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.MeasurementTechniqueType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4863,22 +4240,7 @@ class Organization(Contributor):
     schemaKey: Literal["Organization"] = Field(
         default="Organization",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Contributor"},
-                    {"equals_string": "Organization"},
-                    {"equals_string": "Person"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Contributor)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Contributor'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -4928,19 +4290,6 @@ class Participant(DandiBaseModel):
                     "or subjects across datasets.",
                     "name": "sameAs",
                     "range": "string",
-                },
-                "schemaKey": {
-                    "equals_string": "Participant",
-                    "ifabsent": "string(Participant)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Participant'>>."
-                    ],
                 },
                 "species": {
                     "description": "An identifier indicating the "
@@ -5060,18 +4409,7 @@ class Participant(DandiBaseModel):
     schemaKey: Literal["Participant"] = Field(
         default="Participant",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Participant",
-                "ifabsent": "string(Participant)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Participant'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -5212,22 +4550,7 @@ class Person(Contributor):
     schemaKey: Literal["Person"] = Field(
         default="Person",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Contributor"},
-                    {"equals_string": "Organization"},
-                    {"equals_string": "Person"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Contributor)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Contributor'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -5388,23 +4711,7 @@ class Project(Activity):
     schemaKey: Literal["Project"] = Field(
         default="Project",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Activity"},
-                    {"equals_string": "Project"},
-                    {"equals_string": "Session"},
-                    {"equals_string": "PublishActivity"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Activity)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Activity'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -5424,24 +4731,7 @@ class Project(Activity):
 
 class PropertyValue(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "PropertyValue",
-                    "ifabsent": "string(PropertyValue)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.PropertyValue'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     maxValue: Optional[float] = Field(
@@ -5524,46 +4814,14 @@ class PropertyValue(DandiBaseModel):
     schemaKey: Literal["PropertyValue"] = Field(
         default="PropertyValue",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "PropertyValue",
-                "ifabsent": "string(PropertyValue)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.PropertyValue'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
 
 class Publishable(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "any_of": [
-                        {"equals_string": "Publishable"},
-                        {"equals_string": "Dandiset"},
-                        {"equals_string": "Asset"},
-                    ],
-                    "ifabsent": "string(Publishable)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Publishable'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     datePublished: datetime = Field(
@@ -5599,22 +4857,7 @@ class Publishable(DandiBaseModel):
     schemaKey: Literal["Publishable"] = Field(
         default="Publishable",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Publishable"},
-                    {"equals_string": "Dandiset"},
-                    {"equals_string": "Asset"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Publishable)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Publishable'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -5735,23 +4978,7 @@ class PublishActivity(Activity):
     schemaKey: Literal["PublishActivity"] = Field(
         default="PublishActivity",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Activity"},
-                    {"equals_string": "Project"},
-                    {"equals_string": "Session"},
-                    {"equals_string": "PublishActivity"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Activity)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Activity'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -5787,18 +5014,7 @@ class PublishedAsset(Publishable, Asset):
                 "id": {
                     "name": "id",
                     "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
-                },
-                "schemaKey": {
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.PublishedAsset'>>."
-                    ],
-                },
+                }
             },
         }
     )
@@ -6200,23 +5416,7 @@ class PublishedAsset(Publishable, Asset):
     schemaKey: Literal["PublishedAsset"] = Field(
         default="PublishedAsset",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Publishable"},
-                    {"equals_string": "Dandiset"},
-                    {"equals_string": "Asset"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Asset",
-                "ifabsent": "string(Publishable)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.PublishedAsset'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -6364,19 +5564,6 @@ class PublishedDandiset(Publishable, Dandiset):
                 "model's name. Adjustment to the inherited `schemaKey` slot may be "
                 "needed.",
             ],
-            "slot_usage": {
-                "schemaKey": {
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.PublishedDandiset'>>."
-                    ],
-                }
-            },
         }
     )
 
@@ -6697,23 +5884,7 @@ class PublishedDandiset(Publishable, Dandiset):
     schemaKey: Literal["PublishedDandiset"] = Field(
         default="PublishedDandiset",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Publishable"},
-                    {"equals_string": "Dandiset"},
-                    {"equals_string": "Asset"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Dandiset",
-                "ifabsent": "string(Publishable)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.PublishedDandiset'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -6851,19 +6022,6 @@ class RelatedParticipant(DandiBaseModel):
                     "range": "ParticipantRelationType",
                     "title": "Participant or subject relation",
                 },
-                "schemaKey": {
-                    "equals_string": "RelatedParticipant",
-                    "ifabsent": "string(RelatedParticipant)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.RelatedParticipant'>>."
-                    ],
-                },
                 "url": {
                     "name": "url",
                     "notes": [
@@ -6964,18 +6122,7 @@ class RelatedParticipant(DandiBaseModel):
     schemaKey: Literal["RelatedParticipant"] = Field(
         default="RelatedParticipant",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "RelatedParticipant",
-                "ifabsent": "string(RelatedParticipant)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.RelatedParticipant'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7023,19 +6170,6 @@ class Resource(DandiBaseModel):
                     "name": "repository",
                     "range": "string",
                     "title": "Name of the repository",
-                },
-                "schemaKey": {
-                    "equals_string": "Resource",
-                    "ifabsent": "string(Resource)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Resource'>>."
-                    ],
                 },
                 "url": {
                     "name": "url",
@@ -7149,18 +6283,7 @@ class Resource(DandiBaseModel):
     schemaKey: Literal["Resource"] = Field(
         default="Resource",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Resource",
-                "ifabsent": "string(Resource)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Resource'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7184,24 +6307,7 @@ class SampleType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "SampleType",
-                    "ifabsent": "string(SampleType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.SampleType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7274,18 +6380,7 @@ class SampleType(BaseType):
     schemaKey: Literal["SampleType"] = Field(
         default="SampleType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "SampleType",
-                "ifabsent": "string(SampleType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.SampleType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7433,23 +6528,7 @@ class Session(Activity):
     schemaKey: Literal["Session"] = Field(
         default="Session",
         json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"equals_string": "Activity"},
-                    {"equals_string": "Project"},
-                    {"equals_string": "Session"},
-                    {"equals_string": "PublishActivity"},
-                ],
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "ifabsent": "string(Activity)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Activity'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7473,24 +6552,7 @@ class SexType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "SexType",
-                    "ifabsent": "string(SexType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.SexType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7563,18 +6625,7 @@ class SexType(BaseType):
     schemaKey: Literal["SexType"] = Field(
         default="SexType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "SexType",
-                "ifabsent": "string(SexType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.SexType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7606,19 +6657,6 @@ class Software(DandiBaseModel):
                     "title": "Research resource identifier",
                 },
                 "name": {"name": "name", "required": True},
-                "schemaKey": {
-                    "equals_string": "Software",
-                    "ifabsent": "string(Software)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.Software'>>."
-                    ],
-                },
                 "url": {
                     "description": "Web page for the software.",
                     "name": "url",
@@ -7716,18 +6754,7 @@ class Software(DandiBaseModel):
     schemaKey: Literal["Software"] = Field(
         default="Software",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "Software",
-                "ifabsent": "string(Software)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.Software'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7764,24 +6791,7 @@ class SpeciesType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "SpeciesType",
-                    "ifabsent": "string(SpeciesType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.SpeciesType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7854,18 +6864,7 @@ class SpeciesType(BaseType):
     schemaKey: Literal["SpeciesType"] = Field(
         default="SpeciesType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "SpeciesType",
-                "ifabsent": "string(SpeciesType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.SpeciesType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -7889,24 +6888,7 @@ class StandardsType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "StandardsType",
-                    "ifabsent": "string(StandardsType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.StandardsType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -7979,18 +6961,7 @@ class StandardsType(BaseType):
     schemaKey: Literal["StandardsType"] = Field(
         default="StandardsType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "StandardsType",
-                "ifabsent": "string(StandardsType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.StandardsType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
@@ -8014,24 +6985,7 @@ class StrainType(BaseType):
     """
 
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "slot_usage": {
-                "schemaKey": {
-                    "equals_string": "StrainType",
-                    "ifabsent": "string(StrainType)",
-                    "name": "schemaKey",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate "
-                        "the logic contained in the after "
-                        "validation function, <bound method "
-                        "DandiBaseModel.ensure_schemakey of "
-                        "<class "
-                        "'dandischema.models.StrainType'>>."
-                    ],
-                }
-            },
-        }
+        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
     )
 
     identifier: Optional[str] = Field(
@@ -8104,18 +7058,7 @@ class StrainType(BaseType):
     schemaKey: Literal["StrainType"] = Field(
         default="StrainType",
         json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "equals_string": "StrainType",
-                "ifabsent": "string(StrainType)",
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "DandiBaseModel.ensure_schemakey of <class "
-                    "'dandischema.models.StrainType'>>."
-                ],
-            }
+            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
 
