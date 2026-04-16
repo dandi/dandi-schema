@@ -104,10 +104,10 @@ enums:
   LicenseType:
     description: An enumeration.
     permissible_values:
-      spdx:CC0-1.0:
-        meaning: spdx:CC0-1.0
       spdx:CC-BY-4.0:
         meaning: spdx:CC-BY-4.0
+      spdx:CC0-1.0:
+        meaning: spdx:CC0-1.0
   ParticipantRelationType:
     description: An enumeration of participant relations
     permissible_values:
