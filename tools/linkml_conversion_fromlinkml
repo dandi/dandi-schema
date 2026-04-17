@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Script which will converts from linkml model into all other serializations for comparisons
+#
+
+set -eu
+
+# 2 pydantic from linkml
+
+hatch run linkml-auto-converted:2pydantic
+# add (re)generated files
+git add dandischema/models_linkml.py
+
+# for comparisons sake -- from linkml to jsonschema
+hatch run linkml-auto-converted:2json
+# Rename for consistency
+(
+    cd dandischema/models_linkml
+    for f in *; do
+        nf=$(echo $f | tr '[A-Z]' '[a-z]' | sed -e 's,published,published-,g')
+        mv "$f" "$nf"
+    done
+)
+git add dandischema/models_linkml
+
+hatch run linkml-auto-converted:pydantic2json
+rmdir dandischema/models_pydantic/[0-9]*
+git add dandischema/models_pydantic
+
+
+# because we have pre-commit.ci doing that behind our back too!
+pre-commit run --all || :
