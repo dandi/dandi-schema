@@ -54,6 +54,14 @@ git add dandischema/models_linkml.py dandischema/models.yaml
 git mv dandischema/models.py dandischema/models_orig.py
 git mv dandischema/models_importstab.py dandischema/models.py
 
+# for comparisons sake
+hatch run linkml-auto-converted:2json
+hatch run linkml-auto-converted:pydantic2json
+
+git add dandischema/models_linkml
+git add dandischema/models_pydantic
+
+
 # because we have pre-commit.ci doing that behind our back too!
 pre-commit run --all || :
 
