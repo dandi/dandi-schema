@@ -54,11 +54,20 @@ git add dandischema/models_linkml.py dandischema/models.yaml
 git mv dandischema/models.py dandischema/models_orig.py
 git mv dandischema/models_importstab.py dandischema/models.py
 
-# for comparisons sake
+# for comparisons sake -- from linkml to jsonschema
 hatch run linkml-auto-converted:2json
-hatch run linkml-auto-converted:pydantic2json
-
+# Rename for consistency
+(
+    cd dandischema/models_linkml
+    for f in *; do
+        nf=$(echo $f | tr '[A-Z]' '[a-z]' | sed -e 's,published,published-,g')
+        mv "$f" "$nf"
+    done
+)
 git add dandischema/models_linkml
+
+hatch run linkml-auto-converted:pydantic2json
+rmdir dandischema/models_pydantic/[0-9]*
 git add dandischema/models_pydantic
 
 
