@@ -21,7 +21,6 @@ hatch run linkml-auto-converted:2json
         mv "$f" "$nf"
     done
 )
-git add dandischema/models_linkml
 
 hatch run linkml-auto-converted:pydantic2json
 rmdir dandischema/models_pydantic/[0-9]*
@@ -30,3 +29,5 @@ git add dandischema/models_pydantic
 
 # because we have pre-commit.ci doing that behind our back too!
 pre-commit run --all || :
+
+git add dandischema/models_linkml dandischema/models_linkml.py
