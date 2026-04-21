@@ -187,9 +187,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Title",
@@ -533,9 +530,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -631,9 +625,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -946,9 +937,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -1073,9 +1061,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Title",
@@ -1245,9 +1230,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -1351,9 +1333,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -1778,9 +1757,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name of project",
@@ -1959,9 +1935,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Title",
@@ -2383,9 +2356,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name of session",
@@ -2663,9 +2633,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -2761,9 +2728,6 @@
               "RelatedParticipant",
               "Resource",
               "Software"
-            ],
-            "notes": [
-              "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
             ]
           },
           "title": "Name",
@@ -2973,9 +2937,6 @@
           "RelatedParticipant",
           "Resource",
           "Software"
-        ],
-        "notes": [
-          "pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed as a pattern entry in the slot's `all_of`."
         ]
       },
       "title": "Title",

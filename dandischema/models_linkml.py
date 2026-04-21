@@ -455,12 +455,6 @@ class Activity(DandiBaseModel):
                     "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "The name of the activity.",
                     "name": "name",
-                    "notes": [
-                        "pydantic2linkml: Length constraint of "
-                        "min_length=None, max_length=150 expressed "
-                        "as a pattern entry in the slot's "
-                        "`all_of`."
-                    ],
                     "required": True,
                     "title": "Title",
                 },
@@ -528,11 +522,6 @@ class Activity(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -989,12 +978,6 @@ class BaseType(DandiBaseModel):
                     "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "The name of the item.",
                     "name": "name",
-                    "notes": [
-                        "pydantic2linkml: Length constraint of "
-                        "min_length=None, max_length=150 expressed "
-                        "as a pattern entry in the slot's "
-                        "`all_of`."
-                    ],
                     "required": False,
                 },
             },
@@ -1060,11 +1043,6 @@ class BaseType(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -1151,11 +1129,6 @@ class Anatomy(BaseType):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -1241,11 +1214,6 @@ class ApproachType(BaseType):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -1330,11 +1298,6 @@ class AssayType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -1493,12 +1456,6 @@ class CommonModel(DandiBaseModel):
                     "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "The name of the item.",
                     "name": "name",
-                    "notes": [
-                        "pydantic2linkml: Length constraint of "
-                        "min_length=None, max_length=150 expressed "
-                        "as a pattern entry in the slot's "
-                        "`all_of`."
-                    ],
                     "required": False,
                     "title": "Title",
                 },
@@ -1645,11 +1602,6 @@ class CommonModel(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -2090,11 +2042,6 @@ class BareAsset(CommonModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -2563,11 +2510,6 @@ class Asset(BareAsset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -3259,11 +3201,6 @@ class Dandiset(CommonModel):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -3525,11 +3462,6 @@ class Disorder(BaseType):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -3565,12 +3497,6 @@ class Equipment(DandiBaseModel):
                     "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "A name for the equipment.",
                     "name": "name",
-                    "notes": [
-                        "pydantic2linkml: Length constraint of "
-                        "min_length=None, max_length=150 expressed "
-                        "as a pattern entry in the slot's "
-                        "`all_of`."
-                    ],
                     "required": True,
                     "title": "Title",
                 },
@@ -3635,11 +3561,6 @@ class Equipment(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -3801,11 +3722,6 @@ class GenericType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -4002,11 +3918,6 @@ class MeasurementTechniqueType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -4594,11 +4505,6 @@ class Project(Activity):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -4853,11 +4759,6 @@ class PublishActivity(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -5239,11 +5140,6 @@ class PublishedAsset(Publishable, Asset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -5700,11 +5596,6 @@ class PublishedDandiset(Publishable, Dandiset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -6275,11 +6166,6 @@ class SampleType(BaseType):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -6375,11 +6261,6 @@ class Session(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -6505,11 +6386,6 @@ class SexType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
@@ -6738,11 +6614,6 @@ class SpeciesType(BaseType):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -6828,11 +6699,6 @@ class StandardsType(BaseType):
                     "Resource",
                     "Software",
                 ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
-                ],
             }
         },
     )
@@ -6917,11 +6783,6 @@ class StrainType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Length constraint of min_length=None, "
-                    "max_length=150 expressed as a pattern entry in the slot's "
-                    "`all_of`."
                 ],
             }
         },
