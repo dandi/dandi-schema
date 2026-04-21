@@ -69,6 +69,8 @@ python = "3.10"
 [tool.hatch.envs.linkml-auto-converted]
 dependencies = [
     "black",  # This allows `gen-pydantic` to format the generated Pydantic models with Black formatting
+    "linkml==1.10.0",
+    "linkml-runtime==1.10.0",
     "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git",
     "ruamel.yaml"
 ]
