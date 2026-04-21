@@ -811,8 +811,12 @@ classes:
       name:
         description: The name of the activity.
         title: Title
+        notes:
+        - 'pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed
+          as a pattern entry in the slot''s `all_of`.'
         required: true
-        pattern: ^(?=.{,150}$)
+        all_of:
+        - pattern: ^[\s\S]{,150}\Z
   Affiliation:
     is_a: DandiBaseModel
     slots:
@@ -976,8 +980,12 @@ classes:
           pattern: ^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\._]+$
       name:
         description: The name of the item.
+        notes:
+        - 'pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed
+          as a pattern entry in the slot''s `all_of`.'
         required: false
-        pattern: ^(?=.{,150}$)
+        all_of:
+        - pattern: ^[\s\S]{,150}\Z
   BioSample:
     description: Description of the sample that was studied
     is_a: DandiBaseModel
@@ -1039,8 +1047,12 @@ classes:
       name:
         description: The name of the item.
         title: Title
+        notes:
+        - 'pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed
+          as a pattern entry in the slot''s `all_of`.'
         required: false
-        pattern: ^(?=.{,150}$)
+        all_of:
+        - pattern: ^[\s\S]{,150}\Z
       repository:
         description: location of the item
         notes:
@@ -1176,8 +1188,12 @@ classes:
       name:
         description: A name for the equipment.
         title: Title
+        notes:
+        - 'pydantic2linkml: Length constraint of min_length=None, max_length=150 expressed
+          as a pattern entry in the slot''s `all_of`.'
         required: true
-        pattern: ^(?=.{,150}$)
+        all_of:
+        - pattern: ^[\s\S]{,150}\Z
   EthicsApproval:
     description: Information about ethics committee approval for project
     is_a: DandiBaseModel

@@ -45,14 +45,16 @@ for b in ${branches_to_merge[@]}; do
 done
 
 hatch run linkml-auto-converted:2linkml
-hatch run linkml-auto-converted:2pydantic
+git add dandischema/models.yaml
 
-# add (re)generated files
-git add dandischema/models_linkml.py dandischema/models.yaml
-
+# The renaming dance in preparation to accept converted pyndatic model
 # add our stab and rename original models.py
 git mv dandischema/models.py dandischema/models_orig.py
 git mv dandischema/models_importstab.py dandischema/models.py
+
+# Placed separately so we could play with changing linkml model and redoing the
+# conversion(s) and seeing the effect
+$(dirname $0)/linkml_conversion_fromlinkml
 
 # because we have pre-commit.ci doing that behind our back too!
 pre-commit run --all || :

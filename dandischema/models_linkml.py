@@ -452,9 +452,15 @@ class Activity(DandiBaseModel):
                     "required": False,
                 },
                 "name": {
+                    "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "The name of the activity.",
                     "name": "name",
-                    "pattern": "^(?=.{,150}$)",
+                    "notes": [
+                        "pydantic2linkml: Length constraint of "
+                        "min_length=None, max_length=150 expressed "
+                        "as a pattern entry in the slot's "
+                        "`all_of`."
+                    ],
                     "required": True,
                     "title": "Title",
                 },
@@ -510,6 +516,7 @@ class Activity(DandiBaseModel):
         description="""The name of the activity.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -521,7 +528,12 @@ class Activity(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -576,19 +588,6 @@ class Activity(DandiBaseModel):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class Affiliation(DandiBaseModel):
@@ -987,9 +986,15 @@ class BaseType(DandiBaseModel):
                     "required": False,
                 },
                 "name": {
+                    "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "The name of the item.",
                     "name": "name",
-                    "pattern": "^(?=.{,150}$)",
+                    "notes": [
+                        "pydantic2linkml: Length constraint of "
+                        "min_length=None, max_length=150 expressed "
+                        "as a pattern entry in the slot's "
+                        "`all_of`."
+                    ],
                     "required": False,
                 },
             },
@@ -1043,6 +1048,7 @@ class BaseType(DandiBaseModel):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -1054,7 +1060,12 @@ class BaseType(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -1069,19 +1080,6 @@ class BaseType(DandiBaseModel):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class Anatomy(BaseType):
@@ -1140,6 +1138,7 @@ class Anatomy(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -1151,7 +1150,12 @@ class Anatomy(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -1166,19 +1170,6 @@ class Anatomy(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class ApproachType(BaseType):
@@ -1237,6 +1228,7 @@ class ApproachType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -1248,7 +1240,12 @@ class ApproachType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -1263,19 +1260,6 @@ class ApproachType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class AssayType(BaseType):
@@ -1334,6 +1318,7 @@ class AssayType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -1345,7 +1330,12 @@ class AssayType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -1360,19 +1350,6 @@ class AssayType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class BioSample(DandiBaseModel):
@@ -1513,9 +1490,15 @@ class CommonModel(DandiBaseModel):
                 },
                 "license": {"name": "license", "required": False},
                 "name": {
+                    "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "The name of the item.",
                     "name": "name",
-                    "pattern": "^(?=.{,150}$)",
+                    "notes": [
+                        "pydantic2linkml: Length constraint of "
+                        "min_length=None, max_length=150 expressed "
+                        "as a pattern entry in the slot's "
+                        "`all_of`."
+                    ],
                     "required": False,
                     "title": "Title",
                 },
@@ -1650,6 +1633,7 @@ class CommonModel(DandiBaseModel):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -1661,7 +1645,12 @@ class CommonModel(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -1761,19 +1750,6 @@ class CommonModel(DandiBaseModel):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
     @field_validator("protocol")
     def pattern_protocol(cls, v):
@@ -2102,6 +2078,7 @@ class BareAsset(CommonModel):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -2113,7 +2090,12 @@ class BareAsset(CommonModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -2237,19 +2219,6 @@ class BareAsset(CommonModel):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid sameAs format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -2582,6 +2551,7 @@ class Asset(BareAsset):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -2593,7 +2563,12 @@ class Asset(BareAsset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -2745,19 +2720,6 @@ class Asset(BareAsset):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid sameAs format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -3284,6 +3246,7 @@ class Dandiset(CommonModel):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -3295,7 +3258,12 @@ class Dandiset(CommonModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -3437,19 +3405,6 @@ class Dandiset(CommonModel):
             raise ValueError(err_msg)
         return v
 
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
-
     @field_validator("protocol")
     def pattern_protocol(cls, v):
         pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
@@ -3557,6 +3512,7 @@ class Disorder(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -3568,7 +3524,12 @@ class Disorder(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -3583,19 +3544,6 @@ class Disorder(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class Equipment(DandiBaseModel):
@@ -3614,9 +3562,15 @@ class Equipment(DandiBaseModel):
                     "required": False,
                 },
                 "name": {
+                    "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                     "description": "A name for the equipment.",
                     "name": "name",
-                    "pattern": "^(?=.{,150}$)",
+                    "notes": [
+                        "pydantic2linkml: Length constraint of "
+                        "min_length=None, max_length=150 expressed "
+                        "as a pattern entry in the slot's "
+                        "`all_of`."
+                    ],
                     "required": True,
                     "title": "Title",
                 },
@@ -3669,6 +3623,7 @@ class Equipment(DandiBaseModel):
         description="""A name for the equipment.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -3680,7 +3635,12 @@ class Equipment(DandiBaseModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -3695,19 +3655,6 @@ class Equipment(DandiBaseModel):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class EthicsApproval(DandiBaseModel):
@@ -3842,6 +3789,7 @@ class GenericType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -3853,7 +3801,12 @@ class GenericType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -3868,19 +3821,6 @@ class GenericType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class GenotypeInfo(DandiBaseModel):
@@ -4050,6 +3990,7 @@ class MeasurementTechniqueType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -4061,7 +4002,12 @@ class MeasurementTechniqueType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -4076,19 +4022,6 @@ class MeasurementTechniqueType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class Organization(Contributor):
@@ -4648,6 +4581,7 @@ class Project(Activity):
         description="""The name of the project that generated this Dandiset or asset.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -4659,7 +4593,12 @@ class Project(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -4714,19 +4653,6 @@ class Project(Activity):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class PropertyValue(DandiBaseModel):
@@ -4915,6 +4841,7 @@ class PublishActivity(Activity):
         description="""The name of the activity.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -4926,7 +4853,12 @@ class PublishActivity(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -4981,19 +4913,6 @@ class PublishActivity(Activity):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class PublishedAsset(Publishable, Asset):
@@ -5308,6 +5227,7 @@ class PublishedAsset(Publishable, Asset):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -5319,7 +5239,12 @@ class PublishedAsset(Publishable, Asset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -5471,19 +5396,6 @@ class PublishedAsset(Publishable, Asset):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid sameAs format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -5776,6 +5688,7 @@ class PublishedDandiset(Publishable, Dandiset):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -5787,7 +5700,12 @@ class PublishedDandiset(Publishable, Dandiset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -5939,19 +5857,6 @@ class PublishedDandiset(Publishable, Dandiset):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid sameAs format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -6357,6 +6262,7 @@ class SampleType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -6368,7 +6274,12 @@ class SampleType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -6383,19 +6294,6 @@ class SampleType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class Session(Activity):
@@ -6465,6 +6363,7 @@ class Session(Activity):
         description="""The name of the logical session associated with the asset.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -6476,7 +6375,12 @@ class Session(Activity):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -6531,19 +6435,6 @@ class Session(Activity):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class SexType(BaseType):
@@ -6602,6 +6493,7 @@ class SexType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -6613,7 +6505,12 @@ class SexType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -6628,19 +6525,6 @@ class SexType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class Software(DandiBaseModel):
@@ -6841,6 +6725,7 @@ class SpeciesType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -6852,7 +6737,12 @@ class SpeciesType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -6867,19 +6757,6 @@ class SpeciesType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class StandardsType(BaseType):
@@ -6938,6 +6815,7 @@ class StandardsType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -6949,7 +6827,12 @@ class StandardsType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -6964,19 +6847,6 @@ class StandardsType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 class StrainType(BaseType):
@@ -7035,6 +6905,7 @@ class StrainType(BaseType):
         description="""The name of the item.""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
                 "domain_of": [
                     "Activity",
                     "Affiliation",
@@ -7046,7 +6917,12 @@ class StrainType(BaseType):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "notes": [
+                    "pydantic2linkml: Length constraint of min_length=None, "
+                    "max_length=150 expressed as a pattern entry in the slot's "
+                    "`all_of`."
+                ],
             }
         },
     )
@@ -7061,19 +6937,6 @@ class StrainType(BaseType):
             "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
         },
     )
-
-    @field_validator("name")
-    def pattern_name(cls, v):
-        pattern = re.compile(r"^(?=.{,150}$)")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid name format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid name format: {v}"
-            raise ValueError(err_msg)
-        return v
 
 
 # Model rebuild
