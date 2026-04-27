@@ -62,6 +62,25 @@ all = [
 installer = "uv"
 python = "3.10"
 
+# Env for auto converting `dandischema.models` to LinkML schema and back to Pydantic models
+# To invoke conversion scripts provided by the environment, execute the following respective commands:
+#   `hatch run linkml-auto-converted:2linkml`    # Convert dandischema.models -> dandischema/models.yaml
+#   `hatch run linkml-auto-converted:2pydantic`  # Convert dandischema/models.yaml -> dandischema/models_linkml.py
+[tool.hatch.envs.linkml-auto-converted]
+dependencies = [
+    "black",  # This allows `gen-pydantic` to format the generated Pydantic models with Black formatting
+    "dandi",  # DANDI client, used by scripts that fetch dandiset metadata from the archive
+    "linkml==1.10.0",
+    "linkml-runtime==1.10.0",
+    "pydantic2linkml @ git+https://github.com/dandi/pydantic2linkml.git",
+    "ruamel.yaml"
+]
+[tool.hatch.envs.linkml-auto-converted.scripts]
+2linkml = "pydantic2linkml -l INFO -M dandischema/models_merge.yaml -O dandischema/models_overlay.yaml dandischema.models | sed -e 's,0x[0-9a-ef]*,0xADDRESS,g' -E -e 's,([^[:space:]]+):[0-9]+,\\1:NUMBER,g' | tools/linkml_conversion_tools/sanitize-yaml > dandischema/models.yaml"
+2pydantic = "gen-pydantic --black dandischema/models.yaml | sed -E -e 's,[a-z]+COLON,,g' > dandischema/models_linkml.py"
+2json = "d=dandischema/models_linkml; rm -rf $d && mkdir -p $d && for t in Dandiset Asset PublishedDandiset PublishedAsset; do gen-json-schema -t $t dandischema/models.yaml >| $d/$t.json; done"
+pydantic2json = "d=dandischema/models_pydantic; rm -rf $d && mkdir -p $d && python tools/pubschemata.py $d && mv $d/*/*json $d/"
+
 [tool.setuptools.packages.find]
 namespaces = true
 include = ["dandischema*"]
