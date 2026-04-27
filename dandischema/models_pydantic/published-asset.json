@@ -1,0 +1,4343 @@
+{
+  "$defs": {
+    "AccessRequirements": {
+      "additionalProperties": false,
+      "description": "Information about access options for the dataset",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "AccessRequirements",
+          "default": "AccessRequirements",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "contactPoint": {
+          "$ref": "#/$defs/ContactPoint",
+          "default": null,
+          "description": "Who or where to look for information about access.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "EthicsApproval",
+              "Organization"
+            ]
+          }
+        },
+        "description": {
+          "default": null,
+          "description": "Information about access requirements when embargoed or restricted",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "embargoedUntil": {
+          "default": null,
+          "description": "Date on which embargo ends.",
+          "format": "date",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements"
+            ]
+          },
+          "title": "Embargo end date",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/AccessType",
+          "description": "The access status of the item.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements"
+            ]
+          },
+          "title": "Access status"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "AccessRequirements",
+      "type": "object"
+    },
+    "AccessType": {
+      "description": "An enumeration of access status options",
+      "enum": [
+        "dandi:OpenAccess",
+        "dandi:EmbargoedAccess"
+      ],
+      "title": "AccessType",
+      "type": "string"
+    },
+    "Activity": {
+      "additionalProperties": false,
+      "description": "Information about the Project activity",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Activity",
+          "default": "Activity",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "The description of the activity.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "endDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Enddate",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the activity.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Title",
+          "type": "string"
+        },
+        "startDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Startdate",
+          "type": "string"
+        },
+        "used": {
+          "default": null,
+          "description": "A listing of equipment used for the activity.",
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Used",
+          "type": "array"
+        },
+        "wasAssociatedWith": {
+          "default": null,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Agent"
+              },
+              {
+                "$ref": "#/$defs/Organization"
+              },
+              {
+                "$ref": "#/$defs/Person"
+              },
+              {
+                "$ref": "#/$defs/Software"
+              }
+            ]
+          },
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Person"
+              },
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Organization"
+              },
+              {
+                "range": "Software"
+              },
+              {
+                "range": "Agent"
+              }
+            ],
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Wasassociatedwith",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Activity",
+      "type": "object"
+    },
+    "Affiliation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Affiliation",
+          "default": "Affiliation",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "Use an ror.org identifier for institutions.",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "A ror.org identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of organization",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Affiliation",
+      "type": "object"
+    },
+    "Agent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Agent",
+          "default": "Agent",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "Identifier for an agent.",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Agent",
+      "type": "object"
+    },
+    "Allele": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Allele",
+          "default": "Allele",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "alleleSymbol": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Allele"
+            ]
+          },
+          "title": "Allelesymbol",
+          "type": "string"
+        },
+        "alleleType": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Allele"
+            ]
+          },
+          "title": "Alleletype",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Identifier for genotyping allele.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "range": "string"
+              },
+              {
+                "multivalued": true,
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "Allele",
+      "type": "object"
+    },
+    "Anatomy": {
+      "additionalProperties": false,
+      "description": "UBERON or other identifier for anatomical part studied",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Anatomy",
+          "default": "Anatomy",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "Anatomy",
+      "type": "object"
+    },
+    "ApproachType": {
+      "additionalProperties": false,
+      "description": "Identifier for approach used",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "ApproachType",
+          "default": "ApproachType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "ApproachType",
+      "type": "object"
+    },
+    "AssayType": {
+      "additionalProperties": false,
+      "description": "OBI based identifier for the assay(s) used",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "AssayType",
+          "default": "AssayType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "AssayType",
+      "type": "object"
+    },
+    "BioSample": {
+      "additionalProperties": false,
+      "description": "Description of the sample that was studied",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "BioSample",
+          "default": "BioSample",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "anatomy": {
+          "default": null,
+          "description": "Identifier for what organ the sample belongs to. Use the most specific descriptor from sources such as UBERON.",
+          "items": {
+            "$ref": "#/$defs/Anatomy"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BioSample"
+            ]
+          },
+          "title": "Anatomy",
+          "type": "array"
+        },
+        "assayType": {
+          "default": null,
+          "description": "Identifier for the assay(s) used (e.g., OBI).",
+          "items": {
+            "$ref": "#/$defs/AssayType"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BioSample"
+            ]
+          },
+          "title": "Assaytype",
+          "type": "array"
+        },
+        "hasMember": {
+          "default": null,
+          "items": {
+            "type": "string"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BioSample"
+            ]
+          },
+          "title": "Hasmember",
+          "type": "array"
+        },
+        "identifier": {
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "sameAs": {
+          "default": null,
+          "items": {
+            "type": "string"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BareAsset",
+              "BioSample",
+              "Dandiset",
+              "Participant"
+            ]
+          },
+          "title": "Sameas",
+          "type": "array"
+        },
+        "sampleType": {
+          "$ref": "#/$defs/SampleType",
+          "description": "Identifier for the sample characteristics (e.g., from OBI, Encode).",
+          "linkml_meta": {
+            "domain_of": [
+              "BioSample"
+            ]
+          }
+        },
+        "wasAttributedTo": {
+          "default": null,
+          "description": "Participant(s) or Subject(s) associated with this sample.",
+          "items": {
+            "$ref": "#/$defs/Participant"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BareAsset",
+              "BioSample"
+            ]
+          },
+          "title": "Wasattributedto",
+          "type": "array"
+        },
+        "wasDerivedFrom": {
+          "default": null,
+          "description": "Describes the hierarchy of sample derivation or aggregation.",
+          "items": {
+            "$ref": "#/$defs/BioSample"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BareAsset",
+              "BioSample"
+            ]
+          },
+          "title": "Wasderivedfrom",
+          "type": "array"
+        }
+      },
+      "required": [
+        "identifier",
+        "sampleType"
+      ],
+      "title": "BioSample",
+      "type": "object"
+    },
+    "ContactPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "ContactPoint",
+          "default": "ContactPoint",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "email": {
+          "default": null,
+          "description": "Email address of contact.",
+          "linkml_meta": {
+            "domain_of": [
+              "ContactPoint",
+              "Contributor"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method EmailStr._validate of <class 'pydantic.networks.EmailStr'>>."
+            ]
+          },
+          "title": "Email",
+          "type": "string"
+        },
+        "url": {
+          "default": null,
+          "description": "A Web page to find information on how to contact.",
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "title": "ContactPoint",
+      "type": "object"
+    },
+    "Disorder": {
+      "additionalProperties": false,
+      "description": "Biolink, SNOMED, or other identifier for disorder studied",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Disorder",
+          "default": "Disorder",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        },
+        "dxdate": {
+          "default": null,
+          "description": "Dates of diagnosis",
+          "items": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "format": "date-time",
+                "type": "string"
+              }
+            ]
+          },
+          "linkml_meta": {
+            "any_of": [
+              {
+                "range": "date"
+              },
+              {
+                "range": "datetime"
+              }
+            ],
+            "domain_of": [
+              "Disorder"
+            ]
+          },
+          "title": "Dates of diagnosis",
+          "type": "array"
+        }
+      },
+      "title": "Disorder",
+      "type": "object"
+    },
+    "Equipment": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Equipment",
+          "default": "Equipment",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "The description of the equipment.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "A name for the equipment.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Equipment",
+      "type": "object"
+    },
+    "EthicsApproval": {
+      "additionalProperties": false,
+      "description": "Information about ethics committee approval for project",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "EthicsApproval",
+          "default": "EthicsApproval",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "contactPoint": {
+          "$ref": "#/$defs/ContactPoint",
+          "default": null,
+          "description": "Information about the ethics approval committee.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "EthicsApproval",
+              "Organization"
+            ]
+          }
+        },
+        "identifier": {
+          "description": "Approved Protocol identifier, often a number or alphanumeric string.",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Approved protocol identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "EthicsApproval",
+      "type": "object"
+    },
+    "GenericType": {
+      "additionalProperties": false,
+      "description": "An object to capture any type for about",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "GenericType",
+          "default": "GenericType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "GenericType",
+      "type": "object"
+    },
+    "GenotypeInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "GenotypeInfo",
+          "default": "GenotypeInfo",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "alleles": {
+          "description": "Information about alleles at the locus.",
+          "items": {
+            "$ref": "#/$defs/Allele"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "GenotypeInfo"
+            ]
+          },
+          "title": "Alleles",
+          "type": "array"
+        },
+        "locus": {
+          "$ref": "#/$defs/Locus",
+          "description": "Locus at which information was extracted.",
+          "linkml_meta": {
+            "domain_of": [
+              "GenotypeInfo"
+            ]
+          }
+        },
+        "wasGeneratedBy": {
+          "default": null,
+          "description": "Information about session activity used to determine genotype.",
+          "items": {
+            "$ref": "#/$defs/Session"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "CommonModel",
+              "GenotypeInfo"
+            ]
+          },
+          "title": "Wasgeneratedby",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alleles",
+        "locus"
+      ],
+      "title": "GenotypeInfo",
+      "type": "object"
+    },
+    "IdentifierType": {
+      "description": "An enumeration of identifiers",
+      "enum": [
+        "dandi:doi",
+        "dandi:orcid",
+        "dandi:ror",
+        "dandi:dandi",
+        "dandi:rrid"
+      ],
+      "title": "IdentifierType",
+      "type": "string"
+    },
+    "LicenseType": {
+      "enum": [
+        "spdx:CC-BY-4.0",
+        "spdx:CC0-1.0"
+      ],
+      "title": "LicenseType",
+      "type": "string"
+    },
+    "Locus": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Locus",
+          "default": "Locus",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Identifier for genotyping locus.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "range": "string"
+              },
+              {
+                "multivalued": true,
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "locusType": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Locus"
+            ]
+          },
+          "title": "Locustype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "Locus",
+      "type": "object"
+    },
+    "MeasurementTechniqueType": {
+      "additionalProperties": false,
+      "description": "Identifier for measurement technique used",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "MeasurementTechniqueType",
+          "default": "MeasurementTechniqueType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "MeasurementTechniqueType",
+      "type": "object"
+    },
+    "Organization": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Organization",
+          "default": "Organization",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "awardNumber": {
+          "default": null,
+          "description": "Identifier associated with a sponsored or gift award.",
+          "linkml_meta": {
+            "domain_of": [
+              "Contributor"
+            ]
+          },
+          "title": "Identifier for an award",
+          "type": "string"
+        },
+        "email": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "ContactPoint",
+              "Contributor"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method EmailStr._validate of <class 'pydantic.networks.EmailStr'>>."
+            ]
+          },
+          "title": "Email",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "Use an ror.org identifier for institutions.",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "A ror.org identifier",
+          "type": "string"
+        },
+        "includeInCitation": {
+          "default": false,
+          "description": "A flag to indicate whether a contributor should be included when generating a citation for the item",
+          "linkml_meta": {
+            "domain_of": [
+              "Contributor"
+            ],
+            "ifabsent": "False"
+          },
+          "title": "Include contributor in citation",
+          "type": "boolean"
+        },
+        "name": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        },
+        "roleName": {
+          "default": null,
+          "description": "Role(s) of the contributor. Multiple roles can be selected.",
+          "items": {
+            "$ref": "#/$defs/RoleType"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Contributor"
+            ]
+          },
+          "title": "Role",
+          "type": "array"
+        },
+        "url": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "Url",
+          "type": "string"
+        },
+        "contactPoint": {
+          "default": null,
+          "description": "Contact for the organization",
+          "items": {
+            "$ref": "#/$defs/ContactPoint"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "EthicsApproval",
+              "Organization"
+            ]
+          },
+          "title": "Organization contact information",
+          "type": "array"
+        }
+      },
+      "title": "Organization",
+      "type": "object"
+    },
+    "Participant": {
+      "additionalProperties": false,
+      "description": "Description about the Participant or Subject studied. The Participant or Subject can be any individual or synthesized Agent. The properties of the Participant or Subject refers to information at the timepoint when the Participant or Subject engaged in the production of data being described.",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Participant",
+          "default": "Participant",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "age": {
+          "$ref": "#/$defs/PropertyValue",
+          "default": null,
+          "description": "A representation of age using ISO 8601 duration. This should include a valueReference if anything other than date of birth is used.",
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          }
+        },
+        "altName": {
+          "default": null,
+          "items": {
+            "type": "string"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          },
+          "title": "Altname",
+          "type": "array"
+        },
+        "cellLine": {
+          "default": null,
+          "description": "Cell line associated with the participant or subject.",
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          },
+          "title": "Cellline",
+          "type": "string"
+        },
+        "disorder": {
+          "default": null,
+          "description": "Any current diagnosed disease or disorder associated with the participant or subject.",
+          "items": {
+            "$ref": "#/$defs/Disorder"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          },
+          "title": "Disorder",
+          "type": "array"
+        },
+        "genotype": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GenotypeInfo"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Genotype descriptor of participant or subject if available",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "multivalued": true,
+                "range": "GenotypeInfo"
+              },
+              {
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Participant"
+            ]
+          },
+          "title": "Genotype"
+        },
+        "identifier": {
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "relatedParticipant": {
+          "default": null,
+          "description": "Information about related participants or subjects in a study or across studies.",
+          "items": {
+            "$ref": "#/$defs/RelatedParticipant"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          },
+          "title": "Relatedparticipant",
+          "type": "array"
+        },
+        "sameAs": {
+          "default": null,
+          "description": "An identifier to link participants or subjects across datasets.",
+          "items": {
+            "type": "string"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "BareAsset",
+              "BioSample",
+              "Dandiset",
+              "Participant"
+            ]
+          },
+          "title": "Sameas",
+          "type": "array"
+        },
+        "sex": {
+          "$ref": "#/$defs/SexType",
+          "default": null,
+          "description": "Identifier for sex of the participant or subject if available. (e.g. from OBI)",
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          }
+        },
+        "species": {
+          "$ref": "#/$defs/SpeciesType",
+          "default": null,
+          "description": "An identifier indicating the taxonomic classification of the participant or subject.",
+          "linkml_meta": {
+            "domain_of": [
+              "AssetsSummary",
+              "Participant"
+            ]
+          }
+        },
+        "strain": {
+          "$ref": "#/$defs/StrainType",
+          "default": null,
+          "description": "Identifier for the strain of the participant or subject.",
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ]
+          }
+        },
+        "vendor": {
+          "$ref": "#/$defs/Organization",
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Participant"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+            ]
+          }
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "Participant",
+      "type": "object"
+    },
+    "ParticipantRelationType": {
+      "description": "An enumeration of participant relations",
+      "enum": [
+        "dandi:isChildOf",
+        "dandi:isParentOf",
+        "dandi:isSiblingOf",
+        "dandi:isMonozygoticTwinOf",
+        "dandi:isDizygoticTwinOf"
+      ],
+      "title": "ParticipantRelationType",
+      "type": "string"
+    },
+    "Person": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Person",
+          "default": "Person",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "awardNumber": {
+          "default": null,
+          "description": "Identifier associated with a sponsored or gift award.",
+          "linkml_meta": {
+            "domain_of": [
+              "Contributor"
+            ]
+          },
+          "title": "Identifier for an award",
+          "type": "string"
+        },
+        "email": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "ContactPoint",
+              "Contributor"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method EmailStr._validate of <class 'pydantic.networks.EmailStr'>>."
+            ]
+          },
+          "title": "Email",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "An ORCID (orcid.org) identifier for an individual.",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "An ORCID identifier",
+          "type": "string"
+        },
+        "includeInCitation": {
+          "default": true,
+          "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+          "linkml_meta": {
+            "domain_of": [
+              "Contributor"
+            ],
+            "ifabsent": "True"
+          },
+          "title": "Include contributor in citation",
+          "type": "boolean"
+        },
+        "name": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        },
+        "roleName": {
+          "default": null,
+          "description": "Role(s) of the contributor. Multiple roles can be selected.",
+          "items": {
+            "$ref": "#/$defs/RoleType"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Contributor"
+            ]
+          },
+          "title": "Role",
+          "type": "array"
+        },
+        "url": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "Url",
+          "type": "string"
+        },
+        "affiliation": {
+          "default": null,
+          "description": "An organization that this person is affiliated with.",
+          "items": {
+            "$ref": "#/$defs/Affiliation"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Person"
+            ]
+          },
+          "title": "Affiliation",
+          "type": "array"
+        }
+      },
+      "title": "Person",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Project",
+          "default": "Project",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "A brief description of the project.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "endDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Enddate",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the project that generated this Dandiset or asset.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name of project",
+          "type": "string"
+        },
+        "startDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Startdate",
+          "type": "string"
+        },
+        "used": {
+          "default": null,
+          "description": "A listing of equipment used for the activity.",
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Used",
+          "type": "array"
+        },
+        "wasAssociatedWith": {
+          "default": null,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Agent"
+              },
+              {
+                "$ref": "#/$defs/Organization"
+              },
+              {
+                "$ref": "#/$defs/Person"
+              },
+              {
+                "$ref": "#/$defs/Software"
+              }
+            ]
+          },
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Person"
+              },
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Organization"
+              },
+              {
+                "range": "Software"
+              },
+              {
+                "range": "Agent"
+              }
+            ],
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Wasassociatedwith",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "PropertyValue": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "PropertyValue",
+          "default": "PropertyValue",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "maxValue": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "PropertyValue"
+            ],
+            "notes": [
+              "pydantic2linkml: LinkML does not have support for `'+inf'`, `'-inf'`, and `'NaN'` values. Support for these values is not translated."
+            ]
+          },
+          "title": "Maxvalue",
+          "type": "number"
+        },
+        "minValue": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "PropertyValue"
+            ],
+            "notes": [
+              "pydantic2linkml: LinkML does not have support for `'+inf'`, `'-inf'`, and `'NaN'` values. Support for these values is not translated."
+            ]
+          },
+          "title": "Minvalue",
+          "type": "number"
+        },
+        "propertyID": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentifierType"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "A commonly used identifier for the characteristic represented by the property. For example, a known prefix like DOI or a full URL.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "range": "IdentifierType"
+              },
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              }
+            ],
+            "domain_of": [
+              "PropertyValue"
+            ]
+          },
+          "title": "Propertyid"
+        },
+        "unitText": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "PropertyValue"
+            ]
+          },
+          "title": "Unittext",
+          "type": "string"
+        },
+        "value": {
+          "default": null,
+          "description": "The value associated with this property.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "range": "Any"
+              },
+              {
+                "multivalued": true,
+                "range": "Any"
+              }
+            ],
+            "domain_of": [
+              "PropertyValue"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method PropertyValue.ensure_value of <class 'dandischema.models.PropertyValue'>>."
+            ]
+          },
+          "title": "Value"
+        },
+        "valueReference": {
+          "$ref": "#/$defs/PropertyValue",
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "PropertyValue"
+            ]
+          }
+        }
+      },
+      "title": "PropertyValue",
+      "type": "object"
+    },
+    "PublishActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "PublishActivity",
+          "default": "PublishActivity",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "The description of the activity.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "endDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Enddate",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the activity.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Title",
+          "type": "string"
+        },
+        "startDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Startdate",
+          "type": "string"
+        },
+        "used": {
+          "default": null,
+          "description": "A listing of equipment used for the activity.",
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Used",
+          "type": "array"
+        },
+        "wasAssociatedWith": {
+          "default": null,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Agent"
+              },
+              {
+                "$ref": "#/$defs/Organization"
+              },
+              {
+                "$ref": "#/$defs/Person"
+              },
+              {
+                "$ref": "#/$defs/Software"
+              }
+            ]
+          },
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Person"
+              },
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Organization"
+              },
+              {
+                "range": "Software"
+              },
+              {
+                "range": "Agent"
+              }
+            ],
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Wasassociatedwith",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PublishActivity",
+      "type": "object"
+    },
+    "RelatedParticipant": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "RelatedParticipant",
+          "default": "RelatedParticipant",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name of the participant or subject",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/ParticipantRelationType",
+          "description": "Indicates how the current participant or subject is related to the other participant or subject. This relation should satisfy: Participant/Subject <relation> relatedParticipant/Subject.",
+          "linkml_meta": {
+            "domain_of": [
+              "RelatedParticipant",
+              "Resource"
+            ]
+          },
+          "title": "Participant or subject relation"
+        },
+        "url": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "URL of the related participant or subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation"
+      ],
+      "title": "RelatedParticipant",
+      "type": "object"
+    },
+    "RelationType": {
+      "description": "An enumeration of resource relations",
+      "enum": [
+        "dcite:IsCitedBy",
+        "dcite:Cites",
+        "dcite:IsSupplementTo",
+        "dcite:IsSupplementedBy",
+        "dcite:IsContinuedBy",
+        "dcite:Continues",
+        "dcite:Describes",
+        "dcite:IsDescribedBy",
+        "dcite:HasMetadata",
+        "dcite:IsMetadataFor",
+        "dcite:HasVersion",
+        "dcite:IsVersionOf",
+        "dcite:IsNewVersionOf",
+        "dcite:IsPreviousVersionOf",
+        "dcite:IsPartOf",
+        "dcite:HasPart",
+        "dcite:IsReferencedBy",
+        "dcite:References",
+        "dcite:IsDocumentedBy",
+        "dcite:Documents",
+        "dcite:IsCompiledBy",
+        "dcite:Compiles",
+        "dcite:IsVariantFormOf",
+        "dcite:IsOriginalFormOf",
+        "dcite:IsIdenticalTo",
+        "dcite:IsReviewedBy",
+        "dcite:Reviews",
+        "dcite:IsDerivedFrom",
+        "dcite:IsSourceOf",
+        "dcite:IsRequiredBy",
+        "dcite:Requires",
+        "dcite:Obsoletes",
+        "dcite:IsObsoletedBy",
+        "dcite:IsPublishedIn"
+      ],
+      "title": "RelationType",
+      "type": "string"
+    },
+    "Resource": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Resource",
+          "default": "Resource",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "A title of the resource",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/RelationType",
+          "description": "Indicates how the resource is related to the dataset. This relation should satisfy: dandiset <relation> resource.",
+          "linkml_meta": {
+            "domain_of": [
+              "RelatedParticipant",
+              "Resource"
+            ]
+          },
+          "title": "Resource relation"
+        },
+        "repository": {
+          "default": null,
+          "description": "Name of the repository in which the resource is housed.",
+          "linkml_meta": {
+            "domain_of": [
+              "CommonModel",
+              "Resource"
+            ]
+          },
+          "title": "Name of the repository",
+          "type": "string"
+        },
+        "resourceType": {
+          "$ref": "#/$defs/ResourceType",
+          "default": null,
+          "description": "The type of resource.",
+          "linkml_meta": {
+            "domain_of": [
+              "Resource"
+            ]
+          },
+          "title": "Resource type"
+        },
+        "url": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "URL of the resource",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation"
+      ],
+      "title": "Resource",
+      "type": "object"
+    },
+    "ResourceType": {
+      "description": "An enumeration of resource types",
+      "enum": [
+        "dcite:Audiovisual",
+        "dcite:Book",
+        "dcite:BookChapter",
+        "dcite:Collection",
+        "dcite:ComputationalNotebook",
+        "dcite:ConferencePaper",
+        "dcite:ConferenceProceeding",
+        "dcite:DataPaper",
+        "dcite:Dataset",
+        "dcite:Dissertation",
+        "dcite:Event",
+        "dcite:Image",
+        "dcite:Instrument",
+        "dcite:InteractiveResource",
+        "dcite:Journal",
+        "dcite:JournalArticle",
+        "dcite:Model",
+        "dcite:OutputManagementPlan",
+        "dcite:PeerReview",
+        "dcite:PhysicalObject",
+        "dcite:Preprint",
+        "dcite:Report",
+        "dcite:Service",
+        "dcite:Software",
+        "dcite:Sound",
+        "dcite:Standard",
+        "dcite:StudyRegistration",
+        "dcite:Text",
+        "dcite:Workflow",
+        "dcite:Other"
+      ],
+      "title": "ResourceType",
+      "type": "string"
+    },
+    "RoleType": {
+      "description": "An enumeration of roles",
+      "enum": [
+        "dcite:Author",
+        "dcite:Conceptualization",
+        "dcite:ContactPerson",
+        "dcite:DataCollector",
+        "dcite:DataCurator",
+        "dcite:DataManager",
+        "dcite:FormalAnalysis",
+        "dcite:FundingAcquisition",
+        "dcite:Investigation",
+        "dcite:Maintainer",
+        "dcite:Methodology",
+        "dcite:Producer",
+        "dcite:ProjectLeader",
+        "dcite:ProjectManager",
+        "dcite:ProjectMember",
+        "dcite:ProjectAdministration",
+        "dcite:Researcher",
+        "dcite:Resources",
+        "dcite:Software",
+        "dcite:Supervision",
+        "dcite:Validation",
+        "dcite:Visualization",
+        "dcite:Funder",
+        "dcite:Sponsor",
+        "dcite:StudyParticipant",
+        "dcite:Affiliation",
+        "dcite:EthicsApproval",
+        "dcite:Other"
+      ],
+      "title": "RoleType",
+      "type": "string"
+    },
+    "SampleType": {
+      "additionalProperties": false,
+      "description": "OBI based identifier for the sample type used",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "SampleType",
+          "default": "SampleType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "SampleType",
+      "type": "object"
+    },
+    "Session": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Session",
+          "default": "Session",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "A brief description of the session.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "endDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Enddate",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the logical session associated with the asset.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name of session",
+          "type": "string"
+        },
+        "startDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Startdate",
+          "type": "string"
+        },
+        "used": {
+          "default": null,
+          "description": "A listing of equipment used for the activity.",
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Used",
+          "type": "array"
+        },
+        "wasAssociatedWith": {
+          "default": null,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Agent"
+              },
+              {
+                "$ref": "#/$defs/Organization"
+              },
+              {
+                "$ref": "#/$defs/Person"
+              },
+              {
+                "$ref": "#/$defs/Software"
+              }
+            ]
+          },
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Person"
+              },
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Organization"
+              },
+              {
+                "range": "Software"
+              },
+              {
+                "range": "Agent"
+              }
+            ],
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Wasassociatedwith",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Session",
+      "type": "object"
+    },
+    "SexType": {
+      "additionalProperties": false,
+      "description": "Identifier for the sex of the sample",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "SexType",
+          "default": "SexType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "SexType",
+      "type": "object"
+    },
+    "Software": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "Software",
+          "default": "Software",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "RRID of the software from scicrunch.org.",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Research resource identifier",
+          "type": "string"
+        },
+        "name": {
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "default": null,
+          "description": "Web page for the software.",
+          "linkml_meta": {
+            "domain_of": [
+              "Agent",
+              "CommonModel",
+              "ContactPoint",
+              "Contributor",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ],
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ]
+          },
+          "title": "Url",
+          "type": "string"
+        },
+        "version": {
+          "linkml_meta": {
+            "domain_of": [
+              "Dandiset",
+              "Software"
+            ]
+          },
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "Software",
+      "type": "object"
+    },
+    "SpeciesType": {
+      "additionalProperties": false,
+      "description": "Identifier for species of the sample",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "SpeciesType",
+          "default": "SpeciesType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "SpeciesType",
+      "type": "object"
+    },
+    "StrainType": {
+      "additionalProperties": false,
+      "description": "Identifier for the strain of the sample",
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "StrainType",
+          "default": "StrainType",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ]
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+                ],
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "range": "uri"
+              },
+              {
+                "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                "range": "string"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "default": null,
+          "description": "The name of the item.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "StrainType",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "default": null,
+      "description": "Uniform resource identifier",
+      "linkml_meta": {
+        "domain_of": [
+          "DandiBaseModel"
+        ]
+      },
+      "title": "Id",
+      "type": "string"
+    },
+    "schemaKey": {
+      "const": "PublishedAsset",
+      "default": "PublishedAsset",
+      "linkml_meta": {
+        "designates_type": true,
+        "domain_of": [
+          "DandiBaseModel"
+        ]
+      },
+      "title": "Schemakey",
+      "type": "string"
+    },
+    "about": {
+      "default": null,
+      "description": "The subject matter of the content, such as disorders, brain anatomy.",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Anatomy"
+          },
+          {
+            "$ref": "#/$defs/Disorder"
+          },
+          {
+            "$ref": "#/$defs/GenericType"
+          }
+        ]
+      },
+      "linkml_meta": {
+        "any_of": [
+          {
+            "range": "Disorder"
+          },
+          {
+            "range": "Anatomy"
+          },
+          {
+            "range": "GenericType"
+          }
+        ],
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "Subject matter of the dataset",
+      "type": "array"
+    },
+    "access": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/AccessRequirements"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to express the default factory, <function BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
+          "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>."
+        ]
+      },
+      "maxItems": 1,
+      "title": "Access information",
+      "type": "array"
+    },
+    "acknowledgement": {
+      "default": null,
+      "description": "Any acknowledgments not covered by contributors or external resources.",
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "Acknowledgement",
+      "type": "string"
+    },
+    "contributor": {
+      "default": null,
+      "description": "Contributors to this item: persons or organizations.",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Organization"
+          },
+          {
+            "$ref": "#/$defs/Person"
+          }
+        ]
+      },
+      "linkml_meta": {
+        "any_of": [
+          {
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+            ],
+            "range": "Person"
+          },
+          {
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+            ],
+            "range": "Organization"
+          }
+        ],
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "Contributors",
+      "type": "array"
+    },
+    "description": {
+      "default": null,
+      "description": "A description of the item.",
+      "linkml_meta": {
+        "domain_of": [
+          "AccessRequirements",
+          "Activity",
+          "CommonModel",
+          "Equipment"
+        ]
+      },
+      "title": "Description",
+      "type": "string"
+    },
+    "ethicsApproval": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/EthicsApproval"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "Ethics approvals",
+      "type": "array"
+    },
+    "keywords": {
+      "default": null,
+      "description": "Keywords used to describe this content.",
+      "items": {
+        "type": "string"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "Keywords",
+      "type": "array"
+    },
+    "license": {
+      "default": null,
+      "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+      "items": {
+        "$ref": "#/$defs/LicenseType"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "License",
+      "type": "array"
+    },
+    "name": {
+      "default": null,
+      "description": "The name of the item.",
+      "linkml_meta": {
+        "all_of": [
+          {
+            "pattern": "^[\\s\\S]{,150}\\Z"
+          }
+        ],
+        "domain_of": [
+          "Activity",
+          "Affiliation",
+          "Agent",
+          "BaseType",
+          "CommonModel",
+          "Contributor",
+          "Equipment",
+          "RelatedParticipant",
+          "Resource",
+          "Software"
+        ]
+      },
+      "title": "Title",
+      "type": "string"
+    },
+    "protocol": {
+      "default": null,
+      "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+      "items": {
+        "type": "string"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+        ]
+      },
+      "title": "Protocol",
+      "type": "array"
+    },
+    "relatedResource": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/Resource"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Resource.identifier_or_url at 0xADDRESS>."
+        ]
+      },
+      "title": "Relatedresource",
+      "type": "array"
+    },
+    "repository": {
+      "default": null,
+      "description": "location of the item",
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel",
+          "Resource"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+        ]
+      },
+      "title": "Repository",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "default": "0.7.0",
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ],
+        "ifabsent": "string(0.7.0)"
+      },
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "studyTarget": {
+      "default": null,
+      "description": "Objectives or specific questions of the study.",
+      "items": {
+        "type": "string"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel"
+        ]
+      },
+      "title": "Studytarget",
+      "type": "array"
+    },
+    "url": {
+      "default": null,
+      "description": "permalink to the item",
+      "linkml_meta": {
+        "domain_of": [
+          "Agent",
+          "CommonModel",
+          "ContactPoint",
+          "Contributor",
+          "RelatedParticipant",
+          "Resource",
+          "Software"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+        ]
+      },
+      "title": "Url",
+      "type": "string"
+    },
+    "wasGeneratedBy": {
+      "default": null,
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Activity"
+          },
+          {
+            "$ref": "#/$defs/Project"
+          },
+          {
+            "$ref": "#/$defs/PublishActivity"
+          },
+          {
+            "$ref": "#/$defs/Session"
+          }
+        ]
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "CommonModel",
+          "GenotypeInfo"
+        ]
+      },
+      "title": "Wasgeneratedby",
+      "type": "array"
+    },
+    "approach": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/ApproachType"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "AssetsSummary",
+          "BareAsset"
+        ]
+      },
+      "title": "Approach",
+      "type": "array"
+    },
+    "blobDateModified": {
+      "default": null,
+      "format": "date-time",
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset"
+        ]
+      },
+      "title": "Asset file modification date and time.",
+      "type": "string"
+    },
+    "contentSize": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "linkml_meta": {
+        "any_of": [
+          {
+            "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?",
+            "range": "string"
+          },
+          {
+            "minimum_value": 0,
+            "range": "integer"
+          }
+        ],
+        "domain_of": [
+          "BareAsset"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method ByteSize._validate of <class 'pydantic.types.ByteSize'>>."
+        ]
+      },
+      "title": "Contentsize"
+    },
+    "dataType": {
+      "default": null,
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+        ]
+      },
+      "title": "Datatype",
+      "type": "string"
+    },
+    "dateModified": {
+      "default": null,
+      "format": "date-time",
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset",
+          "Dandiset"
+        ]
+      },
+      "title": "Asset (file or metadata) modification date and time",
+      "type": "string"
+    },
+    "digest": {
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method BareAsset.digest_check of <class 'dandischema.models.BareAsset'>>.",
+          "pydantic2linkml: Warning: The translation is incomplete. `dict` types are yet to be supported."
+        ]
+      },
+      "title": "A map of dandi digests to their values",
+      "type": "string"
+    },
+    "encodingFormat": {
+      "linkml_meta": {
+        "any_of": [
+          {
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ],
+            "pattern": "^(?i:http|https)://[^\\s]+$",
+            "range": "uri"
+          },
+          {
+            "range": "string"
+          }
+        ],
+        "domain_of": [
+          "BareAsset"
+        ]
+      },
+      "title": "File encoding format",
+      "type": "string"
+    },
+    "measurementTechnique": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/MeasurementTechniqueType"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "AssetsSummary",
+          "BareAsset"
+        ]
+      },
+      "title": "Measurementtechnique",
+      "type": "array"
+    },
+    "path": {
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset"
+        ]
+      },
+      "title": "Path",
+      "type": "string"
+    },
+    "sameAs": {
+      "default": null,
+      "items": {
+        "type": "string"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset",
+          "BioSample",
+          "Dandiset",
+          "Participant"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+        ]
+      },
+      "title": "Sameas",
+      "type": "array"
+    },
+    "variableMeasured": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/PropertyValue"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "AssetsSummary",
+          "BareAsset"
+        ]
+      },
+      "title": "Variablemeasured",
+      "type": "array"
+    },
+    "wasAttributedTo": {
+      "default": null,
+      "description": "Associated participant(s) or subject(s).",
+      "items": {
+        "$ref": "#/$defs/Participant"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset",
+          "BioSample"
+        ]
+      },
+      "title": "Wasattributedto",
+      "type": "array"
+    },
+    "wasDerivedFrom": {
+      "default": null,
+      "items": {
+        "$ref": "#/$defs/BioSample"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "BareAsset",
+          "BioSample"
+        ]
+      },
+      "title": "Wasderivedfrom",
+      "type": "array"
+    },
+    "contentUrl": {
+      "items": {
+        "type": "string"
+      },
+      "linkml_meta": {
+        "domain_of": [
+          "Asset"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+        ]
+      },
+      "title": "Contenturl",
+      "type": "array"
+    },
+    "identifier": {
+      "linkml_meta": {
+        "domain_of": [
+          "Activity",
+          "Affiliation",
+          "Agent",
+          "Allele",
+          "Asset",
+          "BaseType",
+          "BioSample",
+          "Contributor",
+          "Dandiset",
+          "Equipment",
+          "EthicsApproval",
+          "Locus",
+          "Participant",
+          "RelatedParticipant",
+          "Resource",
+          "Software"
+        ]
+      },
+      "title": "Identifier",
+      "type": "string"
+    },
+    "datePublished": {
+      "format": "date-time",
+      "linkml_meta": {
+        "domain_of": [
+          "Publishable"
+        ]
+      },
+      "title": "Datepublished",
+      "type": "string"
+    },
+    "publishedBy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PublishActivity"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "The URL should contain the provenance of the publishing process.",
+      "linkml_meta": {
+        "any_of": [
+          {
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ],
+            "pattern": "^(?i:http|https)://[^\\s]+$",
+            "range": "uri"
+          },
+          {
+            "range": "PublishActivity"
+          }
+        ],
+        "domain_of": [
+          "Publishable"
+        ]
+      },
+      "title": "Publishedby"
+    }
+  },
+  "required": [
+    "contentSize",
+    "digest",
+    "encodingFormat",
+    "path",
+    "contentUrl",
+    "identifier",
+    "datePublished",
+    "publishedBy"
+  ],
+  "title": "PublishedAsset",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

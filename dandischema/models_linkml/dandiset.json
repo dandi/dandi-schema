@@ -1,0 +1,4427 @@
+{
+    "$defs": {
+        "AccessRequirements": {
+            "additionalProperties": false,
+            "description": "Information about access options for the dataset",
+            "properties": {
+                "contactPoint": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ContactPoint"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Who or where to look for information about access."
+                },
+                "description": {
+                    "description": "Information about access requirements when embargoed or restricted",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "embargoedUntil": {
+                    "description": "Date on which embargo ends.",
+                    "format": "date",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "AccessRequirements"
+                    ],
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/$defs/AccessType",
+                    "description": "The access status of the item."
+                }
+            },
+            "required": [
+                "status",
+                "schemaKey"
+            ],
+            "title": "AccessRequirements",
+            "type": "object"
+        },
+        "AccessType": {
+            "description": "An enumeration of access status options",
+            "enum": [
+                "dandi:OpenAccess",
+                "dandi:EmbargoedAccess"
+            ],
+            "title": "AccessType",
+            "type": "string"
+        },
+        "Activity": {
+            "additionalProperties": false,
+            "description": "Information about the Project activity",
+            "properties": {
+                "description": {
+                    "description": "The description of the activity.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "endDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the activity.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Activity"
+                    ],
+                    "type": "string"
+                },
+                "startDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "used": {
+                    "description": "A listing of equipment used for the activity.",
+                    "items": {
+                        "$ref": "#/$defs/Equipment"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAssociatedWith": {
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            },
+                            {
+                                "$ref": "#/$defs/Software"
+                            },
+                            {
+                                "$ref": "#/$defs/Agent"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "Activity",
+            "type": "object"
+        },
+        "Affiliation": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "Use an ror.org identifier for institutions.",
+                    "pattern": "^https://ror.org/[a-z0-9]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "description": "Name of organization",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Affiliation"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "Affiliation",
+            "type": "object"
+        },
+        "AgeReferenceType": {
+            "description": "An enumeration of age reference",
+            "enum": [
+                "dandi:BirthReference",
+                "dandi:GestationalReference"
+            ],
+            "title": "AgeReferenceType",
+            "type": "string"
+        },
+        "Agent": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "Identifier for an agent.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Agent"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "Agent",
+            "type": "object"
+        },
+        "Allele": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "alleleSymbol": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "alleleType": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ],
+                    "description": "Identifier for genotyping allele."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Allele"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "identifier",
+                "schemaKey"
+            ],
+            "title": "Allele",
+            "type": "object"
+        },
+        "Anatomy": {
+            "additionalProperties": false,
+            "description": "UBERON or other identifier for anatomical part studied",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Anatomy"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "Anatomy",
+            "type": "object"
+        },
+        "Any": {
+            "additionalProperties": true,
+            "description": "Any object",
+            "title": "Any",
+            "type": [
+                "null",
+                "boolean",
+                "object",
+                "number",
+                "string"
+            ]
+        },
+        "ApproachType": {
+            "additionalProperties": false,
+            "description": "Identifier for approach used",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "ApproachType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "ApproachType",
+            "type": "object"
+        },
+        "AssayType": {
+            "additionalProperties": false,
+            "description": "OBI based identifier for the assay(s) used",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "AssayType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "AssayType",
+            "type": "object"
+        },
+        "Asset": {
+            "additionalProperties": false,
+            "description": "Metadata used to describe an asset on the server.",
+            "properties": {
+                "about": {
+                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Disorder"
+                            },
+                            {
+                                "$ref": "#/$defs/Anatomy"
+                            },
+                            {
+                                "$ref": "#/$defs/GenericType"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "access": {
+                    "items": {
+                        "$ref": "#/$defs/AccessRequirements"
+                    },
+                    "maxItems": 1,
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "acknowledgement": {
+                    "description": "Any acknowledgments not covered by contributors or external resources.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "approach": {
+                    "items": {
+                        "$ref": "#/$defs/ApproachType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "blobDateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "contentSize": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?",
+                            "type": "string"
+                        },
+                        {
+                            "minimum": 0,
+                            "type": "integer"
+                        }
+                    ]
+                },
+                "contentUrl": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "contributor": {
+                    "description": "Contributors to this item: persons or organizations.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "dataType": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "dateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "digest": {
+                    "type": "string"
+                },
+                "encodingFormat": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "ethicsApproval": {
+                    "items": {
+                        "$ref": "#/$defs/EthicsApproval"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
+                    "type": "string"
+                },
+                "keywords": {
+                    "description": "Keywords used to describe this content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "license": {
+                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+                    "items": {
+                        "$ref": "#/$defs/LicenseType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "measurementTechnique": {
+                    "items": {
+                        "$ref": "#/$defs/MeasurementTechniqueType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "relatedResource": {
+                    "items": {
+                        "$ref": "#/$defs/Resource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "repository": {
+                    "description": "location of the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sameAs": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Asset"
+                    ],
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "studyTarget": {
+                    "description": "Objectives or specific questions of the study.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "url": {
+                    "description": "permalink to the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "variableMeasured": {
+                    "items": {
+                        "$ref": "#/$defs/PropertyValue"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAttributedTo": {
+                    "description": "Associated participant(s) or subject(s).",
+                    "items": {
+                        "$ref": "#/$defs/Participant"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasDerivedFrom": {
+                    "items": {
+                        "$ref": "#/$defs/BioSample"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            },
+                            {
+                                "$ref": "#/$defs/PublishActivity"
+                            },
+                            {
+                                "$ref": "#/$defs/Session"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "contentUrl",
+                "identifier",
+                "contentSize",
+                "digest",
+                "encodingFormat",
+                "path",
+                "schemaKey"
+            ],
+            "title": "Asset",
+            "type": "object"
+        },
+        "AssetsSummary": {
+            "additionalProperties": false,
+            "description": "Summary over assets contained in a dandiset (published or not)",
+            "properties": {
+                "approach": {
+                    "items": {
+                        "$ref": "#/$defs/ApproachType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "dataStandard": {
+                    "items": {
+                        "$ref": "#/$defs/StandardsType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "measurementTechnique": {
+                    "items": {
+                        "$ref": "#/$defs/MeasurementTechniqueType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "numberOfBytes": {
+                    "type": "integer"
+                },
+                "numberOfCells": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "numberOfFiles": {
+                    "type": "integer"
+                },
+                "numberOfSamples": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "numberOfSubjects": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "AssetsSummary"
+                    ],
+                    "type": "string"
+                },
+                "species": {
+                    "items": {
+                        "$ref": "#/$defs/SpeciesType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "variableMeasured": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "numberOfBytes",
+                "numberOfFiles",
+                "schemaKey"
+            ],
+            "title": "AssetsSummary",
+            "type": "object"
+        },
+        "BareAsset": {
+            "additionalProperties": false,
+            "description": "Metadata used to describe an asset anywhere (local or server). Derived from C2M2 (Level 0 and 1) and schema.org",
+            "properties": {
+                "about": {
+                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Disorder"
+                            },
+                            {
+                                "$ref": "#/$defs/Anatomy"
+                            },
+                            {
+                                "$ref": "#/$defs/GenericType"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "access": {
+                    "items": {
+                        "$ref": "#/$defs/AccessRequirements"
+                    },
+                    "maxItems": 1,
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "acknowledgement": {
+                    "description": "Any acknowledgments not covered by contributors or external resources.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "approach": {
+                    "items": {
+                        "$ref": "#/$defs/ApproachType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "blobDateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "contentSize": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?",
+                            "type": "string"
+                        },
+                        {
+                            "minimum": 0,
+                            "type": "integer"
+                        }
+                    ]
+                },
+                "contributor": {
+                    "description": "Contributors to this item: persons or organizations.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "dataType": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "dateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "digest": {
+                    "type": "string"
+                },
+                "encodingFormat": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "ethicsApproval": {
+                    "items": {
+                        "$ref": "#/$defs/EthicsApproval"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "keywords": {
+                    "description": "Keywords used to describe this content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "license": {
+                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+                    "items": {
+                        "$ref": "#/$defs/LicenseType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "measurementTechnique": {
+                    "items": {
+                        "$ref": "#/$defs/MeasurementTechniqueType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "relatedResource": {
+                    "items": {
+                        "$ref": "#/$defs/Resource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "repository": {
+                    "description": "location of the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sameAs": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "BareAsset"
+                    ],
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "studyTarget": {
+                    "description": "Objectives or specific questions of the study.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "url": {
+                    "description": "permalink to the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "variableMeasured": {
+                    "items": {
+                        "$ref": "#/$defs/PropertyValue"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAttributedTo": {
+                    "description": "Associated participant(s) or subject(s).",
+                    "items": {
+                        "$ref": "#/$defs/Participant"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasDerivedFrom": {
+                    "items": {
+                        "$ref": "#/$defs/BioSample"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            },
+                            {
+                                "$ref": "#/$defs/PublishActivity"
+                            },
+                            {
+                                "$ref": "#/$defs/Session"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "contentSize",
+                "digest",
+                "encodingFormat",
+                "path",
+                "schemaKey"
+            ],
+            "title": "BareAsset",
+            "type": "object"
+        },
+        "BaseType": {
+            "additionalProperties": false,
+            "description": "Base class for enumerated types",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "BaseType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "BaseType",
+            "type": "object"
+        },
+        "BioSample": {
+            "additionalProperties": false,
+            "description": "Description of the sample that was studied",
+            "properties": {
+                "anatomy": {
+                    "description": "Identifier for what organ the sample belongs to. Use the most specific descriptor from sources such as UBERON.",
+                    "items": {
+                        "$ref": "#/$defs/Anatomy"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "assayType": {
+                    "description": "Identifier for the assay(s) used (e.g., OBI).",
+                    "items": {
+                        "$ref": "#/$defs/AssayType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "hasMember": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "sameAs": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "sampleType": {
+                    "$ref": "#/$defs/SampleType",
+                    "description": "Identifier for the sample characteristics (e.g., from OBI, Encode)."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "BioSample"
+                    ],
+                    "type": "string"
+                },
+                "wasAttributedTo": {
+                    "description": "Participant(s) or Subject(s) associated with this sample.",
+                    "items": {
+                        "$ref": "#/$defs/Participant"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasDerivedFrom": {
+                    "description": "Describes the hierarchy of sample derivation or aggregation.",
+                    "items": {
+                        "$ref": "#/$defs/BioSample"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "identifier",
+                "sampleType",
+                "schemaKey"
+            ],
+            "title": "BioSample",
+            "type": "object"
+        },
+        "CommonModel": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "about": {
+                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Disorder"
+                            },
+                            {
+                                "$ref": "#/$defs/Anatomy"
+                            },
+                            {
+                                "$ref": "#/$defs/GenericType"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "access": {
+                    "items": {
+                        "$ref": "#/$defs/AccessRequirements"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "acknowledgement": {
+                    "description": "Any acknowledgments not covered by contributors or external resources.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "contributor": {
+                    "description": "Contributors to this item: persons or organizations.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ethicsApproval": {
+                    "items": {
+                        "$ref": "#/$defs/EthicsApproval"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "keywords": {
+                    "description": "Keywords used to describe this content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "license": {
+                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+                    "items": {
+                        "$ref": "#/$defs/LicenseType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "relatedResource": {
+                    "items": {
+                        "$ref": "#/$defs/Resource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "repository": {
+                    "description": "location of the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "CommonModel"
+                    ],
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "studyTarget": {
+                    "description": "Objectives or specific questions of the study.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "url": {
+                    "description": "permalink to the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            },
+                            {
+                                "$ref": "#/$defs/PublishActivity"
+                            },
+                            {
+                                "$ref": "#/$defs/Session"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "CommonModel",
+            "type": "object"
+        },
+        "ContactPoint": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "email": {
+                    "description": "Email address of contact.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "ContactPoint"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "description": "A Web page to find information on how to contact.",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "ContactPoint",
+            "type": "object"
+        },
+        "Contributor": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "awardNumber": {
+                    "description": "Identifier associated with a sponsored or gift award.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "email": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "includeInCitation": {
+                    "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "roleName": {
+                    "description": "Role(s) of the contributor. Multiple roles can be selected.",
+                    "items": {
+                        "$ref": "#/$defs/RoleType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Contributor"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "Contributor",
+            "type": "object"
+        },
+        "DandiBaseModel": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "DandiBaseModel"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "DandiBaseModel",
+            "type": "object"
+        },
+        "Dandiset": {
+            "additionalProperties": false,
+            "description": "A body of structured information describing a DANDI dataset.",
+            "properties": {
+                "about": {
+                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Disorder"
+                            },
+                            {
+                                "$ref": "#/$defs/Anatomy"
+                            },
+                            {
+                                "$ref": "#/$defs/GenericType"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "access": {
+                    "items": {
+                        "$ref": "#/$defs/AccessRequirements"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "acknowledgement": {
+                    "description": "Any acknowledgments not covered by contributors or external resources.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "assetsSummary": {
+                    "$ref": "#/$defs/AssetsSummary"
+                },
+                "citation": {
+                    "type": "string"
+                },
+                "contributor": {
+                    "description": "Contributors to this item: persons or organizations.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "dateCreated": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "dateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ethicsApproval": {
+                    "items": {
+                        "$ref": "#/$defs/EthicsApproval"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "A Dandiset identifier that can be resolved by identifiers.org.",
+                    "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
+                    "type": "string"
+                },
+                "keywords": {
+                    "description": "Keywords used to describe this content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "license": {
+                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+                    "items": {
+                        "$ref": "#/$defs/LicenseType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "manifestLocation": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "relatedResource": {
+                    "items": {
+                        "$ref": "#/$defs/Resource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "repository": {
+                    "description": "location of the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sameAs": {
+                    "description": "Known DANDI URLs of the Dandiset at other DANDI instances.",
+                    "items": {
+                        "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Dandiset"
+                    ],
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "studyTarget": {
+                    "description": "Objectives or specific questions of the study.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "url": {
+                    "description": "permalink to the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "type": "string"
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            },
+                            {
+                                "$ref": "#/$defs/PublishActivity"
+                            },
+                            {
+                                "$ref": "#/$defs/Session"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "assetsSummary",
+                "citation",
+                "identifier",
+                "manifestLocation",
+                "version",
+                "schemaKey"
+            ],
+            "title": "Dandiset",
+            "type": "object"
+        },
+        "DigestType": {
+            "description": "An enumeration of checksum types",
+            "enum": [
+                "dandi:md5",
+                "dandi:sha1",
+                "dandi:sha2-256",
+                "dandi:sha3-256",
+                "dandi:blake2b-256",
+                "dandi:blake3",
+                "dandi:dandi-etag",
+                "dandi:dandi-zarr-checksum"
+            ],
+            "title": "DigestType",
+            "type": "string"
+        },
+        "Disorder": {
+            "additionalProperties": false,
+            "description": "Biolink, SNOMED, or other identifier for disorder studied",
+            "properties": {
+                "dxdate": {
+                    "description": "Dates of diagnosis",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "format": "date",
+                                "type": "string"
+                            },
+                            {
+                                "format": "date-time",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Disorder"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "Disorder",
+            "type": "object"
+        },
+        "Equipment": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "description": {
+                    "description": "The description of the equipment.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "A name for the equipment.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Equipment"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "Equipment",
+            "type": "object"
+        },
+        "EthicsApproval": {
+            "additionalProperties": false,
+            "description": "Information about ethics committee approval for project",
+            "properties": {
+                "contactPoint": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ContactPoint"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Information about the ethics approval committee."
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "Approved Protocol identifier, often a number or alphanumeric string.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "EthicsApproval"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "identifier",
+                "schemaKey"
+            ],
+            "title": "EthicsApproval",
+            "type": "object"
+        },
+        "GenericType": {
+            "additionalProperties": false,
+            "description": "An object to capture any type for about",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "GenericType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "GenericType",
+            "type": "object"
+        },
+        "GenotypeInfo": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "alleles": {
+                    "description": "Information about alleles at the locus.",
+                    "items": {
+                        "$ref": "#/$defs/Allele"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "locus": {
+                    "$ref": "#/$defs/Locus",
+                    "description": "Locus at which information was extracted."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "GenotypeInfo"
+                    ],
+                    "type": "string"
+                },
+                "wasGeneratedBy": {
+                    "description": "Information about session activity used to determine genotype.",
+                    "items": {
+                        "$ref": "#/$defs/Session"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "alleles",
+                "locus",
+                "schemaKey"
+            ],
+            "title": "GenotypeInfo",
+            "type": "object"
+        },
+        "IdentifierType": {
+            "description": "An enumeration of identifiers",
+            "enum": [
+                "dandi:doi",
+                "dandi:orcid",
+                "dandi:ror",
+                "dandi:dandi",
+                "dandi:rrid"
+            ],
+            "title": "IdentifierType",
+            "type": "string"
+        },
+        "LicenseType": {
+            "description": "An enumeration.",
+            "enum": [
+                "spdx:CC-BY-4.0",
+                "spdx:CC0-1.0"
+            ],
+            "title": "LicenseType",
+            "type": "string"
+        },
+        "Locus": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ],
+                    "description": "Identifier for genotyping locus."
+                },
+                "locusType": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Locus"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "identifier",
+                "schemaKey"
+            ],
+            "title": "Locus",
+            "type": "object"
+        },
+        "MeasurementTechniqueType": {
+            "additionalProperties": false,
+            "description": "Identifier for measurement technique used",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "MeasurementTechniqueType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "MeasurementTechniqueType",
+            "type": "object"
+        },
+        "Organization": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "awardNumber": {
+                    "description": "Identifier associated with a sponsored or gift award.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "contactPoint": {
+                    "description": "Contact for the organization",
+                    "items": {
+                        "$ref": "#/$defs/ContactPoint"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "email": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "Use an ror.org identifier for institutions.",
+                    "pattern": "^https://ror.org/[a-z0-9]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "includeInCitation": {
+                    "description": "A flag to indicate whether a contributor should be included when generating a citation for the item",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "roleName": {
+                    "description": "Role(s) of the contributor. Multiple roles can be selected.",
+                    "items": {
+                        "$ref": "#/$defs/RoleType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Organization"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "Organization",
+            "type": "object"
+        },
+        "Participant": {
+            "additionalProperties": false,
+            "description": "Description about the Participant or Subject studied. The Participant or Subject can be any individual or synthesized Agent. The properties of the Participant or Subject refers to information at the timepoint when the Participant or Subject engaged in the production of data being described.",
+            "properties": {
+                "age": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/PropertyValue"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "A representation of age using ISO 8601 duration. This should include a valueReference if anything other than date of birth is used."
+                },
+                "altName": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "cellLine": {
+                    "description": "Cell line associated with the participant or subject.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "disorder": {
+                    "description": "Any current diagnosed disease or disorder associated with the participant or subject.",
+                    "items": {
+                        "$ref": "#/$defs/Disorder"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "genotype": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/GenotypeInfo"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Genotype descriptor of participant or subject if available"
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "relatedParticipant": {
+                    "description": "Information about related participants or subjects in a study or across studies.",
+                    "items": {
+                        "$ref": "#/$defs/RelatedParticipant"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "sameAs": {
+                    "description": "An identifier to link participants or subjects across datasets.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Participant"
+                    ],
+                    "type": "string"
+                },
+                "sex": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/SexType"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Identifier for sex of the participant or subject if available. (e.g. from OBI)"
+                },
+                "species": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/SpeciesType"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "An identifier indicating the taxonomic classification of the participant or subject."
+                },
+                "strain": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/StrainType"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Identifier for the strain of the participant or subject."
+                },
+                "vendor": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Organization"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "identifier",
+                "schemaKey"
+            ],
+            "title": "Participant",
+            "type": "object"
+        },
+        "ParticipantRelationType": {
+            "description": "An enumeration of participant relations",
+            "enum": [
+                "dandi:isChildOf",
+                "dandi:isParentOf",
+                "dandi:isSiblingOf",
+                "dandi:isMonozygoticTwinOf",
+                "dandi:isDizygoticTwinOf"
+            ],
+            "title": "ParticipantRelationType",
+            "type": "string"
+        },
+        "Person": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "affiliation": {
+                    "description": "An organization that this person is affiliated with.",
+                    "items": {
+                        "$ref": "#/$defs/Affiliation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "awardNumber": {
+                    "description": "Identifier associated with a sponsored or gift award.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "email": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "An ORCID (orcid.org) identifier for an individual.",
+                    "pattern": "^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "includeInCitation": {
+                    "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "roleName": {
+                    "description": "Role(s) of the contributor. Multiple roles can be selected.",
+                    "items": {
+                        "$ref": "#/$defs/RoleType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Person"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "Person",
+            "type": "object"
+        },
+        "Project": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "description": {
+                    "description": "A brief description of the project.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "endDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the project that generated this Dandiset or asset.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Project"
+                    ],
+                    "type": "string"
+                },
+                "startDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "used": {
+                    "description": "A listing of equipment used for the activity.",
+                    "items": {
+                        "$ref": "#/$defs/Equipment"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAssociatedWith": {
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            },
+                            {
+                                "$ref": "#/$defs/Software"
+                            },
+                            {
+                                "$ref": "#/$defs/Agent"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "Project",
+            "type": "object"
+        },
+        "PropertyValue": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "maxValue": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "minValue": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "propertyID": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/IdentifierType"
+                        },
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "A commonly used identifier for the characteristic represented by the property. For example, a known prefix like DOI or a full URL."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "PropertyValue"
+                    ],
+                    "type": "string"
+                },
+                "unitText": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "value": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Any"
+                        },
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Any"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The value associated with this property."
+                },
+                "valueReference": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/PropertyValue"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "PropertyValue",
+            "type": "object"
+        },
+        "PublishActivity": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "description": {
+                    "description": "The description of the activity.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "endDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the activity.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "PublishActivity"
+                    ],
+                    "type": "string"
+                },
+                "startDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "used": {
+                    "description": "A listing of equipment used for the activity.",
+                    "items": {
+                        "$ref": "#/$defs/Equipment"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAssociatedWith": {
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            },
+                            {
+                                "$ref": "#/$defs/Software"
+                            },
+                            {
+                                "$ref": "#/$defs/Agent"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "PublishActivity",
+            "type": "object"
+        },
+        "Publishable": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "datePublished": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "publishedBy": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/PublishActivity"
+                        }
+                    ],
+                    "description": "The URL should contain the provenance of the publishing process."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Publishable"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "datePublished",
+                "publishedBy",
+                "schemaKey"
+            ],
+            "title": "Publishable",
+            "type": "object"
+        },
+        "PublishedAsset": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "about": {
+                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Disorder"
+                            },
+                            {
+                                "$ref": "#/$defs/Anatomy"
+                            },
+                            {
+                                "$ref": "#/$defs/GenericType"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "access": {
+                    "items": {
+                        "$ref": "#/$defs/AccessRequirements"
+                    },
+                    "maxItems": 1,
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "acknowledgement": {
+                    "description": "Any acknowledgments not covered by contributors or external resources.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "approach": {
+                    "items": {
+                        "$ref": "#/$defs/ApproachType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "blobDateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "contentSize": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?",
+                            "type": "string"
+                        },
+                        {
+                            "minimum": 0,
+                            "type": "integer"
+                        }
+                    ]
+                },
+                "contentUrl": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "contributor": {
+                    "description": "Contributors to this item: persons or organizations.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "dataType": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "dateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "datePublished": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "digest": {
+                    "type": "string"
+                },
+                "encodingFormat": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "ethicsApproval": {
+                    "items": {
+                        "$ref": "#/$defs/EthicsApproval"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
+                    "type": "string"
+                },
+                "keywords": {
+                    "description": "Keywords used to describe this content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "license": {
+                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+                    "items": {
+                        "$ref": "#/$defs/LicenseType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "measurementTechnique": {
+                    "items": {
+                        "$ref": "#/$defs/MeasurementTechniqueType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "publishedBy": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/PublishActivity"
+                        }
+                    ],
+                    "description": "The URL should contain the provenance of the publishing process."
+                },
+                "relatedResource": {
+                    "items": {
+                        "$ref": "#/$defs/Resource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "repository": {
+                    "description": "location of the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sameAs": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "PublishedAsset"
+                    ],
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "studyTarget": {
+                    "description": "Objectives or specific questions of the study.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "url": {
+                    "description": "permalink to the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "variableMeasured": {
+                    "items": {
+                        "$ref": "#/$defs/PropertyValue"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAttributedTo": {
+                    "description": "Associated participant(s) or subject(s).",
+                    "items": {
+                        "$ref": "#/$defs/Participant"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasDerivedFrom": {
+                    "items": {
+                        "$ref": "#/$defs/BioSample"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            },
+                            {
+                                "$ref": "#/$defs/PublishActivity"
+                            },
+                            {
+                                "$ref": "#/$defs/Session"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "datePublished",
+                "publishedBy",
+                "contentUrl",
+                "identifier",
+                "contentSize",
+                "digest",
+                "encodingFormat",
+                "path",
+                "schemaKey"
+            ],
+            "title": "PublishedAsset",
+            "type": "object"
+        },
+        "PublishedDandiset": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "about": {
+                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Disorder"
+                            },
+                            {
+                                "$ref": "#/$defs/Anatomy"
+                            },
+                            {
+                                "$ref": "#/$defs/GenericType"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "access": {
+                    "items": {
+                        "$ref": "#/$defs/AccessRequirements"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "acknowledgement": {
+                    "description": "Any acknowledgments not covered by contributors or external resources.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "assetsSummary": {
+                    "$ref": "#/$defs/AssetsSummary"
+                },
+                "citation": {
+                    "type": "string"
+                },
+                "contributor": {
+                    "description": "Contributors to this item: persons or organizations.",
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "dateCreated": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "dateModified": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "datePublished": {
+                    "format": "date-time",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "A description of the item.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "doi": {
+                    "pattern": "^(10\\.\\d{4,}/[a-z][-a-z]*\\.\\d{6}/\\d+\\.\\d+\\.\\d+|)$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ethicsApproval": {
+                    "items": {
+                        "$ref": "#/$defs/EthicsApproval"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "A Dandiset identifier that can be resolved by identifiers.org.",
+                    "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
+                    "type": "string"
+                },
+                "keywords": {
+                    "description": "Keywords used to describe this content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "license": {
+                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+                    "items": {
+                        "$ref": "#/$defs/LicenseType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "manifestLocation": {
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+                    "items": {
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "publishedBy": {
+                    "$ref": "#/$defs/Any",
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/PublishActivity"
+                        }
+                    ],
+                    "description": "The URL should contain the provenance of the publishing process."
+                },
+                "relatedResource": {
+                    "items": {
+                        "$ref": "#/$defs/Resource"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "releaseNotes": {
+                    "description": "The description of the release",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "repository": {
+                    "description": "location of the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sameAs": {
+                    "description": "Known DANDI URLs of the Dandiset at other DANDI instances.",
+                    "items": {
+                        "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "PublishedDandiset"
+                    ],
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "studyTarget": {
+                    "description": "Objectives or specific questions of the study.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "url": {
+                    "description": "permalink to the item",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "type": "string"
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            },
+                            {
+                                "$ref": "#/$defs/PublishActivity"
+                            },
+                            {
+                                "$ref": "#/$defs/Session"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "datePublished",
+                "publishedBy",
+                "assetsSummary",
+                "citation",
+                "identifier",
+                "manifestLocation",
+                "version",
+                "schemaKey"
+            ],
+            "title": "PublishedDandiset",
+            "type": "object"
+        },
+        "RelatedParticipant": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "relation": {
+                    "$ref": "#/$defs/ParticipantRelationType",
+                    "description": "Indicates how the current participant or subject is related to the other participant or subject. This relation should satisfy: Participant/Subject <relation> relatedParticipant/Subject."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "RelatedParticipant"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "relation",
+                "schemaKey"
+            ],
+            "title": "RelatedParticipant",
+            "type": "object"
+        },
+        "RelationType": {
+            "description": "An enumeration of resource relations",
+            "enum": [
+                "dcite:IsCitedBy",
+                "dcite:Cites",
+                "dcite:IsSupplementTo",
+                "dcite:IsSupplementedBy",
+                "dcite:IsContinuedBy",
+                "dcite:Continues",
+                "dcite:Describes",
+                "dcite:IsDescribedBy",
+                "dcite:HasMetadata",
+                "dcite:IsMetadataFor",
+                "dcite:HasVersion",
+                "dcite:IsVersionOf",
+                "dcite:IsNewVersionOf",
+                "dcite:IsPreviousVersionOf",
+                "dcite:IsPartOf",
+                "dcite:HasPart",
+                "dcite:IsReferencedBy",
+                "dcite:References",
+                "dcite:IsDocumentedBy",
+                "dcite:Documents",
+                "dcite:IsCompiledBy",
+                "dcite:Compiles",
+                "dcite:IsVariantFormOf",
+                "dcite:IsOriginalFormOf",
+                "dcite:IsIdenticalTo",
+                "dcite:IsReviewedBy",
+                "dcite:Reviews",
+                "dcite:IsDerivedFrom",
+                "dcite:IsSourceOf",
+                "dcite:IsRequiredBy",
+                "dcite:Requires",
+                "dcite:Obsoletes",
+                "dcite:IsObsoletedBy",
+                "dcite:IsPublishedIn"
+            ],
+            "title": "RelationType",
+            "type": "string"
+        },
+        "Resource": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "relation": {
+                    "$ref": "#/$defs/RelationType",
+                    "description": "Indicates how the resource is related to the dataset. This relation should satisfy: dandiset <relation> resource."
+                },
+                "repository": {
+                    "description": "Name of the repository in which the resource is housed.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resourceType": {
+                    "$ref": "#/$defs/ResourceType",
+                    "description": "The type of resource."
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Resource"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "relation",
+                "schemaKey"
+            ],
+            "title": "Resource",
+            "type": "object"
+        },
+        "ResourceType": {
+            "description": "An enumeration of resource types",
+            "enum": [
+                "dcite:Audiovisual",
+                "dcite:Book",
+                "dcite:BookChapter",
+                "dcite:Collection",
+                "dcite:ComputationalNotebook",
+                "dcite:ConferencePaper",
+                "dcite:ConferenceProceeding",
+                "dcite:DataPaper",
+                "dcite:Dataset",
+                "dcite:Dissertation",
+                "dcite:Event",
+                "dcite:Image",
+                "dcite:Instrument",
+                "dcite:InteractiveResource",
+                "dcite:Journal",
+                "dcite:JournalArticle",
+                "dcite:Model",
+                "dcite:OutputManagementPlan",
+                "dcite:PeerReview",
+                "dcite:PhysicalObject",
+                "dcite:Preprint",
+                "dcite:Report",
+                "dcite:Service",
+                "dcite:Software",
+                "dcite:Sound",
+                "dcite:Standard",
+                "dcite:StudyRegistration",
+                "dcite:Text",
+                "dcite:Workflow",
+                "dcite:Other"
+            ],
+            "title": "ResourceType",
+            "type": "string"
+        },
+        "RoleType": {
+            "description": "An enumeration of roles",
+            "enum": [
+                "dcite:Author",
+                "dcite:Conceptualization",
+                "dcite:ContactPerson",
+                "dcite:DataCollector",
+                "dcite:DataCurator",
+                "dcite:DataManager",
+                "dcite:FormalAnalysis",
+                "dcite:FundingAcquisition",
+                "dcite:Investigation",
+                "dcite:Maintainer",
+                "dcite:Methodology",
+                "dcite:Producer",
+                "dcite:ProjectLeader",
+                "dcite:ProjectManager",
+                "dcite:ProjectMember",
+                "dcite:ProjectAdministration",
+                "dcite:Researcher",
+                "dcite:Resources",
+                "dcite:Software",
+                "dcite:Supervision",
+                "dcite:Validation",
+                "dcite:Visualization",
+                "dcite:Funder",
+                "dcite:Sponsor",
+                "dcite:StudyParticipant",
+                "dcite:Affiliation",
+                "dcite:EthicsApproval",
+                "dcite:Other"
+            ],
+            "title": "RoleType",
+            "type": "string"
+        },
+        "SampleType": {
+            "additionalProperties": false,
+            "description": "OBI based identifier for the sample type used",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "SampleType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "SampleType",
+            "type": "object"
+        },
+        "Session": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "description": {
+                    "description": "A brief description of the session.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "endDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the logical session associated with the asset.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Session"
+                    ],
+                    "type": "string"
+                },
+                "startDate": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "used": {
+                    "description": "A listing of equipment used for the activity.",
+                    "items": {
+                        "$ref": "#/$defs/Equipment"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "wasAssociatedWith": {
+                    "items": {
+                        "$ref": "#/$defs/Any",
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Person"
+                            },
+                            {
+                                "$ref": "#/$defs/Organization"
+                            },
+                            {
+                                "$ref": "#/$defs/Software"
+                            },
+                            {
+                                "$ref": "#/$defs/Agent"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "name",
+                "schemaKey"
+            ],
+            "title": "Session",
+            "type": "object"
+        },
+        "SexType": {
+            "additionalProperties": false,
+            "description": "Identifier for the sex of the sample",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "SexType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "SexType",
+            "type": "object"
+        },
+        "Software": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "description": "RRID of the software from scicrunch.org.",
+                    "pattern": "^RRID:.*",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Software"
+                    ],
+                    "type": "string"
+                },
+                "url": {
+                    "description": "Web page for the software.",
+                    "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "version",
+                "schemaKey"
+            ],
+            "title": "Software",
+            "type": "object"
+        },
+        "SpeciesType": {
+            "additionalProperties": false,
+            "description": "Identifier for species of the sample",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "SpeciesType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "SpeciesType",
+            "type": "object"
+        },
+        "StandardsType": {
+            "additionalProperties": false,
+            "description": "Identifier for data standard used",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "StandardsType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "StandardsType",
+            "type": "object"
+        },
+        "StrainType": {
+            "additionalProperties": false,
+            "description": "Identifier for the strain of the sample",
+            "properties": {
+                "id": {
+                    "description": "Uniform resource identifier",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "identifier": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "^[a-zA-Z0-9-]+:[a-zA-Z0-9-/\\._]+$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org."
+                },
+                "name": {
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,150}\\Z"
+                        }
+                    ],
+                    "description": "The name of the item.",
+                    "type": "string"
+                },
+                "schemaKey": {
+                    "enum": [
+                        "StrainType"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schemaKey"
+            ],
+            "title": "StrainType",
+            "type": "object"
+        }
+    },
+    "$id": "https://schema.dandiarchive.org/s/dandi/v0.7",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "additionalProperties": true,
+    "description": "A body of structured information describing a DANDI dataset.",
+    "metamodel_version": "1.7.0",
+    "properties": {
+        "about": {
+            "description": "The subject matter of the content, such as disorders, brain anatomy.",
+            "items": {
+                "$ref": "#/$defs/Any",
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/Disorder"
+                    },
+                    {
+                        "$ref": "#/$defs/Anatomy"
+                    },
+                    {
+                        "$ref": "#/$defs/GenericType"
+                    }
+                ]
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "access": {
+            "items": {
+                "$ref": "#/$defs/AccessRequirements"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "acknowledgement": {
+            "description": "Any acknowledgments not covered by contributors or external resources.",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "assetsSummary": {
+            "$ref": "#/$defs/AssetsSummary"
+        },
+        "citation": {
+            "type": "string"
+        },
+        "contributor": {
+            "description": "Contributors to this item: persons or organizations.",
+            "items": {
+                "$ref": "#/$defs/Any",
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/Person"
+                    },
+                    {
+                        "$ref": "#/$defs/Organization"
+                    }
+                ]
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "dateCreated": {
+            "format": "date-time",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "dateModified": {
+            "format": "date-time",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "description": {
+            "description": "A description of the item.",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "ethicsApproval": {
+            "items": {
+                "$ref": "#/$defs/EthicsApproval"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "id": {
+            "description": "Uniform resource identifier",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "identifier": {
+            "description": "A Dandiset identifier that can be resolved by identifiers.org.",
+            "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
+            "type": "string"
+        },
+        "keywords": {
+            "description": "Keywords used to describe this content.",
+            "items": {
+                "type": "string"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "license": {
+            "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
+            "items": {
+                "$ref": "#/$defs/LicenseType"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "manifestLocation": {
+            "items": {
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+        },
+        "name": {
+            "allOf": [
+                {
+                    "pattern": "^[\\s\\S]{,150}\\Z"
+                }
+            ],
+            "description": "The name of the item.",
+            "type": "string"
+        },
+        "protocol": {
+            "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
+            "items": {
+                "pattern": "^(?i:http|https)://[^\\s]+$",
+                "type": "string"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "relatedResource": {
+            "items": {
+                "$ref": "#/$defs/Resource"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "repository": {
+            "description": "location of the item",
+            "pattern": "^(?i:http|https)://[^\\s]+$",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "sameAs": {
+            "description": "Known DANDI URLs of the Dandiset at other DANDI instances.",
+            "items": {
+                "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
+                "type": "string"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "schemaKey": {
+            "enum": [
+                "Dandiset"
+            ],
+            "type": "string"
+        },
+        "schemaVersion": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "studyTarget": {
+            "description": "Objectives or specific questions of the study.",
+            "items": {
+                "type": "string"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "url": {
+            "description": "permalink to the item",
+            "pattern": "^(?i:http|https)://[^\\s]+$",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "version": {
+            "type": "string"
+        },
+        "wasGeneratedBy": {
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/Activity"
+                    },
+                    {
+                        "$ref": "#/$defs/Project"
+                    },
+                    {
+                        "$ref": "#/$defs/PublishActivity"
+                    },
+                    {
+                        "$ref": "#/$defs/Session"
+                    }
+                ]
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        }
+    },
+    "required": [
+        "assetsSummary",
+        "citation",
+        "identifier",
+        "manifestLocation",
+        "version",
+        "schemaKey"
+    ],
+    "title": "dandi-schema",
+    "type": "object",
+    "version": "0.7.0"
+}
