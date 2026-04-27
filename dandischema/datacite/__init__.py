@@ -9,7 +9,7 @@ from functools import lru_cache
 import json
 from pathlib import Path
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from jsonschema import Draft7Validator
 
@@ -117,6 +117,7 @@ def to_datacite(
     meta: Union[dict, PublishedDandiset],
     validate: bool = False,
     publish: bool = False,
+    concept_doi: Optional[str] = None,
 ) -> dict:
     """Convert published Dandiset metadata to Datacite"""
 
@@ -137,6 +138,10 @@ def to_datacite(
         {
             "alternateIdentifier": str(meta.url),
             "alternateIdentifierType": "URL",
+        },
+        {
+            "alternateIdentifier": meta.identifier,
+            "alternateIdentifierType": "DANDI",
         },
     ]
 
@@ -163,6 +168,10 @@ def to_datacite(
         )
 
     attributes["publicationYear"] = str(meta.datePublished.year)
+    # T002: Add dates field with Issued dateType
+    attributes["dates"] = [
+        {"date": str(meta.datePublished.date()), "dateType": "Issued"}
+    ]
     # not sure about it dandi-api had "resourceTypeGeneral": "NWB"
     attributes["types"] = {
         "resourceType": "Neural Data",
@@ -297,6 +306,16 @@ def to_datacite(
 
     if hasattr(meta, "keywords") and meta.keywords is not None:
         attributes["subjects"] = [{"subject": el} for el in meta.keywords]
+
+    # T003: Add IsVersionOf relation when concept_doi is provided
+    if concept_doi is not None:
+        attributes.setdefault("relatedIdentifiers", []).append(
+            {
+                "relatedIdentifier": concept_doi,
+                "relatedIdentifierType": "DOI",
+                "relationType": "IsVersionOf",
+            }
+        )
 
     datacite_dict = {"data": {"id": meta.doi, "type": "dois", "attributes": attributes}}
 

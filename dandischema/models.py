@@ -95,6 +95,15 @@ DANDI_DOI_PATTERN = (
     if _INSTANCE_CONFIG.doi_prefix is not None
     else rf"^({_INNER_DANDI_DOI_PATTERN}|)$"  # This matches an empty string as well
 )
+# Concept DOI pattern: like version DOI but without the version suffix
+_INNER_CONCEPT_DOI_PATTERN = (
+    rf"{DOI_PREFIX_PATTERN}/{ID_PATTERN.lower()}\.\d{{6}}"
+)
+DANDI_CONCEPT_DOI_PATTERN = (
+    rf"^{_INNER_CONCEPT_DOI_PATTERN}$"
+    if _INSTANCE_CONFIG.doi_prefix is not None
+    else rf"^({_INNER_CONCEPT_DOI_PATTERN}|)$"
+)
 DANDI_PUBID_PATTERN = rf"^{ID_PATTERN}:{VERSION_PATTERN}$"
 DANDI_NSKEY = "dandi"  # Namespace for DANDI ontology
 
@@ -1699,6 +1708,14 @@ class Dandiset(CommonModel):
             json_schema_extra={"nskey": "schema"},
         ),
     ]
+
+    doi: Optional[str] = Field(
+        default=None,
+        title="Concept DOI",
+        description="A version-independent DOI for the Dandiset as a whole.",
+        pattern=DANDI_CONCEPT_DOI_PATTERN,
+        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
+    )
 
     name: str = Field(
         title="Dandiset title",
