@@ -605,7 +605,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     },
                     {
                         "alternateIdentifier": dandi_id,
-                        "alternateIdentifierType": "DANDI",
+                        "alternateIdentifierType": _INSTANCE_CONFIG.instance_name,
                     },
                 ],
                 "publicationYear": "1970",

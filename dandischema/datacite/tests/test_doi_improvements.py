@@ -225,20 +225,15 @@ class TestDataciteDandiIdentifier:
         attrs = datacite["data"]["attributes"]
         alt_ids = attrs.get("alternateIdentifiers", [])
 
-        # Find one that looks like a DANDI identifier
-        dandi_ids = [
-            a
-            for a in alt_ids
-            if a.get("alternateIdentifierType") == "DANDI"
-            or (
-                isinstance(a.get("alternateIdentifier"), str)
-                and a["alternateIdentifier"].startswith(f"{INSTANCE_NAME}:")
-            )
+        # Find one with alternateIdentifierType matching the instance name
+        instance_ids = [
+            a for a in alt_ids if a.get("alternateIdentifierType") == INSTANCE_NAME
         ]
-        assert len(dandi_ids) >= 1, (
-            f"Expected at least one alternateIdentifier with DANDI identifier "
-            f"(e.g. {INSTANCE_NAME}:000XXX), got: {alt_ids}"
+        assert len(instance_ids) == 1, (
+            f"Expected one alternateIdentifier with type '{INSTANCE_NAME}', "
+            f"got: {alt_ids}"
         )
+        assert instance_ids[0]["alternateIdentifier"].startswith(f"{INSTANCE_NAME}:")
 
     @skipif_no_doi_prefix
     def test_version_property_populated(

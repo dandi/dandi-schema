@@ -141,7 +141,7 @@ def to_datacite(
         },
         {
             "alternateIdentifier": meta.identifier,
-            "alternateIdentifierType": "DANDI",
+            "alternateIdentifierType": instance_config.instance_name,
         },
     ]
 
