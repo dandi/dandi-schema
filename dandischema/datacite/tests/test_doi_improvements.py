@@ -76,7 +76,9 @@ def metadata_with_publish() -> Dict[str, Any]:
     }
     if DOI_PREFIX is not None:
         meta_dict.update(
-            basic_publishmeta(INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX)
+            basic_publishmeta(
+                INSTANCE_NAME, dandi_id=dandi_id_noprefix, prefix=DOI_PREFIX
+            )
         )
     return meta_dict
 
@@ -90,7 +92,9 @@ class TestDandisetConceptDoi:
     """T001: The Dandiset model should accept an optional doi field."""
 
     @skipif_no_doi_prefix
-    def test_dandiset_accepts_doi_field(self, metadata_with_publish: Dict[str, Any]) -> None:
+    def test_dandiset_accepts_doi_field(
+        self, metadata_with_publish: Dict[str, Any]
+    ) -> None:
         """Dandiset model should accept a doi field without error."""
         meta = metadata_with_publish.copy()
         dandi_id_noprefix = meta["identifier"].split(":")[1]
@@ -109,7 +113,9 @@ class TestDandisetConceptDoi:
         dandiset = Dandiset(**dandiset_meta)
         assert dandiset.doi == concept_doi
 
-    def test_dandiset_doi_is_optional(self, metadata_with_publish: Dict[str, Any]) -> None:
+    def test_dandiset_doi_is_optional(
+        self, metadata_with_publish: Dict[str, Any]
+    ) -> None:
         """Dandiset model should work without a doi field (default None)."""
         meta = metadata_with_publish.copy()
         dandiset_meta = {
@@ -138,7 +144,9 @@ class TestDataciteDatesField:
         assert "dates" in attrs, "dates field missing from DataCite output"
 
     @skipif_no_doi_prefix
-    def test_dates_field_has_issued_type(self, metadata_with_publish: Dict[str, Any]) -> None:
+    def test_dates_field_has_issued_type(
+        self, metadata_with_publish: Dict[str, Any]
+    ) -> None:
         """The dates field should contain an entry with dateType 'Issued'."""
         datacite = to_datacite(metadata_with_publish)
         attrs = datacite["data"]["attributes"]
@@ -181,9 +189,7 @@ class TestDataciteConceptDoiRelations:
         attrs = datacite["data"]["attributes"]
 
         related = attrs.get("relatedIdentifiers", [])
-        is_version_of = [
-            r for r in related if r.get("relationType") == "IsVersionOf"
-        ]
+        is_version_of = [r for r in related if r.get("relationType") == "IsVersionOf"]
         assert len(is_version_of) == 1, "Expected one IsVersionOf relation"
         assert is_version_of[0]["relatedIdentifier"] == concept_doi
         assert is_version_of[0]["relatedIdentifierType"] == "DOI"
@@ -197,10 +203,10 @@ class TestDataciteConceptDoiRelations:
         attrs = datacite["data"]["attributes"]
 
         related = attrs.get("relatedIdentifiers", [])
-        is_version_of = [
-            r for r in related if r.get("relationType") == "IsVersionOf"
-        ]
-        assert len(is_version_of) == 0, "No IsVersionOf relation expected without concept_doi"
+        is_version_of = [r for r in related if r.get("relationType") == "IsVersionOf"]
+        assert (
+            len(is_version_of) == 0
+        ), "No IsVersionOf relation expected without concept_doi"
 
 
 # =============================================================================
