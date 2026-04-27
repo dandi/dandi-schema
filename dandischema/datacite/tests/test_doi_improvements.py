@@ -18,7 +18,6 @@ from dandischema.conf import get_instance_config
 from dandischema.models import (
     Dandiset,
     LicenseType,
-    PublishedDandiset,
     RoleType,
 )
 from dandischema.tests.utils import (
