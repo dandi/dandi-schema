@@ -77,7 +77,7 @@ app = typer.Typer(add_completion=False, help=__doc__.splitlines()[0])
 _SOURCE_PREFIX_RE = re.compile(r"^(\[[A-Z]+\])\s+\[[^\]]+\]\s*")
 
 
-def _normalise_problem(line: str) -> str:
+def _normalize_problem(line: str) -> str:
     """Drop the per-file source prefix from a problem line.
 
     Turns ``"[ERROR] [.../000003/.../metadata.json/0] foo in /bar"`` into
@@ -153,7 +153,7 @@ def _render_bucket(
     pattern_counter: Counter[str] = Counter()
     for r in records:
         for problem in r.get("problems", []):
-            pattern_counter[_normalise_problem(problem)] += 1
+            pattern_counter[_normalize_problem(problem)] += 1
     if pattern_counter:
         fh.write(f"**Top {top_n_patterns} problem patterns:**\n\n")
         for pattern, count in pattern_counter.most_common(top_n_patterns):
@@ -211,7 +211,7 @@ def _render_report(
 ) -> None:
     """Write the top-level ``REPORT.md`` based on ``records``."""
     # Group records into the (class, schemaVersion) buckets the report
-    # is organised around.
+    # is organized around.
     buckets: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for r in records:
         buckets[_bucket_key(r)].append(r)
