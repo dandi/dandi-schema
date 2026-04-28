@@ -1,12 +1,11 @@
 """
-Tests for DataCite DOI improvements (Phase 0 tasks T001-T004).
-
-TDD: These tests are written FIRST and should FAIL before implementation.
+Tests for DataCite DOI improvements.
 
 T001: Optional doi field on Dandiset model for concept DOIs
 T002: dates field in to_datacite() output
 T003: IsVersionOf/HasVersion relation support in to_datacite()
-T004: DANDI identifier in alternateIdentifiers + version in Version property
+
+Note: These tests were AI-generated (Claude Code) using TDD methodology.
 """
 
 import random
@@ -213,27 +212,8 @@ class TestDataciteConceptDoiRelations:
 # =============================================================================
 
 
-class TestDataciteDandiIdentifier:
-    """T004: DataCite output should include DANDI identifier and version."""
-
-    @skipif_no_doi_prefix
-    def test_dandi_identifier_in_alternate_identifiers(
-        self, metadata_with_publish: Dict[str, Any]
-    ) -> None:
-        """alternateIdentifiers should include the DANDI identifier (e.g. DANDI:000485)."""
-        datacite = to_datacite(metadata_with_publish)
-        attrs = datacite["data"]["attributes"]
-        alt_ids = attrs.get("alternateIdentifiers", [])
-
-        # Find one with alternateIdentifierType matching the instance name
-        instance_ids = [
-            a for a in alt_ids if a.get("alternateIdentifierType") == INSTANCE_NAME
-        ]
-        assert len(instance_ids) == 1, (
-            f"Expected one alternateIdentifier with type '{INSTANCE_NAME}', "
-            f"got: {alt_ids}"
-        )
-        assert instance_ids[0]["alternateIdentifier"].startswith(f"{INSTANCE_NAME}:")
+class TestDataciteVersionProperty:
+    """DataCite output should include version property."""
 
     @skipif_no_doi_prefix
     def test_version_property_populated(

@@ -139,10 +139,6 @@ def to_datacite(
             "alternateIdentifier": str(meta.url),
             "alternateIdentifierType": "URL",
         },
-        {
-            "alternateIdentifier": meta.identifier,
-            "alternateIdentifierType": instance_config.instance_name,
-        },
     ]
 
     attributes["doi"] = meta.doi
