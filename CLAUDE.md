@@ -24,9 +24,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Hooks run: trailing-whitespace, end-of-file-fixer, check-yaml, check-added-large-files, black, isort, codespell, flake8.
 - If a commit fails because hooks auto-fixed files, just re-run `git commit` — the second attempt usually succeeds. Investigate further only if it fails twice.
 
-## Test Markers
+## Test Markers / Pytest Plugin
+- A pytest plugin lives at `dandischema/pytest_plugin.py` and is registered via `[project.entry-points.pytest11]` in `pyproject.toml` (so it's auto-loaded once the package is installed).
+- It provides:
+  - `pytest_configure`: registers custom markers — currently only `ai_generated`. Add new markers to the `markers` list there (don't rely on `tox.ini`/`pytest.ini`); `filterwarnings = error` in `tox.ini` makes unregistered markers fail.
+  - `pytest_report_header`: prints versions of declared runtime dependencies on the pytest header.
+  - `pytest_assertrepr_compare`: custom diff for `DandiBaseModel == DandiBaseModel` so failures show the underlying dict diff instead of opaque pydantic reprs.
 - Mark AI-generated tests with `@pytest.mark.ai_generated`.
-- This project does **not** have a `pytest_plugin.py`. If a new marker is introduced, register it under a `[pytest]`/`markers =` block in `tox.ini` (or via `pytest.ini`/`conftest.py`) — otherwise `filterwarnings = error` (set in `tox.ini`) will turn the unregistered-marker warning into a failure.
 
 ## Code Style
 - Black-formatted, line length 100 (see `.flake8: max-line-length = 100`; flake8 ignores `E203,W503`).
