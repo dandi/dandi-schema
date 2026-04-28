@@ -17,47 +17,44 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Default matrix: dandischema installed only into client, across
+        # all OSes and both released and master versions of dandi-cli.
         os:
           - windows-latest
           - ubuntu-latest
           - macos-latest
         python:
-          # Use the only Python which is ATM also used by dandi-api
-          # - '3.10'
           - '3.11'
-          # - '3.12'
         version:
           - master
           - release
-        mode:
-          - normal
+        schema_install:
+          - client
         vendored_dandiapi:
           # Allow vendor information for the dandi-api instance to default to
           #   the default values specified in
-          #   dandi/tests/data/dandiarchive-docker/docker-compose.yml of the dandi-cli
-          #   repo.
+          #   dandi/tests/data/dandiarchive-docker/docker-compose.yml of the
+          #   dandi-cli repo.
           - default
         include:
+          # dandischema installed only into the server (master dandi-cli only,
+          # Ubuntu only since Docker is required)
           - os: ubuntu-latest
-            python: "3.10"
-            mode: dandi-devel
+            python: '3.11'
             version: master
+            schema_install: server
+            vendored_dandiapi: default
+          # dandischema installed into both client and server (both masters)
           - os: ubuntu-latest
-            python: "3.10"
-            mode: dandi-devel
-            version: release
-          - os: ubuntu-latest
-            python: "3.11"
-            mode: normal
+            python: '3.11'
             version: master
-            vendored_dandiapi: ember-dandi
-            instance_name: EMBER-DANDI
-            instance_identifier: 'RRID:SCR_026700'
-            doi_prefix: '10.82754'
+            schema_install: both
+            vendored_dandiapi: default
+          # Vendorized (ember-dandi) with dandischema in both client and server
           - os: ubuntu-latest
-            python: "3.11"
-            mode: normal
-            version: release
+            python: '3.11'
+            version: master
+            schema_install: both
             vendored_dandiapi: ember-dandi
             instance_name: EMBER-DANDI
             instance_identifier: 'RRID:SCR_026700'
@@ -71,27 +68,13 @@ jobs:
       - name: Update pip & install wheel
         run: python -m pip install --upgrade pip wheel
 
-      - name: Install hdf5 (Ubuntu)
-        if: matrix.python == '3.10' && startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get update && sudo apt-get install -y libhdf5-dev
-
-      - name: Install hdf5 (macOS)
-        if: matrix.python == '3.10' && startsWith(matrix.os, 'macos')
-        run: |
-          brew install hdf5@1.8
-          brew link hdf5@1.8
-
       - name: Install master branch of dandi
-        if: ${{ matrix.version == 'master' }}
+        if: matrix.version == 'master'
         run: pip install "dandi[test,extras] @ git+https://github.com/dandi/dandi-cli.git"
 
       - name: Install latest release of dandi
-        if: ${{ matrix.version == 'release' }}
+        if: matrix.version == 'release'
         run: pip install "dandi[test,extras]"
-
-      - name: Set DANDI_DEVEL=1
-        if: matrix.mode == 'dandi-devel'
-        run: echo DANDI_DEVEL=1 >> "$GITHUB_ENV"
 
       - name: Check out dandischema
         uses: actions/checkout@v6
@@ -101,12 +84,13 @@ jobs:
           fetch-depth: 0
           path: dandischema
 
-      - name: Install dandischema
+      - name: Install dandischema into client
+        if: matrix.schema_install != 'server'
         run: pip install .
         working-directory: dandischema
 
       - name: Build dandi-api image with this version of dandischema
-        if: startsWith(matrix.os, 'ubuntu')
+        if: matrix.schema_install != 'client'
         run: |
           docker build \
             -t dandiarchive/dandiarchive-api \
