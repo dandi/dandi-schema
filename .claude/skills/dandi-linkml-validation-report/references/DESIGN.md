@@ -129,7 +129,7 @@ Each stage skips work it's already done:
 - `validate_metadata.py`: skip a version when `validation.json`
   exists and parses, unless `--refresh`. If it parses but is
   unreadable, log a warning and re-validate.
-- `generate_report.py`: stateless; always rewrites `REPORT.md` from
+- `generate_report.py`: stateless; always rewrites `README.md` from
   whatever `validation.json` files are present.
 
 Failures in either of the first two stages are caught at the version

@@ -4,7 +4,7 @@
 The report directory is expected to look like::
 
     linkml-validation-reports/<short-sha>/
-    ├── REPORT.md                    <-- written by this script
+    ├── README.md                    <-- written by this script
     └── data/
         ├── 000003/
         │   ├── draft/
@@ -17,7 +17,7 @@ The report directory is expected to look like::
         └── 000004/...
 
 For each ``validation.json`` produced by ``validate_metadata.py``, this
-script aggregates results and writes a single ``REPORT.md`` at the top
+script aggregates results and writes a single ``README.md`` at the top
 of the report directory.
 
 The report contains:
@@ -100,7 +100,7 @@ def _load_records(data_dir: Path) -> list[dict]:
         except json.JSONDecodeError:
             logger.warning("skipping unreadable %s", vj)
             continue
-        # Path to per-version SUMMARY.md, relative to REPORT.md (which
+        # Path to per-version SUMMARY.md, relative to README.md (which
         # sits one level above ``data_dir``).
         rec["_summary_link"] = (
             f"data/{vj.parent.parent.name}/{vj.parent.name}/SUMMARY.md"
@@ -210,7 +210,7 @@ def _render_report(
     schema: str,
     top_n_patterns: int,
 ) -> None:
-    """Write the top-level ``REPORT.md`` based on ``records``."""
+    """Write the top-level ``README.md`` based on ``records``."""
     # Group records into the (class, schemaVersion) buckets the report
     # is organized around.
     buckets: dict[tuple[str, str], list[dict]] = defaultdict(list)
@@ -306,7 +306,7 @@ def main(
     ),
     log_level: str = typer.Option("INFO", "--log-level", "-l"),
 ) -> None:
-    """Aggregate per-version validation outputs into a top-level REPORT.md."""
+    """Aggregate per-version validation outputs into a top-level README.md."""
     logging.basicConfig(
         format="[%(asctime)s] %(levelname)s %(name)s: %(message)s",
         level=getattr(logging, log_level.upper()),
@@ -320,7 +320,7 @@ def main(
     _attach_info(records, data_dir)
     logger.info("loaded %d validation records", len(records))
 
-    out_path = report_root / "REPORT.md"
+    out_path = report_root / "README.md"
     _render_report(
         out_path,
         records,

@@ -8,7 +8,7 @@ and the shape of every JSON artifact. The top-level `SKILL.md` describes
 
 ```
 linkml-validation-reports/<short-sha>/
-├── REPORT.md                              # written by generate_report.py
+├── README.md                              # written by generate_report.py
 └── data/
     └── <dandiset-id>/                     # e.g. 000003
         ├── draft/                         # draft version
@@ -135,7 +135,7 @@ lists target class, archive status, modified timestamp, raw
 inlines up to the first 20 problem lines and links back to the raw
 files.
 
-## `REPORT.md`
+## `README.md`
 
 Top-level report written by `generate_report.py`.
 
