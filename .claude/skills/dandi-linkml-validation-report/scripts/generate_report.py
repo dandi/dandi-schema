@@ -53,7 +53,6 @@ from collections import Counter, defaultdict
 import json
 import logging
 from pathlib import Path
-import re
 
 import typer
 
@@ -67,23 +66,25 @@ app = typer.Typer(add_completion=False, help=__doc__.splitlines()[0])
 # ---------------------------------------------------------------------------
 
 
-# A line emitted by ``linkml-validate`` looks like::
-#
-#     [ERROR] [path/to/metadata.json/0] <message> in /json/pointer
-#
-# The bracketed source-file segment is per-version noise that prevents
-# similar errors across dandisets from grouping together. This regex
-# strips it so we can count error patterns meaningfully.
-_SOURCE_PREFIX_RE = re.compile(r"^(\[[A-Z]+\])\s+\[[^\]]+\]\s*")
+def _problem_pattern(problem: dict) -> str:
+    """Build a grouping key for one structured problem record.
 
-
-def _normalize_problem(line: str) -> str:
-    """Drop the per-file source prefix from a problem line.
-
-    Turns ``"[ERROR] [.../000003/.../metadata.json/0] foo in /bar"`` into
-    ``"[ERROR] foo in /bar"``, which groups across dandisets.
+    ``validate_metadata.py`` writes each problem as a dict with at
+    least ``severity`` and ``message`` (and, for JSON-schema-backed
+    validation, a ``source.validator`` keyword). The path-prefixed
+    text the CLI prints carries no information not already in these
+    fields, so we group on ``[severity] message`` and prepend the
+    failing JSON-schema validator keyword when available — that lets
+    similar errors group across dandisets without regex scrubbing.
     """
-    return _SOURCE_PREFIX_RE.sub(r"\1 ", line, count=1)
+    severity = problem.get("severity", "?")
+    message = problem.get("message", "")
+    src = problem.get("source") or {}
+    validator = src.get("validator")
+    prefix = f"[{severity}]"
+    if validator:
+        prefix += f" <{validator}>"
+    return f"{prefix} {message}"
 
 
 def _load_records(data_dir: Path) -> list[dict]:
@@ -153,7 +154,7 @@ def _render_bucket(
     pattern_counter: Counter[str] = Counter()
     for r in records:
         for problem in r.get("problems", []):
-            pattern_counter[_normalize_problem(problem)] += 1
+            pattern_counter[_problem_pattern(problem)] += 1
     if pattern_counter:
         fh.write(f"**Top {top_n_patterns} problem patterns:**\n\n")
         for pattern, count in pattern_counter.most_common(top_n_patterns):

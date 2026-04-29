@@ -1,32 +1,31 @@
 #!/usr/bin/env python3
-"""Validate downloaded dandiset metadata using the ``linkml-validate`` CLI.
+"""Validate downloaded dandiset metadata using the LinkML validator Python API.
 
-This script is a thin orchestrator. It does **not** import the LinkML
-validator as a Python library; instead, for every dandiset version
-directory produced by ``fetch_metadata.py`` it shells out to::
+For every dandiset version directory produced by ``fetch_metadata.py`` this
+script runs LinkML validation against ``dandischema/models.yaml`` and emits
+three sibling files in the version directory:
 
-    linkml-validate -s <schema> -C <target-class> <version>/metadata.json
+    ``validation.json`` — machine-readable record. Wraps the structured
+                          ``ValidationResult`` objects from the validator
+                          (severity, message, instance index, JSON-pointer
+                          path, validator name, etc.) plus a small header
+                          identifying the dandiset/version/target class.
 
-where the target class is decided from the version's ``info.json``:
+    ``validation.txt``  — human-readable transcript that is byte-equivalent
+                          to what ``linkml-validate`` would have printed for
+                          the same inputs (same ``[severity] [source/idx]
+                          message`` template, same ``No issues found``
+                          banner, same exit-code semantics). One run, two
+                          outputs — we don't shell out to the CLI.
+
+    ``SUMMARY.md``      — short markdown summary of the version's
+                          validation outcome (linked from the top-level
+                          report).
+
+The target class is decided from the version's ``info.json``:
 
     * ``Dandiset``           — for the ``draft`` version
     * ``PublishedDandiset``  — for any non-``draft`` (i.e. published) version
-
-For each version directory the script writes three sibling files:
-
-    ``validation.txt``  — verbatim stdout / stderr of ``linkml-validate``,
-                          i.e. the human-readable transcript you would
-                          have seen if you'd run the CLI by hand.
-
-    ``validation.json`` — small machine-readable wrapper containing the
-                          exit code, the chosen target class, the number
-                          of problem lines, and the parsed problem lines
-                          themselves. The report generator reads this
-                          file rather than re-parsing ``validation.txt``.
-
-    ``SUMMARY.md``       — short markdown summary of the version's
-                          validation outcome (linked from the top-level
-                          report).
 
 Re-running is safe: by default versions that already have a
 ``validation.json`` are skipped. Pass ``--refresh`` to re-validate
@@ -45,9 +44,10 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-import re
-import subprocess
 
+from linkml.validator import Validator
+from linkml.validator.plugins import JsonschemaValidationPlugin
+from linkml.validator.report import Severity, ValidationResult
 import typer
 
 logger = logging.getLogger("validate_metadata")
@@ -56,45 +56,46 @@ app = typer.Typer(add_completion=False, help=__doc__.splitlines()[0])
 
 
 # ---------------------------------------------------------------------------
-# Output parsing
+# Result rendering
 # ---------------------------------------------------------------------------
-#
-# ``linkml-validate`` prints one validation problem per stdout line and
-# exits non-zero if any problems were found. We classify each line as
-# either a "problem line" or noise (blank lines, the "No issues found"
-# banner some versions emit, etc.) and persist the problem lines into a
-# JSON record so the report generator doesn't have to re-parse the text.
-
-_NOISE_PATTERNS = [
-    re.compile(r"^\s*$"),  # blank lines
-    re.compile(r"^No issues found", re.IGNORECASE),  # success banner
-]
 
 
-def _is_problem_line(line: str) -> bool:
-    """Return True if ``line`` should be counted as a validation problem."""
-    return not any(p.search(line) for p in _NOISE_PATTERNS)
+def _result_to_dict(r: ValidationResult) -> dict:
+    """Serialize one ``ValidationResult`` into a JSON-friendly dict.
 
-
-def _run_linkml_validate(
-    schema: Path, target_class: str, metadata_file: Path
-) -> subprocess.CompletedProcess[str]:
-    """Invoke ``linkml-validate`` and return the completed process.
-
-    ``check=False`` because a non-zero exit code is the *expected*
-    outcome whenever the metadata fails validation — we want to record
-    that, not raise.
+    Pydantic excludes the ``source`` field from default serialization
+    (it's an arbitrary plugin-defined object), but for JSON-schema-based
+    validation it carries useful grouping signals — the failing
+    validator keyword (e.g. ``"required"``, ``"enum"``) and the value
+    that triggered the failure. We pull those out by hand so the
+    downstream report can group by validator without re-parsing
+    messages.
     """
-    cmd = [
-        "linkml-validate",
-        "-s",
-        str(schema),
-        "-C",
-        target_class,
-        str(metadata_file),
-    ]
-    logger.debug("running %s", " ".join(cmd))
-    return subprocess.run(cmd, check=False, capture_output=True, text=True)
+    # ``instance`` echoes the full data instance back into every result,
+    # which would duplicate ``metadata.json`` per-problem and bloat the
+    # record without adding any information the consumer doesn't already
+    # have. Drop it.
+    d = r.model_dump(mode="json", exclude={"instance"})
+    src = r.source
+    if src is not None:
+        d["source"] = {
+            "validator": getattr(src, "validator", None),
+            "validator_value": getattr(src, "validator_value", None),
+        }
+    return d
+
+
+def _format_cli_line(r: ValidationResult, source_label: str) -> str:
+    """Format one result the way ``linkml-validate`` prints it.
+
+    Mirrors the f-string in ``linkml/validator/cli.py`` exactly so the
+    transcript stays byte-equivalent to the CLI's stdout.
+    """
+    # Match the CLI's f-string interpolation exactly: no fallback. If
+    # ``instance_index`` is ``None`` (e.g. a result emitted for a non-list
+    # instance), the literal ``"None"`` is what the CLI would print, and
+    # mirroring that keeps the transcript byte-equivalent.
+    return f"[{r.severity.value}] [{source_label}/{r.instance_index}] {r.message}"
 
 
 # ---------------------------------------------------------------------------
@@ -102,16 +103,18 @@ def _run_linkml_validate(
 # ---------------------------------------------------------------------------
 
 
-def _validate_one(schema: Path, version_dir: Path, *, refresh: bool) -> tuple[str, int]:
+def _validate_one(
+    validator: Validator, version_dir: Path, *, refresh: bool
+) -> tuple[str, int]:
     """Validate one ``<dandiset-id>/<version>`` directory.
 
     Reads ``info.json`` (written by ``fetch_metadata.py``) to decide the
-    target class, runs ``linkml-validate`` on ``metadata.json``, then
-    writes ``validation.txt``, ``validation.json`` and ``SUMMARY.md``
-    inside ``version_dir``.
+    target class, runs the validator on ``metadata.json``, and writes
+    ``validation.json`` / ``validation.txt`` / ``SUMMARY.md`` alongside
+    it.
 
-    Returns ``(target_class, n_problem_lines)`` so the caller can log a
-    tally without re-reading the file.
+    Returns ``(target_class, n_results)`` so the caller can log a tally
+    without re-reading the file.
     """
     metadata_file = version_dir / "metadata.json"
     info_file = version_dir / "info.json"
@@ -135,29 +138,46 @@ def _validate_one(schema: Path, version_dir: Path, *, refresh: bool) -> tuple[st
                 version_dir,
             )
 
-    proc = _run_linkml_validate(schema, target_class, metadata_file)
+    # --- Run validation once. ---
+    raw = json.loads(metadata_file.read_text())
+    # ``@context`` is a JSON-LD framing field that's not part of the
+    # ``Dandiset`` / ``PublishedDandiset`` LinkML class definitions, so a
+    # closed-world JSON-schema check flags it as an unexpected property
+    # (see linkml/linkml#3442). Strip it before validation so we don't
+    # drown the report in noise that has nothing to do with the model.
+    raw.pop("@context", None)
+    report = validator.validate(raw, target_class=target_class)
+    results: list[ValidationResult] = report.results
 
-    # --- Persist the raw transcript exactly as the CLI would print it. ---
-    transcript = proc.stdout
-    if proc.stderr:
-        transcript += "\n--- stderr ---\n" + proc.stderr
-    if not transcript.endswith("\n"):
-        transcript += "\n"
-    out_text.write_text(transcript)
+    # ``linkml-validate``'s exit code is 1 iff any ERROR-severity result
+    # is present, else 0. We replicate that for downstream consumers
+    # that key off ``exit_code``.
+    has_error = any(r.severity is Severity.ERROR for r in results)
+    exit_code = 1 if has_error else 0
 
-    # --- Parse the transcript into a small JSON record. ---
-    problem_lines = [
-        line.rstrip() for line in proc.stdout.splitlines() if _is_problem_line(line)
-    ]
+    # --- Render the human-readable transcript (CLI-equivalent). ---
+    # The CLI prints ``loader.source`` as the bracketed path; for a
+    # file-backed JsonLoader that's the file path string, so use the
+    # same here.
+    source_label = str(metadata_file)
+    if results:
+        transcript_lines = [_format_cli_line(r, source_label) for r in results]
+    else:
+        # Mirrors the CLI's success banner so byte-equivalence holds in
+        # the zero-results case too.
+        transcript_lines = ["No issues found"]
+    out_text.write_text("\n".join(transcript_lines) + "\n")
+
+    # --- Persist the structured record. ---
     record = {
         "dandiset_id": info["dandiset_id"],
         "version": info["version"],
         "is_published": is_published,
         "target_class": target_class,
         "schema_version": info.get("schema_version"),
-        "exit_code": proc.returncode,
-        "problem_count": len(problem_lines),
-        "problems": problem_lines,
+        "exit_code": exit_code,
+        "problem_count": len(results),
+        "problems": [_result_to_dict(r) for r in results],
     }
     out_json.write_text(json.dumps(record, indent=2) + "\n")
 
@@ -169,32 +189,32 @@ def _validate_one(schema: Path, version_dir: Path, *, refresh: bool) -> tuple[st
         f"- **Status:** {info.get('status')}",
         f"- **Modified:** {info.get('modified')}",
         f"- **schemaVersion:** {info.get('schema_version')}",
-        f"- **`linkml-validate` exit code:** {proc.returncode}",
-        f"- **# problem lines:** {len(problem_lines)}",
+        f"- **Equivalent `linkml-validate` exit code:** {exit_code}",
+        f"- **# problems:** {len(results)}",
         "",
         "## Files",
         "",
         "- [`metadata.json`](metadata.json) — raw metadata as fetched from the archive",
-        "- [`validation.txt`](validation.txt) — verbatim `linkml-validate` output",
-        "- [`validation.json`](validation.json) — parsed validation record",
+        "- [`validation.txt`](validation.txt) — `linkml-validate`-equivalent transcript",
+        "- [`validation.json`](validation.json) — structured validation record",
         "",
     ]
-    if problem_lines:
+    if results:
         md_lines += [
-            "## First 20 problem lines",
+            "## First 20 problems",
             "",
             "```",
-            *problem_lines[:20],
+            *transcript_lines[:20],
             "```",
         ]
-        if len(problem_lines) > 20:
+        if len(results) > 20:
             md_lines.append(
-                f"_… {len(problem_lines) - 20} more — see "
+                f"_… {len(results) - 20} more — see "
                 "[`validation.txt`](validation.txt)._"
             )
     out_md.write_text("\n".join(md_lines) + "\n")
 
-    return target_class, len(problem_lines)
+    return target_class, len(results)
 
 
 # ---------------------------------------------------------------------------
@@ -227,6 +247,16 @@ def main(
         level=getattr(logging, log_level.upper()),
     )
 
+    # Build one ``Validator`` and reuse it across every version: parsing
+    # the schema is the expensive part, and the plugin configuration
+    # below matches the ``linkml-validate`` CLI default
+    # (``JsonschemaValidationPlugin`` with ``closed=True``), so the
+    # results we collect are the same ones the CLI would have emitted.
+    validator = Validator(
+        schema,
+        validation_plugins=[JsonschemaValidationPlugin(closed=True)],
+    )
+
     version_dirs = sorted(
         p for p in root.glob("*/*") if p.is_dir() and (p / "metadata.json").is_file()
     )
@@ -234,17 +264,18 @@ def main(
 
     for vd in version_dirs:
         try:
-            target, n = _validate_one(schema, vd, refresh=refresh)
+            target, n = _validate_one(validator, vd, refresh=refresh)
+        except Exception as e:
+            # Never let one broken dandiset abort the whole run.
+            logger.exception("validation failed for %s: %s", vd, e)
+        else:
             logger.info(
-                "validated %s/%s as %s (%d problem lines)",
+                "validated %s/%s as %s (%d problems)",
                 vd.parent.name,
                 vd.name,
                 target,
                 n,
             )
-        except Exception as e:
-            # Never let one broken dandiset abort the whole run.
-            logger.exception("validation failed for %s: %s", vd, e)
 
 
 if __name__ == "__main__":
