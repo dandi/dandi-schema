@@ -2,6 +2,7 @@
 name: dandi-linkml-validation-report
 description: Generate a Markdown report assessing how `dandischema/models.yaml` (the LinkML schema) validates against real DANDI Archive Dandiset metadata. Use when the user wants to assess schema fitness across the archive, investigate a class of validation failure across many dandisets, or compare before/after for a schema change. Covers fetching raw metadata for every dandiset (draft + every published version), running closed-world JSON-schema validation via the LinkML Python API, and aggregating per-version results into a top-level REPORT.md bucketed by target class (Dandiset / PublishedDandiset) × schemaVersion.
 compatibility: Requires the `linkml-auto-converted` hatch env defined in this repo's pyproject.toml (provides linkml, linkml-runtime, dandi, typer) and network access to a DANDI Archive instance.
+allowed-tools: Bash(git:*) Bash(hatch:*) Read
 ---
 
 # DANDI LinkML validation report
