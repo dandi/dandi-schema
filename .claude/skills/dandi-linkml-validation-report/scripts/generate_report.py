@@ -164,7 +164,7 @@ def _render_bucket(
         fh.write("\n")
 
     # --- Per-version index table. ---
-    fh.write("| Dandiset | Version | Problems | Status | Modified |\n")
+    fh.write("| Dandiset | Version | Problems | API Status | Modified |\n")
     fh.write("|---|---|---:|---|---|\n")
     for r in sorted(records, key=lambda x: (x["dandiset_id"], x["version"])):
         problems_cell = (
