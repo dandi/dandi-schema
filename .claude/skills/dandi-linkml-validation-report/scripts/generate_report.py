@@ -125,6 +125,11 @@ def _bucket_key(rec: dict) -> tuple[str, str]:
 # ---------------------------------------------------------------------------
 
 
+def _migration_failed(rec: dict) -> bool:
+    """True if this record's metadata could not be migrated."""
+    return rec.get("migration_status") == "failed"
+
+
 def _render_bucket(
     fh,
     title: str,
@@ -135,20 +140,33 @@ def _render_bucket(
     """Render one bucket section to ``fh``.
 
     Emits:
-      * a one-line headline counting versions / valid / failing,
-      * a "top error patterns" list,
+      * a one-line headline counting versions / migration-failed /
+        valid / failing,
+      * a "top error patterns" list (validation problems only —
+        migration-failed versions never reached the validator),
       * a table indexing every version with a link to its
         per-version ``SUMMARY.md``.
     """
     n_total = len(records)
-    n_valid = sum(1 for r in records if r["problem_count"] == 0)
-    n_failing = n_total - n_valid
+    n_mig_failed = sum(1 for r in records if _migration_failed(r))
+    n_validated = n_total - n_mig_failed
+    # "Valid" here means migration succeeded *and* validation found no
+    # problems. Migration-failed versions are excluded from both
+    # ``valid`` and ``with-problems`` since validation never ran.
+    n_valid = sum(
+        1 for r in records if not _migration_failed(r) and r["problem_count"] == 0
+    )
+    n_with_problems = n_validated - n_valid
 
     fh.write(f"### {title}\n\n")
-    fh.write(
-        f"- **Versions:** {n_total}  •  "
-        f"**Valid:** {n_valid}  •  **With problems:** {n_failing}\n\n"
-    )
+    headline_parts = [f"**Versions:** {n_total}"]
+    if n_mig_failed:
+        headline_parts.append(f"**Migration failed:** {n_mig_failed}")
+    headline_parts += [
+        f"**Valid:** {n_valid}",
+        f"**With problems:** {n_with_problems}",
+    ]
+    fh.write("- " + "  •  ".join(headline_parts) + "\n\n")
 
     # --- Top error patterns within this bucket. ---
     pattern_counter: Counter[str] = Counter()
@@ -167,11 +185,16 @@ def _render_bucket(
     fh.write("| Dandiset | Version | Problems | API Status | Modified |\n")
     fh.write("|---|---|---:|---|---|\n")
     for r in sorted(records, key=lambda x: (x["dandiset_id"], x["version"])):
-        problems_cell = (
-            f"[{r['problem_count']}]({r['_summary_link']})"
-            if r["problem_count"]
-            else f"[OK]({r['_summary_link']})"
-        )
+        if _migration_failed(r):
+            # Migration-failed versions don't have a problem count to
+            # display. Render a distinct cell so the reader can spot
+            # them at a glance and click through to the per-version
+            # SUMMARY.md for the migration error.
+            problems_cell = f"[migration failed]({r['_summary_link']})"
+        elif r["problem_count"]:
+            problems_cell = f"[{r['problem_count']}]({r['_summary_link']})"
+        else:
+            problems_cell = f"[OK]({r['_summary_link']})"
         # ``status`` and ``modified`` come from each version's ``info.json``;
         # ``_attach_info`` has already stashed them onto the record so we
         # can render the table without touching the filesystem here.
@@ -225,11 +248,19 @@ def _render_report(
         fh.write(f"- **Schema:** `{schema}`\n")
         fh.write(f"- **Total dandiset versions checked:** {len(records)}\n\n")
 
-        n_valid = sum(1 for r in records if r["problem_count"] == 0)
+        n_total = len(records)
+        n_mig_failed = sum(1 for r in records if _migration_failed(r))
+        n_valid = sum(
+            1 for r in records if not _migration_failed(r) and r["problem_count"] == 0
+        )
+        n_with_problems = n_total - n_mig_failed - n_valid
+        overall_parts = [f"{n_valid} valid"]
+        if n_mig_failed:
+            overall_parts.append(f"{n_mig_failed} migration-failed")
+        overall_parts.append(f"{n_with_problems} with problems")
         fh.write(
-            f"**Overall:** {n_valid} valid / "
-            f"{len(records) - n_valid} with problems "
-            f"out of {len(records)} versions.\n\n"
+            f"**Overall:** {' / '.join(overall_parts)} "
+            f"out of {n_total} versions.\n\n"
         )
 
         # Draft section first (target class: Dandiset), then published.

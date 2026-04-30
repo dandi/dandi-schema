@@ -1,6 +1,6 @@
 ---
 name: dandi-linkml-validation-report
-description: Generate a Markdown report assessing how `dandischema/models.yaml` (the LinkML schema) validates against real DANDI Archive Dandiset metadata. Use when the user wants to assess schema fitness across the archive, investigate a class of validation failure across many dandisets, or compare before/after for a schema change. Covers fetching raw metadata for every dandiset (draft + every published version), running closed-world JSON-schema validation via the LinkML Python API, and aggregating per-version results into a top-level README.md bucketed by target class (Dandiset / PublishedDandiset) × schemaVersion.
+description: Generate a Markdown report assessing how `dandischema/models.yaml` (the LinkML schema) validates against real DANDI Archive Dandiset metadata after migrating each instance to the latest schema version. Use when the user wants to assess schema fitness across the archive, investigate a class of validation failure across many dandisets, or compare before/after for a schema change. Covers fetching raw metadata for every dandiset (draft + every published version), migrating each instance via `dandischema.metadata.migrate`, running closed-world JSON-schema validation on successfully-migrated instances via the LinkML Python API, and aggregating per-version results into a top-level README.md bucketed by target class (Dandiset / PublishedDandiset) × schemaVersion. Versions whose metadata can't be migrated are flagged in the report; validation is skipped for them.
 compatibility: Requires the `linkml-auto-converted` hatch env defined in this repo's pyproject.toml (provides linkml, linkml-runtime, dandi, typer) and network access to a DANDI Archive instance.
 allowed-tools: Bash(git:*) Bash(hatch:*) Read
 ---
@@ -57,7 +57,7 @@ Re-running is safe — already-downloaded versions are skipped unless
 `--refresh` is passed. `--limit N` truncates to N dandisets for smoke
 tests. `-i <instance>` selects a non-production DANDI instance.
 
-### 2. Validate
+### 2. Migrate + validate
 
 ```sh
 hatch run linkml-auto-converted:python \
@@ -65,12 +65,14 @@ hatch run linkml-auto-converted:python \
   $ROOT/data --schema dandischema/models.yaml
 ```
 
-For each version directory, runs LinkML's `Validator` Python API once
-and writes `validation.json` (structured results), `validation.txt`
-(byte-equivalent to `linkml-validate` CLI output), and `SUMMARY.md`.
-Drafts are validated against `Dandiset`; published versions against
-`PublishedDandiset`. `--refresh` re-validates already-validated
-versions.
+For each version directory, runs `dandischema.metadata.migrate` on
+the raw metadata first, then validates the migrated instance against
+the LinkML schema (drafts → `Dandiset`, published → `PublishedDandiset`).
+Writes `metadata_migrated.json` (when migration succeeds), plus
+`validation.json` (structured record carrying `migration_status`),
+`validation.txt`, and `SUMMARY.md`. Versions whose migration fails
+are recorded with the error and skipped for validation. `--refresh`
+re-runs migration and validation on already-processed versions.
 
 ### 3. Generate report
 
