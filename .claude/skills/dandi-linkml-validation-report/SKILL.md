@@ -86,10 +86,5 @@ Writes `$ROOT/README.md`: overall counts, then per-bucket tables
 (target class × schemaVersion) with top error patterns and links to
 each version's `SUMMARY.md`.
 
-## Further reading
-
-- [references/OUTPUT.md](references/OUTPUT.md) — directory layout,
-  `info.json` / `validation.json` field shapes, README.md structure.
-- [references/DESIGN.md](references/DESIGN.md) — key design choices:
-  closed-world JSON-schema plugin, `@context` strip, byte-equivalent
-  CLI transcript, all-or-nothing fetch writes, resume semantics.
+For details on the on-disk layout, JSON field shapes, and design
+rationale, read the module docstrings of the three scripts directly.
