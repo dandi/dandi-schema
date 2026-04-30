@@ -3,13 +3,14 @@
 
 The report directory is expected to look like::
 
-    linkml-validation-reports/<short-sha>/
+    linkml-validation-reports/
     ├── README.md                    <-- written by this script
     └── data/
         ├── 000003/
         │   ├── draft/
         │   │   ├── metadata.json
         │   │   ├── info.json
+        │   │   ├── metadata_migrated.json
         │   │   ├── validation.json
         │   │   ├── validation.txt
         │   │   └── SUMMARY.md
@@ -42,7 +43,7 @@ Example
 -------
 ::
 
-    python generate_report.py linkml-validation-reports/<short-sha> \\
+    python generate_report.py linkml-validation-reports \\
         --commit-hash 54085828c72b69f3b9933dbd288114a9d074ed46 \\
         --commit-date 2026-04-20T18:47:47-07:00
 """
@@ -306,7 +307,7 @@ def main(
     report_root: Path = typer.Argument(
         ...,
         help="Top-level report directory, i.e. "
-        "linkml-validation-reports/<short-sha>/. "
+        "linkml-validation-reports/. "
         "Must contain a `data/` subdirectory of validated versions.",
     ),
     commit_hash: str = typer.Option(

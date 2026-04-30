@@ -36,12 +36,16 @@ idempotent and resumable.
 
 ## Workflow
 
-Pick a short SHA of the schema commit to namespace the run:
+The pipeline writes everything under one flat directory:
 
 ```sh
-SHA=$(git rev-parse --short=7 linkml-auto-converted)
-ROOT=linkml-validation-reports/$SHA
+ROOT=linkml-validation-reports
 ```
+
+Raw metadata is schema-independent and only fetched once; subsequent
+runs reuse it. Schema-dependent files (`metadata_migrated.json`,
+`validation.{json,txt}`, `SUMMARY.md`, top-level `README.md`) are
+rewritten in place when the schema content changes.
 
 ### 1. Fetch metadata
 
@@ -53,9 +57,10 @@ hatch run linkml-auto-converted:python \
 
 Downloads `metadata.json` + `info.json` for every dandiset's draft and
 every published version into `$ROOT/data/<dandiset-id>/<version-or-draft>/`.
-Re-running is safe — already-downloaded versions are skipped unless
-`--refresh` is passed. `--limit N` truncates to N dandisets for smoke
-tests. `-i <instance>` selects a non-production DANDI instance.
+Already-downloaded versions are skipped. `--refresh` is a forceful
+override that re-downloads everything regardless. `--limit N`
+truncates to N dandisets for smoke tests. `-i <instance>` selects a
+non-production DANDI instance.
 
 ### 2. Migrate + validate
 
@@ -69,10 +74,18 @@ For each version directory, runs `dandischema.metadata.migrate` on
 the raw metadata first, then validates the migrated instance against
 the LinkML schema (drafts → `Dandiset`, published → `PublishedDandiset`).
 Writes `metadata_migrated.json` (when migration succeeds), plus
-`validation.json` (structured record carrying `migration_status`),
-`validation.txt`, and `SUMMARY.md`. Versions whose migration fails
-are recorded with the error and skipped for validation. `--refresh`
-re-runs migration and validation on already-processed versions.
+`validation.json` (structured record carrying `migration_status` and
+`schema_sha256`), `validation.txt`, and `SUMMARY.md`. Versions whose
+migration fails are recorded with the error and skipped for
+validation.
+
+The resume guard is schema-aware: each `validation.json` is stamped
+with the SHA-256 of the schema file's bytes, and a re-run skips a
+version only when its stamp matches the current schema. So changing
+`dandischema/models.yaml` (committed or uncommitted) automatically
+re-runs migration and validation for every version on the next call —
+no flag needed. `--refresh` is a forceful override that ignores the
+stamp and re-runs everything regardless.
 
 ### 3. Generate report
 
@@ -86,7 +99,7 @@ hatch run linkml-auto-converted:python \
 
 Writes `$ROOT/README.md`: overall counts, then per-bucket tables
 (target class × schemaVersion) with top error patterns and links to
-each version's `SUMMARY.md`.
+each version's `SUMMARY.md`. Always rewritten on invocation.
 
 For details on the on-disk layout, JSON field shapes, and design
 rationale, read the module docstrings of the three scripts directly.

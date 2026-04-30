@@ -27,7 +27,7 @@ Example
 -------
 ::
 
-    python fetch_metadata.py linkml-validation-reports/<short-sha>/data
+    python fetch_metadata.py linkml-validation-reports/data
 """
 
 from __future__ import annotations
