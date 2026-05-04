@@ -605,6 +605,7 @@ def test_datacite_publish(metadata_basic: Dict[str, Any]) -> None:
                     },
                 ],
                 "publicationYear": "1970",
+                "dates": [{"date": "1970-01-01", "dateType": "Issued"}],
                 "publisher": {
                     "name": f"{_INSTANCE_CONFIG.instance_name} Archive",
                     "publisherIdentifier": f"https://scicrunch.org/resolver/"
