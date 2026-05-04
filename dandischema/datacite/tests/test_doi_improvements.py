@@ -11,6 +11,7 @@ Note: These tests were AI-generated (Claude Code) using TDD methodology.
 import random
 from typing import Any, Dict
 
+from pydantic import ValidationError
 import pytest
 
 from dandischema.conf import get_instance_config
@@ -124,6 +125,31 @@ class TestDandisetConceptDoi:
         # No doi field — should still work
         dandiset = Dandiset(**dandiset_meta)
         assert dandiset.doi is None
+
+    @skipif_no_doi_prefix
+    @pytest.mark.parametrize(
+        "bad_doi",
+        [
+            "not-a-doi",
+            "10.1234/foo",  # wrong prefix and format
+            f"{DOI_PREFIX}/{INSTANCE_NAME.lower()}.000123/0.0.0",  # version DOI, not concept
+            "https://doi.org/10.80507/dandi.000123",  # URL, not bare DOI
+            "",
+        ],
+    )
+    def test_dandiset_doi_rejects_malformed(
+        self, metadata_with_publish: Dict[str, Any], bad_doi: str
+    ) -> None:
+        """Dandiset.doi should reject values not matching DANDI_CONCEPT_DOI_PATTERN."""
+        meta = metadata_with_publish.copy()
+        dandiset_meta = {
+            k: v
+            for k, v in meta.items()
+            if k not in ("datePublished", "publishedBy", "doi")
+        }
+        dandiset_meta["doi"] = bad_doi
+        with pytest.raises(ValidationError):
+            Dandiset(**dandiset_meta)
 
 
 # =============================================================================
