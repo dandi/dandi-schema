@@ -25,6 +25,7 @@
                 "embargoedUntil": {
                     "description": "Date on which embargo ends.",
                     "format": "date",
+                    "title": "Embargo end date",
                     "type": [
                         "string",
                         "null"
@@ -45,7 +46,8 @@
                 },
                 "status": {
                     "$ref": "#/$defs/AccessType",
-                    "description": "The access status of the item."
+                    "description": "The access status of the item.",
+                    "title": "Access status"
                 }
             },
             "required": [
@@ -102,6 +104,7 @@
                         }
                     ],
                     "description": "The name of the activity.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "schemaKey": {
@@ -172,6 +175,7 @@
                 "identifier": {
                     "description": "Use an ror.org identifier for institutions.",
                     "pattern": "^https://ror.org/[a-z0-9]+$",
+                    "title": "A ror.org identifier",
                     "type": [
                         "string",
                         "null"
@@ -217,6 +221,7 @@
                 },
                 "identifier": {
                     "description": "Identifier for an agent.",
+                    "title": "Identifier",
                     "type": [
                         "string",
                         "null"
@@ -477,6 +482,7 @@
                             }
                         ]
                     },
+                    "title": "Subject matter of the dataset",
                     "type": [
                         "array",
                         "null"
@@ -487,6 +493,7 @@
                         "$ref": "#/$defs/AccessRequirements"
                     },
                     "maxItems": 1,
+                    "title": "Access information",
                     "type": [
                         "array",
                         "null"
@@ -510,6 +517,7 @@
                 },
                 "blobDateModified": {
                     "format": "date-time",
+                    "title": "Asset file modification date and time.",
                     "type": [
                         "string",
                         "null"
@@ -548,6 +556,7 @@
                             }
                         ]
                     },
+                    "title": "Contributors",
                     "type": [
                         "array",
                         "null"
@@ -562,6 +571,7 @@
                 },
                 "dateModified": {
                     "format": "date-time",
+                    "title": "Asset (file or metadata) modification date and time",
                     "type": [
                         "string",
                         "null"
@@ -575,6 +585,7 @@
                     ]
                 },
                 "digest": {
+                    "title": "A map of dandi digests to their values",
                     "type": "string"
                 },
                 "encodingFormat": {
@@ -587,12 +598,14 @@
                         {
                             "type": "string"
                         }
-                    ]
+                    ],
+                    "title": "File encoding format"
                 },
                 "ethicsApproval": {
                     "items": {
                         "$ref": "#/$defs/EthicsApproval"
                     },
+                    "title": "Ethics approvals",
                     "type": [
                         "array",
                         "null"
@@ -645,6 +658,7 @@
                         }
                     ],
                     "description": "The name of the item.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "path": {
@@ -896,6 +910,7 @@
                             }
                         ]
                     },
+                    "title": "Subject matter of the dataset",
                     "type": [
                         "array",
                         "null"
@@ -906,6 +921,7 @@
                         "$ref": "#/$defs/AccessRequirements"
                     },
                     "maxItems": 1,
+                    "title": "Access information",
                     "type": [
                         "array",
                         "null"
@@ -929,6 +945,7 @@
                 },
                 "blobDateModified": {
                     "format": "date-time",
+                    "title": "Asset file modification date and time.",
                     "type": [
                         "string",
                         "null"
@@ -960,6 +977,7 @@
                             }
                         ]
                     },
+                    "title": "Contributors",
                     "type": [
                         "array",
                         "null"
@@ -974,6 +992,7 @@
                 },
                 "dateModified": {
                     "format": "date-time",
+                    "title": "Asset (file or metadata) modification date and time",
                     "type": [
                         "string",
                         "null"
@@ -987,6 +1006,7 @@
                     ]
                 },
                 "digest": {
+                    "title": "A map of dandi digests to their values",
                     "type": "string"
                 },
                 "encodingFormat": {
@@ -999,12 +1019,14 @@
                         {
                             "type": "string"
                         }
-                    ]
+                    ],
+                    "title": "File encoding format"
                 },
                 "ethicsApproval": {
                     "items": {
                         "$ref": "#/$defs/EthicsApproval"
                     },
+                    "title": "Ethics approvals",
                     "type": [
                         "array",
                         "null"
@@ -1053,6 +1075,7 @@
                         }
                     ],
                     "description": "The name of the item.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "path": {
@@ -1347,6 +1370,7 @@
                             }
                         ]
                     },
+                    "title": "Subject matter of the dataset",
                     "type": [
                         "array",
                         "null"
@@ -1356,6 +1380,7 @@
                     "items": {
                         "$ref": "#/$defs/AccessRequirements"
                     },
+                    "title": "Access information",
                     "type": [
                         "array",
                         "null"
@@ -1381,6 +1406,7 @@
                             }
                         ]
                     },
+                    "title": "Contributors",
                     "type": [
                         "array",
                         "null"
@@ -1397,6 +1423,7 @@
                     "items": {
                         "$ref": "#/$defs/EthicsApproval"
                     },
+                    "title": "Ethics approvals",
                     "type": [
                         "array",
                         "null"
@@ -1436,6 +1463,7 @@
                         }
                     ],
                     "description": "The name of the item.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "protocol": {
@@ -1570,6 +1598,7 @@
             "properties": {
                 "awardNumber": {
                     "description": "Identifier associated with a sponsored or gift award.",
+                    "title": "Identifier for an award",
                     "type": [
                         "string",
                         "null"
@@ -1590,6 +1619,7 @@
                 },
                 "identifier": {
                     "description": "Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.",
+                    "title": "A common identifier",
                     "type": [
                         "string",
                         "null"
@@ -1597,6 +1627,7 @@
                 },
                 "includeInCitation": {
                     "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+                    "title": "Include contributor in citation",
                     "type": [
                         "boolean",
                         "null"
@@ -1613,6 +1644,7 @@
                     "items": {
                         "$ref": "#/$defs/RoleType"
                     },
+                    "title": "Role",
                     "type": [
                         "array",
                         "null"
@@ -1682,6 +1714,7 @@
                             }
                         ]
                     },
+                    "title": "Subject matter of the dataset",
                     "type": [
                         "array",
                         "null"
@@ -1691,6 +1724,7 @@
                     "items": {
                         "$ref": "#/$defs/AccessRequirements"
                     },
+                    "title": "Access information",
                     "type": [
                         "array",
                         "null"
@@ -1722,6 +1756,7 @@
                             }
                         ]
                     },
+                    "title": "Contributors",
                     "type": [
                         "array",
                         "null"
@@ -1729,6 +1764,7 @@
                 },
                 "dateCreated": {
                     "format": "date-time",
+                    "title": "Dandiset creation date and time.",
                     "type": [
                         "string",
                         "null"
@@ -1736,6 +1772,7 @@
                 },
                 "dateModified": {
                     "format": "date-time",
+                    "title": "Last modification date and time.",
                     "type": [
                         "string",
                         "null"
@@ -1752,6 +1789,7 @@
                     "items": {
                         "$ref": "#/$defs/EthicsApproval"
                     },
+                    "title": "Ethics approvals",
                     "type": [
                         "array",
                         "null"
@@ -1767,6 +1805,7 @@
                 "identifier": {
                     "description": "A Dandiset identifier that can be resolved by identifiers.org.",
                     "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
+                    "title": "Dandiset identifier",
                     "type": "string"
                 },
                 "keywords": {
@@ -1804,6 +1843,7 @@
                         }
                     ],
                     "description": "The name of the item.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "protocol": {
@@ -1946,6 +1986,7 @@
                             }
                         ]
                     },
+                    "title": "Dates of diagnosis",
                     "type": [
                         "array",
                         "null"
@@ -2027,6 +2068,7 @@
                         }
                     ],
                     "description": "A name for the equipment.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "schemaKey": {
@@ -2067,6 +2109,7 @@
                 },
                 "identifier": {
                     "description": "Approved Protocol identifier, often a number or alphanumeric string.",
+                    "title": "Approved protocol identifier",
                     "type": "string"
                 },
                 "schemaKey": {
@@ -2301,6 +2344,7 @@
             "properties": {
                 "awardNumber": {
                     "description": "Identifier associated with a sponsored or gift award.",
+                    "title": "Identifier for an award",
                     "type": [
                         "string",
                         "null"
@@ -2311,6 +2355,7 @@
                     "items": {
                         "$ref": "#/$defs/ContactPoint"
                     },
+                    "title": "Organization contact information",
                     "type": [
                         "array",
                         "null"
@@ -2332,6 +2377,7 @@
                 "identifier": {
                     "description": "Use an ror.org identifier for institutions.",
                     "pattern": "^https://ror.org/[a-z0-9]+$",
+                    "title": "A ror.org identifier",
                     "type": [
                         "string",
                         "null"
@@ -2339,6 +2385,7 @@
                 },
                 "includeInCitation": {
                     "description": "A flag to indicate whether a contributor should be included when generating a citation for the item",
+                    "title": "Include contributor in citation",
                     "type": [
                         "boolean",
                         "null"
@@ -2355,6 +2402,7 @@
                     "items": {
                         "$ref": "#/$defs/RoleType"
                     },
+                    "title": "Role",
                     "type": [
                         "array",
                         "null"
@@ -2553,6 +2601,7 @@
                 },
                 "awardNumber": {
                     "description": "Identifier associated with a sponsored or gift award.",
+                    "title": "Identifier for an award",
                     "type": [
                         "string",
                         "null"
@@ -2574,6 +2623,7 @@
                 "identifier": {
                     "description": "An ORCID (orcid.org) identifier for an individual.",
                     "pattern": "^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$",
+                    "title": "An ORCID identifier",
                     "type": [
                         "string",
                         "null"
@@ -2581,6 +2631,7 @@
                 },
                 "includeInCitation": {
                     "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+                    "title": "Include contributor in citation",
                     "type": [
                         "boolean",
                         "null"
@@ -2597,6 +2648,7 @@
                     "items": {
                         "$ref": "#/$defs/RoleType"
                     },
+                    "title": "Role",
                     "type": [
                         "array",
                         "null"
@@ -2660,6 +2712,7 @@
                         }
                     ],
                     "description": "The name of the project that generated this Dandiset or asset.",
+                    "title": "Name of project",
                     "type": "string"
                 },
                 "schemaKey": {
@@ -2838,6 +2891,7 @@
                         }
                     ],
                     "description": "The name of the activity.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "schemaKey": {
@@ -2957,6 +3011,7 @@
                             }
                         ]
                     },
+                    "title": "Subject matter of the dataset",
                     "type": [
                         "array",
                         "null"
@@ -2967,6 +3022,7 @@
                         "$ref": "#/$defs/AccessRequirements"
                     },
                     "maxItems": 1,
+                    "title": "Access information",
                     "type": [
                         "array",
                         "null"
@@ -2990,6 +3046,7 @@
                 },
                 "blobDateModified": {
                     "format": "date-time",
+                    "title": "Asset file modification date and time.",
                     "type": [
                         "string",
                         "null"
@@ -3028,6 +3085,7 @@
                             }
                         ]
                     },
+                    "title": "Contributors",
                     "type": [
                         "array",
                         "null"
@@ -3042,6 +3100,7 @@
                 },
                 "dateModified": {
                     "format": "date-time",
+                    "title": "Asset (file or metadata) modification date and time",
                     "type": [
                         "string",
                         "null"
@@ -3059,6 +3118,7 @@
                     ]
                 },
                 "digest": {
+                    "title": "A map of dandi digests to their values",
                     "type": "string"
                 },
                 "encodingFormat": {
@@ -3071,12 +3131,14 @@
                         {
                             "type": "string"
                         }
-                    ]
+                    ],
+                    "title": "File encoding format"
                 },
                 "ethicsApproval": {
                     "items": {
                         "$ref": "#/$defs/EthicsApproval"
                     },
+                    "title": "Ethics approvals",
                     "type": [
                         "array",
                         "null"
@@ -3130,6 +3192,7 @@
                         }
                     ],
                     "description": "The name of the item.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "path": {
@@ -3301,6 +3364,7 @@
                             }
                         ]
                     },
+                    "title": "Subject matter of the dataset",
                     "type": [
                         "array",
                         "null"
@@ -3310,6 +3374,7 @@
                     "items": {
                         "$ref": "#/$defs/AccessRequirements"
                     },
+                    "title": "Access information",
                     "type": [
                         "array",
                         "null"
@@ -3341,6 +3406,7 @@
                             }
                         ]
                     },
+                    "title": "Contributors",
                     "type": [
                         "array",
                         "null"
@@ -3348,6 +3414,7 @@
                 },
                 "dateCreated": {
                     "format": "date-time",
+                    "title": "Dandiset creation date and time.",
                     "type": [
                         "string",
                         "null"
@@ -3355,6 +3422,7 @@
                 },
                 "dateModified": {
                     "format": "date-time",
+                    "title": "Last modification date and time.",
                     "type": [
                         "string",
                         "null"
@@ -3373,6 +3441,7 @@
                 },
                 "doi": {
                     "pattern": "^(10\\.\\d{4,}/[a-z][-a-z]*\\.\\d{6}/\\d+\\.\\d+\\.\\d+|)$",
+                    "title": "DOI",
                     "type": [
                         "string",
                         "null"
@@ -3382,6 +3451,7 @@
                     "items": {
                         "$ref": "#/$defs/EthicsApproval"
                     },
+                    "title": "Ethics approvals",
                     "type": [
                         "array",
                         "null"
@@ -3397,6 +3467,7 @@
                 "identifier": {
                     "description": "A Dandiset identifier that can be resolved by identifiers.org.",
                     "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
+                    "title": "Dandiset identifier",
                     "type": "string"
                 },
                 "keywords": {
@@ -3434,6 +3505,7 @@
                         }
                     ],
                     "description": "The name of the item.",
+                    "title": "Title",
                     "type": "string"
                 },
                 "protocol": {
@@ -3582,6 +3654,7 @@
                     ]
                 },
                 "name": {
+                    "title": "Name of the participant or subject",
                     "type": [
                         "string",
                         "null"
@@ -3589,7 +3662,8 @@
                 },
                 "relation": {
                     "$ref": "#/$defs/ParticipantRelationType",
-                    "description": "Indicates how the current participant or subject is related to the other participant or subject. This relation should satisfy: Participant/Subject <relation> relatedParticipant/Subject."
+                    "description": "Indicates how the current participant or subject is related to the other participant or subject. This relation should satisfy: Participant/Subject <relation> relatedParticipant/Subject.",
+                    "title": "Participant or subject relation"
                 },
                 "schemaKey": {
                     "enum": [
@@ -3599,6 +3673,7 @@
                 },
                 "url": {
                     "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "title": "URL of the related participant or subject",
                     "type": [
                         "string",
                         "null"
@@ -3671,6 +3746,7 @@
                     ]
                 },
                 "name": {
+                    "title": "A title of the resource",
                     "type": [
                         "string",
                         "null"
@@ -3678,10 +3754,12 @@
                 },
                 "relation": {
                     "$ref": "#/$defs/RelationType",
-                    "description": "Indicates how the resource is related to the dataset. This relation should satisfy: dandiset <relation> resource."
+                    "description": "Indicates how the resource is related to the dataset. This relation should satisfy: dandiset <relation> resource.",
+                    "title": "Resource relation"
                 },
                 "repository": {
                     "description": "Name of the repository in which the resource is housed.",
+                    "title": "Name of the repository",
                     "type": [
                         "string",
                         "null"
@@ -3689,7 +3767,8 @@
                 },
                 "resourceType": {
                     "$ref": "#/$defs/ResourceType",
-                    "description": "The type of resource."
+                    "description": "The type of resource.",
+                    "title": "Resource type"
                 },
                 "schemaKey": {
                     "enum": [
@@ -3699,6 +3778,7 @@
                 },
                 "url": {
                     "pattern": "^(?i:http|https)://[^\\s]+$",
+                    "title": "URL of the resource",
                     "type": [
                         "string",
                         "null"
@@ -3871,6 +3951,7 @@
                         }
                     ],
                     "description": "The name of the logical session associated with the asset.",
+                    "title": "Name of session",
                     "type": "string"
                 },
                 "schemaKey": {
@@ -3990,6 +4071,7 @@
                 "identifier": {
                     "description": "RRID of the software from scicrunch.org.",
                     "pattern": "^RRID:.*",
+                    "title": "Research resource identifier",
                     "type": [
                         "string",
                         "null"
@@ -4194,6 +4276,7 @@
                     }
                 ]
             },
+            "title": "Subject matter of the dataset",
             "type": [
                 "array",
                 "null"
@@ -4203,6 +4286,7 @@
             "items": {
                 "$ref": "#/$defs/AccessRequirements"
             },
+            "title": "Access information",
             "type": [
                 "array",
                 "null"
@@ -4234,6 +4318,7 @@
                     }
                 ]
             },
+            "title": "Contributors",
             "type": [
                 "array",
                 "null"
@@ -4241,6 +4326,7 @@
         },
         "dateCreated": {
             "format": "date-time",
+            "title": "Dandiset creation date and time.",
             "type": [
                 "string",
                 "null"
@@ -4248,6 +4334,7 @@
         },
         "dateModified": {
             "format": "date-time",
+            "title": "Last modification date and time.",
             "type": [
                 "string",
                 "null"
@@ -4264,6 +4351,7 @@
             "items": {
                 "$ref": "#/$defs/EthicsApproval"
             },
+            "title": "Ethics approvals",
             "type": [
                 "array",
                 "null"
@@ -4279,6 +4367,7 @@
         "identifier": {
             "description": "A Dandiset identifier that can be resolved by identifiers.org.",
             "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
+            "title": "Dandiset identifier",
             "type": "string"
         },
         "keywords": {
@@ -4316,6 +4405,7 @@
                 }
             ],
             "description": "The name of the item.",
+            "title": "Title",
             "type": "string"
         },
         "protocol": {
