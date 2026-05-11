@@ -1754,8 +1754,8 @@ class BareAsset(CommonModel):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
-                "field in the BareAsset Pydantic model has changes in value in "
-                "constraint meta slots: ['range'] .",
+                "field in the BareAsset Pydantic model has disallowed changes in "
+                "value in constraint meta slots: ['range'] .",
                 "MANUAL_NOTE: The default of the `schemaKey` field in the "
                 "corresponding Pydantic model in `dandischema.models` is not the "
                 "model's name. Adjustment to the inherited `schemaKey` slot may be "
@@ -2217,19 +2217,18 @@ class Asset(BareAsset):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "id slot. The slot representation of the id field in the Asset "
-                "Pydantic model has changes in value in constraint meta slots: "
-                "['required'] ."
-            ],
             "slot_usage": {
+                "id": {
+                    "description": "Uniform resource identifier.",
+                    "name": "id",
+                    "required": True,
+                },
                 "identifier": {
                     "name": "identifier",
                     "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
                     "range": "string",
                     "required": True,
-                }
+                },
             },
         }
     )
@@ -2599,9 +2598,9 @@ class Asset(BareAsset):
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
-    id: Optional[str] = Field(
-        default=None,
-        description="""Uniform resource identifier""",
+    id: str = Field(
+        default=...,
+        description="""Uniform resource identifier.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["Asset"] = Field(
@@ -2967,34 +2966,43 @@ class Dandiset(CommonModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "contributor slot. The slot representation of the contributor field "
-                "in the Dandiset Pydantic model has changes in value in constraint "
-                "meta slots: ['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "description slot. The slot representation of the description field "
-                "in the Dandiset Pydantic model has changes in value in constraint "
-                "meta slots: ['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "id slot. The slot representation of the id field in the Dandiset "
-                "Pydantic model has changes in value in constraint meta slots: "
-                "['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "license slot. The slot representation of the license field in the "
-                "Dandiset Pydantic model has changes in value in constraint meta "
-                "slots: ['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "name slot. The slot representation of the name field in the "
-                "Dandiset Pydantic model has changes in value in constraint meta "
-                "slots: ['required'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
-                "field in the Dandiset Pydantic model has changes in value in "
-                "constraint meta slots: ['range'] .",
+                "field in the Dandiset Pydantic model has disallowed changes in "
+                "value in constraint meta slots: ['range'] ."
             ],
             "slot_usage": {
+                "contributor": {
+                    "description": "People or Organizations that "
+                    "have contributed to this "
+                    "Dandiset.",
+                    "minimum_cardinality": 1,
+                    "name": "contributor",
+                    "notes": [
+                        "pydantic2linkml: Unable to "
+                        "translate the logic contained in "
+                        "the after validation function, "
+                        "<bound method "
+                        "Dandiset.contributor_musthave_contact "
+                        "of <class "
+                        "'dandischema.models.Dandiset'>>."
+                    ],
+                    "required": True,
+                    "title": "Dandiset contributors",
+                },
                 "dateModified": {
                     "name": "dateModified",
                     "title": "Last modification date and time.",
+                },
+                "description": {
+                    "all_of": [{"pattern": "^[\\s\\S]{,10000}\\Z"}],
+                    "description": "A description of the Dandiset",
+                    "name": "description",
+                    "required": True,
+                },
+                "id": {
+                    "name": "id",
+                    "pattern": "^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$",
+                    "required": True,
                 },
                 "identifier": {
                     "description": "A Dandiset identifier that can "
@@ -3004,6 +3012,17 @@ class Dandiset(CommonModel):
                     "range": "string",
                     "required": True,
                     "title": "Dandiset identifier",
+                },
+                "license": {
+                    "minimum_cardinality": 1,
+                    "name": "license",
+                    "required": True,
+                },
+                "name": {
+                    "description": "A title associated with the Dandiset.",
+                    "name": "name",
+                    "required": True,
+                    "title": "Dandiset title",
                 },
                 "sameAs": {
                     "description": "Known DANDI URLs of the Dandiset at "
@@ -3123,10 +3142,11 @@ class Dandiset(CommonModel):
         description="""Any acknowledgments not covered by contributors or external resources.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    contributor: Optional[list[Union[Organization, Person]]] = Field(
-        default=None,
-        title="Contributors",
-        description="""Contributors to this item: persons or organizations.""",
+    contributor: list[Union[Organization, Person]] = Field(
+        default=...,
+        title="Dandiset contributors",
+        description="""People or Organizations that have contributed to this Dandiset.""",
+        min_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -3150,20 +3170,27 @@ class Dandiset(CommonModel):
                     },
                 ],
                 "domain_of": ["CommonModel"],
+                "notes": [
+                    "pydantic2linkml: Unable to translate the logic contained in the "
+                    "after validation function, <bound method "
+                    "Dandiset.contributor_musthave_contact of <class "
+                    "'dandischema.models.Dandiset'>>."
+                ],
             }
         },
     )
-    description: Optional[str] = Field(
-        default=None,
-        description="""A description of the item.""",
+    description: str = Field(
+        default=...,
+        description="""A description of the Dandiset""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,10000}\\Z"}],
                 "domain_of": [
                     "AccessRequirements",
                     "Activity",
                     "CommonModel",
                     "Equipment",
-                ]
+                ],
             }
         },
     )
@@ -3177,15 +3204,16 @@ class Dandiset(CommonModel):
         description="""Keywords used to describe this content.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    license: Optional[list[LicenseType]] = Field(
-        default=None,
+    license: list[LicenseType] = Field(
+        default=...,
         description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        min_length=1,
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    name: Optional[str] = Field(
-        default=None,
-        title="Title",
-        description="""The name of the item.""",
+    name: str = Field(
+        default=...,
+        title="Dandiset title",
+        description="""A title associated with the Dandiset.""",
         json_schema_extra={
             "linkml_meta": {
                 "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
@@ -3289,8 +3317,8 @@ class Dandiset(CommonModel):
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
-    id: Optional[str] = Field(
-        default=None,
+    id: str = Field(
+        default=...,
         description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
@@ -3378,6 +3406,21 @@ class Dandiset(CommonModel):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid url format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator("id")
+    def pattern_id(cls, v):
+        pattern = re.compile(
+            r"^([A-Z][-A-Z]*|[a-z][-a-z]*):\d{6}(/(draft|\d+\.\d+\.\d+))$"
+        )
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.match(element):
+                    err_msg = f"Invalid id format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.match(v):
+            err_msg = f"Invalid id format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -4262,12 +4305,6 @@ class Person(Contributor):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "name slot. The slot representation of the name field in the Person "
-                "Pydantic model has changes in value in constraint meta slots: "
-                "['required'] ."
-            ],
             "slot_usage": {
                 "identifier": {
                     "description": "An ORCID (orcid.org) identifier "
@@ -4275,7 +4312,14 @@ class Person(Contributor):
                     "name": "identifier",
                     "pattern": "^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$",
                     "title": "An ORCID identifier",
-                }
+                },
+                "name": {
+                    "description": "Use the format: familyname, given " "names ...",
+                    "name": "name",
+                    "pattern": "^([\\w\\s\\-\\.']+),\\s+([\\w\\s\\-\\.']+)$",
+                    "required": True,
+                    "title": "Use Last, First. Example: Lovelace, Augusta " "Ada",
+                },
             },
         }
     )
@@ -4339,8 +4383,10 @@ class Person(Contributor):
             "linkml_meta": {"domain_of": ["Contributor"], "ifabsent": "True"}
         },
     )
-    name: Optional[str] = Field(
-        default=None,
+    name: str = Field(
+        default=...,
+        title="Use Last, First. Example: Lovelace, Augusta Ada",
+        description="""Use the format: familyname, given names ...""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -4408,6 +4454,19 @@ class Person(Contributor):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid identifier format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator("name")
+    def pattern_name(cls, v):
+        pattern = re.compile(r"^([\w\s\-\.']+),\s+([\w\s\-\.']+)$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.match(element):
+                    err_msg = f"Invalid name format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.match(v):
+            err_msg = f"Invalid name format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -5229,9 +5288,9 @@ class PublishedAsset(Publishable, Asset):
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
-    id: Optional[str] = Field(
-        default=None,
-        description="""Uniform resource identifier""",
+    id: str = Field(
+        default=...,
+        description="""Uniform resource identifier.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
     schemaKey: Literal["PublishedAsset"] = Field(
@@ -5358,12 +5417,8 @@ class PublishedDandiset(Publishable, Dandiset):
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "id slot. The slot representation of the id field in the "
-                "PublishedDandiset Pydantic model has changes in value in "
-                "constraint meta slots: ['pattern'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "url slot. The slot representation of the url field in the "
-                "PublishedDandiset Pydantic model has changes in value in "
-                "constraint meta slots: ['required'] .",
+                "PublishedDandiset Pydantic model has disallowed changes in value "
+                "in constraint meta slots: ['pattern'] .",
                 "pydantic2linkml: Warning: LinkML does not support multiple "
                 "inheritance. Publishable is not specified as a parent, through the "
                 "`is_a` meta slot, but as a mixin.",
@@ -5372,6 +5427,25 @@ class PublishedDandiset(Publishable, Dandiset):
                 "model's name. Adjustment to the inherited `schemaKey` slot may be "
                 "needed.",
             ],
+            "slot_usage": {
+                "url": {
+                    "description": "Permalink to the Dandiset.",
+                    "name": "url",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate the "
+                        "logic contained in the after validation "
+                        "function, <bound method "
+                        "PublishedDandiset.check_url of <class "
+                        "'dandischema.models.PublishedDandiset'>>.",
+                        "pydantic2linkml: Unable to translate the "
+                        "logic contained in the wrap validation "
+                        "function, <function "
+                        "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
+                        "at 0xADDRESS>.",
+                    ],
+                    "required": True,
+                }
+            },
         }
     )
 
@@ -5519,10 +5593,11 @@ class PublishedDandiset(Publishable, Dandiset):
         description="""Any acknowledgments not covered by contributors or external resources.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    contributor: Optional[list[Union[Organization, Person]]] = Field(
-        default=None,
-        title="Contributors",
-        description="""Contributors to this item: persons or organizations.""",
+    contributor: list[Union[Organization, Person]] = Field(
+        default=...,
+        title="Dandiset contributors",
+        description="""People or Organizations that have contributed to this Dandiset.""",
+        min_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "any_of": [
@@ -5546,20 +5621,27 @@ class PublishedDandiset(Publishable, Dandiset):
                     },
                 ],
                 "domain_of": ["CommonModel"],
+                "notes": [
+                    "pydantic2linkml: Unable to translate the logic contained in the "
+                    "after validation function, <bound method "
+                    "Dandiset.contributor_musthave_contact of <class "
+                    "'dandischema.models.Dandiset'>>."
+                ],
             }
         },
     )
-    description: Optional[str] = Field(
-        default=None,
-        description="""A description of the item.""",
+    description: str = Field(
+        default=...,
+        description="""A description of the Dandiset""",
         json_schema_extra={
             "linkml_meta": {
+                "all_of": [{"pattern": "^[\\s\\S]{,10000}\\Z"}],
                 "domain_of": [
                     "AccessRequirements",
                     "Activity",
                     "CommonModel",
                     "Equipment",
-                ]
+                ],
             }
         },
     )
@@ -5573,15 +5655,16 @@ class PublishedDandiset(Publishable, Dandiset):
         description="""Keywords used to describe this content.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    license: Optional[list[LicenseType]] = Field(
-        default=None,
+    license: list[LicenseType] = Field(
+        default=...,
         description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
+        min_length=1,
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    name: Optional[str] = Field(
-        default=None,
-        title="Title",
-        description="""The name of the item.""",
+    name: str = Field(
+        default=...,
+        title="Dandiset title",
+        description="""A title associated with the Dandiset.""",
         json_schema_extra={
             "linkml_meta": {
                 "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
@@ -5654,9 +5737,9 @@ class PublishedDandiset(Publishable, Dandiset):
         description="""Objectives or specific questions of the study.""",
         json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
     )
-    url: Optional[str] = Field(
-        default=None,
-        description="""permalink to the item""",
+    url: str = Field(
+        default=...,
+        description="""Permalink to the Dandiset.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -5670,9 +5753,13 @@ class PublishedDandiset(Publishable, Dandiset):
                 ],
                 "notes": [
                     "pydantic2linkml: Unable to translate the logic contained in the "
+                    "after validation function, <bound method "
+                    "PublishedDandiset.check_url of <class "
+                    "'dandischema.models.PublishedDandiset'>>.",
+                    "pydantic2linkml: Unable to translate the logic contained in the "
                     "wrap validation function, <function "
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
+                    "0xADDRESS>.",
                 ],
             }
         },
@@ -5685,8 +5772,8 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
-    id: Optional[str] = Field(
-        default=None,
+    id: str = Field(
+        default=...,
         description="""Uniform resource identifier""",
         json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
     )
@@ -5787,6 +5874,21 @@ class PublishedDandiset(Publishable, Dandiset):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.match(v):
             err_msg = f"Invalid url format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator("id")
+    def pattern_id(cls, v):
+        pattern = re.compile(
+            r"^([A-Z][-A-Z]*|[a-z][-a-z]*):\d{6}(/(draft|\d+\.\d+\.\d+))$"
+        )
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.match(element):
+                    err_msg = f"Invalid id format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.match(v):
+            err_msg = f"Invalid id format: {v}"
             raise ValueError(err_msg)
         return v
 

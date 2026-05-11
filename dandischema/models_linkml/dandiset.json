@@ -612,11 +612,8 @@
                     ]
                 },
                 "id": {
-                    "description": "Uniform resource identifier",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "description": "Uniform resource identifier.",
+                    "type": "string"
                 },
                 "identifier": {
                     "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
@@ -790,6 +787,7 @@
                 "digest",
                 "encodingFormat",
                 "path",
+                "id",
                 "schemaKey"
             ],
             "title": "Asset",
@@ -1744,7 +1742,7 @@
                     "type": "string"
                 },
                 "contributor": {
-                    "description": "Contributors to this item: persons or organizations.",
+                    "description": "People or Organizations that have contributed to this Dandiset.",
                     "items": {
                         "$ref": "#/$defs/Any",
                         "anyOf": [
@@ -1756,11 +1754,9 @@
                             }
                         ]
                     },
-                    "title": "Contributors",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "minItems": 1,
+                    "title": "Dandiset contributors",
+                    "type": "array"
                 },
                 "dateCreated": {
                     "format": "date-time",
@@ -1779,11 +1775,13 @@
                     ]
                 },
                 "description": {
-                    "description": "A description of the item.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,10000}\\Z"
+                        }
+                    ],
+                    "description": "A description of the Dandiset",
+                    "type": "string"
                 },
                 "ethicsApproval": {
                     "items": {
@@ -1797,10 +1795,8 @@
                 },
                 "id": {
                     "description": "Uniform resource identifier",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "pattern": "^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$",
+                    "type": "string"
                 },
                 "identifier": {
                     "description": "A Dandiset identifier that can be resolved by identifiers.org.",
@@ -1823,10 +1819,8 @@
                     "items": {
                         "$ref": "#/$defs/LicenseType"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "minItems": 1,
+                    "type": "array"
                 },
                 "manifestLocation": {
                     "items": {
@@ -1842,8 +1836,8 @@
                             "pattern": "^[\\s\\S]{,150}\\Z"
                         }
                     ],
-                    "description": "The name of the item.",
-                    "title": "Title",
+                    "description": "A title associated with the Dandiset.",
+                    "title": "Dandiset title",
                     "type": "string"
                 },
                 "protocol": {
@@ -1947,6 +1941,11 @@
                 "identifier",
                 "manifestLocation",
                 "version",
+                "contributor",
+                "description",
+                "license",
+                "name",
+                "id",
                 "schemaKey"
             ],
             "title": "Dandiset",
@@ -2638,10 +2637,10 @@
                     ]
                 },
                 "name": {
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "description": "Use the format: familyname, given names ...",
+                    "pattern": "^([\\w\\s\\-\\.']+),\\s+([\\w\\s\\-\\.']+)$",
+                    "title": "Use Last, First. Example: Lovelace, Augusta Ada",
+                    "type": "string"
                 },
                 "roleName": {
                     "description": "Role(s) of the contributor. Multiple roles can be selected.",
@@ -2669,6 +2668,7 @@
                 }
             },
             "required": [
+                "name",
                 "schemaKey"
             ],
             "title": "Person",
@@ -3145,12 +3145,9 @@
                     ]
                 },
                 "id": {
-                    "description": "Uniform resource identifier",
+                    "description": "Uniform resource identifier.",
                     "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "type": "string"
                 },
                 "identifier": {
                     "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
@@ -3339,6 +3336,7 @@
                 "digest",
                 "encodingFormat",
                 "path",
+                "id",
                 "schemaKey"
             ],
             "title": "PublishedAsset",
@@ -3394,7 +3392,7 @@
                     "type": "string"
                 },
                 "contributor": {
-                    "description": "Contributors to this item: persons or organizations.",
+                    "description": "People or Organizations that have contributed to this Dandiset.",
                     "items": {
                         "$ref": "#/$defs/Any",
                         "anyOf": [
@@ -3406,11 +3404,9 @@
                             }
                         ]
                     },
-                    "title": "Contributors",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "minItems": 1,
+                    "title": "Dandiset contributors",
+                    "type": "array"
                 },
                 "dateCreated": {
                     "format": "date-time",
@@ -3433,11 +3429,13 @@
                     "type": "string"
                 },
                 "description": {
-                    "description": "A description of the item.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "allOf": [
+                        {
+                            "pattern": "^[\\s\\S]{,10000}\\Z"
+                        }
+                    ],
+                    "description": "A description of the Dandiset",
+                    "type": "string"
                 },
                 "doi": {
                     "pattern": "^(10\\.\\d{4,}/[a-z][-a-z]*\\.\\d{6}/\\d+\\.\\d+\\.\\d+|)$",
@@ -3459,10 +3457,8 @@
                 },
                 "id": {
                     "description": "Uniform resource identifier",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "pattern": "^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$",
+                    "type": "string"
                 },
                 "identifier": {
                     "description": "A Dandiset identifier that can be resolved by identifiers.org.",
@@ -3485,10 +3481,8 @@
                     "items": {
                         "$ref": "#/$defs/LicenseType"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "minItems": 1,
+                    "type": "array"
                 },
                 "manifestLocation": {
                     "items": {
@@ -3504,8 +3498,8 @@
                             "pattern": "^[\\s\\S]{,150}\\Z"
                         }
                     ],
-                    "description": "The name of the item.",
-                    "title": "Title",
+                    "description": "A title associated with the Dandiset.",
+                    "title": "Dandiset title",
                     "type": "string"
                 },
                 "protocol": {
@@ -3590,12 +3584,9 @@
                     ]
                 },
                 "url": {
-                    "description": "permalink to the item",
+                    "description": "Permalink to the Dandiset.",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
+                    "type": "string"
                 },
                 "version": {
                     "type": "string"
@@ -3631,6 +3622,12 @@
                 "identifier",
                 "manifestLocation",
                 "version",
+                "contributor",
+                "description",
+                "license",
+                "name",
+                "url",
+                "id",
                 "schemaKey"
             ],
             "title": "PublishedDandiset",
@@ -4306,7 +4303,7 @@
             "type": "string"
         },
         "contributor": {
-            "description": "Contributors to this item: persons or organizations.",
+            "description": "People or Organizations that have contributed to this Dandiset.",
             "items": {
                 "$ref": "#/$defs/Any",
                 "anyOf": [
@@ -4318,11 +4315,9 @@
                     }
                 ]
             },
-            "title": "Contributors",
-            "type": [
-                "array",
-                "null"
-            ]
+            "minItems": 1,
+            "title": "Dandiset contributors",
+            "type": "array"
         },
         "dateCreated": {
             "format": "date-time",
@@ -4341,11 +4336,13 @@
             ]
         },
         "description": {
-            "description": "A description of the item.",
-            "type": [
-                "string",
-                "null"
-            ]
+            "allOf": [
+                {
+                    "pattern": "^[\\s\\S]{,10000}\\Z"
+                }
+            ],
+            "description": "A description of the Dandiset",
+            "type": "string"
         },
         "ethicsApproval": {
             "items": {
@@ -4359,10 +4356,8 @@
         },
         "id": {
             "description": "Uniform resource identifier",
-            "type": [
-                "string",
-                "null"
-            ]
+            "pattern": "^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$",
+            "type": "string"
         },
         "identifier": {
             "description": "A Dandiset identifier that can be resolved by identifiers.org.",
@@ -4385,10 +4380,8 @@
             "items": {
                 "$ref": "#/$defs/LicenseType"
             },
-            "type": [
-                "array",
-                "null"
-            ]
+            "minItems": 1,
+            "type": "array"
         },
         "manifestLocation": {
             "items": {
@@ -4404,8 +4397,8 @@
                     "pattern": "^[\\s\\S]{,150}\\Z"
                 }
             ],
-            "description": "The name of the item.",
-            "title": "Title",
+            "description": "A title associated with the Dandiset.",
+            "title": "Dandiset title",
             "type": "string"
         },
         "protocol": {
@@ -4509,6 +4502,11 @@
         "identifier",
         "manifestLocation",
         "version",
+        "contributor",
+        "description",
+        "license",
+        "name",
+        "id",
         "schemaKey"
     ],
     "title": "dandi-schema",

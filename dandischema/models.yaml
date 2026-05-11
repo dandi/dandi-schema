@@ -875,15 +875,14 @@ classes:
     is_a: BaseType
   Asset:
     description: Metadata used to describe an asset on the server.
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
-      slot representation of the id field in the Asset Pydantic model has changes
-      in value in constraint meta slots: [''required''] .'
     is_a: BareAsset
     slots:
     - contentUrl
     - identifier
     slot_usage:
+      id:
+        description: Uniform resource identifier.
+        required: true
       identifier:
         range: string
         required: true
@@ -914,7 +913,8 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
-      model has changes in value in constraint meta slots: [''range''] .'
+      model has disallowed changes in value in constraint meta slots: [''range'']
+      .'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
       model in `dandischema.models` is not the model''s name. Adjustment to the inherited
       `schemaKey` slot may be needed.'
@@ -1116,24 +1116,10 @@ classes:
   Dandiset:
     description: A body of structured information describing a DANDI dataset.
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the contributor
-      slot. The slot representation of the contributor field in the Dandiset Pydantic
-      model has changes in value in constraint meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the description
-      slot. The slot representation of the description field in the Dandiset Pydantic
-      model has changes in value in constraint meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
-      slot representation of the id field in the Dandiset Pydantic model has changes
-      in value in constraint meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the license slot.
-      The slot representation of the license field in the Dandiset Pydantic model
-      has changes in value in constraint meta slots: [''required''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
-      The slot representation of the name field in the Dandiset Pydantic model has
-      changes in value in constraint meta slots: [''required''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
-      model has changes in value in constraint meta slots: [''range''] .'
+      model has disallowed changes in value in constraint meta slots: [''range'']
+      .'
     is_a: CommonModel
     slots:
     - assetsSummary
@@ -1145,8 +1131,26 @@ classes:
     - sameAs
     - version
     slot_usage:
+      contributor:
+        description: People or Organizations that have contributed to this
+          Dandiset.
+        title: Dandiset contributors
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method Dandiset.contributor_musthave_contact of <class
+          ''dandischema.models.Dandiset''>>.'
+        required: true
+        minimum_cardinality: 1
       dateModified:
         title: Last modification date and time.
+      description:
+        description: A description of the Dandiset
+        required: true
+        all_of:
+        - pattern: ^[\s\S]{,10000}\Z
+      id:
+        required: true
+        pattern: ^([A-Z][-A-Z]*|[a-z][-a-z]*):\d{6}(/(draft|\d+\.\d+\.\d+))$
       identifier:
         description: A Dandiset identifier that can be resolved by
           identifiers.org.
@@ -1154,6 +1158,13 @@ classes:
         range: string
         required: true
         pattern: ^[A-Z][-A-Z]*:\d{6}$
+      license:
+        required: true
+        minimum_cardinality: 1
+      name:
+        description: A title associated with the Dandiset.
+        title: Dandiset title
+        required: true
       sameAs:
         description: Known DANDI URLs of the Dandiset at other DANDI instances.
         range: string
@@ -1277,10 +1288,6 @@ classes:
         description: An identifier indicating the taxonomic classification of
           the participant or subject.
   Person:
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the name slot.
-      The slot representation of the name field in the Person Pydantic model has changes
-      in value in constraint meta slots: [''required''] .'
     is_a: Contributor
     slots:
     - affiliation
@@ -1289,6 +1296,11 @@ classes:
         description: An ORCID (orcid.org) identifier for an individual.
         title: An ORCID identifier
         pattern: ^\d{4}-\d{4}-\d{4}-(\d{3}X|\d{4})$
+      name:
+        description: 'Use the format: familyname, given names ...'
+        title: 'Use Last, First. Example: Lovelace, Augusta Ada'
+        required: true
+        pattern: ^([\w\s\-\.']+),\s+([\w\s\-\.']+)$
   Project:
     is_a: Activity
     slot_usage:
@@ -1332,10 +1344,7 @@ classes:
     notes:
     - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
       slot representation of the id field in the PublishedDandiset Pydantic model
-      has changes in value in constraint meta slots: [''pattern''] .'
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the url slot.
-      The slot representation of the url field in the PublishedDandiset Pydantic model
-      has changes in value in constraint meta slots: [''required''] .'
+      has disallowed changes in value in constraint meta slots: [''pattern''] .'
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
@@ -1347,6 +1356,16 @@ classes:
     slots:
     - doi
     - releaseNotes
+    slot_usage:
+      url:
+        description: Permalink to the Dandiset.
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <bound method PublishedDandiset.check_url of <class ''dandischema.models.PublishedDandiset''>>.'
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
+        required: true
   RelatedParticipant:
     is_a: DandiBaseModel
     slots:

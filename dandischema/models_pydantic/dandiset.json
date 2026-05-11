@@ -1593,7 +1593,7 @@
           "type": "boolean"
         },
         "name": {
-          "default": null,
+          "description": "Use the format: familyname, given names ...",
           "linkml_meta": {
             "domain_of": [
               "Activity",
@@ -1608,7 +1608,7 @@
               "Software"
             ]
           },
-          "title": "Name",
+          "title": "Use Last, First. Example: Lovelace, Augusta Ada",
           "type": "string"
         },
         "roleName": {
@@ -1659,6 +1659,9 @@
           "type": "array"
         }
       },
+      "required": [
+        "name"
+      ],
       "title": "Person",
       "type": "object"
     },
@@ -2742,7 +2745,6 @@
   "description": "A body of structured information describing a DANDI dataset.",
   "properties": {
     "id": {
-      "default": null,
       "description": "Uniform resource identifier",
       "linkml_meta": {
         "domain_of": [
@@ -2828,8 +2830,7 @@
       "type": "string"
     },
     "contributor": {
-      "default": null,
-      "description": "Contributors to this item: persons or organizations.",
+      "description": "People or Organizations that have contributed to this Dandiset.",
       "items": {
         "anyOf": [
           {
@@ -2857,15 +2858,23 @@
         ],
         "domain_of": [
           "CommonModel"
+        ],
+        "notes": [
+          "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method Dandiset.contributor_musthave_contact of <class 'dandischema.models.Dandiset'>>."
         ]
       },
-      "title": "Contributors",
+      "minItems": 1,
+      "title": "Dandiset contributors",
       "type": "array"
     },
     "description": {
-      "default": null,
-      "description": "A description of the item.",
+      "description": "A description of the Dandiset",
       "linkml_meta": {
+        "all_of": [
+          {
+            "pattern": "^[\\s\\S]{,10000}\\Z"
+          }
+        ],
         "domain_of": [
           "AccessRequirements",
           "Activity",
@@ -2904,7 +2913,6 @@
       "type": "array"
     },
     "license": {
-      "default": null,
       "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
       "items": {
         "$ref": "#/$defs/LicenseType"
@@ -2914,12 +2922,12 @@
           "CommonModel"
         ]
       },
+      "minItems": 1,
       "title": "License",
       "type": "array"
     },
     "name": {
-      "default": null,
-      "description": "The name of the item.",
+      "description": "A title associated with the Dandiset.",
       "linkml_meta": {
         "all_of": [
           {
@@ -2939,7 +2947,7 @@
           "Software"
         ]
       },
-      "title": "Title",
+      "title": "Dandiset title",
       "type": "string"
     },
     "protocol": {
@@ -3172,6 +3180,11 @@
     }
   },
   "required": [
+    "id",
+    "contributor",
+    "description",
+    "license",
+    "name",
     "assetsSummary",
     "citation",
     "identifier",

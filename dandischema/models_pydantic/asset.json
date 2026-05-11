@@ -2157,7 +2157,7 @@
           "type": "boolean"
         },
         "name": {
-          "default": null,
+          "description": "Use the format: familyname, given names ...",
           "linkml_meta": {
             "domain_of": [
               "Activity",
@@ -2172,7 +2172,7 @@
               "Software"
             ]
           },
-          "title": "Name",
+          "title": "Use Last, First. Example: Lovelace, Augusta Ada",
           "type": "string"
         },
         "roleName": {
@@ -2223,6 +2223,9 @@
           "type": "array"
         }
       },
+      "required": [
+        "name"
+      ],
       "title": "Person",
       "type": "object"
     },
@@ -3730,8 +3733,7 @@
   "description": "Metadata used to describe an asset on the server.",
   "properties": {
     "id": {
-      "default": null,
-      "description": "Uniform resource identifier",
+      "description": "Uniform resource identifier.",
       "linkml_meta": {
         "domain_of": [
           "DandiBaseModel"
@@ -4290,6 +4292,7 @@
     }
   },
   "required": [
+    "id",
     "contentSize",
     "digest",
     "encodingFormat",
