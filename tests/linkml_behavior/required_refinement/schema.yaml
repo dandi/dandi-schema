@@ -1,0 +1,31 @@
+id: https://example.org/required-refinement
+name: required_refinement
+description: >-
+  Minimal schema exercising the LinkML behavior that the LinkML version of
+  `dandischema` relies on for `required: False -> True` slot_usage
+  refinements (see https://github.com/dandi/dandi-schema/issues/405). A
+  child class tightens an inherited optional slot to required while
+  inheriting the slot's range constraint from the parent class.
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ex: https://example.org/
+default_prefix: ex
+default_range: string
+imports:
+  - linkml:types
+
+slots:
+  name:
+    required: false
+    range: string
+
+classes:
+  Person:
+    slots:
+      - name
+
+  Employee:
+    is_a: Person
+    slot_usage:
+      name:
+        required: true

@@ -81,6 +81,18 @@ dependencies = [
 2json = "d=dandischema/models_linkml; rm -rf $d && mkdir -p $d && for t in Dandiset Asset PublishedDandiset PublishedAsset; do gen-json-schema --title-from title -t $t dandischema/models.yaml >| $d/$t.json; done"
 pydantic2json = "d=dandischema/models_pydantic; rm -rf $d && mkdir -p $d && python tools/pubschemata.py $d && mv $d/*/*json $d/"
 
+# Detached env for testing LinkML behaviors that may not be reliable
+[tool.hatch.envs.linkml-behavior-test]
+detached = true
+installer = "uv"
+dependencies = [
+    "linkml",
+    "pytest",
+]
+[tool.hatch.envs.linkml-behavior-test.scripts]
+# Invoke with: `hatch run linkml-behavior-test:test`
+test = "pytest -v {args:tests/linkml_behavior}"
+
 [tool.setuptools.packages.find]
 namespaces = true
 include = ["dandischema*"]
