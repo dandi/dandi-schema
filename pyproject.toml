@@ -86,8 +86,10 @@ pydantic2json = "d=dandischema/models_pydantic; rm -rf $d && mkdir -p $d && pyth
 detached = true
 installer = "uv"
 dependencies = [
+    "check-jsonschema",
     "linkml",
     "pytest",
+    "PyYAML",
 ]
 [tool.hatch.envs.linkml-behavior-test.scripts]
 # Invoke with: `hatch run linkml-behavior-test:test`
