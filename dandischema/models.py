@@ -1201,6 +1201,9 @@ class AssetsSummary(DandiBaseModel):
         None, json_schema_extra={"readOnly": True}
     )  # more of NWB
     numberOfCells: Optional[int] = Field(None, json_schema_extra={"readOnly": True})
+    numberOfSessions: Optional[int] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )  # BIDS ses-* tokens, counted as unique (subject, session) pairs
 
     dataStandard: Optional[List[StandardsType]] = Field(
         None, json_schema_extra={"readOnly": True}

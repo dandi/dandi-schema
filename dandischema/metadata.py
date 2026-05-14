@@ -530,15 +530,31 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     # which components already found, so we do not count more than
     # once in some incorrectly named datasets
     found: Dict[str, str] = {}
-    for part in Path(assetmeta["path"]).name.split(".")[0].split("_"):
-        if not found.get("subject") and part.startswith("sub-"):
-            found["subject"] = subject = part.split("sub-", 1)[1]
-            if subject not in stats["subjects"]:
-                stats["subjects"].append(subject)
-        if not found.get("sample") and part.startswith("sample-"):
-            found["sample"] = sample = part.replace("sample-", "")
-            if sample not in stats["tissuesample"]:
-                stats["tissuesample"].append(sample)
+    asset_path = Path(assetmeta["path"])
+    # (entity key, BIDS prefix, unique-values bucket in stats; None if not aggregated)
+    entities = [
+        ("subject", "sub-", "subjects"),
+        ("sample", "sample-", "tissuesample"),
+        ("session", "ses-", None),
+    ]
+    for part in asset_path.name.split(".")[0].split("_"):
+        for key, prefix, bucket in entities:
+            if not found.get(key) and part.startswith(prefix):
+                found[key] = value = part.split(prefix, 1)[1]
+                if bucket is not None and value not in stats[bucket]:
+                    stats[bucket].append(value)
+    # If ses- is absent from the filename, fall back to scanning the path
+    # parts (BIDS keeps `ses-X` as its own directory).
+    if not found.get("session"):
+        for part in asset_path.parts[:-1]:
+            if part.startswith("ses-"):
+                found["session"] = part.split("ses-", 1)[1]
+                break
+    stats["sessions"] = stats.get("sessions", [])
+    if found.get("subject") and found.get("session"):
+        pair = (found["subject"], found["session"])
+        if pair not in stats["sessions"]:
+            stats["sessions"].append(pair)
 
     stats["dataStandard"] = stats.get("dataStandard", [])
 
@@ -573,4 +589,5 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
+    stats["numberOfSessions"] = len(stats.pop("sessions", [])) or None
     return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)
