@@ -12,6 +12,7 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 
+from _cases import FAILING_CASES, PASSING_CASES
 import pytest
 
 HERE = Path(__file__).parent
@@ -34,20 +35,7 @@ def _validate(target_class: str, instance: str) -> subprocess.CompletedProcess[s
     )
 
 
-@pytest.mark.parametrize(
-    ("target_class", "instance"),
-    [
-        # Child requires `name`; instance supplies a string value
-        # matching the inherited `range: string` -> valid.
-        ("Employee", "valid_instance.yaml"),
-        # Parent class leaves `name` optional -> a missing-name instance
-        # is valid.
-        ("Person", "missing_name_instance.yaml"),
-        # Parent class leaves `name` optional; a string value satisfies
-        # the slot's `range: string` -> valid.
-        ("Person", "valid_instance.yaml"),
-    ],
-)
+@pytest.mark.parametrize(("target_class", "instance"), PASSING_CASES)
 def test_validation_passes(target_class: str, instance: str) -> None:
     result = _validate(target_class, instance)
     assert result.returncode == 0, (
@@ -56,18 +44,7 @@ def test_validation_passes(target_class: str, instance: str) -> None:
     )
 
 
-@pytest.mark.parametrize(
-    ("target_class", "instance"),
-    [
-        # The core assertion of issue #405: the child's `required: True`
-        # override is honored.
-        ("Employee", "missing_name_instance.yaml"),
-        # The inherited `range: string` survives the refinement on the child.
-        ("Employee", "bad_type_instance.yaml"),
-        # `range: string` is also enforced on the parent class itself.
-        ("Person", "bad_type_instance.yaml"),
-    ],
-)
+@pytest.mark.parametrize(("target_class", "instance"), FAILING_CASES)
 def test_validation_fails(target_class: str, instance: str) -> None:
     result = _validate(target_class, instance)
     assert result.returncode != 0, (
