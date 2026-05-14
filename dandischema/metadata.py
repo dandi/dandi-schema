@@ -527,34 +527,42 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             stats = _get_samples(value, stats, hierarchy)
             break
 
-    stats["sessions"] = stats.get("sessions", [])
-    path_subject = None
-    path_session = None
+    # which components already found, so we do not count more than
+    # once in some incorrectly named datasets
+    found: Dict[str, str] = {}
     asset_path = Path(assetmeta["path"])
-    # Scan filename first (existing behavior for sub-/sample-), then directory
-    # components, so ses- tokens that appear only in the directory (e.g.
-    # `sub-X/ses-Y/foo_acq-Z_bold.nii.gz`) are still counted.
     for part in asset_path.name.split(".")[0].split("_"):
-        if part.startswith("sub-"):
-            subject = part.replace("sub-", "")
-            path_subject = subject
+        if not found.get("subject") and part.startswith("sub-"):
+            found["subject"] = subject = part.split("sub-", 1)[1]
             if subject not in stats["subjects"]:
                 stats["subjects"].append(subject)
-        if part.startswith("sample-"):
-            sample = part.replace("sample-", "")
+        if not found.get("sample") and part.startswith("sample-"):
+            found["sample"] = sample = part.replace("sample-", "")
             if sample not in stats["tissuesample"]:
                 stats["tissuesample"].append(sample)
-        if part.startswith("ses-"):
-            path_session = part.replace("ses-", "")
-    if path_session is None or path_subject is None:
+        if not found.get("session") and part.startswith("ses-"):
+            found["session"] = part.split("ses-", 1)[1]
+    # Fallback: ses- tokens that appear only in directory components (e.g.
+    # `sub-X/ses-Y/foo_acq-Z_bold.nii.gz`) should still be counted. To form
+    # the (subject, session) pair we also accept a directory-only subject,
+    # but we do not add such a subject to stats["subjects"] — subject
+    # counting remains driven by the filename and wasAttributedTo, matching
+    # prior behavior.
+    if not found.get("session"):
+        dir_subject = found.get("subject")
+        dir_session: Optional[str] = None
         for directory in asset_path.parts[:-1]:
             for part in directory.split("_"):
-                if path_subject is None and part.startswith("sub-"):
-                    path_subject = part.replace("sub-", "")
-                if path_session is None and part.startswith("ses-"):
-                    path_session = part.replace("ses-", "")
-    if path_subject is not None and path_session is not None:
-        pair = (path_subject, path_session)
+                if dir_subject is None and part.startswith("sub-"):
+                    dir_subject = part.split("sub-", 1)[1]
+                if dir_session is None and part.startswith("ses-"):
+                    dir_session = part.split("ses-", 1)[1]
+        if dir_subject is not None and dir_session is not None:
+            found.setdefault("subject", dir_subject)
+            found["session"] = dir_session
+    stats["sessions"] = stats.get("sessions", [])
+    if found.get("subject") and found.get("session"):
+        pair = (found["subject"], found["session"])
         if pair not in stats["sessions"]:
             stats["sessions"].append(pair)
 
@@ -580,10 +588,13 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     stats: _stats_type = {}
     for meta in metadata:
         _add_asset_to_stats(meta, stats)
-
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
     stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
     stats["numberOfSubjects"] = len(stats.pop("subjects", [])) or None
+    if stats["numberOfSubjects"]:
+        # Must not happen. If does -- a bug in software
+        assert stats["numberOfFiles"]
+        assert stats["numberOfSubjects"] <= stats["numberOfFiles"]
     stats["numberOfSamples"] = (
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None

@@ -19,10 +19,11 @@ jobs:
           - ubuntu-latest
           - macos-latest
         python:
-          - 3.9
           - '3.10'
           - '3.11'
           - '3.12'
+          - '3.13'
+          - '3.14'
     steps:
       - name: Set up environment
         uses: actions/checkout@v6
@@ -47,7 +48,7 @@ jobs:
           DANDI_TESTS_NONETWORK: 1
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           file: ./coverage.xml
           flags: unittests
