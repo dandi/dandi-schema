@@ -527,15 +527,36 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
             stats = _get_samples(value, stats, hierarchy)
             break
 
-    for part in Path(assetmeta["path"]).name.split(".")[0].split("_"):
+    stats["sessions"] = stats.get("sessions", [])
+    path_subject = None
+    path_session = None
+    asset_path = Path(assetmeta["path"])
+    # Scan filename first (existing behavior for sub-/sample-), then directory
+    # components, so ses- tokens that appear only in the directory (e.g.
+    # `sub-X/ses-Y/foo_acq-Z_bold.nii.gz`) are still counted.
+    for part in asset_path.name.split(".")[0].split("_"):
         if part.startswith("sub-"):
             subject = part.replace("sub-", "")
+            path_subject = subject
             if subject not in stats["subjects"]:
                 stats["subjects"].append(subject)
         if part.startswith("sample-"):
             sample = part.replace("sample-", "")
             if sample not in stats["tissuesample"]:
                 stats["tissuesample"].append(sample)
+        if part.startswith("ses-"):
+            path_session = part.replace("ses-", "")
+    if path_session is None or path_subject is None:
+        for directory in asset_path.parts[:-1]:
+            for part in directory.split("_"):
+                if path_subject is None and part.startswith("sub-"):
+                    path_subject = part.replace("sub-", "")
+                if path_session is None and part.startswith("ses-"):
+                    path_session = part.replace("ses-", "")
+    if path_subject is not None and path_session is not None:
+        pair = (path_subject, path_session)
+        if pair not in stats["sessions"]:
+            stats["sessions"].append(pair)
 
     stats["dataStandard"] = stats.get("dataStandard", [])
 
@@ -567,4 +588,5 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
+    stats["numberOfSessions"] = len(stats.pop("sessions", [])) or None
     return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)
