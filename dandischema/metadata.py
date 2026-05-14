@@ -531,35 +531,25 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     # once in some incorrectly named datasets
     found: Dict[str, str] = {}
     asset_path = Path(assetmeta["path"])
+    # (entity key, BIDS prefix, unique-values bucket in stats; None if not aggregated)
+    entities = [
+        ("subject", "sub-", "subjects"),
+        ("sample", "sample-", "tissuesample"),
+        ("session", "ses-", None),
+    ]
     for part in asset_path.name.split(".")[0].split("_"):
-        if not found.get("subject") and part.startswith("sub-"):
-            found["subject"] = subject = part.split("sub-", 1)[1]
-            if subject not in stats["subjects"]:
-                stats["subjects"].append(subject)
-        if not found.get("sample") and part.startswith("sample-"):
-            found["sample"] = sample = part.replace("sample-", "")
-            if sample not in stats["tissuesample"]:
-                stats["tissuesample"].append(sample)
-        if not found.get("session") and part.startswith("ses-"):
-            found["session"] = part.split("ses-", 1)[1]
-    # Fallback: ses- tokens that appear only in directory components (e.g.
-    # `sub-X/ses-Y/foo_acq-Z_bold.nii.gz`) should still be counted. To form
-    # the (subject, session) pair we also accept a directory-only subject,
-    # but we do not add such a subject to stats["subjects"] — subject
-    # counting remains driven by the filename and wasAttributedTo, matching
-    # prior behavior.
+        for key, prefix, bucket in entities:
+            if not found.get(key) and part.startswith(prefix):
+                found[key] = value = part.split(prefix, 1)[1]
+                if bucket is not None and value not in stats[bucket]:
+                    stats[bucket].append(value)
+    # If ses- is absent from the filename, fall back to scanning the path
+    # parts (BIDS keeps `ses-X` as its own directory).
     if not found.get("session"):
-        dir_subject = found.get("subject")
-        dir_session: Optional[str] = None
-        for directory in asset_path.parts[:-1]:
-            for part in directory.split("_"):
-                if dir_subject is None and part.startswith("sub-"):
-                    dir_subject = part.split("sub-", 1)[1]
-                if dir_session is None and part.startswith("ses-"):
-                    dir_session = part.split("ses-", 1)[1]
-        if dir_subject is not None and dir_session is not None:
-            found.setdefault("subject", dir_subject)
-            found["session"] = dir_session
+        for part in asset_path.parts[:-1]:
+            if part.startswith("ses-"):
+                found["session"] = part.split("ses-", 1)[1]
+                break
     stats["sessions"] = stats.get("sessions", [])
     if found.get("subject") and found.get("session"):
         pair = (found["subject"], found["session"])
