@@ -86,8 +86,10 @@ pydantic2json = "d=dandischema/models_pydantic; rm -rf $d && mkdir -p $d && pyth
 detached = true
 installer = "uv"
 dependencies = [
+    "black",  # Allows `gen-pydantic --black` to format the generated Pydantic models
     "check-jsonschema",
     "linkml",
+    "pydantic",  # For loading the generated Pydantic models in tests
     "pytest",
     "PyYAML",
 ]
