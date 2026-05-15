@@ -85,6 +85,7 @@ pydantic2json = "d=dandischema/models_pydantic; rm -rf $d && mkdir -p $d && pyth
 [tool.hatch.envs.linkml-behavior-test]
 detached = true
 installer = "uv"
+python = "3.10"
 dependencies = [
     "black",  # Allows `gen-pydantic --black` to format the generated Pydantic models
     "check-jsonschema",
