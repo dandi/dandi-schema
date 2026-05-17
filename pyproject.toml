@@ -41,6 +41,9 @@ dynamic = ["version"]
 Homepage = "http://dandiarchive.org"
 "Source Code" = "https://github.com/dandi/dandischema"
 
+[project.entry-points.pytest11]
+dandischema = "dandischema.pytest_plugin"
+
 [project.optional-dependencies]
 style = [
     "flake8",
