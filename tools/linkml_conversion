@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+# Script which will force us to apply the changes we have
+#
+
+set -eu
+
+# ensure we are clean to no side effects and are in
+test -z "$(git status --porcelain)" || { echo "Git tree is dirty, aborting."; exit 1; }
+
+# determine remote name based on what remote linkml-conversion is
+# tracked from which should correspond to our main repo!
+remote=$(git config branch.linkml-conversion.remote)
+
+git checkout linkml-conversion
+# ensure up to date!
+git pull --ff-only
+
+ver=$(git describe linkml-conversion)
+
+master_mergebase=$(git merge-base $remote/master linkml-conversion)
+
+git checkout linkml-auto-converted
+
+git merge -s ours --no-commit linkml-conversion
+
+git read-tree -m -u linkml-conversion
+
+# Poor man patch queue implementation
+# Edit this list if you want to merge or drop PRs branches to be patched with.
+# Order matters
+branches_to_merge=(
+    master
+    remove-discriminated-unions
+)
+
+echo "Applying patches from base $master_mergebase"
+
+for b in ${branches_to_merge[@]}; do
+    b_ver=$(git describe "$remote"/$b)
+    echo "Applying branch $b patch with following differences"
+    git diff --stat "$master_mergebase"..."$remote"/$b
+
+    # --forward: skip hunks that are already applied (e.g. when a branch
+    # in the queue is stacked on top of an earlier one in the queue and
+    # therefore re-introduces hunks already landed). Without it, `patch`
+    # would prompt "Assume -R?" with default `y` and silently revert
+    # those hunks since stdin is occupied by the diff.
+    #
+    # `patch --forward` exits non-zero whenever any hunk is skipped, even
+    # when every skip is "already applied". To distinguish that benign
+    # case from a real conflict, capture the output and inspect it:
+    #   - "failed" (Apple patch) / "FAILED" (GNU patch) marks a real
+    #     conflict — abort.
+    #   - A skip indicator ("previously applied" / "reversed" /
+    #     "skipping patch") is required to accept a non-zero exit.
+    # `set +e` is needed because `set -eu` is on; otherwise the script
+    # would bail before we can read `$?`.
+    set +e
+    out=$(git diff "$master_mergebase"..."$remote"/$b | patch -p1 --forward 2>&1)
+    status=$?
+    set -e
+    echo "$out"
+    if [ "$status" -ne 0 ]; then
+        if grep -qi 'failed' <<<"$out"; then
+            echo "patch FAILED for branch $b — see rejects" >&2
+            exit 1
+        fi
+        if ! grep -qiE 'previously applied|reversed|skipping patch' <<<"$out"; then
+            echo "patch exited $status for branch $b without a recognized skip indicator; aborting" >&2
+            exit 1
+        fi
+    fi
+done
+
+# Clean up `.rej` files left behind by `patch --forward` for hunks it
+# ignored as already applied. They are harmless but would otherwise
+# clutter the tree and could be picked up by `git add -A` below.
+find . -name '*.rej' -delete
+
+hatch run linkml-auto-converted:2linkml
+git add dandischema/models.yaml
+
+# The renaming dance in preparation to accept converted pyndatic model
+# add our stab and rename original models.py
+git mv dandischema/models.py dandischema/models_orig.py
+git mv dandischema/models_importstab.py dandischema/models.py
+
+# Placed separately so we could play with changing linkml model and redoing the
+# conversion(s) and seeing the effect
+$(dirname $0)/linkml_conversion_fromlinkml
+
+# because we have pre-commit.ci doing that behind our back too!
+pre-commit run --all || :
+
+# Stage everything, including new files introduced by patches from the
+# branches above (e.g. files added on `master`). `git commit -a` alone
+# would skip untracked files and silently leave them out of the merge.
+git add -A
+git commit -m "'Merged' with linkml-conversion $ver and ${#branches_to_merge[@]} branches" --no-verify
