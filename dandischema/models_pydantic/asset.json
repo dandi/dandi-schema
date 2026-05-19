@@ -10,7 +10,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -22,7 +23,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -60,7 +62,8 @@
           "linkml_meta": {
             "domain_of": [
               "AccessRequirements"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Embargo end date",
           "type": "string"
@@ -101,7 +104,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -113,7 +117,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -279,7 +284,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -291,7 +297,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -357,7 +364,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -369,7 +377,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -453,7 +462,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -465,7 +475,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -541,7 +552,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -553,7 +565,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -636,7 +649,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -648,7 +662,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -731,7 +746,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -743,7 +759,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -826,7 +843,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -838,7 +856,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -980,7 +999,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -992,7 +1012,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1046,7 +1067,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1058,7 +1080,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1171,7 +1194,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1183,7 +1207,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1268,7 +1293,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1280,7 +1306,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1339,7 +1366,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1351,7 +1379,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1433,7 +1462,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1445,7 +1475,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1524,7 +1555,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1536,7 +1568,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1602,7 +1635,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1614,7 +1648,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1696,7 +1731,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1708,7 +1744,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1858,7 +1895,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -1870,7 +1908,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2076,7 +2115,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -2088,7 +2128,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2238,7 +2279,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -2250,7 +2292,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2416,7 +2459,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -2428,7 +2472,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2543,7 +2588,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -2555,7 +2601,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2721,7 +2768,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -2733,7 +2781,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2869,7 +2918,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -2881,7 +2931,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3072,7 +3123,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -3084,7 +3136,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3166,7 +3219,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -3178,7 +3232,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3345,7 +3400,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -3357,7 +3413,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3439,7 +3496,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -3451,7 +3509,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3548,7 +3607,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -3560,7 +3620,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3643,7 +3704,8 @@
           "linkml_meta": {
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Id",
           "type": "string"
@@ -3655,7 +3717,8 @@
             "designates_type": true,
             "domain_of": [
               "DandiBaseModel"
-            ]
+            ],
+            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
           },
           "title": "Schemakey",
           "type": "string"
@@ -3737,7 +3800,8 @@
       "linkml_meta": {
         "domain_of": [
           "DandiBaseModel"
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Id",
       "type": "string"
@@ -3749,7 +3813,8 @@
         "designates_type": true,
         "domain_of": [
           "DandiBaseModel"
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Schemakey",
       "type": "string"
@@ -3799,11 +3864,11 @@
           "CommonModel"
         ],
         "notes": [
-          "pydantic2linkml: Unable to express the default factory, <function BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
+          "pydantic2linkml: Unable to express the default factory, <function CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
           "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>."
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
-      "maxItems": 1,
       "title": "Access information",
       "type": "array"
     },
@@ -3976,7 +4041,8 @@
         ],
         "notes": [
           "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Repository",
       "type": "string"
@@ -3987,7 +4053,8 @@
         "domain_of": [
           "CommonModel"
         ],
-        "ifabsent": "string(0.7.0)"
+        "ifabsent": "string(0.7.0)",
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Schemaversion",
       "type": "string"
@@ -4021,7 +4088,8 @@
         ],
         "notes": [
           "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Url",
       "type": "string"
@@ -4062,7 +4130,8 @@
         "domain_of": [
           "AssetsSummary",
           "BareAsset"
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Approach",
       "type": "array"
@@ -4175,7 +4244,8 @@
         "domain_of": [
           "AssetsSummary",
           "BareAsset"
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Measurementtechnique",
       "type": "array"
@@ -4217,7 +4287,8 @@
         "domain_of": [
           "AssetsSummary",
           "BareAsset"
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Variablemeasured",
       "type": "array"
@@ -4261,7 +4332,8 @@
         ],
         "notes": [
           "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Contenturl",
       "type": "array"
@@ -4285,7 +4357,8 @@
           "RelatedParticipant",
           "Resource",
           "Software"
-        ]
+        ],
+        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
       },
       "title": "Identifier",
       "type": "string"

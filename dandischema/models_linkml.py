@@ -349,12 +349,25 @@ class DandiBaseModel(ConfiguredBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["DandiBaseModel"] = Field(
         default="DandiBaseModel",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -411,7 +424,14 @@ class AccessRequirements(DandiBaseModel):
         default=None,
         title="Embargo end date",
         description="""Date on which embargo ends.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccessRequirements"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AccessRequirements"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     status: AccessType = Field(
         default=...,
@@ -422,12 +442,25 @@ class AccessRequirements(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["AccessRequirements"] = Field(
         default="AccessRequirements",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -569,12 +602,25 @@ class Activity(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Activity"] = Field(
         default="Activity",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -651,12 +697,25 @@ class Affiliation(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Affiliation"] = Field(
         default="Affiliation",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -773,12 +832,25 @@ class Agent(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Agent"] = Field(
         default="Agent",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -854,12 +926,25 @@ class Allele(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Allele"] = Field(
         default="Allele",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -873,7 +958,15 @@ class AssetsSummary(DandiBaseModel):
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "slot_usage": {
-                "species": {"multivalued": True, "name": "species"},
+                "species": {
+                    "multivalued": True,
+                    "name": "species",
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another entity "
+                    "to modify the value are expected to "
+                    "be ignored or rejected by that owning "
+                    "authority",
+                },
                 "variableMeasured": {"name": "variableMeasured", "range": "string"},
             },
         }
@@ -882,58 +975,135 @@ class AssetsSummary(DandiBaseModel):
     approach: Optional[list[ApproachType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     dataStandard: Optional[list[StandardsType]] = Field(
         default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["AssetsSummary"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     measurementTechnique: Optional[list[MeasurementTechniqueType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     numberOfBytes: int = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["AssetsSummary"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     numberOfCells: Optional[int] = Field(
         default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["AssetsSummary"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     numberOfFiles: int = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["AssetsSummary"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     numberOfSamples: Optional[int] = Field(
         default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["AssetsSummary"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     numberOfSubjects: Optional[int] = Field(
         default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["AssetsSummary"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     species: Optional[list[SpeciesType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "Participant"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "Participant"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     variableMeasured: Optional[list[str]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["AssetsSummary"] = Field(
         default="AssetsSummary",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1050,12 +1220,25 @@ class BaseType(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["BaseType"] = Field(
         default="BaseType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1135,12 +1318,25 @@ class Anatomy(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Anatomy"] = Field(
         default="Anatomy",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1220,12 +1416,25 @@ class ApproachType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["ApproachType"] = Field(
         default="ApproachType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1305,12 +1514,25 @@ class AssayType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["AssayType"] = Field(
         default="AssayType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1410,12 +1632,25 @@ class BioSample(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["BioSample"] = Field(
         default="BioSample",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1438,6 +1673,11 @@ class CommonModel(DandiBaseModel):
                         "AccessRequirements.open_or_embargoed at "
                         "0xADDRESS>.",
                     ],
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another entity "
+                    "to modify the value are expected to be "
+                    "ignored or rejected by that owning "
+                    "authority",
                 },
                 "contributor": {
                     "description": "Contributors to this item: "
@@ -1471,6 +1711,11 @@ class CommonModel(DandiBaseModel):
                     ],
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "range": "uri",
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another "
+                    "entity to modify the value are "
+                    "expected to be ignored or rejected "
+                    "by that owning authority",
                 },
                 "url": {
                     "description": "permalink to the item",
@@ -1482,6 +1727,11 @@ class CommonModel(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another entity to "
+                    "modify the value are expected to be "
+                    "ignored or rejected by that owning "
+                    "authority",
                     "required": False,
                 },
                 "wasGeneratedBy": {"name": "wasGeneratedBy", "range": "Activity"},
@@ -1517,6 +1767,9 @@ class CommonModel(DandiBaseModel):
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -1646,13 +1899,22 @@ class CommonModel(DandiBaseModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     schemaVersion: Optional[str] = Field(
         default="0.7.0",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel"], "ifabsent": "string(0.7.0)"}
+            "linkml_meta": {
+                "domain_of": ["CommonModel"],
+                "ifabsent": "string(0.7.0)",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     studyTarget: Optional[list[str]] = Field(
@@ -1680,6 +1942,9 @@ class CommonModel(DandiBaseModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -1694,12 +1959,25 @@ class CommonModel(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["CommonModel"] = Field(
         default="CommonModel",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -1753,6 +2031,9 @@ class BareAsset(CommonModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
+                "access slot. The slot representation of the access field in the "
+                "BareAsset Pydantic model lacks meta slots: ['readonly'] .",
+                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
                 "field in the BareAsset Pydantic model has disallowed changes in "
                 "value in constraint meta slots: ['range'] .",
@@ -1762,21 +2043,6 @@ class BareAsset(CommonModel):
                 "needed.",
             ],
             "slot_usage": {
-                "access": {
-                    "maximum_cardinality": 1,
-                    "name": "access",
-                    "notes": [
-                        "pydantic2linkml: Unable to express the "
-                        "default factory, <function "
-                        "BareAsset.<lambda> at 0xADDRESS>, in "
-                        "LinkML.",
-                        "pydantic2linkml: Unable to translate the "
-                        "logic contained in the after validation "
-                        "function, <function "
-                        "AccessRequirements.open_or_embargoed at "
-                        "0xADDRESS>.",
-                    ],
-                },
                 "dateModified": {
                     "name": "dateModified",
                     "title": "Asset (file or metadata) " "modification date and time",
@@ -1808,7 +2074,12 @@ class BareAsset(CommonModel):
     approach: Optional[list[ApproachType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     blobDateModified: Optional[datetime] = Field(
@@ -1893,7 +2164,12 @@ class BareAsset(CommonModel):
     measurementTechnique: Optional[list[MeasurementTechniqueType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     path: str = Field(
@@ -1916,7 +2192,12 @@ class BareAsset(CommonModel):
     variableMeasured: Optional[list[PropertyValue]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
@@ -1946,17 +2227,19 @@ class BareAsset(CommonModel):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
-        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
+                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -2086,13 +2369,22 @@ class BareAsset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     schemaVersion: Optional[str] = Field(
         default="0.7.0",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel"], "ifabsent": "string(0.7.0)"}
+            "linkml_meta": {
+                "domain_of": ["CommonModel"],
+                "ifabsent": "string(0.7.0)",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     studyTarget: Optional[list[str]] = Field(
@@ -2120,6 +2412,9 @@ class BareAsset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -2134,12 +2429,25 @@ class BareAsset(CommonModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["BareAsset"] = Field(
         default="BareAsset",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -2227,6 +2535,11 @@ class Asset(BareAsset):
                     "name": "identifier",
                     "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
                     "range": "string",
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another "
+                    "entity to modify the value are "
+                    "expected to be ignored or rejected "
+                    "by that owning authority",
                     "required": True,
                 },
             },
@@ -2244,6 +2557,9 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -2268,14 +2584,22 @@ class Asset(BareAsset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     approach: Optional[list[ApproachType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     blobDateModified: Optional[datetime] = Field(
@@ -2360,7 +2684,12 @@ class Asset(BareAsset):
     measurementTechnique: Optional[list[MeasurementTechniqueType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     path: str = Field(
@@ -2383,7 +2712,12 @@ class Asset(BareAsset):
     variableMeasured: Optional[list[PropertyValue]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
@@ -2413,17 +2747,19 @@ class Asset(BareAsset):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
-        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
+                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -2553,13 +2889,22 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     schemaVersion: Optional[str] = Field(
         default="0.7.0",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel"], "ifabsent": "string(0.7.0)"}
+            "linkml_meta": {
+                "domain_of": ["CommonModel"],
+                "ifabsent": "string(0.7.0)",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     studyTarget: Optional[list[str]] = Field(
@@ -2587,6 +2932,9 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -2601,12 +2949,25 @@ class Asset(BareAsset):
     id: str = Field(
         default=...,
         description="""Uniform resource identifier.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Asset"] = Field(
         default="Asset",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -2767,12 +3128,25 @@ class ContactPoint(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["ContactPoint"] = Field(
         default="ContactPoint",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -2933,12 +3307,25 @@ class Contributor(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Contributor"] = Field(
         default="Contributor",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -2991,6 +3378,12 @@ class Dandiset(CommonModel):
                 },
                 "dateModified": {
                     "name": "dateModified",
+                    "readonly": "Managed exclusively by the "
+                    "owning authority; attempts by "
+                    "another entity to modify the "
+                    "value are expected to be ignored "
+                    "or rejected by that owning "
+                    "authority",
                     "title": "Last modification date and time.",
                 },
                 "description": {
@@ -3010,6 +3403,11 @@ class Dandiset(CommonModel):
                     "name": "identifier",
                     "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
                     "range": "string",
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another "
+                    "entity to modify the value are "
+                    "expected to be ignored or rejected "
+                    "by that owning authority",
                     "required": True,
                     "title": "Dandiset identifier",
                 },
@@ -3031,25 +3429,63 @@ class Dandiset(CommonModel):
                     "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
                     "range": "string",
                 },
+                "version": {
+                    "name": "version",
+                    "readonly": "Managed exclusively by the owning "
+                    "authority; attempts by another entity "
+                    "to modify the value are expected to "
+                    "be ignored or rejected by that owning "
+                    "authority",
+                },
             },
         }
     )
 
     assetsSummary: AssetsSummary = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     citation: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     dateCreated: Optional[datetime] = Field(
         default=None,
         title="Dandiset creation date and time.",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     dateModified: Optional[datetime] = Field(
         default=None,
         title="Last modification date and time.",
-        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["BareAsset", "Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     identifier: str = Field(
         default=...,
@@ -3074,7 +3510,10 @@ class Dandiset(CommonModel):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -3090,6 +3529,9 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -3104,7 +3546,14 @@ class Dandiset(CommonModel):
     )
     version: str = Field(
         default=...,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset", "Software"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset", "Software"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
@@ -3134,6 +3583,9 @@ class Dandiset(CommonModel):
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -3272,13 +3724,22 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     schemaVersion: Optional[str] = Field(
         default="0.7.0",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel"], "ifabsent": "string(0.7.0)"}
+            "linkml_meta": {
+                "domain_of": ["CommonModel"],
+                "ifabsent": "string(0.7.0)",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     studyTarget: Optional[list[str]] = Field(
@@ -3306,6 +3767,9 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -3320,12 +3784,25 @@ class Dandiset(CommonModel):
     id: str = Field(
         default=...,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Dandiset"] = Field(
         default="Dandiset",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3511,12 +3988,25 @@ class Disorder(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Disorder"] = Field(
         default="Disorder",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3611,12 +4101,25 @@ class Equipment(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Equipment"] = Field(
         default="Equipment",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3687,12 +4190,25 @@ class EthicsApproval(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["EthicsApproval"] = Field(
         default="EthicsApproval",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3772,12 +4288,25 @@ class GenericType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["GenericType"] = Field(
         default="GenericType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3818,12 +4347,25 @@ class GenotypeInfo(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["GenotypeInfo"] = Field(
         default="GenotypeInfo",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3883,12 +4425,25 @@ class Locus(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Locus"] = Field(
         default="Locus",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -3968,12 +4523,25 @@ class MeasurementTechniqueType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["MeasurementTechniqueType"] = Field(
         default="MeasurementTechniqueType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4122,12 +4690,25 @@ class Organization(Contributor):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Organization"] = Field(
         default="Organization",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4291,12 +4872,25 @@ class Participant(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Participant"] = Field(
         default="Participant",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4435,12 +5029,25 @@ class Person(Contributor):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Person"] = Field(
         default="Person",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4610,12 +5217,25 @@ class Project(Activity):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Project"] = Field(
         default="Project",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4700,12 +5320,25 @@ class PropertyValue(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["PropertyValue"] = Field(
         default="PropertyValue",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4716,7 +5349,15 @@ class Publishable(DandiBaseModel):
     )
 
     datePublished: datetime = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Publishable"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Publishable"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
@@ -4737,18 +5378,34 @@ class Publishable(DandiBaseModel):
                     {"range": "PublishActivity"},
                 ],
                 "domain_of": ["Publishable"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Publishable"] = Field(
         default="Publishable",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4865,12 +5522,25 @@ class PublishActivity(Activity):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["PublishActivity"] = Field(
         default="PublishActivity",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -4899,7 +5569,15 @@ class PublishedAsset(Publishable, Asset):
     )
 
     datePublished: datetime = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Publishable"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Publishable"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
@@ -4920,6 +5598,9 @@ class PublishedAsset(Publishable, Asset):
                     {"range": "PublishActivity"},
                 ],
                 "domain_of": ["Publishable"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -4934,6 +5615,9 @@ class PublishedAsset(Publishable, Asset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -4958,14 +5642,22 @@ class PublishedAsset(Publishable, Asset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     approach: Optional[list[ApproachType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     blobDateModified: Optional[datetime] = Field(
@@ -5050,7 +5742,12 @@ class PublishedAsset(Publishable, Asset):
     measurementTechnique: Optional[list[MeasurementTechniqueType]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     path: str = Field(
@@ -5073,7 +5770,12 @@ class PublishedAsset(Publishable, Asset):
     variableMeasured: Optional[list[PropertyValue]] = Field(
         default=None,
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["AssetsSummary", "BareAsset"]}
+            "linkml_meta": {
+                "domain_of": ["AssetsSummary", "BareAsset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     wasAttributedTo: Optional[list[Participant]] = Field(
@@ -5103,17 +5805,19 @@ class PublishedAsset(Publishable, Asset):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
-        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
+                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -5243,13 +5947,22 @@ class PublishedAsset(Publishable, Asset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     schemaVersion: Optional[str] = Field(
         default="0.7.0",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel"], "ifabsent": "string(0.7.0)"}
+            "linkml_meta": {
+                "domain_of": ["CommonModel"],
+                "ifabsent": "string(0.7.0)",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     studyTarget: Optional[list[str]] = Field(
@@ -5277,6 +5990,9 @@ class PublishedAsset(Publishable, Asset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -5291,12 +6007,25 @@ class PublishedAsset(Publishable, Asset):
     id: str = Field(
         default=...,
         description="""Uniform resource identifier.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["PublishedAsset"] = Field(
         default="PublishedAsset",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -5453,16 +6182,37 @@ class PublishedDandiset(Publishable, Dandiset):
         default="",
         title="DOI",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["PublishedDandiset"], "ifabsent": "string()"}
+            "linkml_meta": {
+                "domain_of": ["PublishedDandiset"],
+                "ifabsent": "string()",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     releaseNotes: Optional[str] = Field(
         default=None,
         description="""The description of the release""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["PublishedDandiset"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["PublishedDandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     datePublished: datetime = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Publishable"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Publishable"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     publishedBy: Union[PublishActivity, str] = Field(
         default=...,
@@ -5483,24 +6233,57 @@ class PublishedDandiset(Publishable, Dandiset):
                     {"range": "PublishActivity"},
                 ],
                 "domain_of": ["Publishable"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     assetsSummary: AssetsSummary = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     citation: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}}
+        default=...,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     dateCreated: Optional[datetime] = Field(
         default=None,
         title="Dandiset creation date and time.",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     dateModified: Optional[datetime] = Field(
         default=None,
         title="Last modification date and time.",
-        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["BareAsset", "Dandiset"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     identifier: str = Field(
         default=...,
@@ -5525,7 +6308,10 @@ class PublishedDandiset(Publishable, Dandiset):
                     "RelatedParticipant",
                     "Resource",
                     "Software",
-                ]
+                ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -5541,6 +6327,9 @@ class PublishedDandiset(Publishable, Dandiset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -5555,7 +6344,14 @@ class PublishedDandiset(Publishable, Dandiset):
     )
     version: str = Field(
         default=...,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Dandiset", "Software"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset", "Software"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
         default=None,
@@ -5585,6 +6381,9 @@ class PublishedDandiset(Publishable, Dandiset):
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -5723,13 +6522,22 @@ class PublishedDandiset(Publishable, Dandiset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
     schemaVersion: Optional[str] = Field(
         default="0.7.0",
         json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel"], "ifabsent": "string(0.7.0)"}
+            "linkml_meta": {
+                "domain_of": ["CommonModel"],
+                "ifabsent": "string(0.7.0)",
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
     studyTarget: Optional[list[str]] = Field(
@@ -5761,6 +6569,9 @@ class PublishedDandiset(Publishable, Dandiset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>.",
                 ],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
             }
         },
     )
@@ -5775,12 +6586,25 @@ class PublishedDandiset(Publishable, Dandiset):
     id: str = Field(
         default=...,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["PublishedDandiset"] = Field(
         default="PublishedDandiset",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6015,12 +6839,25 @@ class RelatedParticipant(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["RelatedParticipant"] = Field(
         default="RelatedParticipant",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6176,12 +7013,25 @@ class Resource(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Resource"] = Field(
         default="Resource",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6274,12 +7124,25 @@ class SampleType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["SampleType"] = Field(
         default="SampleType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6410,12 +7273,25 @@ class Session(Activity):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Session"] = Field(
         default="Session",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6495,12 +7371,25 @@ class SexType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["SexType"] = Field(
         default="SexType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6611,12 +7500,25 @@ class Software(DandiBaseModel):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["Software"] = Field(
         default="Software",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6722,12 +7624,25 @@ class SpeciesType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["SpeciesType"] = Field(
         default="SpeciesType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6807,12 +7722,25 @@ class StandardsType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["StandardsType"] = Field(
         default="StandardsType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
@@ -6892,12 +7820,25 @@ class StrainType(BaseType):
     id: Optional[str] = Field(
         default=None,
         description="""Uniform resource identifier""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DandiBaseModel"]}},
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
+        },
     )
     schemaKey: Literal["StrainType"] = Field(
         default="StrainType",
         json_schema_extra={
-            "linkml_meta": {"designates_type": True, "domain_of": ["DandiBaseModel"]}
+            "linkml_meta": {
+                "designates_type": True,
+                "domain_of": ["DandiBaseModel"],
+                "readonly": "Managed exclusively by the owning authority; attempts by another "
+                "entity to modify the value are expected to be ignored or "
+                "rejected by that owning authority",
+            }
         },
     )
 
