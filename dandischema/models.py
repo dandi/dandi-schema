@@ -1800,7 +1800,7 @@ class BareAsset(CommonModel):
     access: List[AccessRequirements] = Field(
         title="Access information",
         default_factory=lambda: [AccessRequirements(status=AccessType.OpenAccess)],
-        json_schema_extra={"nskey": DANDI_NSKEY},
+        json_schema_extra={"nskey": DANDI_NSKEY, "readOnly": True},
         max_length=1,
     )
 
