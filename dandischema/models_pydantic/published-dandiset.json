@@ -11,7 +11,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -24,7 +24,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -63,7 +63,7 @@
             "domain_of": [
               "AccessRequirements"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Embargo end date",
           "type": "string"
@@ -105,7 +105,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -118,7 +118,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -285,7 +285,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -298,7 +298,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -365,7 +365,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -378,7 +378,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -464,7 +464,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -477,7 +477,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -561,7 +561,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -574,7 +574,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -658,7 +658,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -671,7 +671,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -686,7 +686,7 @@
               "AssetsSummary",
               "BareAsset"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Approach",
           "type": "array"
@@ -700,7 +700,7 @@
             "domain_of": [
               "AssetsSummary"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Datastandard",
           "type": "array"
@@ -715,7 +715,7 @@
               "AssetsSummary",
               "BareAsset"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Measurementtechnique",
           "type": "array"
@@ -725,7 +725,7 @@
             "domain_of": [
               "AssetsSummary"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Numberofbytes",
           "type": "integer"
@@ -736,7 +736,7 @@
             "domain_of": [
               "AssetsSummary"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Numberofcells",
           "type": "integer"
@@ -746,7 +746,7 @@
             "domain_of": [
               "AssetsSummary"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Numberoffiles",
           "type": "integer"
@@ -757,7 +757,7 @@
             "domain_of": [
               "AssetsSummary"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Numberofsamples",
           "type": "integer"
@@ -768,7 +768,7 @@
             "domain_of": [
               "AssetsSummary"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Numberofsubjects",
           "type": "integer"
@@ -783,7 +783,7 @@
               "AssetsSummary",
               "Participant"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Species",
           "type": "array"
@@ -798,7 +798,7 @@
               "AssetsSummary",
               "BareAsset"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Variablemeasured",
           "type": "array"
@@ -821,7 +821,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -834,7 +834,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -889,7 +889,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -902,7 +902,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1016,7 +1016,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1029,7 +1029,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1115,7 +1115,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1128,7 +1128,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1188,7 +1188,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1201,7 +1201,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1293,7 +1293,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1306,7 +1306,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1389,7 +1389,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1402,7 +1402,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1552,7 +1552,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1565,7 +1565,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1716,7 +1716,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1729,7 +1729,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -1896,7 +1896,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -1909,7 +1909,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2117,7 +2117,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -2130,7 +2130,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2321,7 +2321,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -2334,7 +2334,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2501,7 +2501,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -2514,7 +2514,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2612,7 +2612,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -2625,7 +2625,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2709,7 +2709,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Id",
           "type": "string"
@@ -2722,7 +2722,7 @@
             "domain_of": [
               "DandiBaseModel"
             ],
-            "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+            "readonly": "Read-only for clients; managed by server"
           },
           "title": "Schemakey",
           "type": "string"
@@ -2804,7 +2804,7 @@
         "domain_of": [
           "DandiBaseModel"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Id",
       "type": "string"
@@ -2817,7 +2817,7 @@
         "domain_of": [
           "DandiBaseModel"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Schemakey",
       "type": "string"
@@ -2870,7 +2870,7 @@
           "pydantic2linkml: Unable to express the default factory, <function CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
           "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>."
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Access information",
       "type": "array"
@@ -3051,7 +3051,7 @@
         "notes": [
           "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Repository",
       "type": "string"
@@ -3063,7 +3063,7 @@
           "CommonModel"
         ],
         "ifabsent": "string(0.7.0)",
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Schemaversion",
       "type": "string"
@@ -3098,7 +3098,7 @@
           "pydantic2linkml: Unable to translate the logic contained in the after validation function, <bound method PublishedDandiset.check_url of <class 'dandischema.models.PublishedDandiset'>>.",
           "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Url",
       "type": "string"
@@ -3136,7 +3136,7 @@
         "domain_of": [
           "Dandiset"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       }
     },
     "citation": {
@@ -3144,7 +3144,7 @@
         "domain_of": [
           "Dandiset"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Citation",
       "type": "string"
@@ -3156,7 +3156,7 @@
         "domain_of": [
           "Dandiset"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Dandiset creation date and time.",
       "type": "string"
@@ -3169,7 +3169,7 @@
           "BareAsset",
           "Dandiset"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Last modification date and time.",
       "type": "string"
@@ -3195,7 +3195,7 @@
           "Resource",
           "Software"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Dandiset identifier",
       "type": "string"
@@ -3211,7 +3211,7 @@
         "notes": [
           "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "minItems": 1,
       "title": "Manifestlocation",
@@ -3240,7 +3240,7 @@
           "Dandiset",
           "Software"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Version",
       "type": "string"
@@ -3251,7 +3251,7 @@
         "domain_of": [
           "Publishable"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Datepublished",
       "type": "string"
@@ -3282,7 +3282,7 @@
         "domain_of": [
           "Publishable"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Publishedby"
     },
@@ -3293,7 +3293,7 @@
           "PublishedDandiset"
         ],
         "ifabsent": "string()",
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "DOI",
       "type": "string"
@@ -3305,7 +3305,7 @@
         "domain_of": [
           "PublishedDandiset"
         ],
-        "readonly": "Managed exclusively by the owning authority; attempts by another entity to modify the value are expected to be ignored or rejected by that owning authority"
+        "readonly": "Read-only for clients; managed by server"
       },
       "title": "Releasenotes",
       "type": "string"

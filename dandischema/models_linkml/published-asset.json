@@ -492,6 +492,7 @@
                     "items": {
                         "$ref": "#/$defs/AccessRequirements"
                     },
+                    "maxItems": 1,
                     "title": "Access information",
                     "type": [
                         "array",
@@ -917,6 +918,7 @@
                     "items": {
                         "$ref": "#/$defs/AccessRequirements"
                     },
+                    "maxItems": 1,
                     "title": "Access information",
                     "type": [
                         "array",
@@ -3019,6 +3021,7 @@
                     "items": {
                         "$ref": "#/$defs/AccessRequirements"
                     },
+                    "maxItems": 1,
                     "title": "Access information",
                     "type": [
                         "array",
@@ -4280,6 +4283,7 @@
             "items": {
                 "$ref": "#/$defs/AccessRequirements"
             },
+            "maxItems": 1,
             "title": "Access information",
             "type": [
                 "array",

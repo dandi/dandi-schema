@@ -329,6 +329,7 @@ slots:
     - range: GenericType
   access:
     title: Access information
+    readonly: Read-only for clients; managed by server
     range: AccessRequirements
     required: false
     multivalued: true
@@ -369,9 +370,7 @@ slots:
     required: false
     multivalued: true
   approach:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: ApproachType
     required: false
     multivalued: true
@@ -381,9 +380,7 @@ slots:
     required: false
     multivalued: true
   assetsSummary:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: AssetsSummary
     required: true
   awardNumber:
@@ -400,9 +397,7 @@ slots:
     range: string
     required: false
   citation:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: string
     required: true
   contactPoint:
@@ -424,9 +419,7 @@ slots:
     - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
       function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
       at 0xADDRESS>.'
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: uri
     required: true
     multivalued: true
@@ -444,9 +437,7 @@ slots:
         function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>.'
       range: Organization
   dataStandard:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: StandardsType
     required: false
     multivalued: true
@@ -460,18 +451,14 @@ slots:
     pattern: ^(?i:http|https)://[^\s]+$
   dateCreated:
     title: Dandiset creation date and time.
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: datetime
     required: false
   dateModified:
     range: datetime
     required: false
   datePublished:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: datetime
     required: true
   description:
@@ -492,9 +479,7 @@ slots:
     multivalued: true
   doi:
     title: DOI
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     ifabsent: string()
     range: string
     required: false
@@ -517,9 +502,7 @@ slots:
   embargoedUntil:
     description: Date on which embargo ends.
     title: Embargo end date
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: date
     required: false
   encodingFormat:
@@ -555,9 +538,7 @@ slots:
     required: false
     multivalued: true
   id:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: string
   identifier: {}
   includeInCitation:
@@ -586,9 +567,7 @@ slots:
     - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
       function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
       at 0xADDRESS>.'
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: uri
     required: true
     multivalued: true
@@ -601,9 +580,7 @@ slots:
     range: float
     required: false
   measurementTechnique:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: MeasurementTechniqueType
     required: false
     multivalued: true
@@ -616,33 +593,23 @@ slots:
   name:
     range: string
   numberOfBytes:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: integer
     required: true
   numberOfCells:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: integer
     required: false
   numberOfFiles:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: integer
     required: true
   numberOfSamples:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: integer
     required: false
   numberOfSubjects:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: integer
     required: false
   path:
@@ -675,9 +642,7 @@ slots:
   publishedBy:
     description: The URL should contain the provenance of the publishing
       process.
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: Any
     required: true
     any_of:
@@ -705,9 +670,7 @@ slots:
     required: true
   releaseNotes:
     description: The description of the release
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     range: string
     required: false
   repository:
@@ -732,16 +695,12 @@ slots:
     range: SampleType
     required: true
   schemaKey:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     designates_type: true
     range: string
     required: true
   schemaVersion:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     ifabsent: string(0.7.0)
     range: string
     required: false
@@ -796,9 +755,7 @@ slots:
     range: PropertyValue
     required: false
   variableMeasured:
-    readonly: Managed exclusively by the owning authority; attempts by another
-      entity to modify the value are expected to be ignored or rejected by that
-      owning authority
+    readonly: Read-only for clients; managed by server
     required: false
     multivalued: true
   vendor:
@@ -950,9 +907,7 @@ classes:
         description: Uniform resource identifier.
         required: true
       identifier:
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
         range: string
         required: true
         pattern:
@@ -973,9 +928,7 @@ classes:
     - variableMeasured
     slot_usage:
       species:
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
         multivalued: true
       variableMeasured:
         range: string
@@ -983,9 +936,6 @@ classes:
     description: Metadata used to describe an asset anywhere (local or server).
       Derived from C2M2 (Level 0 and 1) and schema.org
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the access slot.
-      The slot representation of the access field in the BareAsset Pydantic model
-      lacks meta slots: [''readonly''] .'
     - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
       slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
       model has disallowed changes in value in constraint meta slots: [''range'']
@@ -1009,6 +959,13 @@ classes:
     - wasAttributedTo
     - wasDerivedFrom
     slot_usage:
+      access:
+        notes:
+        - 'pydantic2linkml: Unable to express the default factory, <function BareAsset.<lambda>
+          at 0xADDRESS>, in LinkML.'
+        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
+          function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
+        maximum_cardinality: 1
       dateModified:
         title: Asset (file or metadata) modification date and time
       sameAs:
@@ -1097,9 +1054,6 @@ classes:
           at 0xADDRESS>, in LinkML.'
         - 'pydantic2linkml: Unable to translate the logic contained in the after validation
           function, <function AccessRequirements.open_or_embargoed at 0xADDRESS>.'
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
       contributor:
         description: 'Contributors to this item: persons or organizations.'
         title: Contributors
@@ -1121,9 +1075,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
         range: uri
         pattern: ^(?i:http|https)://[^\s]+$
       url:
@@ -1132,9 +1084,7 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
         required: false
       wasGeneratedBy:
         range: Activity
@@ -1220,9 +1170,7 @@ classes:
         minimum_cardinality: 1
       dateModified:
         title: Last modification date and time.
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
       description:
         description: A description of the Dandiset
         required: true
@@ -1235,9 +1183,7 @@ classes:
         description: A Dandiset identifier that can be resolved by
           identifiers.org.
         title: Dandiset identifier
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
         range: string
         required: true
         pattern: ^[A-Z][-A-Z]*:\d{6}$
@@ -1253,9 +1199,7 @@ classes:
         range: string
         pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
       version:
-        readonly: Managed exclusively by the owning authority; attempts by
-          another entity to modify the value are expected to be ignored or
-          rejected by that owning authority
+        readonly: Read-only for clients; managed by server
   Disorder:
     description: Biolink, SNOMED, or other identifier for disorder studied
     is_a: BaseType

@@ -352,9 +352,7 @@ class DandiBaseModel(ConfiguredBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -364,9 +362,7 @@ class DandiBaseModel(ConfiguredBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -427,9 +423,7 @@ class AccessRequirements(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AccessRequirements"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -445,9 +439,7 @@ class AccessRequirements(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -457,9 +449,7 @@ class AccessRequirements(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -605,9 +595,7 @@ class Activity(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -617,9 +605,7 @@ class Activity(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -700,9 +686,7 @@ class Affiliation(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -712,9 +696,7 @@ class Affiliation(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -835,9 +817,7 @@ class Agent(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -847,9 +827,7 @@ class Agent(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -929,9 +907,7 @@ class Allele(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -941,9 +917,7 @@ class Allele(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -961,11 +935,7 @@ class AssetsSummary(DandiBaseModel):
                 "species": {
                     "multivalued": True,
                     "name": "species",
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another entity "
-                    "to modify the value are expected to "
-                    "be ignored or rejected by that owning "
-                    "authority",
+                    "readonly": "Read-only for clients; managed by " "server",
                 },
                 "variableMeasured": {"name": "variableMeasured", "range": "string"},
             },
@@ -977,9 +947,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -988,9 +956,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -999,9 +965,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1010,9 +974,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1021,9 +983,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1032,9 +992,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1043,9 +1001,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1054,9 +1010,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1065,9 +1019,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "Participant"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1076,9 +1028,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1088,9 +1038,7 @@ class AssetsSummary(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1100,9 +1048,7 @@ class AssetsSummary(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1223,9 +1169,7 @@ class BaseType(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1235,9 +1179,7 @@ class BaseType(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1321,9 +1263,7 @@ class Anatomy(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1333,9 +1273,7 @@ class Anatomy(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1419,9 +1357,7 @@ class ApproachType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1431,9 +1367,7 @@ class ApproachType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1517,9 +1451,7 @@ class AssayType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1529,9 +1461,7 @@ class AssayType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1635,9 +1565,7 @@ class BioSample(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1647,9 +1575,7 @@ class BioSample(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1673,11 +1599,6 @@ class CommonModel(DandiBaseModel):
                         "AccessRequirements.open_or_embargoed at "
                         "0xADDRESS>.",
                     ],
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another entity "
-                    "to modify the value are expected to be "
-                    "ignored or rejected by that owning "
-                    "authority",
                 },
                 "contributor": {
                     "description": "Contributors to this item: "
@@ -1711,11 +1632,7 @@ class CommonModel(DandiBaseModel):
                     ],
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "range": "uri",
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another "
-                    "entity to modify the value are "
-                    "expected to be ignored or rejected "
-                    "by that owning authority",
+                    "readonly": "Read-only for clients; managed by " "server",
                 },
                 "url": {
                     "description": "permalink to the item",
@@ -1727,11 +1644,7 @@ class CommonModel(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another entity to "
-                    "modify the value are expected to be "
-                    "ignored or rejected by that owning "
-                    "authority",
+                    "readonly": "Read-only for clients; managed by server",
                     "required": False,
                 },
                 "wasGeneratedBy": {"name": "wasGeneratedBy", "range": "Activity"},
@@ -1767,9 +1680,7 @@ class CommonModel(DandiBaseModel):
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1899,9 +1810,7 @@ class CommonModel(DandiBaseModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1911,9 +1820,7 @@ class CommonModel(DandiBaseModel):
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "ifabsent": "string(0.7.0)",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1942,9 +1849,7 @@ class CommonModel(DandiBaseModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1962,9 +1867,7 @@ class CommonModel(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -1974,9 +1877,7 @@ class CommonModel(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2031,9 +1932,6 @@ class BareAsset(CommonModel):
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
             "notes": [
                 "pydantic2linkml: Impossible to generate slot usage entry for the "
-                "access slot. The slot representation of the access field in the "
-                "BareAsset Pydantic model lacks meta slots: ['readonly'] .",
-                "pydantic2linkml: Impossible to generate slot usage entry for the "
                 "wasGeneratedBy slot. The slot representation of the wasGeneratedBy "
                 "field in the BareAsset Pydantic model has disallowed changes in "
                 "value in constraint meta slots: ['range'] .",
@@ -2043,6 +1941,21 @@ class BareAsset(CommonModel):
                 "needed.",
             ],
             "slot_usage": {
+                "access": {
+                    "maximum_cardinality": 1,
+                    "name": "access",
+                    "notes": [
+                        "pydantic2linkml: Unable to express the "
+                        "default factory, <function "
+                        "BareAsset.<lambda> at 0xADDRESS>, in "
+                        "LinkML.",
+                        "pydantic2linkml: Unable to translate the "
+                        "logic contained in the after validation "
+                        "function, <function "
+                        "AccessRequirements.open_or_embargoed at "
+                        "0xADDRESS>.",
+                    ],
+                },
                 "dateModified": {
                     "name": "dateModified",
                     "title": "Asset (file or metadata) " "modification date and time",
@@ -2076,9 +1989,7 @@ class BareAsset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2166,9 +2077,7 @@ class BareAsset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2194,9 +2103,7 @@ class BareAsset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2227,19 +2134,18 @@ class BareAsset(CommonModel):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
+        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
+                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2369,9 +2275,7 @@ class BareAsset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2381,9 +2285,7 @@ class BareAsset(CommonModel):
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "ifabsent": "string(0.7.0)",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2412,9 +2314,7 @@ class BareAsset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2432,9 +2332,7 @@ class BareAsset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2444,9 +2342,7 @@ class BareAsset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2535,11 +2431,7 @@ class Asset(BareAsset):
                     "name": "identifier",
                     "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
                     "range": "string",
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another "
-                    "entity to modify the value are "
-                    "expected to be ignored or rejected "
-                    "by that owning authority",
+                    "readonly": "Read-only for clients; managed by " "server",
                     "required": True,
                 },
             },
@@ -2557,9 +2449,7 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2585,9 +2475,7 @@ class Asset(BareAsset):
                     "Resource",
                     "Software",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2596,9 +2484,7 @@ class Asset(BareAsset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2686,9 +2572,7 @@ class Asset(BareAsset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2714,9 +2598,7 @@ class Asset(BareAsset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2747,19 +2629,18 @@ class Asset(BareAsset):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
+        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
+                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2889,9 +2770,7 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2901,9 +2780,7 @@ class Asset(BareAsset):
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "ifabsent": "string(0.7.0)",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2932,9 +2809,7 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2952,9 +2827,7 @@ class Asset(BareAsset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -2964,9 +2837,7 @@ class Asset(BareAsset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3131,9 +3002,7 @@ class ContactPoint(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3143,9 +3012,7 @@ class ContactPoint(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3310,9 +3177,7 @@ class Contributor(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3322,9 +3187,7 @@ class Contributor(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3378,12 +3241,7 @@ class Dandiset(CommonModel):
                 },
                 "dateModified": {
                     "name": "dateModified",
-                    "readonly": "Managed exclusively by the "
-                    "owning authority; attempts by "
-                    "another entity to modify the "
-                    "value are expected to be ignored "
-                    "or rejected by that owning "
-                    "authority",
+                    "readonly": "Read-only for clients; managed " "by server",
                     "title": "Last modification date and time.",
                 },
                 "description": {
@@ -3403,11 +3261,7 @@ class Dandiset(CommonModel):
                     "name": "identifier",
                     "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
                     "range": "string",
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another "
-                    "entity to modify the value are "
-                    "expected to be ignored or rejected "
-                    "by that owning authority",
+                    "readonly": "Read-only for clients; managed by " "server",
                     "required": True,
                     "title": "Dandiset identifier",
                 },
@@ -3431,11 +3285,7 @@ class Dandiset(CommonModel):
                 },
                 "version": {
                     "name": "version",
-                    "readonly": "Managed exclusively by the owning "
-                    "authority; attempts by another entity "
-                    "to modify the value are expected to "
-                    "be ignored or rejected by that owning "
-                    "authority",
+                    "readonly": "Read-only for clients; managed by " "server",
                 },
             },
         }
@@ -3446,9 +3296,7 @@ class Dandiset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3457,9 +3305,7 @@ class Dandiset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3469,9 +3315,7 @@ class Dandiset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3481,9 +3325,7 @@ class Dandiset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset", "Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3511,9 +3353,7 @@ class Dandiset(CommonModel):
                     "Resource",
                     "Software",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3529,9 +3369,7 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3549,9 +3387,7 @@ class Dandiset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset", "Software"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3583,9 +3419,7 @@ class Dandiset(CommonModel):
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3724,9 +3558,7 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3736,9 +3568,7 @@ class Dandiset(CommonModel):
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "ifabsent": "string(0.7.0)",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3767,9 +3597,7 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3787,9 +3615,7 @@ class Dandiset(CommonModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3799,9 +3625,7 @@ class Dandiset(CommonModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -3991,9 +3815,7 @@ class Disorder(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4003,9 +3825,7 @@ class Disorder(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4104,9 +3924,7 @@ class Equipment(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4116,9 +3934,7 @@ class Equipment(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4193,9 +4009,7 @@ class EthicsApproval(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4205,9 +4019,7 @@ class EthicsApproval(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4291,9 +4103,7 @@ class GenericType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4303,9 +4113,7 @@ class GenericType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4350,9 +4158,7 @@ class GenotypeInfo(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4362,9 +4168,7 @@ class GenotypeInfo(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4428,9 +4232,7 @@ class Locus(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4440,9 +4242,7 @@ class Locus(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4526,9 +4326,7 @@ class MeasurementTechniqueType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4538,9 +4336,7 @@ class MeasurementTechniqueType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4693,9 +4489,7 @@ class Organization(Contributor):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4705,9 +4499,7 @@ class Organization(Contributor):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4875,9 +4667,7 @@ class Participant(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -4887,9 +4677,7 @@ class Participant(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5032,9 +4820,7 @@ class Person(Contributor):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5044,9 +4830,7 @@ class Person(Contributor):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5220,9 +5004,7 @@ class Project(Activity):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5232,9 +5014,7 @@ class Project(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5323,9 +5103,7 @@ class PropertyValue(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5335,9 +5113,7 @@ class PropertyValue(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5353,9 +5129,7 @@ class Publishable(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Publishable"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5378,9 +5152,7 @@ class Publishable(DandiBaseModel):
                     {"range": "PublishActivity"},
                 ],
                 "domain_of": ["Publishable"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5390,9 +5162,7 @@ class Publishable(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5402,9 +5172,7 @@ class Publishable(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5525,9 +5293,7 @@ class PublishActivity(Activity):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5537,9 +5303,7 @@ class PublishActivity(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5573,9 +5337,7 @@ class PublishedAsset(Publishable, Asset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Publishable"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5598,9 +5360,7 @@ class PublishedAsset(Publishable, Asset):
                     {"range": "PublishActivity"},
                 ],
                 "domain_of": ["Publishable"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5615,9 +5375,7 @@ class PublishedAsset(Publishable, Asset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5643,9 +5401,7 @@ class PublishedAsset(Publishable, Asset):
                     "Resource",
                     "Software",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5654,9 +5410,7 @@ class PublishedAsset(Publishable, Asset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5744,9 +5498,7 @@ class PublishedAsset(Publishable, Asset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5772,9 +5524,7 @@ class PublishedAsset(Publishable, Asset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5805,19 +5555,18 @@ class PublishedAsset(Publishable, Asset):
     access: Optional[list[AccessRequirements]] = Field(
         default=None,
         title="Access information",
+        max_length=1,
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "notes": [
                     "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
+                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
                     "pydantic2linkml: Unable to translate the logic contained in the "
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5947,9 +5696,7 @@ class PublishedAsset(Publishable, Asset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5959,9 +5706,7 @@ class PublishedAsset(Publishable, Asset):
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "ifabsent": "string(0.7.0)",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -5990,9 +5735,7 @@ class PublishedAsset(Publishable, Asset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6010,9 +5753,7 @@ class PublishedAsset(Publishable, Asset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6022,9 +5763,7 @@ class PublishedAsset(Publishable, Asset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6185,9 +5924,7 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {
                 "domain_of": ["PublishedDandiset"],
                 "ifabsent": "string()",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6197,9 +5934,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["PublishedDandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6208,9 +5943,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Publishable"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6233,9 +5966,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     {"range": "PublishActivity"},
                 ],
                 "domain_of": ["Publishable"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6244,9 +5975,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6255,9 +5984,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6267,9 +5994,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6279,9 +6004,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["BareAsset", "Dandiset"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6309,9 +6032,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     "Resource",
                     "Software",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6327,9 +6048,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6347,9 +6066,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["Dandiset", "Software"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6381,9 +6098,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     "after validation function, <function "
                     "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6522,9 +6237,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6534,9 +6247,7 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
                 "ifabsent": "string(0.7.0)",
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6569,9 +6280,7 @@ class PublishedDandiset(Publishable, Dandiset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>.",
                 ],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6589,9 +6298,7 @@ class PublishedDandiset(Publishable, Dandiset):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6601,9 +6308,7 @@ class PublishedDandiset(Publishable, Dandiset):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6842,9 +6547,7 @@ class RelatedParticipant(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -6854,9 +6557,7 @@ class RelatedParticipant(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7016,9 +6717,7 @@ class Resource(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7028,9 +6727,7 @@ class Resource(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7127,9 +6824,7 @@ class SampleType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7139,9 +6834,7 @@ class SampleType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7276,9 +6969,7 @@ class Session(Activity):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7288,9 +6979,7 @@ class Session(Activity):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7374,9 +7063,7 @@ class SexType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7386,9 +7073,7 @@ class SexType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7503,9 +7188,7 @@ class Software(DandiBaseModel):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7515,9 +7198,7 @@ class Software(DandiBaseModel):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7627,9 +7308,7 @@ class SpeciesType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7639,9 +7318,7 @@ class SpeciesType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7725,9 +7402,7 @@ class StandardsType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7737,9 +7412,7 @@ class StandardsType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7823,9 +7496,7 @@ class StrainType(BaseType):
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
@@ -7835,9 +7506,7 @@ class StrainType(BaseType):
             "linkml_meta": {
                 "designates_type": True,
                 "domain_of": ["DandiBaseModel"],
-                "readonly": "Managed exclusively by the owning authority; attempts by another "
-                "entity to modify the value are expected to be ignored or "
-                "rejected by that owning authority",
+                "readonly": "Read-only for clients; managed by server",
             }
         },
     )
