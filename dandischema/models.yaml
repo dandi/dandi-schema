@@ -982,7 +982,8 @@ classes:
         notes:
         - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `range`
           constraint meta slot that differs from the base by a change that is not
-          an allowed monotonic refinement.'
+          an allowed monotonic refinement (base value: ''Activity''; target value:
+          ''Any'').'
         any_of:
         - range: Session
         - range: Project
@@ -1209,7 +1210,8 @@ classes:
         notes:
         - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `range`
           constraint meta slot that differs from the base by a change that is not
-          an allowed monotonic refinement.'
+          an allowed monotonic refinement (base value: ''Activity''; target value:
+          ''Project'').'
   Disorder:
     description: Biolink, SNOMED, or other identifier for disorder studied
     is_a: BaseType
@@ -1400,7 +1402,8 @@ classes:
         notes:
         - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `pattern`
           constraint meta slot that differs from the base by a change that is not
-          an allowed monotonic refinement.'
+          an allowed monotonic refinement (base value: ''^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$'';
+          target value: ''^[A-Z][-A-Z]*:\\d{6}/\\d+\\.\\d+\\.\\d+$'').'
       url:
         description: Permalink to the Dandiset.
         notes:

@@ -1992,7 +1992,9 @@ class BareAsset(CommonModel):
                         "for the `range` constraint meta "
                         "slot that differs from the base "
                         "by a change that is not an "
-                        "allowed monotonic refinement."
+                        "allowed monotonic refinement "
+                        "(base value: 'Activity'; target "
+                        "value: 'Any')."
                     ],
                     "title": "Name of the session, project or " "activity.",
                 },
@@ -2353,7 +2355,8 @@ class BareAsset(CommonModel):
                 "notes": [
                     "pydantic2linkml: Cannot express in a slot_usage entry a value for "
                     "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement."
+                    "change that is not an allowed monotonic refinement (base value: "
+                    "'Activity'; target value: 'Any')."
                 ],
             }
         },
@@ -2864,7 +2867,8 @@ class Asset(BareAsset):
                 "notes": [
                     "pydantic2linkml: Cannot express in a slot_usage entry a value for "
                     "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement."
+                    "change that is not an allowed monotonic refinement (base value: "
+                    "'Activity'; target value: 'Any')."
                 ],
             }
         },
@@ -3338,7 +3342,9 @@ class Dandiset(CommonModel):
                         "for the `range` constraint meta "
                         "slot that differs from the base "
                         "by a change that is not an "
-                        "allowed monotonic refinement."
+                        "allowed monotonic refinement "
+                        "(base value: 'Activity'; target "
+                        "value: 'Project')."
                     ],
                     "title": "Associated projects",
                 },
@@ -3668,7 +3674,8 @@ class Dandiset(CommonModel):
                 "notes": [
                     "pydantic2linkml: Cannot express in a slot_usage entry a value for "
                     "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement."
+                    "change that is not an allowed monotonic refinement (base value: "
+                    "'Activity'; target value: 'Project')."
                 ],
             }
         },
@@ -5822,7 +5829,8 @@ class PublishedAsset(Publishable, Asset):
                 "notes": [
                     "pydantic2linkml: Cannot express in a slot_usage entry a value for "
                     "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement."
+                    "change that is not an allowed monotonic refinement (base value: "
+                    "'Activity'; target value: 'Any')."
                 ],
             }
         },
@@ -5980,7 +5988,10 @@ class PublishedDandiset(Publishable, Dandiset):
                         "slot_usage entry a value for the `pattern` "
                         "constraint meta slot that differs from the "
                         "base by a change that is not an allowed "
-                        "monotonic refinement."
+                        "monotonic refinement (base value: "
+                        "'^([A-Z][-A-Z]*|[a-z][-a-z]*):\\\\d{6}(/(draft|\\\\d+\\\\.\\\\d+\\\\.\\\\d+))$'; "
+                        "target value: "
+                        "'^[A-Z][-A-Z]*:\\\\d{6}/\\\\d+\\\\.\\\\d+\\\\.\\\\d+$')."
                     ],
                 },
                 "url": {
@@ -6383,7 +6394,8 @@ class PublishedDandiset(Publishable, Dandiset):
                 "notes": [
                     "pydantic2linkml: Cannot express in a slot_usage entry a value for "
                     "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement."
+                    "change that is not an allowed monotonic refinement (base value: "
+                    "'Activity'; target value: 'Project')."
                 ],
             }
         },
@@ -6397,7 +6409,10 @@ class PublishedDandiset(Publishable, Dandiset):
                 "notes": [
                     "pydantic2linkml: Cannot express in a slot_usage entry a value for "
                     "the `pattern` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement."
+                    "change that is not an allowed monotonic refinement (base value: "
+                    "'^([A-Z][-A-Z]*|[a-z][-a-z]*):\\\\d{6}(/(draft|\\\\d+\\\\.\\\\d+\\\\.\\\\d+))$'; "
+                    "target value: "
+                    "'^[A-Z][-A-Z]*:\\\\d{6}/\\\\d+\\\\.\\\\d+\\\\.\\\\d+$')."
                 ],
                 "readonly": "Read-only for clients; managed by server",
             }

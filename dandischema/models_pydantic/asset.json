@@ -4131,7 +4131,7 @@
           "GenotypeInfo"
         ],
         "notes": [
-          "pydantic2linkml: Cannot express in a slot_usage entry a value for the `range` constraint meta slot that differs from the base by a change that is not an allowed monotonic refinement."
+          "pydantic2linkml: Cannot express in a slot_usage entry a value for the `range` constraint meta slot that differs from the base by a change that is not an allowed monotonic refinement (base value: 'Activity'; target value: 'Any')."
         ]
       },
       "title": "Name of the session, project or activity.",
