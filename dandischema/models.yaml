@@ -936,10 +936,6 @@ classes:
     description: Metadata used to describe an asset anywhere (local or server).
       Derived from C2M2 (Level 0 and 1) and schema.org
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
-      slot. The slot representation of the wasGeneratedBy field in the BareAsset Pydantic
-      model has disallowed changes in value in constraint meta slots: [''range'']
-      .'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
       model in `dandischema.models` is not the model''s name. Adjustment to the inherited
       `schemaKey` slot may be needed.'
@@ -979,6 +975,18 @@ classes:
         range: PropertyValue
       wasAttributedTo:
         description: Associated participant(s) or subject(s).
+      wasGeneratedBy:
+        description: Describe the session, project or activity that generated
+          this asset.
+        title: Name of the session, project or activity.
+        notes:
+        - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `range`
+          constraint meta slot that differs from the base by a change that is not
+          an allowed monotonic refinement.'
+        any_of:
+        - range: Session
+        - range: Project
+        - range: Activity
   BaseType:
     description: Base class for enumerated types
     is_a: DandiBaseModel
@@ -1142,11 +1150,6 @@ classes:
         required: false
   Dandiset:
     description: A body of structured information describing a DANDI dataset.
-    notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the wasGeneratedBy
-      slot. The slot representation of the wasGeneratedBy field in the Dandiset Pydantic
-      model has disallowed changes in value in constraint meta slots: [''range'']
-      .'
     is_a: CommonModel
     slots:
     - assetsSummary
@@ -1200,6 +1203,13 @@ classes:
         pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
       version:
         readonly: Read-only for clients; managed by server
+      wasGeneratedBy:
+        description: Project(s) that generated this Dandiset.
+        title: Associated projects
+        notes:
+        - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `range`
+          constraint meta slot that differs from the base by a change that is not
+          an allowed monotonic refinement.'
   Disorder:
     description: Biolink, SNOMED, or other identifier for disorder studied
     is_a: BaseType
@@ -1373,9 +1383,6 @@ classes:
           ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
   PublishedDandiset:
     notes:
-    - 'pydantic2linkml: Impossible to generate slot usage entry for the id slot. The
-      slot representation of the id field in the PublishedDandiset Pydantic model
-      has disallowed changes in value in constraint meta slots: [''pattern''] .'
     - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
       is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
     - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
@@ -1388,6 +1395,12 @@ classes:
     - doi
     - releaseNotes
     slot_usage:
+      id:
+        description: Uniform resource identifier.
+        notes:
+        - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `pattern`
+          constraint meta slot that differs from the base by a change that is not
+          an allowed monotonic refinement.'
       url:
         description: Permalink to the Dandiset.
         notes:

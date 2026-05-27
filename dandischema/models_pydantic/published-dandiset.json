@@ -2799,10 +2799,13 @@
   "additionalProperties": false,
   "properties": {
     "id": {
-      "description": "Uniform resource identifier",
+      "description": "Uniform resource identifier.",
       "linkml_meta": {
         "domain_of": [
           "DandiBaseModel"
+        ],
+        "notes": [
+          "pydantic2linkml: Cannot express in a slot_usage entry a value for the `pattern` constraint meta slot that differs from the base by a change that is not an allowed monotonic refinement."
         ],
         "readonly": "Read-only for clients; managed by server"
       },
@@ -3105,6 +3108,7 @@
     },
     "wasGeneratedBy": {
       "default": null,
+      "description": "Project(s) that generated this Dandiset.",
       "items": {
         "anyOf": [
           {
@@ -3125,9 +3129,12 @@
         "domain_of": [
           "CommonModel",
           "GenotypeInfo"
+        ],
+        "notes": [
+          "pydantic2linkml: Cannot express in a slot_usage entry a value for the `range` constraint meta slot that differs from the base by a change that is not an allowed monotonic refinement."
         ]
       },
-      "title": "Wasgeneratedby",
+      "title": "Associated projects",
       "type": "array"
     },
     "assetsSummary": {

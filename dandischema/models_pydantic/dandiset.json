@@ -3106,6 +3106,7 @@
     },
     "wasGeneratedBy": {
       "default": null,
+      "description": "Project(s) that generated this Dandiset.",
       "items": {
         "anyOf": [
           {
@@ -3126,9 +3127,12 @@
         "domain_of": [
           "CommonModel",
           "GenotypeInfo"
+        ],
+        "notes": [
+          "pydantic2linkml: Cannot express in a slot_usage entry a value for the `range` constraint meta slot that differs from the base by a change that is not an allowed monotonic refinement."
         ]
       },
-      "title": "Wasgeneratedby",
+      "title": "Associated projects",
       "type": "array"
     },
     "assetsSummary": {
