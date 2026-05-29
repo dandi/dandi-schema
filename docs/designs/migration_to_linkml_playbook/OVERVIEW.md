@@ -27,7 +27,7 @@ The conversion is orchestrated by the shell script **[`tools/linkml_conversion`]
 
 - **Sources live on `linkml-conversion`** (and on the patch-queue branches it lists — currently `master` and `remove-discriminated-unions`). This is where you edit:
   - the Pydantic source: `dandischema/models.py`,
-  - the LinkML-side inputs consumed by the translator: `dandischema/models_overlay.yaml` (corrections), `dandischema/models_merge.yaml` (merge inputs),
+  - the LinkML-side inputs consumed by the translator: `dandischema/models_merge.yaml` (passed via `-M`: deep merge — dicts merge recursively, lists append, file wins only on scalars and type mismatches), `dandischema/models_overlay.yaml` (passed via `-O`: shallow merge — top-level keys only). See [`context/roles/linkml.md`](context/roles/linkml.md#-m-vs--o-semantics-verified-against-pydantic2linkmls-source--toolspy770809) for the full per-type breakdown.
   - the import stub: `dandischema/models_importstab.py` (installed as `models.py` on the output branch — see step 4 below).
 - **`./tools/linkml_conversion` runs the translation** and writes the result to the **`linkml-auto-converted`** branch (checkout flips during the script; tree must be clean before running). Order of stages:
   1. Apply the **patch queue** of branches on top of `linkml-conversion` — see [`context/patch-queue.md`](context/patch-queue.md). Order in that list matters.
@@ -93,7 +93,10 @@ The procedure that's known to work. Follow in order; deviations belong in `log.m
 6. **Diagnose any divergence** — between Pydantic-validated and LinkML-validated outcomes on the same instance, between the two JSON Schemas, or in the dandi-archive frontend behavior. Record in `log.md`; promote stable conclusions into `findings.md`.
 7. **Decide where to fix:**
    - **In `pydantic2linkml`** if the issue is a systematic translation gap (whole class of types/constraints mishandled).
-   - **In `dandischema/models_overlay.yaml` or `dandischema/models_merge.yaml`** if it's a one-off LinkML-side change that can't reasonably be expressed by improving the translator. Both files are consumed directly by `pydantic2linkml` (`-O` and `-M` respectively); pick the one that fits the kind of change being made (overlay for corrections to translated elements, merge for additions/merges). When in doubt, check `pydantic2linkml`'s docs for the exact semantics rather than guessing.
+   - **In `dandischema/models_merge.yaml`** (consumed by `pydantic2linkml -M`) — deep merge: dicts merge recursively, lists append, file wins only on scalars and type mismatches. Use to override a scalar nested inside generated structure, or to *add* items to a list (e.g. extra `permissible_values`, extra slots). Cannot replace or reorder list items.
+   - **In `dandischema/models_overlay.yaml`** (consumed by `pydantic2linkml -O`) — shallow merge of top-level keys. Use to add/replace whole top-level elements (classes, enums, prefixes), or to outright replace a top-level list that `-M` would have appended to.
+
+   See [`context/roles/linkml.md`](context/roles/linkml.md#-m-vs--o-semantics-verified-against-pydantic2linkmls-source--toolspy770809) for the full decision matrix.
    - **In `dandischema/models.py`** if the Pydantic source itself is the right place (e.g. an under-specified field).
    - Default preference: upstream first.
 8. **Pin the fix with a test** at the layer that caught it — no fix lands without a test that would have caught it:
