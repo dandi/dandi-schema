@@ -14,6 +14,14 @@ classes:
       - "MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
       model in `dandischema.models` is not the model's name. Adjustment to the inherited
       `schemaKey` slot may be needed."
+    slot_usage:
+      wasGeneratedBy:
+        notes: null
+        any_of: null
+  Dandiset:
+    slot_usage:
+      wasGeneratedBy:
+        notes: null
   PublishedAsset:
     notes:
       - "MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
