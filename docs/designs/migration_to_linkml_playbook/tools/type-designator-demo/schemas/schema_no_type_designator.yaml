@@ -1,0 +1,63 @@
+id: https://example.org/dandi-schema-experiment
+name: dandi-schema-experiment
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ex: https://example.org/dandi-schema-experiment/
+default_prefix: ex
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  DandiBaseModel:
+    description: A base model for Dandi schema.
+    slots:
+      - schemaKey
+    slot_usage:
+      schemaKey:
+        ifabsent: string(DandiBaseModel)
+        # Please note: we can't use `equals_string` meta slot to restrict the value
+        # of `schemaKey` since it can't be overridden in subclasses due to the
+        # intended monotonicity behavior of LinkML
+
+  Activity:
+    is_a: DandiBaseModel
+    description: A base activity.
+    slot_usage:
+      schemaKey:
+        ifabsent: string(Activity)
+
+  Project:
+    is_a: Activity
+    description: A project, which is a kind of activity.
+    slots:
+      - project_name
+    slot_usage:
+      schemaKey:
+        ifabsent: string(Project)
+
+
+  CommonModel:
+    is_a: DandiBaseModel
+    description: A base model carrying common slots.
+    slots:
+      - wasGeneratedBy
+    slot_usage:
+      schemaKey:
+        ifabsent: string(CommonModel)
+
+  BareAsset:
+    is_a: CommonModel
+    description: An asset, which is a kind of common model.
+    slot_usage:
+      schemaKey:
+        ifabsent: string(BareAsset)
+
+slots:
+  schemaKey:
+    range: string
+  wasGeneratedBy:
+    range: Activity
+    multivalued: true
+  project_name:
+    range: string
