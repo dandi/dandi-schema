@@ -1,0 +1,45 @@
+id: https://example.org/dandi-schema-experiment
+name: dandi-schema-experiment
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ex: https://example.org/dandi-schema-experiment/
+default_prefix: ex
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  DandiBaseModel:
+    description: A base model for Dandi schema.
+    slots:
+      - schemaKey
+
+  Activity:
+    is_a: DandiBaseModel
+    description: A base activity.
+
+  Project:
+    is_a: Activity
+    slots:
+      - project_name
+    description: A project, which is a kind of activity.
+
+  CommonModel:
+    is_a: DandiBaseModel
+    description: A base model carrying common slots.
+    slots:
+      - wasGeneratedBy
+
+  BareAsset:
+    is_a: CommonModel
+    description: An asset, which is a kind of common model.
+
+slots:
+  schemaKey:
+    designates_type: true
+    range: string
+  wasGeneratedBy:
+    range: Activity
+    multivalued: true
+  project_name:
+    range: string

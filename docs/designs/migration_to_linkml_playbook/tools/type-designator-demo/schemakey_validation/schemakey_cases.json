@@ -1,0 +1,6 @@
+{
+    "valid": {"schemaKey": "BareAsset"},
+    "absent": {},
+    "null": {"schemaKey": null},
+    "wrong_class": {"schemaKey": "WrongClass"}
+}
