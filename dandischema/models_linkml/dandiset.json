@@ -237,6 +237,7 @@
                     "type": "string"
                 },
                 "url": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -317,6 +318,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -378,6 +380,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -427,6 +430,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -538,6 +542,7 @@
                 },
                 "contentUrl": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -563,6 +568,7 @@
                     ]
                 },
                 "dataType": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -592,6 +598,7 @@
                     "$ref": "#/$defs/Any",
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -664,6 +671,7 @@
                 "protocol": {
                     "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -683,6 +691,7 @@
                 },
                 "repository": {
                     "description": "location of the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -691,6 +700,7 @@
                 },
                 "sameAs": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -723,6 +733,7 @@
                 },
                 "url": {
                     "description": "permalink to the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -994,6 +1005,7 @@
                     ]
                 },
                 "dataType": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1023,6 +1035,7 @@
                     "$ref": "#/$defs/Any",
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -1094,6 +1107,7 @@
                 "protocol": {
                     "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -1113,6 +1127,7 @@
                 },
                 "repository": {
                     "description": "location of the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1121,6 +1136,7 @@
                 },
                 "sameAs": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -1153,6 +1169,7 @@
                 },
                 "url": {
                     "description": "permalink to the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1246,6 +1263,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -1491,6 +1509,7 @@
                 "protocol": {
                     "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -1510,6 +1529,7 @@
                 },
                 "repository": {
                     "description": "location of the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1540,6 +1560,7 @@
                 },
                 "url": {
                     "description": "permalink to the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1601,6 +1622,7 @@
                 },
                 "url": {
                     "description": "A Web page to find information on how to contact.",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1679,6 +1701,7 @@
                     "type": "string"
                 },
                 "url": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1848,6 +1871,7 @@
                 },
                 "manifestLocation": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -1867,6 +1891,7 @@
                 "protocol": {
                     "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -1886,6 +1911,7 @@
                 },
                 "repository": {
                     "description": "location of the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -1927,6 +1953,7 @@
                 },
                 "url": {
                     "description": "permalink to the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -2027,6 +2054,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -2165,6 +2193,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -2328,6 +2357,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -2440,6 +2470,7 @@
                     "type": "string"
                 },
                 "url": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -2686,6 +2717,7 @@
                     "type": "string"
                 },
                 "url": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -2824,6 +2856,7 @@
                             "$ref": "#/$defs/IdentifierType"
                         },
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -2993,6 +3026,7 @@
                     "$ref": "#/$defs/Any",
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -3093,6 +3127,7 @@
                 },
                 "contentUrl": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -3118,6 +3153,7 @@
                     ]
                 },
                 "dataType": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -3151,6 +3187,7 @@
                     "$ref": "#/$defs/Any",
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -3224,6 +3261,7 @@
                 "protocol": {
                     "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -3236,6 +3274,7 @@
                     "$ref": "#/$defs/Any",
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -3256,6 +3295,7 @@
                 },
                 "repository": {
                     "description": "location of the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -3264,6 +3304,7 @@
                 },
                 "sameAs": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -3296,6 +3337,7 @@
                 },
                 "url": {
                     "description": "permalink to the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -3524,6 +3566,7 @@
                 },
                 "manifestLocation": {
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -3543,6 +3586,7 @@
                 "protocol": {
                     "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
                     "items": {
+                        "format": "uri",
                         "pattern": "^(?i:http|https)://[^\\s]+$",
                         "type": "string"
                     },
@@ -3555,6 +3599,7 @@
                     "$ref": "#/$defs/Any",
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -3582,6 +3627,7 @@
                 },
                 "repository": {
                     "description": "location of the item",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -3623,6 +3669,7 @@
                 },
                 "url": {
                     "description": "Permalink to the Dandiset.",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": "string"
                 },
@@ -3709,6 +3756,7 @@
                     "type": "string"
                 },
                 "url": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "title": "URL of the related participant or subject",
                     "type": [
@@ -3814,6 +3862,7 @@
                     "type": "string"
                 },
                 "url": {
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "title": "URL of the resource",
                     "type": [
@@ -3915,6 +3964,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -4059,6 +4109,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -4125,6 +4176,7 @@
                 },
                 "url": {
                     "description": "Web page for the software.",
+                    "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
                         "string",
@@ -4157,6 +4209,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -4206,6 +4259,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -4255,6 +4309,7 @@
                 "identifier": {
                     "anyOf": [
                         {
+                            "format": "uri",
                             "pattern": "^(?i:http|https)://[^\\s]+$",
                             "type": "string"
                         },
@@ -4295,7 +4350,7 @@
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": true,
     "description": "A body of structured information describing a DANDI dataset.",
-    "metamodel_version": "1.7.0",
+    "metamodel_version": "1.11.0",
     "properties": {
         "about": {
             "description": "The subject matter of the content, such as disorders, brain anatomy.",
@@ -4425,6 +4480,7 @@
         },
         "manifestLocation": {
             "items": {
+                "format": "uri",
                 "pattern": "^(?i:http|https)://[^\\s]+$",
                 "type": "string"
             },
@@ -4444,6 +4500,7 @@
         "protocol": {
             "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
             "items": {
+                "format": "uri",
                 "pattern": "^(?i:http|https)://[^\\s]+$",
                 "type": "string"
             },
@@ -4463,6 +4520,7 @@
         },
         "repository": {
             "description": "location of the item",
+            "format": "uri",
             "pattern": "^(?i:http|https)://[^\\s]+$",
             "type": [
                 "string",
@@ -4504,6 +4562,7 @@
         },
         "url": {
             "description": "permalink to the item",
+            "format": "uri",
             "pattern": "^(?i:http|https)://[^\\s]+$",
             "type": [
                 "string",
