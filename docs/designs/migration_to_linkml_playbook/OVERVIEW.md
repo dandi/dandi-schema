@@ -150,5 +150,5 @@ When working in a fresh conversation, open this `OVERVIEW.md` first, then pull o
 ## Open questions / unknowns
 
 - Which behavior gaps (if any) are *intentional* (deliberate cleanup during migration) vs. unintentional regressions from the Pydantic baseline.
-- Whether `dandi-archive`'s frontend relies on JSON Schema *extensions* (`$comment`, custom keywords) that LinkML's `gen-json-schema` doesn't currently emit.
+- Whether `dandi-archive`'s frontend relies on JSON Schema *extensions* (`$comment`, custom keywords) that LinkML's `gen-json-schema` doesn't currently emit. (Partly answered for the *dialect* axis: LinkML emits draft 2019-09, Pydantic and the frontend's Ajv are on 2020-12, but the frontend deletes `$schema` so the gap is mostly cosmetic except for tuple arrays — see `findings.md`. The `$comment`/custom-keyword question is still open.)
 - **Frontend impact of removing discriminated unions** — the active blocker on retiring the `remove-discriminated-unions` patch-queue branch (see [`context/patch-queue.md`](context/patch-queue.md)).
