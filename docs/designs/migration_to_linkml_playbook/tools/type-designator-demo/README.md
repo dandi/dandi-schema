@@ -126,7 +126,7 @@ every keyword to pass) — matching Pydantic's `Literal["BareAsset"]`.
 ## Running the demos
 
 From the repo root, using the `linkml-auto-converted` Hatch env — the migration
-pipeline env, which pins `linkml==1.10.0` (and provides `pydantic`, `jsonschema`,
+pipeline env, which pins `linkml==1.11.1` (and provides `pydantic`, `jsonschema`,
 and the LinkML CLIs). Running in the pipeline env keeps the demos consistent with
 the LinkML version the migration actually generates against:
 
@@ -164,7 +164,7 @@ migration pipeline's `2json` / `2pydantic` Hatch scripts (see
 ## Provenance
 
 Snapshots generated and demos verified with the `linkml-auto-converted` pipeline
-env: `linkml` 1.10.0, `linkml-runtime` 1.10.0, `pydantic` 2.10.6, `jsonschema`
-4.26.0. Using the pipeline env (rather than a detached one tracking the latest
-`linkml`) keeps these snapshots consistent with what the migration actually
-generates. The `designates_type` behavior was also confirmed on `linkml` 1.11.1.
+env: `linkml` 1.11.1, `linkml-runtime` 1.11.1, `pydantic` 2.10.6, `jsonschema`
+4.26.0. Using the pipeline env keeps these snapshots consistent with what the
+migration actually generates. The `designates_type` behavior was also confirmed
+on `linkml` 1.10.0 (the previous pipeline pin).
