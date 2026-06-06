@@ -125,6 +125,16 @@ def to_datacite(
     if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
 
+    # ``to_datacite`` operates on *published* Dandiset metadata. Since the
+    # publication-only fields are now optional on ``Dandiset`` (gated on
+    # ``datePublished``), enforce the precondition the ``PublishedDandiset`` type
+    # used to guarantee.
+    if meta.datePublished is None:
+        raise ValueError(
+            "to_datacite requires published Dandiset metadata, but datePublished "
+            "is not set"
+        )
+
     attributes: Dict[str, Any] = {}
     if publish:
         attributes["event"] = "publish"

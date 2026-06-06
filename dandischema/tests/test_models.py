@@ -1,7 +1,6 @@
-from collections import namedtuple
 from enum import Enum
 from inspect import isclass
-from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Type, Union, cast
 
 import anys
 import pydantic
@@ -13,7 +12,6 @@ from dandischema.conf import get_instance_config
 from .utils import DOI_PREFIX, INSTANCE_NAME, basic_publishmeta, skipif_no_doi_prefix
 from .. import models
 from ..models import (
-    DANDI_INSTANCE_URL_PATTERN,
     DANDI_NSKEY,
     AccessRequirements,
     AccessType,
@@ -131,6 +129,17 @@ def test_asset() -> None:
 
 
 def test_asset_digest() -> None:
+    # Fields needed (beyond the bare asset fields) to make an instance a
+    # complete, published ``Asset`` so the ``datePublished``-gated checks (e.g.
+    # the sha2_256 requirement, formerly on ``PublishedAsset``) actually run.
+    pub_extra: Dict[str, Any] = {
+        "id": "dandiasset:6668d37f-e842-4b73-8c20-082a1dd0d31a",
+        "identifier": "6668d37f-e842-4b73-8c20-082a1dd0d31a",
+        "contentUrl": ["https://example.com/asset"],
+        "publishedBy": "https://example.com/dandi/publish",
+        "datePublished": "2021-01-01T00:00:00+00:00",
+    }
+
     with pytest.raises(pydantic.ValidationError) as exc:
         models.BareAsset(
             contentSize=100, encodingFormat="nwb", digest={"sha1": ""}, path="/"
@@ -159,11 +168,12 @@ def test_asset_digest() -> None:
         contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
     )
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
+        models.Asset(
             contentSize=100,
             encodingFormat="nwb",
             digest={models.DigestType.dandi_etag: digest, "sha1": ""},
             path="/",
+            **pub_extra,
         )
 
     # Assert validation failed at the `digest` attribute because the provided dictionary
@@ -178,8 +188,12 @@ def test_asset_digest() -> None:
         models.DigestType.sha2_256: 63 * "a",
     }
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
-            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        models.Asset(
+            contentSize=100,
+            encodingFormat="nwb",
+            digest=digest_model,
+            path="/",
+            **pub_extra,
         )
     assert any(
         "Digest must have an appropriate sha2_256 value." in el["msg"]
@@ -189,20 +203,24 @@ def test_asset_digest() -> None:
         models.DigestType.dandi_etag: digest,
         models.DigestType.sha2_256: 64 * "a",
     }
-    with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
-            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
-        )
-    assert not any(
-        "Digest must have an appropriate dandi-etag value." in el["msg"]
-        for el in exc.value.errors()
+    # A complete published asset with a valid etag and sha2_256 is valid.
+    models.Asset(
+        contentSize=100,
+        encodingFormat="nwb",
+        digest=digest_model,
+        path="/",
+        **pub_extra,
     )
     digest_model = {
         models.DigestType.dandi_etag: digest,
     }
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
-            contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
+        models.Asset(
+            contentSize=100,
+            encodingFormat="nwb",
+            digest=digest_model,
+            path="/",
+            **pub_extra,
         )
     assert any(
         "A non-zarr asset must have a sha2_256." in el["msg"]
@@ -235,16 +253,18 @@ def test_asset_digest() -> None:
         "contentSize 100 is not equal to the checksum size 42." in val
         for val in set(el["msg"] for el in exc.value.errors())
     )
+    # A complete published zarr asset (valid zarr checksum, no sha2_256) is
+    # valid: zarr assets are exempt from the published-asset sha2_256
+    # requirement that applies to non-zarr assets.
     digest = f"{32 * 'a'}-1--100"
     digest_model = {models.DigestType.dandi_zarr_checksum: digest}
-    with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
-            contentSize=100,
-            encodingFormat="application/x-zarr",
-            digest=digest_model,
-            path="/",
-        )
-    assert all(err["type"] == "missing" for err in exc.value.errors())
+    models.Asset(
+        contentSize=100,
+        encodingFormat="application/x-zarr",
+        digest=digest_model,
+        path="/",
+        **pub_extra,
+    )
     digest_model = {
         models.DigestType.dandi_zarr_checksum: digest,
         models.DigestType.dandi_etag: digest + "-1",
@@ -261,11 +281,12 @@ def test_asset_digest() -> None:
         for val in set(el["msg"] for el in exc.value.errors())
     )
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
+        models.Asset(
             contentSize=100,
             encodingFormat="application/x-zarr",
             digest=digest_model,
             path="/",
+            **pub_extra,
         )
     assert any(
         "Digest cannot have both etag and zarr checksums." in val
@@ -284,11 +305,12 @@ def test_asset_digest() -> None:
         for val in set(el["msg"] for el in exc.value.errors())
     )
     with pytest.raises(pydantic.ValidationError) as exc:
-        models.PublishedAsset(  # type: ignore[call-arg]
+        models.Asset(
             contentSize=100,
             encodingFormat="application/x-zarr",
             digest=digest_model,
             path="/",
+            **pub_extra,
         )
     assert any(
         "A zarr asset must have a zarr checksum." in val
@@ -442,54 +464,27 @@ def test_dandimeta_1(base_dandiset_metadata: dict[str, Any]) -> None:
 
     assert DOI_PREFIX is not None
 
-    # should work for Dandiset but PublishedDandiset should raise an error
+    # The base metadata is a valid draft (no datePublished), so it validates as a
+    # Dandiset (and, since PublishedDandiset is now an alias of Dandiset, as that
+    # too).
     Dandiset(**base_dandiset_metadata)
+
+    # Setting datePublished marks the record published and triggers the
+    # publish-only requirements. The draft id/url/assetsSummary and the missing
+    # publishedBy/doi are reported together in a single model-level error.
+    publishing = dict(base_dandiset_metadata, datePublished="2021-01-01T00:00:00+00:00")
     with pytest.raises(ValidationError) as exc:
-        PublishedDandiset(**base_dandiset_metadata)
-
-    ErrDetail = namedtuple("ErrDetail", ["type", "msg"])
-
-    # Expected errors keyed by location of the respective error
-    # Note: Pydantic generated error messages are not provided for they are not in our
-    #       control, and the error type should be indicative enough.
-    expected_errors: Dict[Tuple[Union[int, str], ...], ErrDetail] = {
-        ("id",): ErrDetail(type="string_pattern_mismatch", msg=None),
-        ("publishedBy",): ErrDetail(type="missing", msg=None),
-        ("datePublished",): ErrDetail(type="missing", msg=None),
-        ("url",): ErrDetail(
-            type="value_error",
-            msg="Value error, string does not match regex "
-            f'"^{DANDI_INSTANCE_URL_PATTERN}/dandiset/'
-            '\\d{6}/\\d+\\.\\d+\\.\\d+$"',
-        ),
-        ("assetsSummary",): ErrDetail(
-            type="value_error",
-            msg="Value error, "
-            "A Dandiset containing no files or zero bytes is not publishable",
-        ),
-        ("doi",): ErrDetail(type="missing", msg=None),
-    }
-
-    assert len(exc.value.errors()) == len(expected_errors)
-    for err in exc.value.errors():
-        err_loc = err["loc"]
-        assert err_loc in expected_errors
-
-        assert err["type"] == expected_errors[err_loc].type
-        if expected_errors[err_loc].msg is not None:
-            assert err["msg"] == expected_errors[err_loc].msg
-
-    assert set(loc[0] if (loc := el["loc"]) else None for el in exc.value.errors()) == {
-        e
-        for e in [
-            "assetsSummary",
-            "datePublished",
-            "publishedBy",
-            "doi",
-            "url",
-            "id",
-        ]
-    }
+        Dandiset(**publishing)
+    assert len(exc.value.errors()) == 1
+    msg = exc.value.errors()[0]["msg"]
+    for expected in [
+        "publishedBy is required for a published Dandiset",
+        "url does not match regex",
+        "does not match the published-Dandiset pattern",
+        "A Dandiset containing no files or zero bytes is not publishable",
+        "doi is required for a published Dandiset",
+    ]:
+        assert expected in msg
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,
     # so PublishedDandiset should work
@@ -518,9 +513,82 @@ def test_dandimeta_1(base_dandiset_metadata: dict[str, Any]) -> None:
     assert dumped["releaseNotes"] == "Releasing during testing"
 
 
+def test_dandiset_publication_coherence(
+    base_dandiset_metadata: dict[str, Any],
+) -> None:
+    """A draft Dandiset (no datePublished) must not carry publication-only fields."""
+    Dandiset(**base_dandiset_metadata)  # a valid draft
+
+    draft_with_pub_field = dict(
+        base_dandiset_metadata,
+        publishedBy="https://example.com/dandi/publish",
+    )
+    with pytest.raises(ValidationError) as exc:
+        Dandiset(**draft_with_pub_field)
+    assert (
+        "publishedBy is not allowed unless datePublished is set"
+        in exc.value.errors()[0]["msg"]
+    )
+
+
+def test_asset_publication_coherence() -> None:
+    """A non-``None`` ``datePublished`` gates the published-asset requirements."""
+    valid_etag = 32 * "a" + "-1"
+    valid_sha256 = 64 * "a"
+    server_fields: Dict[str, Any] = {
+        "id": "dandiasset:6668d37f-e842-4b73-8c20-082a1dd0d31a",
+        "identifier": "6668d37f-e842-4b73-8c20-082a1dd0d31a",
+        "contentUrl": ["https://example.com/asset"],
+        "contentSize": 100,
+        "encodingFormat": "application/x-nwb",
+        "path": "/",
+    }
+
+    # An unpublished server asset needs only an etag (no sha2_256 required) and
+    # must not carry publishedBy.
+    Asset(**server_fields, digest={DigestType.dandi_etag: valid_etag})
+    with pytest.raises(ValidationError) as exc:
+        Asset(
+            **server_fields,
+            digest={DigestType.dandi_etag: valid_etag},
+            publishedBy="https://example.com/dandi/publish",
+        )
+    assert (
+        "publishedBy is not allowed unless datePublished is set"
+        in exc.value.errors()[0]["msg"]
+    )
+
+    # A complete published asset (publishedBy, a published id and a sha2_256)
+    # validates.
+    Asset(
+        **server_fields,
+        digest={
+            DigestType.dandi_etag: valid_etag,
+            DigestType.sha2_256: valid_sha256,
+        },
+        publishedBy="https://example.com/dandi/publish",
+        datePublished="2021-01-01T00:00:00+00:00",
+    )
+
+    # A published asset whose id is not a published-asset id is rejected.
+    with pytest.raises(ValidationError) as exc:
+        Asset(
+            **{**server_fields, "id": "not-a-dandiasset-id"},
+            digest={
+                DigestType.dandi_etag: valid_etag,
+                DigestType.sha2_256: valid_sha256,
+            },
+            publishedBy="https://example.com/dandi/publish",
+            datePublished="2021-01-01T00:00:00+00:00",
+        )
+    assert "does not match the published-asset pattern" in exc.value.errors()[0]["msg"]
+
+
 def test_schemakey() -> None:
+    # ``PublishedAsset``/``PublishedDandiset`` are deprecated aliases of
+    # ``Asset``/``Dandiset``, so under their alias names ``dir(models)`` yields
+    # the consolidated class whose ``schemaKey`` default is the base class name.
     typemap = {
-        "BareAsset": "Asset",
         "PublishedAsset": "Asset",
         "PublishedDandiset": "Dandiset",
     }
@@ -578,6 +646,13 @@ def test_duplicate_classes() -> None:
                 "AssetsSummary",
             }:
                 return
+            # ``publishedBy`` lives on both ``Asset`` and ``Dandiset`` since the
+            # shared ``Publishable`` mixin was removed during consolidation.
+            if qname == "dandi:publishedBy" and {t.__name__, klass.__name__} == {
+                "Asset",
+                "Dandiset",
+            }:
+                return
             raise ValueError(f"{qname},{klass} already exists {qnames[qname]}")
         qnames[qname] = klass
 
@@ -614,7 +689,6 @@ def test_properties_mismatch() -> None:
     modelnames.remove("DandiBaseModel")
     modelnames.remove("CommonModel")
     modelnames.remove("Contributor")
-    modelnames.remove("Publishable")
     for val in modelnames:
         klass = getattr(models, val)
         if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):

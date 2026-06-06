@@ -35,6 +35,7 @@ from pydantic import (
 )
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import CoreSchema
+from typing_extensions import Self
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
 from dandischema.conf import (
@@ -570,15 +571,8 @@ class DandiBaseModel(BaseModel):
     @field_validator("schemaKey")
     @classmethod
     def ensure_schemakey(cls, val: str) -> str:
-        tempval = val
-        if "Published" in cls.__name__:
-            tempval = "Published" + tempval
-        elif "BareAsset" == cls.__name__:
-            tempval = "Bare" + tempval
-        if tempval != cls.__name__:
-            raise ValueError(
-                f"schemaKey {tempval} does not match classname {cls.__name__}"
-            )
+        if val != cls.__name__:
+            raise ValueError(f"schemaKey {val} does not match classname {cls.__name__}")
         return val
 
     @classmethod
@@ -1752,6 +1746,40 @@ class Dandiset(CommonModel):
 
     version: str = Field(json_schema_extra={"nskey": "schema", "readOnly": True})
 
+    # Publication-related fields. A non-``None`` ``datePublished`` marks the
+    # record as published; ``check_publication_status`` enforces the cross-field
+    # rules (which of these are then required vs. must be absent).
+    url: Optional[AnyHttpUrl] = Field(
+        None,
+        description="Permalink to the Dandiset.",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
+    )
+    doi: Optional[str] = Field(
+        None,
+        title="DOI",
+        pattern=DANDI_DOI_PATTERN,
+        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
+    )
+    """The DOI of the published Dandiset.
+
+    The empty string indicates that there is no DOI for the published Dandiset;
+    it is set automatically for a published Dandiset on a DANDI instance with no
+    configured DOI prefix.
+    """
+    publishedBy: Optional[Union[AnyHttpUrl, PublishActivity]] = Field(
+        None,
+        description="The URL should contain the provenance of the publishing process.",
+        json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
+    )
+    datePublished: Optional[datetime] = Field(
+        None, json_schema_extra={"readOnly": True, "nskey": "schema"}
+    )
+    releaseNotes: Optional[str] = Field(
+        None,
+        description="The description of the release",
+        json_schema_extra={"readOnly": True, "nskey": "schema"},
+    )
+
     wasGeneratedBy: Optional[Sequence[Project]] = Field(
         None,
         title="Associated projects",
@@ -1768,6 +1796,54 @@ class Dandiset(CommonModel):
         "rdfs:label": "Information about the dataset",
         "nskey": DANDI_NSKEY,
     }
+
+    @model_validator(mode="after")
+    def check_publication_status(self) -> Self:
+        """Enforce publication coherence keyed on ``datePublished``.
+
+        A non-``None`` ``datePublished`` marks the record as published and
+        triggers the published-Dandiset requirements; otherwise the publication-only
+        fields must be absent.
+        """
+        errors = []
+        if self.datePublished is None:
+            errors += [
+                f"{name} is not allowed unless datePublished is set"
+                for name in ("doi", "publishedBy", "releaseNotes")
+                if getattr(self, name) is not None
+            ]
+        else:
+            if self.publishedBy is None:
+                errors.append("publishedBy is required for a published Dandiset")
+            if self.url is None:
+                errors.append("url is required for a published Dandiset")
+            elif not re.match(PUBLISHED_VERSION_URL_PATTERN, str(self.url)):
+                errors.append(
+                    f'url does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
+                )
+            # Stricter than the ``id`` field pattern, which also accepts
+            # ``/draft`` and a lowercase prefix; only a published version id
+            # passes here.
+            if not re.match(DANDI_PUBID_PATTERN, self.id):
+                errors.append(
+                    f'id "{self.id}" does not match the published-Dandiset pattern '
+                    f'"{DANDI_PUBID_PATTERN}"'
+                )
+            if (
+                self.assetsSummary.numberOfBytes == 0
+                or self.assetsSummary.numberOfFiles == 0
+            ):
+                errors.append(
+                    "A Dandiset containing no files or zero bytes is not publishable"
+                )
+            if self.doi is None:
+                if _INSTANCE_CONFIG.doi_prefix is None:
+                    self.doi = ""
+                else:
+                    errors.append("doi is required for a published Dandiset")
+        if errors:
+            raise ValueError("; ".join(errors))
+        return self
 
 
 class BareAsset(CommonModel):
@@ -1841,9 +1917,8 @@ class BareAsset(CommonModel):
         json_schema_extra={"nskey": "prov"},
     )
 
-    # Bare asset is to be just Asset.
-    schemaKey: Literal["Asset"] = Field(
-        "Asset", validate_default=True, json_schema_extra={"readOnly": True}
+    schemaKey: Literal["BareAsset"] = Field(
+        "BareAsset", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
     _ldmeta = {
@@ -1894,6 +1969,10 @@ class BareAsset(CommonModel):
 class Asset(BareAsset):
     """Metadata used to describe an asset on the server."""
 
+    # A non-``None`` ``datePublished`` marks the asset as published, which
+    # additionally requires ``publishedBy``, a published-asset ``id``, and (for a
+    # non-zarr asset) a ``sha2_256`` digest; see ``check_publication_status``.
+
     # all of the following are set by server
     id: str = Field(
         json_schema_extra={"readOnly": True}, description="Uniform resource identifier."
@@ -1903,102 +1982,64 @@ class Asset(BareAsset):
         json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
 
-
-class Publishable(DandiBaseModel):
-    publishedBy: Union[AnyHttpUrl, PublishActivity] = Field(
+    # Publication-related fields. Present only on a published asset, i.e. when
+    # ``datePublished`` is set.
+    publishedBy: Optional[Union[AnyHttpUrl, PublishActivity]] = Field(
+        None,
         description="The URL should contain the provenance of the publishing process.",
         json_schema_extra={"readOnly": True, "nskey": DANDI_NSKEY},
     )
-    datePublished: datetime = Field(
-        json_schema_extra={"readOnly": True, "nskey": "schema"}
-    )
-    schemaKey: Literal["Publishable", "Dandiset", "Asset"] = Field(
-        "Publishable", validate_default=True, json_schema_extra={"readOnly": True}
+    datePublished: Optional[datetime] = Field(
+        None, json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
 
-
-_doi_field_kwargs: dict[str, Any] = {
-    "title": "DOI",
-    "pattern": DANDI_DOI_PATTERN,
-    "json_schema_extra": {"readOnly": True, "nskey": DANDI_NSKEY},
-}
-if _INSTANCE_CONFIG.doi_prefix is None:
-    _doi_field_kwargs["default"] = ""
-
-
-class PublishedDandiset(Dandiset, Publishable):
-    id: str = Field(
-        description="Uniform resource identifier.",
-        pattern=DANDI_PUBID_PATTERN,
-        json_schema_extra={"readOnly": True},
-    )
-    doi: str = Field(**_doi_field_kwargs)
-    """
-    The DOI of the published Dandiset
-
-    The value of the empty string indicates that there is no DOI for the published
-    Dandiset.
-    """
-
-    url: AnyHttpUrl = Field(
-        description="Permalink to the Dandiset.",
-        json_schema_extra={"readOnly": True, "nskey": "schema"},
-    )
-    releaseNotes: Optional[str] = Field(
-        None,
-        description="The description of the release",
-        json_schema_extra={"readOnly": True, "nskey": "schema"},
-    )
-
-    schemaKey: Literal["Dandiset"] = Field(
-        "Dandiset", validate_default=True, json_schema_extra={"readOnly": True}
-    )
-
-    @field_validator("assetsSummary")
-    @classmethod
-    def check_filesbytes(cls, values: AssetsSummary) -> AssetsSummary:
-        if values.numberOfBytes == 0 or values.numberOfFiles == 0:
-            raise ValueError(
-                "A Dandiset containing no files or zero bytes is not publishable"
-            )
-        return values
-
-    @field_validator("url")
-    @classmethod
-    def check_url(cls, url: AnyHttpUrl) -> AnyHttpUrl:
-        if not re.match(PUBLISHED_VERSION_URL_PATTERN, str(url)):
-            raise ValueError(
-                f'string does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
-            )
-        return url
-
-
-class PublishedAsset(Asset, Publishable):
-    id: str = Field(
-        description="Uniform resource identifier.",
-        pattern=ASSET_UUID_PATTERN,
-        json_schema_extra={"readOnly": True},
-    )
-
-    schemaKey: Literal["Asset"] = Field(
+    # mypy flags the narrowed Literal as an incompatible override of
+    # BareAsset's, but pydantic allows it and ensure_schemakey pins each
+    # instance to its class name at runtime.
+    schemaKey: Literal["Asset"] = Field(  # type: ignore[assignment]
         "Asset", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
-    @field_validator("digest")
-    @classmethod
-    def digest_sha256check(
-        cls, v: Dict[DigestType, str], info: ValidationInfo
-    ) -> Dict[DigestType, str]:
-        values = info.data
-        if values.get("encodingFormat") != "application/x-zarr":
-            if DigestType.sha2_256 not in v:
-                raise ValueError("A non-zarr asset must have a sha2_256.")
-            digest = v[DigestType.sha2_256]
-            if not re.fullmatch(SHA256_PATTERN, digest):
-                raise ValueError(
-                    f"Digest must have an appropriate sha2_256 value. Got {digest}"
+    @model_validator(mode="after")
+    def check_publication_status(self) -> Self:
+        """Enforce publication coherence keyed on ``datePublished``.
+
+        A non-``None`` ``datePublished`` marks the asset as published and
+        triggers the published-asset requirements; otherwise ``publishedBy``
+        must be absent.
+        """
+        errors = []
+        if self.datePublished is None:
+            if self.publishedBy is not None:
+                errors.append("publishedBy is not allowed unless datePublished is set")
+        else:
+            if self.publishedBy is None:
+                errors.append("publishedBy is required for a published asset")
+            if not re.match(ASSET_UUID_PATTERN, self.id):
+                errors.append(
+                    f'id "{self.id}" does not match the published-asset pattern '
+                    f'"{ASSET_UUID_PATTERN}"'
                 )
-        return v
+            if self.encodingFormat != "application/x-zarr":
+                if DigestType.sha2_256 not in self.digest:
+                    errors.append("A non-zarr asset must have a sha2_256.")
+                elif not re.fullmatch(SHA256_PATTERN, self.digest[DigestType.sha2_256]):
+                    errors.append(
+                        "Digest must have an appropriate sha2_256 value. "
+                        f"Got {self.digest[DigestType.sha2_256]}"
+                    )
+        if errors:
+            raise ValueError("; ".join(errors))
+        return self
+
+
+# ``PublishedDandiset`` and ``PublishedAsset`` were consolidated into
+# ``Dandiset`` and ``Asset`` respectively: a record is "published" when its
+# ``datePublished`` is set (see each class's ``check_publication_status``).
+# These names are kept as deprecated aliases for backward compatibility and
+# will be removed in a future release.
+PublishedDandiset = Dandiset
+PublishedAsset = Asset
 
 
 def get_schema_version() -> str:
