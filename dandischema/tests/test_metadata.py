@@ -13,7 +13,6 @@ from dandischema.utils import TransitionalGenerateJsonSchema
 
 from .utils import (
     DANDISET_METADATA_DIR,
-    DOI_PREFIX,
     INSTANCE_NAME,
     METADATA_DIR,
     skipif_instance_name_not_dandi,
@@ -130,27 +129,23 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # ``PublishedDandiset`` is now an alias of ``Dandiset``; its
+            # publication-only fields are optional (gated on ``datePublished``),
+            # so an incomplete instance reports the same missing fields as
+            # ``Dandiset``.
             {"schemaKey": "Dandiset"},
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "contributor",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "contributor",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -160,24 +155,16 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "contributor",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "contributor",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -194,23 +181,15 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -235,12 +214,13 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             {"contentSize", "encodingFormat", "id", "identifier", "path", "contentUrl"},
         ),
         (
+            # ``PublishedAsset`` is now an alias of ``Asset``; ``publishedBy`` and
+            # ``datePublished`` are optional (gated on ``datePublished``), so an
+            # incomplete instance reports the same missing fields as ``Asset``.
             {"schemaKey": "Asset"},
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -250,15 +230,15 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # A sha2_256-only digest fails ``digest_check`` (a non-zarr asset must
+            # have a dandi-etag), so ``digest`` is reported too.
             {
                 "schemaKey": "Asset",
                 "digest": {"dandi:sha2-256": sha256(b"test").hexdigest()},
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -268,20 +248,21 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # A valid etag digest passes ``digest_check``; the sha2_256
+            # requirement is gated on ``datePublished`` and the model validator
+            # never runs here (required fields are missing), so ``digest`` is not
+            # reported.
             {
                 "schemaKey": "Asset",
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
                 "path",
-                "digest",
                 "contentUrl",
             },
         ),
@@ -295,9 +276,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
