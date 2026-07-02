@@ -34,7 +34,8 @@ from pydantic import (
     model_validator,
 )
 from pydantic.json_schema import JsonSchemaValue
-from pydantic_core import CoreSchema
+from pydantic_core import CoreSchema, InitErrorDetails
+from pydantic_core import ValidationError as _CoreValidationError
 from typing_extensions import Self
 from zarr_checksum.checksum import InvalidZarrChecksum, ZarrDirectoryDigest
 
@@ -1747,8 +1748,7 @@ class Dandiset(CommonModel):
     version: str = Field(json_schema_extra={"nskey": "schema", "readOnly": True})
 
     # Publication-related fields. A non-``None`` ``datePublished`` marks the
-    # record as published; ``check_publication_status`` enforces the cross-field
-    # rules (which of these are then required vs. must be absent).
+    # record as published; ``check_publication_status`` enforces the rules.
     url: Optional[AnyHttpUrl] = Field(
         None,
         description="Permalink to the Dandiset.",
@@ -1803,46 +1803,59 @@ class Dandiset(CommonModel):
 
         A non-``None`` ``datePublished`` marks the record as published and
         triggers the published-Dandiset requirements; otherwise the publication-only
-        fields must be absent.
+        fields must be absent. Each violation is reported against its own field.
         """
-        errors = []
+        line_errors: list[InitErrorDetails] = []
+
+        def err(field: str, msg: str) -> None:
+            line_errors.append(
+                InitErrorDetails(
+                    type="value_error",
+                    loc=(field,),
+                    input=getattr(self, field),
+                    ctx={"error": msg},
+                )
+            )
+
         if self.datePublished is None:
-            errors += [
-                f"{name} is not allowed unless datePublished is set"
-                for name in ("doi", "publishedBy", "releaseNotes")
-                if getattr(self, name) is not None
-            ]
+            for name in ("doi", "publishedBy", "releaseNotes"):
+                if getattr(self, name) is not None:
+                    err(name, f"{name} is not allowed unless datePublished is set")
         else:
             if self.publishedBy is None:
-                errors.append("publishedBy is required for a published Dandiset")
+                err("publishedBy", "publishedBy is required for a published Dandiset")
             if self.url is None:
-                errors.append("url is required for a published Dandiset")
+                err("url", "url is required for a published Dandiset")
             elif not re.match(PUBLISHED_VERSION_URL_PATTERN, str(self.url)):
-                errors.append(
-                    f'url does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
+                err(
+                    "url", f'url does not match regex "{PUBLISHED_VERSION_URL_PATTERN}"'
                 )
             # Stricter than the ``id`` field pattern, which also accepts
             # ``/draft`` and a lowercase prefix; only a published version id
             # passes here.
             if not re.match(DANDI_PUBID_PATTERN, self.id):
-                errors.append(
+                err(
+                    "id",
                     f'id "{self.id}" does not match the published-Dandiset pattern '
-                    f'"{DANDI_PUBID_PATTERN}"'
+                    f'"{DANDI_PUBID_PATTERN}"',
                 )
             if (
                 self.assetsSummary.numberOfBytes == 0
                 or self.assetsSummary.numberOfFiles == 0
             ):
-                errors.append(
-                    "A Dandiset containing no files or zero bytes is not publishable"
+                err(
+                    "assetsSummary",
+                    "A Dandiset containing no files or zero bytes is not publishable",
                 )
             if self.doi is None:
                 if _INSTANCE_CONFIG.doi_prefix is None:
                     self.doi = ""
                 else:
-                    errors.append("doi is required for a published Dandiset")
-        if errors:
-            raise ValueError("; ".join(errors))
+                    err("doi", "doi is required for a published Dandiset")
+        if line_errors:
+            raise _CoreValidationError.from_exception_data(
+                self.__class__.__name__, line_errors
+            )
         return self
 
 
@@ -1969,9 +1982,8 @@ class BareAsset(CommonModel):
 class Asset(BareAsset):
     """Metadata used to describe an asset on the server."""
 
-    # A non-``None`` ``datePublished`` marks the asset as published, which
-    # additionally requires ``publishedBy``, a published-asset ``id``, and (for a
-    # non-zarr asset) a ``sha2_256`` digest; see ``check_publication_status``.
+    # A non-``None`` ``datePublished`` marks the asset as published; see
+    # ``check_publication_status`` for the rules that then apply.
 
     # all of the following are set by server
     id: str = Field(
@@ -2006,30 +2018,50 @@ class Asset(BareAsset):
 
         A non-``None`` ``datePublished`` marks the asset as published and
         triggers the published-asset requirements; otherwise ``publishedBy``
-        must be absent.
+        must be absent. Each violation is reported against its own field.
         """
-        errors = []
+        line_errors: list[InitErrorDetails] = []
+
+        def err(field: str, msg: str) -> None:
+            line_errors.append(
+                InitErrorDetails(
+                    type="value_error",
+                    loc=(field,),
+                    input=getattr(self, field),
+                    ctx={"error": msg},
+                )
+            )
+
         if self.datePublished is None:
             if self.publishedBy is not None:
-                errors.append("publishedBy is not allowed unless datePublished is set")
+                err(
+                    "publishedBy",
+                    "publishedBy is not allowed unless datePublished is set",
+                )
         else:
             if self.publishedBy is None:
-                errors.append("publishedBy is required for a published asset")
+                err("publishedBy", "publishedBy is required for a published asset")
             if not re.match(ASSET_UUID_PATTERN, self.id):
-                errors.append(
+                err(
+                    "id",
                     f'id "{self.id}" does not match the published-asset pattern '
-                    f'"{ASSET_UUID_PATTERN}"'
+                    f'"{ASSET_UUID_PATTERN}"',
                 )
             if self.encodingFormat != "application/x-zarr":
                 if DigestType.sha2_256 not in self.digest:
-                    errors.append("A non-zarr asset must have a sha2_256.")
-                elif not re.fullmatch(SHA256_PATTERN, self.digest[DigestType.sha2_256]):
-                    errors.append(
-                        "Digest must have an appropriate sha2_256 value. "
-                        f"Got {self.digest[DigestType.sha2_256]}"
-                    )
-        if errors:
-            raise ValueError("; ".join(errors))
+                    err("digest", "A non-zarr asset must have a sha2_256.")
+                else:
+                    sha2_256_digest = self.digest[DigestType.sha2_256]
+                    if not re.fullmatch(SHA256_PATTERN, sha2_256_digest):
+                        err(
+                            "digest",
+                            "Digest must have an appropriate sha2_256 value. "
+                            f"Got {sha2_256_digest}",
+                        )
+        if line_errors:
+            raise _CoreValidationError.from_exception_data(
+                self.__class__.__name__, line_errors
+            )
         return self
 
 
