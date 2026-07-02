@@ -471,20 +471,21 @@ def test_dandimeta_1(base_dandiset_metadata: dict[str, Any]) -> None:
 
     # Setting datePublished marks the record published and triggers the
     # publish-only requirements. The draft id/url/assetsSummary and the missing
-    # publishedBy/doi are reported together in a single model-level error.
+    # publishedBy/doi are each reported against their own field.
     publishing = dict(base_dandiset_metadata, datePublished="2021-01-01T00:00:00+00:00")
     with pytest.raises(ValidationError) as exc:
         Dandiset(**publishing)
-    assert len(exc.value.errors()) == 1
-    msg = exc.value.errors()[0]["msg"]
-    for expected in [
-        "publishedBy is required for a published Dandiset",
-        "url does not match regex",
-        "does not match the published-Dandiset pattern",
-        "A Dandiset containing no files or zero bytes is not publishable",
-        "doi is required for a published Dandiset",
-    ]:
-        assert expected in msg
+    by_field = {err["loc"][0]: err["msg"] for err in exc.value.errors()}
+    expected = {
+        "publishedBy": "publishedBy is required for a published Dandiset",
+        "url": "url does not match regex",
+        "id": "does not match the published-Dandiset pattern",
+        "assetsSummary": "A Dandiset containing no files or zero bytes is not publishable",
+        "doi": "doi is required for a published Dandiset",
+    }
+    assert set(by_field) == set(expected)
+    for field, substr in expected.items():
+        assert substr in by_field[field]
 
     # after adding basic meta required to publish: doi, datePublished, publishedBy, assetsSummary,
     # so PublishedDandiset should work

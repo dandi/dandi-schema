@@ -118,17 +118,23 @@ def to_datacite(
     validate: bool = False,
     publish: bool = False,
 ) -> dict:
-    """Convert published Dandiset metadata to Datacite"""
+    """Convert published Dandiset metadata to Datacite
+
+    Raises
+    ------
+    ValueError
+        If ``meta`` does not represent published Dandiset metadata, i.e. its
+        ``datePublished`` is not set.
+    """
 
     instance_config = get_instance_config()
 
     if not isinstance(meta, PublishedDandiset):
         meta = PublishedDandiset(**meta)
 
-    # ``to_datacite`` operates on *published* Dandiset metadata. Since the
-    # publication-only fields are now optional on ``Dandiset`` (gated on
-    # ``datePublished``), enforce the precondition the ``PublishedDandiset`` type
-    # used to guarantee.
+    # ``to_datacite`` operates on *published* Dandiset metadata, but the
+    # publication-only fields are optional on ``Dandiset`` (gated on
+    # ``datePublished``), so enforce that precondition explicitly here.
     if meta.datePublished is None:
         raise ValueError(
             "to_datacite requires published Dandiset metadata, but datePublished "
