@@ -14,6 +14,7 @@ from .utils import DOI_PREFIX, INSTANCE_NAME, basic_publishmeta, skipif_no_doi_p
 from .. import models
 from ..models import (
     DANDI_INSTANCE_URL_PATTERN,
+    DANDI_NSKEY,
     AccessRequirements,
     AccessType,
     Affiliation,
@@ -550,7 +551,7 @@ def test_schemakey() -> None:
 
 
 def test_duplicate_classes() -> None:
-    qnames: Dict[str, Optional[type]] = {}
+    qnames: Dict[str, type] = {}
 
     def check_qname(qname: str, klass: type) -> None:
         if (
@@ -565,9 +566,8 @@ def test_duplicate_classes() -> None:
             return
         if qname in qnames:
             t = qnames[qname]
-            if t is None:
-                return
-            elif issubclass(klass, (t,)):
+
+            if issubclass(klass, (t,)):
                 return
             elif issubclass(t, klass):
                 qnames[qname] = klass
@@ -596,20 +596,18 @@ def test_duplicate_classes() -> None:
         qnames[qname] = klass
 
     modelnames = dir(models)
-    modelnames.remove("CommonModel")
-    modelnames.remove("BaseType")
     modelnames.remove("BaseModel")
     modelnames.remove("DandiBaseModel")
-    for val in ["CommonModel", "BaseType"] + modelnames:
+    for val in modelnames:
         klass = getattr(models, val)
         if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
         if hasattr(klass, "_ldmeta"):
+            name = klass.__name__
             if "nskey" in klass._ldmeta.default:
-                name = klass.__name__
                 qname = f'{klass._ldmeta.default["nskey"]}:{name}'
             else:
-                qname = f"dandi:{name}"
+                qname = f"{DANDI_NSKEY}:{name}"
             check_qname(qname, klass)
         for name, field in klass.model_fields.items():
             if (
@@ -618,7 +616,7 @@ def test_duplicate_classes() -> None:
             ):
                 qname = cast(str, field.json_schema_extra["nskey"]) + ":" + name
             else:
-                qname = f"dandi:{name}"
+                qname = f"{DANDI_NSKEY}:{name}"
             check_qname(qname, klass)
 
 
