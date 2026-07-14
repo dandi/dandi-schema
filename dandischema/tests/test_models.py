@@ -572,25 +572,25 @@ def test_duplicate_classes() -> None:
             elif issubclass(t, klass):
                 qnames[qname] = klass
                 return
-            if qname == "dandi:repository" and klass.__name__ in (
+            if qname == "dandi:repository" and {t.__name__, klass.__name__} == {
                 "Resource",
                 "CommonModel",
-            ):
+            }:
                 return
-            if qname == "dandi:relation" and klass.__name__ in (
+            if qname == "dandi:relation" and {t.__name__, klass.__name__} == {
                 "Resource",
                 "RelatedParticipant",
-            ):
+            }:
                 return
-            if qname in "dandi:approach" and klass.__name__ in (
+            if qname in "dandi:approach" and {t.__name__, klass.__name__} == {
                 "Asset",
                 "AssetsSummary",
-            ):
+            }:
                 return
-            if qname == "dandi:species" and klass.__name__ in (
+            if qname == "dandi:species" and {t.__name__, klass.__name__} == {
                 "Participant",
                 "AssetsSummary",
-            ):
+            }:
                 return
             raise ValueError(f"{qname},{klass} already exists {qnames[qname]}")
         qnames[qname] = klass
