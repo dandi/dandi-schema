@@ -150,10 +150,8 @@ def test_asset_digest() -> None:
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
     assert any(
-        [
-            "Digest must have an appropriate dandi-etag value." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest must have an appropriate dandi-etag value." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest = 32 * "a" + "-1"
     digest_model = {models.DigestType.dandi_etag: digest}
@@ -221,10 +219,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "Digest must have an appropriate dandi-zarr-checksum value." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest must have an appropriate dandi-zarr-checksum value." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest = f"{32 * 'a'}-1--42"
     digest_model = {models.DigestType.dandi_zarr_checksum: digest}
@@ -236,10 +232,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "contentSize 100 is not equal to the checksum size 42." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "contentSize 100 is not equal to the checksum size 42." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest = f"{32 * 'a'}-1--100"
     digest_model = {models.DigestType.dandi_zarr_checksum: digest}
@@ -263,10 +257,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "Digest cannot have both etag and zarr checksums." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest cannot have both etag and zarr checksums." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(  # type: ignore[call-arg]
@@ -276,10 +268,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "Digest cannot have both etag and zarr checksums." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest cannot have both etag and zarr checksums." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest_model = {}
     with pytest.raises(pydantic.ValidationError) as exc:
@@ -290,10 +280,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "A zarr asset must have a zarr checksum." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "A zarr asset must have a zarr checksum." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(  # type: ignore[call-arg]
@@ -303,10 +291,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "A zarr asset must have a zarr checksum." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "A zarr asset must have a zarr checksum." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
 
 
@@ -493,7 +479,7 @@ def test_dandimeta_1(base_dandiset_metadata: dict[str, Any]) -> None:
         if expected_errors[err_loc].msg is not None:
             assert err["msg"] == expected_errors[err_loc].msg
 
-    assert set([el["loc"][0] for el in exc.value.errors()]) == {
+    assert set(el["loc"][0] for el in exc.value.errors()) == {
         e
         for e in [
             "assetsSummary",
@@ -683,7 +669,7 @@ def test_schemakey_roundtrip() -> None:
     contributor[0]["name"] = "last, first"
     klassobj = TempKlass1(contributor=contributor)
     assert klassobj.contributor is not None and all(
-        [isinstance(val, Person) for val in klassobj.contributor]
+        isinstance(val, Person) for val in klassobj.contributor
     )
 
 
