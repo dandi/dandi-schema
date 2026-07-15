@@ -77,7 +77,7 @@ jobs:
         run: pip install "dandi[test,extras]"
 
       - name: Check out dandischema
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # Fetch all commits so that versioningit will return something
           # compatible with semantic-version
