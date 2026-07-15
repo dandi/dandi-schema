@@ -316,7 +316,10 @@ def test_requirements(
         validate(obj, schema_key=schema_key)
     with pytest.raises(PydanticValidationError) as exc:
         validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
-    assert set(el["loc"][0] for el in exc.value.errors) == missingfields
+    assert (
+        set(loc[0] if (loc := el["loc"]) else None for el in exc.value.errors)
+        == missingfields
+    )
 
 
 @pytest.mark.parametrize(

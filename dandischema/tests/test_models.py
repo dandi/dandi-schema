@@ -479,7 +479,7 @@ def test_dandimeta_1(base_dandiset_metadata: dict[str, Any]) -> None:
         if expected_errors[err_loc].msg is not None:
             assert err["msg"] == expected_errors[err_loc].msg
 
-    assert set(el["loc"][0] for el in exc.value.errors()) == {
+    assert set(loc[0] if (loc := el["loc"]) else None for el in exc.value.errors()) == {
         e
         for e in [
             "assetsSummary",
