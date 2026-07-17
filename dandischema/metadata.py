@@ -263,12 +263,15 @@ def validate(
      None
 
      Raises
-     --------
-     ValueError:
-       if no schema_key is provided and object doesn't provide schemaKey or
-       is missing properly formatted values
-     ValidationError
-       if obj fails validation
+     ------
+     ValueError
+       if no schema key is provided through `schema_key` or the `schemaKey`
+       attribute of the object, or if the schema version to validate against
+       is not an allowed one
+     JsonschemaValidationError
+       if `json_validation` is `True` and the object fails JSON schema validation
+     PydanticValidationError
+       if the object fails Pydantic validation
     """
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
