@@ -574,9 +574,6 @@ slots:
     pattern: ^(?i:http|https)://[^\s]+$
     minimum_cardinality: 1
   maxValue:
-    notes:
-    - 'pydantic2linkml: LinkML does not have support for `''+inf''`, `''-inf''`, and
-      `''NaN''` values. Support for these values is not translated.'
     range: float
     required: false
   measurementTechnique:
@@ -585,9 +582,6 @@ slots:
     required: false
     multivalued: true
   minValue:
-    notes:
-    - 'pydantic2linkml: LinkML does not have support for `''+inf''`, `''-inf''`, and
-      `''NaN''` values. Support for these values is not translated.'
     range: float
     required: false
   name:

@@ -5098,29 +5098,11 @@ class PropertyValue(DandiBaseModel):
 
     maxValue: Optional[float] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["PropertyValue"],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have support for `'+inf'`, "
-                    "`'-inf'`, and `'NaN'` values. Support for these values is not "
-                    "translated."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["PropertyValue"]}},
     )
     minValue: Optional[float] = Field(
         default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["PropertyValue"],
-                "notes": [
-                    "pydantic2linkml: LinkML does not have support for `'+inf'`, "
-                    "`'-inf'`, and `'NaN'` values. Support for these values is not "
-                    "translated."
-                ],
-            }
-        },
+        json_schema_extra={"linkml_meta": {"domain_of": ["PropertyValue"]}},
     )
     propertyID: Optional[Union[IdentifierType, str]] = Field(
         default=None,

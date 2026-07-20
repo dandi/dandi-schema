@@ -2483,9 +2483,6 @@
           "linkml_meta": {
             "domain_of": [
               "PropertyValue"
-            ],
-            "notes": [
-              "pydantic2linkml: LinkML does not have support for `'+inf'`, `'-inf'`, and `'NaN'` values. Support for these values is not translated."
             ]
           },
           "title": "Maxvalue",
@@ -2496,9 +2493,6 @@
           "linkml_meta": {
             "domain_of": [
               "PropertyValue"
-            ],
-            "notes": [
-              "pydantic2linkml: LinkML does not have support for `'+inf'`, `'-inf'`, and `'NaN'` values. Support for these values is not translated."
             ]
           },
           "title": "Minvalue",

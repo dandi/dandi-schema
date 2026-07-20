@@ -98,7 +98,7 @@
     "$id": "https://example.org/dandi-schema-experiment",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": true,
-    "metamodel_version": "1.7.0",
+    "metamodel_version": "1.11.0",
     "title": "dandi-schema-experiment",
     "type": "object",
     "version": null
