@@ -772,6 +772,7 @@ def _bids_asset(path: str, size: int = 1) -> Dict[str, Any]:
     }
 
 
+@pytest.mark.ai_generated
 def test_aggregate_number_of_sessions() -> None:
     # Same subject, two sessions (session token only in filename)
     data = [
@@ -800,6 +801,12 @@ def test_aggregate_number_of_sessions() -> None:
 
     # No ses- anywhere -> field is absent
     data = [_bids_asset("sub-01/anat/sub-01_T1w.nii.gz")]
+    summary = aggregate_assets_summary(data)
+    assert "numberOfSessions" not in summary
+
+    # ses- present but no sub- anywhere -> no (subject, session) pair, so
+    # no session is counted
+    data = [_bids_asset("ses-A/eeg/task-rest_eeg.edf")]
     summary = aggregate_assets_summary(data)
     assert "numberOfSessions" not in summary
 

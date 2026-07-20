@@ -544,7 +544,8 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
                 if bucket is not None and value not in stats[bucket]:
                     stats[bucket].append(value)
     # If ses- is absent from the filename, fall back to scanning the path
-    # parts (BIDS keeps `ses-X` as its own directory).
+    # parts (BIDS keeps `ses-X` as its own directory).  Deliberately no such
+    # fallback for sub-, so that subject counting behavior stays unchanged.
     if not found.get("session"):
         for part in asset_path.parts[:-1]:
             if part.startswith("ses-"):
