@@ -642,14 +642,14 @@ class DandiBaseModel(BaseModel):
                     value["type"] = "object"
                     del value["allOf"]
             if anyOf is not None:
-                if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
+                if len(anyOf) > 1 and any("$ref" in val for val in anyOf):
                     value["type"] = "object"
             if items is not None:
                 anyOf = items.get("anyOf")
                 if (
                     anyOf is not None
                     and len(anyOf) > 1
-                    and any(["$ref" in val for val in anyOf])
+                    and any("$ref" in val for val in anyOf)
                 ):
                     value["items"]["type"] = "object"
             # In pydantic 1.8+ all Literals are mapped on to enum
