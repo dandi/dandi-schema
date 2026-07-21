@@ -1201,6 +1201,12 @@ class AssetsSummary(DandiBaseModel):
         None, json_schema_extra={"readOnly": True}
     )  # more of NWB
     numberOfCells: Optional[int] = Field(None, json_schema_extra={"readOnly": True})
+    numberOfSessions: Optional[int] = Field(
+        None,
+        description="Number of unique subject/session pairs, "
+        "derived from BIDS ses-* tokens in asset paths.",
+        json_schema_extra={"readOnly": True},
+    )
 
     dataStandard: Optional[List[StandardsType]] = Field(
         None, json_schema_extra={"readOnly": True}

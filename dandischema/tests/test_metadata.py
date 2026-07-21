@@ -524,6 +524,7 @@ def test_migrate_schemaversion_update() -> None:
                 "numberOfSubjects": 1,
                 "numberOfSamples": 1,
                 "numberOfCells": 1,
+                "numberOfSessions": 1,
                 "dataStandard": [
                     {
                         "schemaKey": "StandardsType",
@@ -544,6 +545,7 @@ def test_migrate_schemaversion_update() -> None:
                 "numberOfBytes": 608720,
                 "numberOfFiles": 2,
                 "numberOfSubjects": 1,
+                "numberOfSessions": 2,
                 "dataStandard": [
                     {
                         "schemaKey": "StandardsType",
@@ -591,6 +593,7 @@ def test_migrate_schemaversion_update() -> None:
                 "numberOfSubjects": 2,
                 "numberOfSamples": 1,
                 "numberOfCells": 1,
+                "numberOfSessions": 2,
                 "dataStandard": [
                     {
                         "schemaKey": "StandardsType",
@@ -754,11 +757,61 @@ def test_aggregation_bids() -> None:
     assert summary["numberOfFiles"] == 3
     assert summary["numberOfSamples"] == 2
     assert summary["numberOfSubjects"] == 1
+    assert summary["numberOfSessions"] == 2
     assert sum("BIDS" in _.get("name", "") for _ in summary["dataStandard"]) == 1
     assert (
         sum(_.get("name", "").startswith("OME/NGFF") for _ in summary["dataStandard"])
         == 1
     )  # only a single entry so we do not duplicate them
+
+
+def _bids_asset(path: str, size: int = 1) -> Dict[str, Any]:
+    return {
+        "schemaKey": "Asset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "path": path,
+        "contentSize": size,
+        "encodingFormat": "application/x-nwb",
+    }
+
+
+@pytest.mark.ai_generated
+def test_aggregate_number_of_sessions() -> None:
+    # Same subject, two sessions (session token only in filename)
+    data = [
+        _bids_asset("sub-01/ses-A/eeg/sub-01_ses-A_task-rest_eeg.edf"),
+        _bids_asset("sub-01/ses-B/eeg/sub-01_ses-B_task-rest_eeg.edf"),
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["numberOfSubjects"] == 1
+    assert summary["numberOfSessions"] == 2
+
+    # Two subjects sharing a session id "A" -> two distinct (sub, ses) pairs
+    data = [
+        _bids_asset("sub-01/ses-A/eeg/sub-01_ses-A_task-rest_eeg.edf"),
+        _bids_asset("sub-02/ses-A/eeg/sub-02_ses-A_task-rest_eeg.edf"),
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["numberOfSubjects"] == 2
+    assert summary["numberOfSessions"] == 2
+
+    # ses- only in directory portion (filename omits it) still counts
+    data = [
+        _bids_asset("sub-01/ses-A/anat/sub-01_T1w.nii.gz"),
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["numberOfSessions"] == 1
+
+    # No ses- anywhere -> field is absent
+    data = [_bids_asset("sub-01/anat/sub-01_T1w.nii.gz")]
+    summary = aggregate_assets_summary(data)
+    assert "numberOfSessions" not in summary
+
+    # ses- present but no sub- anywhere -> no (subject, session) pair, so
+    # no session is counted
+    data = [_bids_asset("ses-A/eeg/task-rest_eeg.edf")]
+    summary = aggregate_assets_summary(data)
+    assert "numberOfSessions" not in summary
 
 
 class TestValidateObjJson:
