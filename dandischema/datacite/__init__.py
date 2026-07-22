@@ -227,11 +227,14 @@ def to_datacite(
         elif isinstance(contr_el, Organization):
             contr_dict["nameType"] = "Organizational"
 
-        if contr_el.roleName and RoleType("dcite:Author") in contr_el.roleName:
+        is_author = contr_el.roleName and RoleType("dcite:Author") in contr_el.roleName
+        if is_author:
+            contr_el.roleName.remove(RoleType("dcite:Author"))
+
+        if is_author or contr_el.includeInCitation:
             create_dict = deepcopy(contr_dict)
             create_dict["creatorName"] = create_dict.pop("contributorName")
             creators.append(create_dict)
-            contr_el.roleName.remove(RoleType("dcite:Author"))
             # if no more roles, it shouldn't be added to contributors
             if not contr_el.roleName:
                 continue
