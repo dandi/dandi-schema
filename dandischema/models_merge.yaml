@@ -4,7 +4,6 @@
 
 slots:
   schemaKey:
-    ifabsent: null
     designates_type: true
     required: true
 
