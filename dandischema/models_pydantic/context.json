@@ -1,0 +1,361 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "dandi": "http://schema.dandiarchive.org/",
+    "dcite": "http://schema.dandiarchive.org/datacite/",
+    "dandiasset": "http://dandiarchive.org/asset/",
+    "DANDI": "http://dandiarchive.org/dandiset/",
+    "dct": "http://purl.org/dc/terms/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfa": "http://www.w3.org/ns/rdfa#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "http://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "pav": "http://purl.org/pav/",
+    "nidm": "http://purl.org/nidash/nidm#",
+    "uuid": "http://uuid.repronim.org/",
+    "rs": "http://schema.repronim.org/",
+    "RRID": "https://scicrunch.org/resolver/RRID:",
+    "ORCID": "https://orcid.org/",
+    "ROR": "https://ror.org/",
+    "PATO": "http://purl.obolibrary.org/obo/PATO_",
+    "spdx": "http://spdx.org/licenses/",
+    "Asset": "dandi:Asset",
+    "Dandiset": "dandi:Dandiset",
+    "about": {
+      "@id": "dandi:about",
+      "@container": "@set"
+    },
+    "access": {
+      "@id": "dandi:access",
+      "@container": "@set"
+    },
+    "acknowledgement": {
+      "@id": "dandi:acknowledgement"
+    },
+    "affiliation": {
+      "@id": "dandi:affiliation",
+      "@container": "@set"
+    },
+    "age": {
+      "@id": "dandi:age"
+    },
+    "alleleSymbol": {
+      "@id": "dandi:alleleSymbol"
+    },
+    "alleleType": {
+      "@id": "dandi:alleleType"
+    },
+    "alleles": {
+      "@id": "dandi:alleles",
+      "@container": "@set"
+    },
+    "altName": {
+      "@id": "dandi:altName",
+      "@container": "@set"
+    },
+    "anatomy": {
+      "@id": "dandi:anatomy",
+      "@container": "@set"
+    },
+    "approach": {
+      "@id": "dandi:approach",
+      "@container": "@set"
+    },
+    "assayType": {
+      "@id": "dandi:assayType",
+      "@container": "@set"
+    },
+    "assetsSummary": {
+      "@id": "dandi:assetsSummary"
+    },
+    "awardNumber": {
+      "@id": "dandi:awardNumber"
+    },
+    "blobDateModified": {
+      "@id": "dandi:blobDateModified"
+    },
+    "cellLine": {
+      "@id": "dandi:cellLine"
+    },
+    "citation": {
+      "@id": "dandi:citation"
+    },
+    "contactPoint": {
+      "@id": "dandi:contactPoint"
+    },
+    "contentSize": {
+      "@id": "dandi:contentSize"
+    },
+    "contentUrl": {
+      "@id": "dandi:contentUrl",
+      "@container": "@set"
+    },
+    "contributor": {
+      "@id": "dandi:contributor",
+      "@container": "@list"
+    },
+    "dandi:blake2b-256": {
+      "@id": "dandi:blake2b-256",
+      "@nest": "digest"
+    },
+    "dandi:blake3": {
+      "@id": "dandi:blake3",
+      "@nest": "digest"
+    },
+    "dandi:dandi-etag": {
+      "@id": "dandi:dandi-etag",
+      "@nest": "digest"
+    },
+    "dandi:dandi-zarr-checksum": {
+      "@id": "dandi:dandi-zarr-checksum",
+      "@nest": "digest"
+    },
+    "dandi:md5": {
+      "@id": "dandi:md5",
+      "@nest": "digest"
+    },
+    "dandi:sha1": {
+      "@id": "dandi:sha1",
+      "@nest": "digest"
+    },
+    "dandi:sha2-256": {
+      "@id": "dandi:sha2-256",
+      "@nest": "digest"
+    },
+    "dandi:sha3-256": {
+      "@id": "dandi:sha3-256",
+      "@nest": "digest"
+    },
+    "dataStandard": {
+      "@id": "dandi:dataStandard",
+      "@container": "@set"
+    },
+    "dataType": {
+      "@id": "dandi:dataType"
+    },
+    "dateCreated": {
+      "@id": "dandi:dateCreated"
+    },
+    "dateModified": {
+      "@id": "dandi:dateModified"
+    },
+    "datePublished": {
+      "@id": "dandi:datePublished"
+    },
+    "description": {
+      "@id": "dandi:description"
+    },
+    "digest": "@nest",
+    "disorder": {
+      "@id": "dandi:disorder",
+      "@container": "@set"
+    },
+    "doi": {
+      "@id": "dandi:doi"
+    },
+    "dxdate": {
+      "@id": "dandi:dxdate",
+      "@container": "@set"
+    },
+    "email": {
+      "@id": "dandi:email"
+    },
+    "embargoedUntil": {
+      "@id": "dandi:embargoedUntil"
+    },
+    "encodingFormat": {
+      "@id": "dandi:encodingFormat"
+    },
+    "endDate": {
+      "@id": "dandi:endDate"
+    },
+    "ethicsApproval": {
+      "@id": "dandi:ethicsApproval",
+      "@container": "@set"
+    },
+    "genotype": {
+      "@id": "dandi:genotype"
+    },
+    "hasMember": {
+      "@id": "dandi:hasMember",
+      "@container": "@set",
+      "@type": "@id"
+    },
+    "id": "@id",
+    "identifier": {
+      "@id": "dandi:identifier"
+    },
+    "includeInCitation": {
+      "@id": "dandi:includeInCitation"
+    },
+    "keywords": {
+      "@id": "dandi:keywords",
+      "@container": "@set"
+    },
+    "license": {
+      "@id": "dandi:license",
+      "@container": "@set",
+      "@type": "@id"
+    },
+    "locus": {
+      "@id": "dandi:locus"
+    },
+    "locusType": {
+      "@id": "dandi:locusType"
+    },
+    "manifestLocation": {
+      "@id": "dandi:manifestLocation",
+      "@container": "@set"
+    },
+    "maxValue": {
+      "@id": "dandi:maxValue"
+    },
+    "measurementTechnique": {
+      "@id": "dandi:measurementTechnique",
+      "@container": "@set"
+    },
+    "minValue": {
+      "@id": "dandi:minValue"
+    },
+    "name": {
+      "@id": "dandi:name"
+    },
+    "numberOfBytes": {
+      "@id": "dandi:numberOfBytes"
+    },
+    "numberOfCells": {
+      "@id": "dandi:numberOfCells"
+    },
+    "numberOfFiles": {
+      "@id": "dandi:numberOfFiles"
+    },
+    "numberOfSamples": {
+      "@id": "dandi:numberOfSamples"
+    },
+    "numberOfSubjects": {
+      "@id": "dandi:numberOfSubjects"
+    },
+    "path": {
+      "@id": "dandi:path"
+    },
+    "propertyID": {
+      "@id": "dandi:propertyID"
+    },
+    "protocol": {
+      "@id": "dandi:protocol",
+      "@container": "@set"
+    },
+    "publishedBy": {
+      "@id": "dandi:publishedBy"
+    },
+    "relatedParticipant": {
+      "@id": "dandi:relatedParticipant",
+      "@container": "@set"
+    },
+    "relatedResource": {
+      "@id": "dandi:relatedResource",
+      "@container": "@set"
+    },
+    "relation": {
+      "@id": "dandi:relation",
+      "@type": "@id"
+    },
+    "releaseNotes": {
+      "@id": "dandi:releaseNotes"
+    },
+    "repository": {
+      "@id": "dandi:repository"
+    },
+    "resourceType": {
+      "@id": "dandi:resourceType",
+      "@type": "@id"
+    },
+    "roleName": {
+      "@id": "dandi:roleName",
+      "@container": "@set",
+      "@type": "@id"
+    },
+    "root": {
+      "@id": "dandi:root"
+    },
+    "sameAs": {
+      "@id": "dandi:sameAs",
+      "@container": "@set"
+    },
+    "sampleType": {
+      "@id": "dandi:sampleType"
+    },
+    "schemaKey": "@type",
+    "schemaVersion": {
+      "@id": "dandi:schemaVersion"
+    },
+    "sex": {
+      "@id": "dandi:sex"
+    },
+    "species": {
+      "@id": "dandi:species",
+      "@container": "@set"
+    },
+    "startDate": {
+      "@id": "dandi:startDate"
+    },
+    "status": {
+      "@id": "dandi:status",
+      "@type": "@id"
+    },
+    "strain": {
+      "@id": "dandi:strain"
+    },
+    "studyTarget": {
+      "@id": "dandi:studyTarget",
+      "@container": "@set"
+    },
+    "unitText": {
+      "@id": "dandi:unitText"
+    },
+    "url": {
+      "@id": "dandi:url",
+      "@type": "@id"
+    },
+    "used": {
+      "@id": "dandi:used",
+      "@container": "@set"
+    },
+    "value": {
+      "@id": "dandi:value"
+    },
+    "valueReference": {
+      "@id": "dandi:valueReference"
+    },
+    "variableMeasured": {
+      "@id": "dandi:variableMeasured",
+      "@container": "@set"
+    },
+    "vendor": {
+      "@id": "dandi:vendor"
+    },
+    "version": {
+      "@id": "dandi:version"
+    },
+    "wasAssociatedWith": {
+      "@id": "dandi:wasAssociatedWith",
+      "@container": "@set"
+    },
+    "wasAttributedTo": {
+      "@id": "dandi:wasAttributedTo",
+      "@container": "@set"
+    },
+    "wasDerivedFrom": {
+      "@id": "dandi:wasDerivedFrom",
+      "@container": "@set"
+    },
+    "wasGeneratedBy": {
+      "@id": "dandi:wasGeneratedBy",
+      "@container": "@set"
+    }
+  }
+}

@@ -14,6 +14,7 @@ from .utils import DOI_PREFIX, INSTANCE_NAME, basic_publishmeta, skipif_no_doi_p
 from .. import models
 from ..models import (
     DANDI_INSTANCE_URL_PATTERN,
+    DANDI_NSKEY,
     AccessRequirements,
     AccessType,
     Affiliation,
@@ -149,10 +150,8 @@ def test_asset_digest() -> None:
             contentSize=100, encodingFormat="nwb", digest=digest_model, path="/"
         )
     assert any(
-        [
-            "Digest must have an appropriate dandi-etag value." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest must have an appropriate dandi-etag value." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest = 32 * "a" + "-1"
     digest_model = {models.DigestType.dandi_etag: digest}
@@ -220,10 +219,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "Digest must have an appropriate dandi-zarr-checksum value." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest must have an appropriate dandi-zarr-checksum value." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest = f"{32 * 'a'}-1--42"
     digest_model = {models.DigestType.dandi_zarr_checksum: digest}
@@ -235,10 +232,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "contentSize 100 is not equal to the checksum size 42." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "contentSize 100 is not equal to the checksum size 42." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest = f"{32 * 'a'}-1--100"
     digest_model = {models.DigestType.dandi_zarr_checksum: digest}
@@ -262,10 +257,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "Digest cannot have both etag and zarr checksums." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest cannot have both etag and zarr checksums." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(  # type: ignore[call-arg]
@@ -275,10 +268,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "Digest cannot have both etag and zarr checksums." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "Digest cannot have both etag and zarr checksums." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     digest_model = {}
     with pytest.raises(pydantic.ValidationError) as exc:
@@ -289,10 +280,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "A zarr asset must have a zarr checksum." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "A zarr asset must have a zarr checksum." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
     with pytest.raises(pydantic.ValidationError) as exc:
         models.PublishedAsset(  # type: ignore[call-arg]
@@ -302,10 +291,8 @@ def test_asset_digest() -> None:
             path="/",
         )
     assert any(
-        [
-            "A zarr asset must have a zarr checksum." in val
-            for val in set([el["msg"] for el in exc.value.errors()])
-        ]
+        "A zarr asset must have a zarr checksum." in val
+        for val in set(el["msg"] for el in exc.value.errors())
     )
 
 
@@ -492,7 +479,7 @@ def test_dandimeta_1(base_dandiset_metadata: dict[str, Any]) -> None:
         if expected_errors[err_loc].msg is not None:
             assert err["msg"] == expected_errors[err_loc].msg
 
-    assert set([el["loc"][0] for el in exc.value.errors()]) == {
+    assert set(loc[0] if (loc := el["loc"]) else None for el in exc.value.errors()) == {
         e
         for e in [
             "assetsSummary",
@@ -550,7 +537,7 @@ def test_schemakey() -> None:
 
 
 def test_duplicate_classes() -> None:
-    qnames: Dict[str, Optional[type]] = {}
+    qnames: Dict[str, type] = {}
 
     def check_qname(qname: str, klass: type) -> None:
         if (
@@ -565,51 +552,48 @@ def test_duplicate_classes() -> None:
             return
         if qname in qnames:
             t = qnames[qname]
-            if t is None:
-                return
-            elif issubclass(klass, (t,)):
+
+            if issubclass(klass, (t,)):
                 return
             elif issubclass(t, klass):
                 qnames[qname] = klass
                 return
-            if qname == "dandi:repository" and klass.__name__ in (
+            if qname == "dandi:repository" and {t.__name__, klass.__name__} == {
                 "Resource",
                 "CommonModel",
-            ):
+            }:
                 return
-            if qname == "dandi:relation" and klass.__name__ in (
+            if qname == "dandi:relation" and {t.__name__, klass.__name__} == {
                 "Resource",
                 "RelatedParticipant",
-            ):
+            }:
                 return
-            if qname in "dandi:approach" and klass.__name__ in (
+            if qname in "dandi:approach" and {t.__name__, klass.__name__} == {
                 "Asset",
                 "AssetsSummary",
-            ):
+            }:
                 return
-            if qname == "dandi:species" and klass.__name__ in (
+            if qname == "dandi:species" and {t.__name__, klass.__name__} == {
                 "Participant",
                 "AssetsSummary",
-            ):
+            }:
                 return
             raise ValueError(f"{qname},{klass} already exists {qnames[qname]}")
         qnames[qname] = klass
 
     modelnames = dir(models)
-    modelnames.remove("CommonModel")
-    modelnames.remove("BaseType")
     modelnames.remove("BaseModel")
     modelnames.remove("DandiBaseModel")
-    for val in ["CommonModel", "BaseType"] + modelnames:
+    for val in modelnames:
         klass = getattr(models, val)
         if not isclass(klass) or not issubclass(klass, pydantic.BaseModel):
             continue
         if hasattr(klass, "_ldmeta"):
+            name = klass.__name__
             if "nskey" in klass._ldmeta.default:
-                name = klass.__name__
                 qname = f'{klass._ldmeta.default["nskey"]}:{name}'
             else:
-                qname = f"dandi:{name}"
+                qname = f"{DANDI_NSKEY}:{name}"
             check_qname(qname, klass)
         for name, field in klass.model_fields.items():
             if (
@@ -618,7 +602,7 @@ def test_duplicate_classes() -> None:
             ):
                 qname = cast(str, field.json_schema_extra["nskey"]) + ":" + name
             else:
-                qname = f"dandi:{name}"
+                qname = f"{DANDI_NSKEY}:{name}"
             check_qname(qname, klass)
 
 
@@ -685,7 +669,7 @@ def test_schemakey_roundtrip() -> None:
     contributor[0]["name"] = "last, first"
     klassobj = TempKlass1(contributor=contributor)
     assert klassobj.contributor is not None and all(
-        [isinstance(val, Person) for val in klassobj.contributor]
+        isinstance(val, Person) for val in klassobj.contributor
     )
 
 

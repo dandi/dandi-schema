@@ -61,7 +61,7 @@ jobs:
             doi_prefix: '10.82754'
     steps:
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
 
@@ -77,7 +77,7 @@ jobs:
         run: pip install "dandi[test,extras]"
 
       - name: Check out dandischema
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # Fetch all commits so that versioningit will return something
           # compatible with semantic-version

@@ -1,5 +1,8 @@
 # DANDI Schema
 
+[![Tests](https://github.com/dandi/dandi-schema/actions/workflows/test.yml/badge.svg)](https://github.com/dandi/dandi-schema/actions/workflows/test.yml)
+[![Integration Tests](https://github.com/dandi/dandi-schema/actions/workflows/test-dandi-cli.yml/badge.svg)](https://github.com/dandi/dandi-schema/actions/workflows/test-dandi-cli.yml)
+
 `dandi-schema` is a Python library for maintaining and managing DANDI metadata models and schemas.
 
 ## Installation
