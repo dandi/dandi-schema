@@ -16,7 +16,7 @@ from .consts import (
     ALLOWED_VALIDATION_SCHEMAS,
     DANDI_SCHEMA_VERSION,
 )
-from .exceptions import JsonschemaValidationError, PydanticValidationError
+from .exceptions import PydanticValidationError
 from . import models
 from .utils import (
     TransitionalGenerateJsonSchema,
@@ -151,47 +151,16 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     return vdir
 
 
-def _validate_obj_json(
-    instance: Any, validator: JsonschemaValidator, *, missing_ok: bool = False
-) -> None:
-    """
-    Validate a data instance using a jsonschema validator with an option to filter out
-    errors related to missing required properties
-
-    :param instance: The data instance to validate
-    :param validator: The JSON schema validator to use
-    :param missing_ok: Indicates whether to filter out errors related to missing
-        required properties
-    :raises JsonschemaValidationError: If the metadata instance is invalid, and there
-        are errors detected in the validation, optionally discounting errors
-        related to missing required properties. An instance of this exception containing
-        a list of `jsonschema.exceptions.ValidationError` instances representing all the
-        (remaining) errors detected in the validation
-    """
-    try:
-        validate_json(instance, validator)
-    except JsonschemaValidationError as e:
-        if missing_ok:
-            remaining_errs = [
-                err for err in e.errors if "is a required property" not in err.message
-            ]
-            # Raise an exception only if there are errors left after filtering
-            if remaining_errs:
-                raise JsonschemaValidationError(remaining_errs) from e
-        else:
-            raise e
-
-
 def _validate_dandiset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj_json(data, dandi_jsonschema_validator(schema))
+    validate_json(data, dandi_jsonschema_validator(schema))
 
 
 def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj_json(data, dandi_jsonschema_validator(schema))
+    validate_json(data, dandi_jsonschema_validator(schema))
 
 
 @cache
@@ -273,7 +242,6 @@ def validate(
     obj: dict,
     schema_version: Optional[str] = None,
     schema_key: Optional[str] = None,
-    missing_ok: bool = False,
     json_validation: bool = False,
 ) -> None:
     """Validate object using pydantic
@@ -287,9 +255,6 @@ def validate(
     schema_key: str, optional
       Name of the schema key to be used, if not specified, `schemaKey` of the
       object will be consulted
-    missing_ok: bool, optional
-      This flag allows checking if all fields have appropriate values but ignores
-      missing fields. A `ValueError` is raised with the list of all errors.
     json_validation: bool, optional
       If set to True, `obj` is first validated against the corresponding jsonschema.
 
@@ -298,12 +263,15 @@ def validate(
      None
 
      Raises
-     --------
-     ValueError:
-       if no schema_key is provided and object doesn't provide schemaKey or
-       is missing properly formatted values
-     ValidationError
-       if obj fails validation
+     ------
+     ValueError
+       if no schema key is provided through `schema_key` or the `schemaKey`
+       attribute of the object, or if the schema version to validate against
+       is not an allowed one
+     JsonschemaValidationError
+       if `json_validation` is `True` and the object fails JSON schema validation
+     PydanticValidationError
+       if the object fails Pydantic validation
     """
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
@@ -324,17 +292,12 @@ def validate(
                     "using json schema for older versions"
                 )
             jvalidator = _get_jsonschema_validator(schema_version, schema_key)
-        _validate_obj_json(obj, jvalidator, missing_ok=missing_ok)
+        validate_json(obj, jvalidator)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
     except pydantic.ValidationError as exc:
-        messages = []
-        for el in exc.errors():
-            if not missing_ok or el["type"] != "missing":
-                messages.append(el)
-        if messages:
-            raise PydanticValidationError(messages)  # type: ignore[arg-type]
+        raise PydanticValidationError(exc.errors())  # type: ignore[arg-type]
 
 
 def migrate(
@@ -432,7 +395,7 @@ def migrate(
     # Optionally validate the instance against the DANDI schema it specifies
     # before migration
     if not skip_validation:
-        _validate_obj_json(obj, _get_jsonschema_validator(obj_ver, "Dandiset"))
+        validate_json(obj, _get_jsonschema_validator(obj_ver, "Dandiset"))
 
     obj_migrated = deepcopy(obj)
 
