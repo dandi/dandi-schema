@@ -37,6 +37,16 @@ REMOVALS = [
         r"Length constraint of min_length=[a-zA-Z0-9]+, max_length=[a-zA-Z0-9]+ expressed "
         r"as a pattern entry"
     ),
+    # The `range` of these two slot usages is supplied through
+    # `dandischema/models_merge.yaml`, which makes the note obsolete.
+    Removal(
+        r"pydantic2linkml: Cannot express in a slot_usage entry a value for the `range` "
+        r"constraint meta slot",
+        (
+            ("classes", "BareAsset", "slot_usage", "wasGeneratedBy", "notes"),
+            ("classes", "Dandiset", "slot_usage", "wasGeneratedBy", "notes"),
+        ),
+    ),
 ]
 
 
