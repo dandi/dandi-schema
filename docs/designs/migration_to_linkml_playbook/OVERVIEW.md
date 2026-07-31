@@ -54,7 +54,12 @@ The conversion is orchestrated by the shell script **[`tools/linkml_conversion`]
   - `dandischema/models_pydantic/*.json` — JSON Schemas derived **from the original Pydantic models** (parity baseline, generated via `tools/pubschemata.py`)
 - **`tools/linkml_conversion_tools/`** is a general drawer for any tool convenient to the LinkML migration. It is **not** structurally divided into "pipeline" vs "auxiliary" — files just live here, and some of them happen to be wired into the current pipeline. New migration-related tools belong here; whether they end up wired into the pipeline is a separate decision. As of now:
   - `sanitize-yaml` → wired in as the final pipe stage of `2linkml`. Internally a sub-pipeline that runs three Python helpers in order, each as a stdin→stdout filter:
-    1. `remove_notes_by_pattern.py` — strips `notes:` entries matching a configured regex set.
+    1. `remove_notes_by_pattern.py` — strips `notes:` entries matching a configured set of `Removal` rules. Each rule pairs a regex with an optional tuple of paths confining where it applies, a path being the sequence of mapping keys and sequence indices leading from the document root to a node. Three scoping modes, so a note can be suppressed in one place while staying legitimate elsewhere:
+       - **no paths** (`None`) — the rule applies to every `notes` in the document.
+       - **path ending in `"notes"`** — exact, non-recursive: that one node only, e.g. `("classes", "Dandiset", "slot_usage", "wasGeneratedBy", "notes")`.
+       - **any other path** — a subtree root: every `notes` at or below it, e.g. `("classes", "Dandiset")`.
+
+       A `notes` list left empty by a removal is dropped entirely.
     2. `remove_slot_usage_schemakey.py` — strips `schemaKey` entries inside `slot_usage` blocks.
     3. `sort_license_type_permissible_values.py` — sorts `enums.LicenseType.permissible_values` alphabetically for stable output.
 
