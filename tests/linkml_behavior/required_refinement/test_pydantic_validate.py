@@ -14,9 +14,10 @@ from __future__ import annotations
 
 from types import ModuleType
 
-from _cases import FAILING_CASES, PASSING_CASES
 from pydantic import ValidationError
 import pytest
+
+from ._cases import FAILING_CASES, PASSING_CASES
 
 
 @pytest.mark.parametrize(("target_class", "instance"), PASSING_CASES)

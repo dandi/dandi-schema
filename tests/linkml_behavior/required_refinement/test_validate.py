@@ -12,8 +12,9 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 
-from _cases import FAILING_CASES, PASSING_CASES
 import pytest
+
+from ._cases import FAILING_CASES, PASSING_CASES
 
 HERE = Path(__file__).parent
 SCHEMA = HERE / "schema.yaml"
