@@ -1986,16 +1986,7 @@ class BareAsset(CommonModel):
                     "project or activity that "
                     "generated this asset.",
                     "name": "wasGeneratedBy",
-                    "notes": [
-                        "pydantic2linkml: Cannot express "
-                        "in a slot_usage entry a value "
-                        "for the `range` constraint meta "
-                        "slot that differs from the base "
-                        "by a change that is not an "
-                        "allowed monotonic refinement "
-                        "(base value: 'Activity'; target "
-                        "value: 'Any')."
-                    ],
+                    "range": "Any",
                     "title": "Name of the session, project or " "activity.",
                 },
             },
@@ -2352,12 +2343,6 @@ class BareAsset(CommonModel):
                     {"range": "Activity"},
                 ],
                 "domain_of": ["CommonModel", "GenotypeInfo"],
-                "notes": [
-                    "pydantic2linkml: Cannot express in a slot_usage entry a value for "
-                    "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement (base value: "
-                    "'Activity'; target value: 'Any')."
-                ],
             }
         },
     )
@@ -2864,12 +2849,6 @@ class Asset(BareAsset):
                     {"range": "Activity"},
                 ],
                 "domain_of": ["CommonModel", "GenotypeInfo"],
-                "notes": [
-                    "pydantic2linkml: Cannot express in a slot_usage entry a value for "
-                    "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement (base value: "
-                    "'Activity'; target value: 'Any')."
-                ],
             }
         },
     )
@@ -3336,16 +3315,7 @@ class Dandiset(CommonModel):
                 "wasGeneratedBy": {
                     "description": "Project(s) that generated " "this Dandiset.",
                     "name": "wasGeneratedBy",
-                    "notes": [
-                        "pydantic2linkml: Cannot express "
-                        "in a slot_usage entry a value "
-                        "for the `range` constraint meta "
-                        "slot that differs from the base "
-                        "by a change that is not an "
-                        "allowed monotonic refinement "
-                        "(base value: 'Activity'; target "
-                        "value: 'Project')."
-                    ],
+                    "range": "Project",
                     "title": "Associated projects",
                 },
             },
@@ -3662,22 +3632,12 @@ class Dandiset(CommonModel):
             }
         },
     )
-    wasGeneratedBy: Optional[
-        list[Union[Activity, Project, PublishActivity, Session]]
-    ] = Field(
+    wasGeneratedBy: Optional[list[Project]] = Field(
         default=None,
         title="Associated projects",
         description="""Project(s) that generated this Dandiset.""",
         json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel", "GenotypeInfo"],
-                "notes": [
-                    "pydantic2linkml: Cannot express in a slot_usage entry a value for "
-                    "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement (base value: "
-                    "'Activity'; target value: 'Project')."
-                ],
-            }
+            "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
     id: str = Field(
@@ -5808,12 +5768,6 @@ class PublishedAsset(Publishable, Asset):
                     {"range": "Activity"},
                 ],
                 "domain_of": ["CommonModel", "GenotypeInfo"],
-                "notes": [
-                    "pydantic2linkml: Cannot express in a slot_usage entry a value for "
-                    "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement (base value: "
-                    "'Activity'; target value: 'Any')."
-                ],
             }
         },
     )
@@ -6364,22 +6318,12 @@ class PublishedDandiset(Publishable, Dandiset):
             }
         },
     )
-    wasGeneratedBy: Optional[
-        list[Union[Activity, Project, PublishActivity, Session]]
-    ] = Field(
+    wasGeneratedBy: Optional[list[Project]] = Field(
         default=None,
         title="Associated projects",
         description="""Project(s) that generated this Dandiset.""",
         json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel", "GenotypeInfo"],
-                "notes": [
-                    "pydantic2linkml: Cannot express in a slot_usage entry a value for "
-                    "the `range` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement (base value: "
-                    "'Activity'; target value: 'Project')."
-                ],
-            }
+            "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
         },
     )
     id: str = Field(

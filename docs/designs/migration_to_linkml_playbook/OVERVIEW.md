@@ -54,7 +54,12 @@ The conversion is orchestrated by the shell script **[`tools/linkml_conversion`]
   - `dandischema/models_pydantic/*.json` — JSON Schemas derived **from the original Pydantic models** (parity baseline, generated via `tools/pubschemata.py`)
 - **`tools/linkml_conversion_tools/`** is a general drawer for any tool convenient to the LinkML migration. It is **not** structurally divided into "pipeline" vs "auxiliary" — files just live here, and some of them happen to be wired into the current pipeline. New migration-related tools belong here; whether they end up wired into the pipeline is a separate decision. As of now:
   - `sanitize-yaml` → wired in as the final pipe stage of `2linkml`. Internally a sub-pipeline that runs three Python helpers in order, each as a stdin→stdout filter:
-    1. `remove_notes_by_pattern.py` — strips `notes:` entries matching a configured regex set.
+    1. `remove_notes_by_pattern.py` — strips `notes:` entries matching a configured set of `Removal` rules. Each rule pairs a regex with an optional tuple of paths confining where it applies, a path being the sequence of mapping keys and sequence indices leading from the document root to a node. Three scoping modes, so a note can be suppressed in one place while staying legitimate elsewhere:
+       - **no paths** (`None`) — the rule applies to every `notes` in the document.
+       - **path ending in `"notes"`** — exact, non-recursive: that one node only, e.g. `("classes", "Dandiset", "slot_usage", "wasGeneratedBy", "notes")`.
+       - **any other path** — a subtree root: every `notes` at or below it, e.g. `("classes", "Dandiset")`.
+
+       A `notes` list left empty by a removal is dropped entirely.
     2. `remove_slot_usage_schemakey.py` — strips `schemaKey` entries inside `slot_usage` blocks.
     3. `sort_license_type_permissible_values.py` — sorts `enums.LicenseType.permissible_values` alphabetically for stable output.
 
@@ -68,7 +73,15 @@ The conversion is orchestrated by the shell script **[`tools/linkml_conversion`]
   - `hatch run linkml-behavior-typing:check` — runs `mypy` against the tests.
 
   Both envs are **detached** (don't install `dandischema`); they exist because these tests probe LinkML itself, not our package.
-- **LinkML-semantics tests:** `tests/linkml_behavior/` (e.g. `tests/linkml_behavior/required_refinement/`) is **not** a parity harness for our migration. Each subdirectory pins a specific *LinkML upstream behavior* that the generated dandischema LinkML relies on — e.g. `required_refinement/` exercises `required: False -> True` via `slot_usage` to defend against the issue tracked in [#405](https://github.com/dandi/dandi-schema/issues/405). Extend these only when a new LinkML semantic our schema depends on needs a contract test; parity testing of our migration belongs elsewhere (see [Approach](#approach--repeatable-procedure)).
+- **LinkML-semantics tests:** `tests/linkml_behavior/` is **not** a parity harness for our migration. Each subdirectory pins a specific *LinkML upstream behavior* that the generated dandischema LinkML relies on. Extend these only when a new LinkML semantic our schema depends on needs a contract test; parity testing of our migration belongs elsewhere (see [Approach](#approach--repeatable-procedure)). Current topics:
+  - `required_refinement/` — exercises `required: False -> True` via `slot_usage`, defending against the issue tracked in [#405](https://github.com/dandi/dandi-schema/issues/405).
+  - `range_refinement/` — exercises respecifying the `range` of an inherited multivalued slot via `slot_usage`, both narrowing it to a subclass of the inherited range and widening it to `Any` constrained by an `any_of`. These back the `wasGeneratedBy` range overrides carried in `dandischema/models_merge.yaml`. Its cases also depend on `designates_type: true` expanding a class-valued range over the class's descendants, so a regression there surfaces as a failure here; that behavior itself is documented under the `designates_type` finding in [`findings.md`](findings.md), with a runnable exhibit at [`tools/type-designator-demo/`](tools/type-designator-demo/).
+
+  `tests/linkml_behavior/` and each topic directory under it are **Python packages** (they carry an `__init__.py`). Those markers are **required**, not decorative: without them both pytest's default "prepend" import mode and `mypy` resolve the identically named modules in sibling topics (`_cases`, `conftest`, `test_validate`, …) to the same top-level module name and refuse to collect the second one. Import within the tree relatively (`from ._cases import ...`, `from .._generation import ...`) for the same reason.
+
+  A topic directory holds `schema.yaml`, instance YAML files, `_cases.py` with the `(target_class, instance)` case lists, a `conftest.py`, and one `test_*.py` per validator (`linkml-validate`, `gen-json-schema` + `check-jsonschema`, `gen-pydantic` + Pydantic). The artifact generation itself lives once in [`tests/linkml_behavior/_generation.py`](../../../tests/linkml_behavior/_generation.py); each `conftest.py` is just that topic's `SCHEMA` / `CLASSES` / `INSTANCES` plus thin session-scoped fixtures delegating to those helpers.
+
+  **Keep those fixtures topic-local — do not hoist them into a parent `conftest.py`.** A fixture defined in a parent `conftest.py` has a single `FixtureDef` shared by every topic below it, so at session scope the artifacts generated for whichever topic ran first are silently handed to all the others, even though each topic supplies its own schema. The passing cases then fail confusingly and, worse, the failing cases keep passing while asserting nothing. Narrowing the scope to `module` avoids the bug but nothing enforces it, so a later "optimization" back to `session` reintroduces it.
 
 ## Upstream tool we own
 

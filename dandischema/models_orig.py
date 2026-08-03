@@ -120,9 +120,13 @@ if TYPE_CHECKING:
         ...  # fmt: skip
 
 else:
+    # `sorted()` makes the member order, and hence the JSON schema, consistent.
     LicenseType = Enum(
         "LicenseType",
-        [(license_.name, license_.value) for license_ in _INSTANCE_CONFIG.licenses],
+        [
+            (license_.name, license_.value)
+            for license_ in sorted(_INSTANCE_CONFIG.licenses, key=lambda lic: lic.value)
+        ],
     )
     r"""
     An enumeration of supported licenses

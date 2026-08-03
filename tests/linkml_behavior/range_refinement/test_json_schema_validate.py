@@ -2,12 +2,11 @@
 Tests that the JSON schema generated from the LinkML schema via
 ``gen-json-schema --title-from title`` (matching the invocation used in
 ``pyproject.toml``'s ``linkml-auto-converted:2json`` script) honors a
-``slot_usage`` entry that refines an inherited slot from ``required: False``
-to ``required: True`` while preserving the slot's other inherited
-constraints (here, ``range``). This is the LinkML behavior that the LinkML
-version of `dandischema` relies on.
-
-See https://github.com/dandi/dandi-schema/issues/405.
+``slot_usage`` entry that respecifies the range of an inherited multivalued
+slot, both when the new range is a subclass of the inherited one and when it
+is ``Any`` constrained by an ``any_of``. These are the LinkML behaviors that
+the LinkML version of `dandischema` relies on for the ``wasGeneratedBy``
+range overrides carried in ``dandischema/models_merge.yaml``.
 """
 
 from __future__ import annotations

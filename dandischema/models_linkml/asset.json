@@ -771,6 +771,7 @@
                 "wasGeneratedBy": {
                     "description": "Describe the session, project or activity that generated this asset.",
                     "items": {
+                        "$ref": "#/$defs/Any",
                         "anyOf": [
                             {
                                 "$ref": "#/$defs/Session"
@@ -1207,6 +1208,7 @@
                 "wasGeneratedBy": {
                     "description": "Describe the session, project or activity that generated this asset.",
                     "items": {
+                        "$ref": "#/$defs/Any",
                         "anyOf": [
                             {
                                 "$ref": "#/$defs/Session"
@@ -1966,20 +1968,7 @@
                 "wasGeneratedBy": {
                     "description": "Project(s) that generated this Dandiset.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Activity"
-                            },
-                            {
-                                "$ref": "#/$defs/Project"
-                            },
-                            {
-                                "$ref": "#/$defs/PublishActivity"
-                            },
-                            {
-                                "$ref": "#/$defs/Session"
-                            }
-                        ]
+                        "$ref": "#/$defs/Project"
                     },
                     "title": "Associated projects",
                     "type": [
@@ -3375,6 +3364,7 @@
                 "wasGeneratedBy": {
                     "description": "Describe the session, project or activity that generated this asset.",
                     "items": {
+                        "$ref": "#/$defs/Any",
                         "anyOf": [
                             {
                                 "$ref": "#/$defs/Session"
@@ -3679,20 +3669,7 @@
                 "wasGeneratedBy": {
                     "description": "Project(s) that generated this Dandiset.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Activity"
-                            },
-                            {
-                                "$ref": "#/$defs/Project"
-                            },
-                            {
-                                "$ref": "#/$defs/PublishActivity"
-                            },
-                            {
-                                "$ref": "#/$defs/Session"
-                            }
-                        ]
+                        "$ref": "#/$defs/Project"
                     },
                     "title": "Associated projects",
                     "type": [
@@ -4653,6 +4630,7 @@
         "wasGeneratedBy": {
             "description": "Describe the session, project or activity that generated this asset.",
             "items": {
+                "$ref": "#/$defs/Any",
                 "anyOf": [
                     {
                         "$ref": "#/$defs/Session"

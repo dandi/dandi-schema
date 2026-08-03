@@ -15,11 +15,13 @@ from .._generation import (
 HERE = Path(__file__).parent
 SCHEMA = HERE / "schema.yaml"
 
-CLASSES = ("Person", "Employee")
+CLASSES = ("DeclaredRangeHolder", "NarrowedRangeHolder", "AnyOfRangeHolder")
 INSTANCES = (
-    "valid_instance.yaml",
-    "missing_name_instance.yaml",
-    "bad_type_instance.yaml",
+    "range_base_instance.yaml",
+    "range_subclass_instance.yaml",
+    "range_sibling_subclass_instance.yaml",
+    "two_range_subclasses_instance.yaml",
+    "outside_hierarchy_instance.yaml",
 )
 
 
