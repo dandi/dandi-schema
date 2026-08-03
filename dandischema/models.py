@@ -120,9 +120,13 @@ if TYPE_CHECKING:
         ...  # fmt: skip
 
 else:
+    # `sorted()` makes the member order, and hence the JSON schema, consistent.
     LicenseType = Enum(
         "LicenseType",
-        [(license_.name, license_.value) for license_ in _INSTANCE_CONFIG.licenses],
+        [
+            (license_.name, license_.value)
+            for license_ in sorted(_INSTANCE_CONFIG.licenses, key=lambda lic: lic.value)
+        ],
     )
     r"""
     An enumeration of supported licenses
@@ -642,14 +646,14 @@ class DandiBaseModel(BaseModel):
                     value["type"] = "object"
                     del value["allOf"]
             if anyOf is not None:
-                if len(anyOf) > 1 and any(["$ref" in val for val in anyOf]):
+                if len(anyOf) > 1 and any("$ref" in val for val in anyOf):
                     value["type"] = "object"
             if items is not None:
                 anyOf = items.get("anyOf")
                 if (
                     anyOf is not None
                     and len(anyOf) > 1
-                    and any(["$ref" in val for val in anyOf])
+                    and any("$ref" in val for val in anyOf)
                 ):
                     value["items"]["type"] = "object"
             # In pydantic 1.8+ all Literals are mapped on to enum
