@@ -1,3 +1,75 @@
+# 0.13.0 (Mon Aug 03 2026)
+
+### Release Notes
+
+#### Remove the `missing_ok` parameter from `metadata.validate()` ([#422](https://github.com/dandi/dandi-schema/pull/422))
+
+The `missing_ok` parameter of the `validate()` function in the `dandischema.metadata` module has been removed. Any call passing `missing_ok` (regardless of its value) must be updated to no longer pass it.
+
+---
+
+#### 🚀 Enhancement
+
+- Consolidate Asset/Dandiset models; gate publish validation on datePublished [#419](https://github.com/dandi/dandi-schema/pull/419) ([@candleindark](https://github.com/candleindark))
+- Remove the `missing_ok` parameter from `metadata.validate()` [#422](https://github.com/dandi/dandi-schema/pull/422) ([@candleindark](https://github.com/candleindark))
+
+#### 🐛 Bug Fix
+
+- fix: sort `LicenseType` members by value for reproducible schemas [#434](https://github.com/dandi/dandi-schema/pull/434) ([@candleindark](https://github.com/candleindark))
+- docs: add Integration Tests badge to README [#426](https://github.com/dandi/dandi-schema/pull/426) ([@candleindark](https://github.com/candleindark))
+- docs: add Tests CI badge to README [#425](https://github.com/dandi/dandi-schema/pull/425) ([@bendichter](https://github.com/bendichter))
+- Inherit readOnly from CommonModel for access of BareAsset [#414](https://github.com/dandi/dandi-schema/pull/414) ([@yarikoptic](https://github.com/yarikoptic) [@candleindark](https://github.com/candleindark))
+- Count only for the first hit for subject or tissue within filename [#173](https://github.com/dandi/dandi-schema/pull/173) ([@yarikoptic](https://github.com/yarikoptic))
+- ci: remove last use of DANDI_ALLOW_LOCALHOST_URLS env var [#375](https://github.com/dandi/dandi-schema/pull/375) ([@candleindark](https://github.com/candleindark))
+- Add Python 3.13/3.14 support in package metadata and CI test matrices [#377](https://github.com/dandi/dandi-schema/pull/377) ([@Copilot](https://github.com/Copilot))
+- maint: drop Python 3.9 support, require Python >=3.10 [#374](https://github.com/dandi/dandi-schema/pull/374) ([@candleindark](https://github.com/candleindark))
+- Remove `readOnly` JSON Schema keyword on `sameAs` field of `Dandiset` [#370](https://github.com/dandi/dandi-schema/pull/370) ([@candleindark](https://github.com/candleindark))
+- Add `sameAs` field to the `Dandiset` model` [#364](https://github.com/dandi/dandi-schema/pull/364) ([@candleindark](https://github.com/candleindark))
+
+#### 🏠 Internal
+
+- fix: guard against empty loc tuples; drop redundant list comprehensions [#429](https://github.com/dandi/dandi-schema/pull/429) ([@candleindark](https://github.com/candleindark))
+- [gh-actions](deps): Bump actions/setup-python from 6 to 7 [#431](https://github.com/dandi/dandi-schema/pull/431) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- [gh-actions](deps): Bump actions/checkout from 6 to 7 [#423](https://github.com/dandi/dandi-schema/pull/423) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#427](https://github.com/dandi/dandi-schema/pull/427) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [gh-actions](deps): Bump codecov/codecov-action from 6 to 7 [#420](https://github.com/dandi/dandi-schema/pull/420) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#415](https://github.com/dandi/dandi-schema/pull/415) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#412](https://github.com/dandi/dandi-schema/pull/412) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [gh-actions](deps): Bump codecov/codecov-action from 5 to 6 [#392](https://github.com/dandi/dandi-schema/pull/392) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#384](https://github.com/dandi/dandi-schema/pull/384) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#378](https://github.com/dandi/dandi-schema/pull/378) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- Introduce Hatch-managed environments to the project [#380](https://github.com/dandi/dandi-schema/pull/380) ([@candleindark](https://github.com/candleindark))
+- Consolidate package metadata from setup.py/setup.cfg into pyproject.toml [#379](https://github.com/dandi/dandi-schema/pull/379) ([@candleindark](https://github.com/candleindark) [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#373](https://github.com/dandi/dandi-schema/pull/373) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [pre-commit.ci] pre-commit autoupdate [#277](https://github.com/dandi/dandi-schema/pull/277) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- [gh-actions](deps): Bump actions/checkout from 5 to 6 [#352](https://github.com/dandi/dandi-schema/pull/352) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### 📝 Documentation
+
+- DOC: Adopt from dandi-cli - rudimentary CLAUDE.md  and pytest_plugin.py (summary of depends, ai_generated marker, better diff for DandiBaseModel) [#402](https://github.com/dandi/dandi-schema/pull/402) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🧪 Tests
+
+- TESTS: Fix dandi cli testing [#435](https://github.com/dandi/dandi-schema/pull/435) ([@candleindark](https://github.com/candleindark) [@yarikoptic](https://github.com/yarikoptic))
+- test: fix bugs and tighten checks in `test_duplicate_classes` [#428](https://github.com/dandi/dandi-schema/pull/428) ([@candleindark](https://github.com/candleindark))
+- Overhaul dandi-cli testing matrix with explicit schema_install dimension [#396](https://github.com/dandi/dandi-schema/pull/396) ([@claude](https://github.com/claude) [@yarikoptic-gitmate](https://github.com/yarikoptic-gitmate))
+- test: add wait time after DOI creation [#363](https://github.com/dandi/dandi-schema/pull/363) ([@candleindark](https://github.com/candleindark))
+- ci: update test configuration to vendorize dandiapi instance in tests [#360](https://github.com/dandi/dandi-schema/pull/360) ([@candleindark](https://github.com/candleindark))
+- Remove use of Python 3.9 in tests against dandi-cli [#359](https://github.com/dandi/dandi-schema/pull/359) ([@candleindark](https://github.com/candleindark))
+
+#### Authors: 8
+
+- [@Copilot](https://github.com/Copilot)
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Ben Dichter ([@bendichter](https://github.com/bendichter))
+- Claude ([@claude](https://github.com/claude))
+- GitMate for @yarikoptic ([@yarikoptic-gitmate](https://github.com/yarikoptic-gitmate))
+- Isaac To ([@candleindark](https://github.com/candleindark))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.12.1 (Wed Nov 26 2025)
 
 #### 🐛 Bug Fix
