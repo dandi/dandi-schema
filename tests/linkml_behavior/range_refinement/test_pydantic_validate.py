@@ -13,10 +13,10 @@ from __future__ import annotations
 
 from types import ModuleType
 
-from pydantic import ValidationError
 import pytest
 
 from ._cases import FAILING_CASES, PASSING_CASES
+from .._validators import assert_pydantic_validate
 
 
 @pytest.mark.parametrize(("target_class", "instance"), PASSING_CASES)
@@ -26,8 +26,9 @@ def test_validation_passes(
     pydantic_module: ModuleType,
     instance_data: dict[str, dict],
 ) -> None:
-    cls = getattr(pydantic_module, target_class)
-    cls.model_validate(instance_data[instance])
+    assert_pydantic_validate(
+        pydantic_module, instance_data, target_class, instance, expect_pass=True
+    )
 
 
 @pytest.mark.parametrize(("target_class", "instance"), FAILING_CASES)
@@ -37,6 +38,6 @@ def test_validation_fails(
     pydantic_module: ModuleType,
     instance_data: dict[str, dict],
 ) -> None:
-    cls = getattr(pydantic_module, target_class)
-    with pytest.raises(ValidationError):
-        cls.model_validate(instance_data[instance])
+    assert_pydantic_validate(
+        pydantic_module, instance_data, target_class, instance, expect_pass=False
+    )

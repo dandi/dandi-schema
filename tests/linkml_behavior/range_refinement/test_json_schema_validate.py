@@ -7,35 +7,16 @@ slot, both when the new range is a subclass of the inherited one and when it
 is ``Any`` constrained by an ``any_of``. These are the LinkML behaviors that
 the LinkML version of `dandischema` relies on for the ``wasGeneratedBy``
 range overrides carried in ``dandischema/models_merge.yaml``.
-
-Validation is performed via the ``check-jsonschema`` CLI, which has JSON
-Schema ``format`` validation enabled by default (see
-https://check-jsonschema.readthedocs.io/en/stable/usage.html — disabled
-only via ``--disable-formats``).
 """
 
 from __future__ import annotations
 
 from pathlib import Path
-import subprocess
 
 import pytest
 
 from ._cases import FAILING_CASES, PASSING_CASES
-
-
-def _validate(schema: Path, instance: Path) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [
-            "check-jsonschema",
-            "--schemafile",
-            str(schema),
-            str(instance),
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+from .._validators import assert_check_jsonschema
 
 
 @pytest.mark.parametrize(("target_class", "instance"), PASSING_CASES)
@@ -45,10 +26,8 @@ def test_validation_passes(
     json_schemas: dict[str, Path],
     json_instances: dict[str, Path],
 ) -> None:
-    result = _validate(json_schemas[target_class], json_instances[instance])
-    assert result.returncode == 0, (
-        f"expected validation to pass for {target_class} <- {instance}, "
-        f"got rc={result.returncode}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    assert_check_jsonschema(
+        json_schemas, json_instances, target_class, instance, expect_pass=True
     )
 
 
@@ -59,8 +38,6 @@ def test_validation_fails(
     json_schemas: dict[str, Path],
     json_instances: dict[str, Path],
 ) -> None:
-    result = _validate(json_schemas[target_class], json_instances[instance])
-    assert result.returncode != 0, (
-        f"expected validation to fail for {target_class} <- {instance}, "
-        f"got rc={result.returncode}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    assert_check_jsonschema(
+        json_schemas, json_instances, target_class, instance, expect_pass=False
     )

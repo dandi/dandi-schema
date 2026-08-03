@@ -10,45 +10,20 @@ subclass of the inherited one and when it is `Any` constrained by an
 from __future__ import annotations
 
 from pathlib import Path
-import subprocess
 
 import pytest
 
 from ._cases import FAILING_CASES, PASSING_CASES
+from .._validators import assert_linkml_validate
 
-HERE = Path(__file__).parent
-SCHEMA = HERE / "schema.yaml"
-
-
-def _validate(target_class: str, instance: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [
-            "linkml-validate",
-            "--schema",
-            str(SCHEMA),
-            "--target-class",
-            target_class,
-            str(HERE / instance),
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+SCHEMA = Path(__file__).parent / "schema.yaml"
 
 
 @pytest.mark.parametrize(("target_class", "instance"), PASSING_CASES)
 def test_validation_passes(target_class: str, instance: str) -> None:
-    result = _validate(target_class, instance)
-    assert result.returncode == 0, (
-        f"expected validation to pass for {target_class} <- {instance}, "
-        f"got rc={result.returncode}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-    )
+    assert_linkml_validate(SCHEMA, target_class, instance, expect_pass=True)
 
 
 @pytest.mark.parametrize(("target_class", "instance"), FAILING_CASES)
 def test_validation_fails(target_class: str, instance: str) -> None:
-    result = _validate(target_class, instance)
-    assert result.returncode != 0, (
-        f"expected validation to fail for {target_class} <- {instance}, "
-        f"got rc={result.returncode}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-    )
+    assert_linkml_validate(SCHEMA, target_class, instance, expect_pass=False)
