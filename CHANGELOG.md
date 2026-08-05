@@ -1,3 +1,22 @@
+# 0.14.0 (Wed Aug 05 2026)
+
+#### 🚀 Enhancement
+
+- Add ability to downgrade schema all the way to 0.6.10 [#342](https://github.com/dandi/dandi-schema/pull/342) ([@yarikoptic](https://github.com/yarikoptic))
+
+#### 🏠 Internal
+
+- [pre-commit.ci] pre-commit autoupdate [#432](https://github.com/dandi/dandi-schema/pull/432) ([@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot]))
+- chore: auto - run "released" plugin before "exec" [#436](https://github.com/dandi/dandi-schema/pull/436) ([@yarikoptic](https://github.com/yarikoptic) [@dandibot](https://github.com/dandibot))
+
+#### Authors: 3
+
+- [@pre-commit-ci[bot]](https://github.com/pre-commit-ci[bot])
+- Dandi Bot ([@dandibot](https://github.com/dandibot))
+- Yaroslav Halchenko ([@yarikoptic](https://github.com/yarikoptic))
+
+---
+
 # 0.13.0 (Mon Aug 03 2026)
 
 ### Release Notes
