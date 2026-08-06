@@ -928,7 +928,7 @@ class Contributor(DandiBaseModel):
         description="Identifier associated with a sponsored or gift award.",
         json_schema_extra={"nskey": DANDI_NSKEY},
     )
-    schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
+    schemaKey: Literal["Contributor"] = Field(
         "Contributor", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -965,7 +965,7 @@ class Organization(Contributor):
         description="Contact for the organization",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Organization"] = Field(
+    schemaKey: Literal["Organization"] = Field(  # type: ignore[assignment]
         "Organization", validate_default=True, json_schema_extra={"readOnly": True}
     )
     _ldmeta = {
@@ -1014,7 +1014,7 @@ class Person(Contributor):
         description="An organization that this person is affiliated with.",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Person"] = Field(
+    schemaKey: Literal["Person"] = Field(  # type: ignore[assignment]
         "Person", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1289,7 +1289,7 @@ class Activity(DandiBaseModel):
         description="A listing of equipment used for the activity.",
         json_schema_extra={"nskey": "prov"},
     )
-    schemaKey: Literal["Activity", "Project", "Session", "PublishActivity"] = Field(
+    schemaKey: Literal["Activity"] = Field(
         "Activity", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1311,7 +1311,7 @@ class Project(Activity):
         description="A brief description of the project.",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Project"] = Field(
+    schemaKey: Literal["Project"] = Field(  # type: ignore[assignment]
         "Project", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1328,13 +1328,13 @@ class Session(Activity):
         description="A brief description of the session.",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Session"] = Field(
+    schemaKey: Literal["Session"] = Field(  # type: ignore[assignment]
         "Session", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
 
 class PublishActivity(Activity):
-    schemaKey: Literal["PublishActivity"] = Field(
+    schemaKey: Literal["PublishActivity"] = Field(  # type: ignore[assignment]
         "PublishActivity", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
