@@ -11,7 +11,6 @@ from typing import (
     List,
     Literal,
     Optional,
-    Sequence,
     Type,
     TypeVar,
     Union,
@@ -1637,9 +1636,9 @@ class CommonModel(DandiBaseModel):
         None, json_schema_extra={"nskey": DANDI_NSKEY}
     )
 
-    wasGeneratedBy: Optional[Sequence[Activity]] = Field(
-        None, json_schema_extra={"nskey": "prov"}
-    )
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(None, json_schema_extra={"nskey": "prov"})
     schemaKey: str = Field(
         "CommonModel", validate_default=True, json_schema_extra={"readOnly": True}
     )
@@ -1784,7 +1783,7 @@ class Dandiset(CommonModel):
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
 
-    wasGeneratedBy: Optional[Sequence[Project]] = Field(
+    wasGeneratedBy: Optional[list[Project]] = Field(  # type: ignore[assignment]
         None,
         title="Associated projects",
         description="Project(s) that generated this Dandiset.",
@@ -1927,10 +1926,12 @@ class BareAsset(CommonModel):
         description="Associated participant(s) or subject(s).",
         json_schema_extra={"nskey": "prov"},
     )
-    wasGeneratedBy: Optional[List[Union[Session, Project, Activity]]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         None,
-        title="Name of the session, project or activity.",
-        description="Describe the session, project or activity that generated this asset.",
+        title="Associated activities",
+        description="Activities that generated this asset.",
         json_schema_extra={"nskey": "prov"},
     )
 
