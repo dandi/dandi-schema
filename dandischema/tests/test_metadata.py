@@ -13,7 +13,6 @@ from dandischema.utils import TransitionalGenerateJsonSchema
 
 from .utils import (
     DANDISET_METADATA_DIR,
-    DOI_PREFIX,
     INSTANCE_NAME,
     METADATA_DIR,
     skipif_instance_name_not_dandi,
@@ -130,27 +129,23 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # ``PublishedDandiset`` is now an alias of ``Dandiset``; its
+            # publication-only fields are optional (gated on ``datePublished``),
+            # so an incomplete instance reports the same missing fields as
+            # ``Dandiset``.
             {"schemaKey": "Dandiset"},
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "contributor",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "contributor",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -160,24 +155,16 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "contributor",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "contributor",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -194,23 +181,15 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -235,12 +214,13 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             {"contentSize", "encodingFormat", "id", "identifier", "path", "contentUrl"},
         ),
         (
+            # ``PublishedAsset`` is now an alias of ``Asset``; ``publishedBy`` and
+            # ``datePublished`` are optional (gated on ``datePublished``), so an
+            # incomplete instance reports the same missing fields as ``Asset``.
             {"schemaKey": "Asset"},
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -250,15 +230,15 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # A sha2_256-only digest fails ``digest_check`` (a non-zarr asset must
+            # have a dandi-etag), so ``digest`` is reported too.
             {
                 "schemaKey": "Asset",
                 "digest": {"dandi:sha2-256": sha256(b"test").hexdigest()},
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -268,20 +248,21 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # A valid etag digest passes ``digest_check``; the sha2_256
+            # requirement is gated on ``datePublished`` and the model validator
+            # never runs here (required fields are missing), so ``digest`` is not
+            # reported.
             {
                 "schemaKey": "Asset",
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
                 "path",
-                "digest",
                 "contentUrl",
             },
         ),
@@ -295,9 +276,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -363,20 +342,6 @@ def test_migrate_value_errors(obj: Dict[str, Any], target: Any, msg: str) -> Non
     """
     with pytest.raises(ValueError, match=msg):
         migrate(obj, to_version=target, skip_validation=True)
-
-
-def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> None:
-    """
-    Test cases when `migrate()` is expected to raise a `ValueError` exception
-    when the target schema version is lesser than the schema version of the metadata
-    instance
-    """
-    from dandischema import metadata
-
-    monkeypatch.setattr(metadata, "ALLOWED_TARGET_SCHEMAS", ["0.6.0"])
-
-    with pytest.raises(ValueError, match="Cannot migrate from .* to lower"):
-        migrate({"schemaVersion": "0.6.7"}, to_version="0.6.0", skip_validation=True)
 
 
 @skipif_no_network
@@ -448,6 +413,65 @@ def test_migrate_schemaversion_update() -> None:
         f"Expected schemaVersion to be {DANDI_SCHEMA_VERSION}, "
         f"but got {result['schemaVersion']}"
     )
+
+
+@pytest.mark.ai_generated
+def test_migrate_downgrade() -> None:
+    """Test downgrade from 0.7.0 to 0.6.10 handling releaseNotes and sameAs fields"""
+
+    # Minimal metadata at current (0.7.0) version
+    meta_dict: dict = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "identifier": "DANDI:000000",
+    }
+
+    # Test 1: Downgrade without new fields (should succeed)
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+    assert "sameAs" not in downgraded
+
+    # Test 2: Downgrade with empty releaseNotes (should succeed)
+    meta_dict["releaseNotes"] = ""
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 3: Downgrade with None releaseNotes (should succeed)
+    meta_dict["releaseNotes"] = None
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 4: Downgrade with empty sameAs list (should succeed)
+    meta_dict.pop("releaseNotes")
+    meta_dict["sameAs"] = []
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "sameAs" not in downgraded
+
+    # Test 5: Downgrade with non-empty releaseNotes (should fail)
+    meta_dict.pop("sameAs")
+    meta_dict["releaseNotes"] = "Releasing during testing"
+    with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
+        migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+
+    # Test 6: Downgrade with non-empty sameAs (should fail)
+    meta_dict.pop("releaseNotes")
+    meta_dict["sameAs"] = ["dandi://DANDI-SANDBOX/123456"]
+    with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
+        migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+
+    # Test 7: No-op migration (already at target version)
+    meta_dict_0610 = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": "0.6.10",
+        "identifier": "DANDI:000000",
+    }
+    migrated = migrate(meta_dict_0610, to_version="0.6.10", skip_validation=True)
+    assert migrated == meta_dict_0610
+    assert migrated is not meta_dict_0610  # but we do create a copy
 
 
 @pytest.mark.parametrize(
