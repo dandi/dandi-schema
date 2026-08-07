@@ -1928,12 +1928,6 @@ class BareAsset(CommonModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
             "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "MANUAL_NOTE: The default of the `schemaKey` field in the "
-                "corresponding Pydantic model in `dandischema.models` is not the "
-                "model's name. Adjustment to the inherited `schemaKey` slot may be "
-                "needed."
-            ],
             "slot_usage": {
                 "access": {
                     "maximum_cardinality": 1,
@@ -6492,38 +6486,6 @@ class StrainType(BaseType):
     )
 
 
-class PublishedAsset(ConfiguredBaseModel):
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "MANUAL_NOTE: The default of the `schemaKey` field in the "
-                "corresponding Pydantic model in `dandischema.models` is not the "
-                "model's name. Adjustment to the inherited `schemaKey` slot may be "
-                "needed."
-            ],
-        }
-    )
-
-    pass
-
-
-class PublishedDandiset(ConfiguredBaseModel):
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "notes": [
-                "MANUAL_NOTE: The default of the `schemaKey` field in the "
-                "corresponding Pydantic model in `dandischema.models` is not the "
-                "model's name. Adjustment to the inherited `schemaKey` slot may be "
-                "needed."
-            ],
-        }
-    )
-
-    pass
-
-
 # Model rebuild
 # see https://pydantic-docs.helpmanual.io/usage/models/#rebuilding-a-model
 DandiBaseModel.model_rebuild()
@@ -6566,5 +6528,3 @@ Software.model_rebuild()
 SpeciesType.model_rebuild()
 StandardsType.model_rebuild()
 StrainType.model_rebuild()
-PublishedAsset.model_rebuild()
-PublishedDandiset.model_rebuild()

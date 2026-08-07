@@ -3057,18 +3057,6 @@
             "title": "PublishActivity",
             "type": "object"
         },
-        "PublishedAsset": {
-            "additionalProperties": false,
-            "description": "",
-            "title": "PublishedAsset",
-            "type": "object"
-        },
-        "PublishedDandiset": {
-            "additionalProperties": false,
-            "description": "",
-            "title": "PublishedDandiset",
-            "type": "object"
-        },
         "RelatedParticipant": {
             "additionalProperties": false,
             "description": "",

@@ -9,7 +9,7 @@ import dandischema.models as mod
 
 # The set of the names of classes where the schemaKey default doesn't match the class
 # name in the last recorded inspection of this script
-LAST_SCHEMAKEY_MISMATCHES = {"BareAsset", "PublishedAsset", "PublishedDandiset"}
+LAST_SCHEMAKEY_MISMATCHES: set[str] = set()
 
 # The set of the names of classes where the schemaKey default doesn't match the class
 # name
@@ -21,6 +21,9 @@ for name, cls in inspect.getmembers(mod, inspect.isclass):
         continue
     # Skip re-exported classes defined in other modules
     if cls.__module__ != mod.__name__:
+        continue
+    # Skip a re-exposure of a class via an alias
+    if cls.__name__ != name and getattr(mod, cls.__name__, None) is cls:
         continue
 
     fields = cls.model_fields

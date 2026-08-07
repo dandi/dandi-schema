@@ -931,10 +931,6 @@ classes:
   BareAsset:
     description: Metadata used to describe an asset anywhere (local or server).
       Derived from C2M2 (Level 0 and 1) and schema.org
-    notes:
-    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
-      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
-      `schemaKey` slot may be needed.'
     is_a: CommonModel
     slots:
     - approach
@@ -1470,13 +1466,3 @@ classes:
   StrainType:
     description: Identifier for the strain of the sample
     is_a: BaseType
-  PublishedAsset:
-    notes:
-    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
-      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
-      `schemaKey` slot may be needed.'
-  PublishedDandiset:
-    notes:
-    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
-      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
-      `schemaKey` slot may be needed.'
