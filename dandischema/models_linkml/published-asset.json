@@ -583,6 +583,13 @@
                         "null"
                     ]
                 },
+                "datePublished": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "description": {
                     "description": "A description of the item.",
                     "type": [
@@ -679,6 +686,22 @@
                         "array",
                         "null"
                     ]
+                },
+                "publishedBy": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/PublishActivity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The URL should contain the provenance of the publishing process."
                 },
                 "relatedResource": {
                     "items": {
@@ -1823,6 +1846,13 @@
                         "null"
                     ]
                 },
+                "datePublished": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "description": {
                     "allOf": [
                         {
@@ -1831,6 +1861,14 @@
                     ],
                     "description": "A description of the Dandiset",
                     "type": "string"
+                },
+                "doi": {
+                    "pattern": "^(10\\.\\d{4,}/[a-z][-a-z]*\\.\\d{6}/\\d+\\.\\d+\\.\\d+|)$",
+                    "title": "DOI",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 },
                 "ethicsApproval": {
                     "items": {
@@ -1902,12 +1940,35 @@
                         "null"
                     ]
                 },
+                "publishedBy": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/PublishActivity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The URL should contain the provenance of the publishing process."
+                },
                 "relatedResource": {
                     "items": {
                         "$ref": "#/$defs/Resource"
                     },
                     "type": [
                         "array",
+                        "null"
+                    ]
+                },
+                "releaseNotes": {
+                    "description": "The description of the release",
+                    "type": [
+                        "string",
                         "null"
                     ]
                 },
@@ -1954,7 +2015,7 @@
                     ]
                 },
                 "url": {
-                    "description": "permalink to the item",
+                    "description": "Permalink to the Dandiset.",
                     "format": "uri",
                     "pattern": "^(?i:http|https)://[^\\s]+$",
                     "type": [
@@ -2996,704 +3057,15 @@
             "title": "PublishActivity",
             "type": "object"
         },
-        "Publishable": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "datePublished": {
-                    "format": "date-time",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "Uniform resource identifier",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "publishedBy": {
-                    "$ref": "#/$defs/Any",
-                    "anyOf": [
-                        {
-                            "format": "uri",
-                            "pattern": "^(?i:http|https)://[^\\s]+$",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/PublishActivity"
-                        }
-                    ],
-                    "description": "The URL should contain the provenance of the publishing process."
-                },
-                "schemaKey": {
-                    "enum": [
-                        "Publishable"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "datePublished",
-                "publishedBy",
-                "schemaKey"
-            ],
-            "title": "Publishable",
-            "type": "object"
-        },
         "PublishedAsset": {
             "additionalProperties": false,
             "description": "",
-            "properties": {
-                "about": {
-                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
-                    "items": {
-                        "$ref": "#/$defs/Any",
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Disorder"
-                            },
-                            {
-                                "$ref": "#/$defs/Anatomy"
-                            },
-                            {
-                                "$ref": "#/$defs/GenericType"
-                            }
-                        ]
-                    },
-                    "title": "Subject matter of the dataset",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "access": {
-                    "items": {
-                        "$ref": "#/$defs/AccessRequirements"
-                    },
-                    "maxItems": 1,
-                    "title": "Access information",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "acknowledgement": {
-                    "description": "Any acknowledgments not covered by contributors or external resources.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "approach": {
-                    "items": {
-                        "$ref": "#/$defs/ApproachType"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "blobDateModified": {
-                    "format": "date-time",
-                    "title": "Asset file modification date and time.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "contentSize": {
-                    "$ref": "#/$defs/Any",
-                    "anyOf": [
-                        {
-                            "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?",
-                            "type": "string"
-                        },
-                        {
-                            "minimum": 0,
-                            "type": "integer"
-                        }
-                    ]
-                },
-                "contentUrl": {
-                    "items": {
-                        "format": "uri",
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "contributor": {
-                    "description": "Contributors to this item: persons or organizations.",
-                    "items": {
-                        "$ref": "#/$defs/Any",
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Person"
-                            },
-                            {
-                                "$ref": "#/$defs/Organization"
-                            }
-                        ]
-                    },
-                    "title": "Contributors",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "dataType": {
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "dateModified": {
-                    "format": "date-time",
-                    "title": "Asset (file or metadata) modification date and time",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "datePublished": {
-                    "format": "date-time",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "A description of the item.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "digest": {
-                    "title": "A map of dandi digests to their values",
-                    "type": "string"
-                },
-                "encodingFormat": {
-                    "$ref": "#/$defs/Any",
-                    "anyOf": [
-                        {
-                            "format": "uri",
-                            "pattern": "^(?i:http|https)://[^\\s]+$",
-                            "type": "string"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "title": "File encoding format"
-                },
-                "ethicsApproval": {
-                    "items": {
-                        "$ref": "#/$defs/EthicsApproval"
-                    },
-                    "title": "Ethics approvals",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "id": {
-                    "description": "Uniform resource identifier.",
-                    "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
-                    "type": "string"
-                },
-                "identifier": {
-                    "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
-                    "type": "string"
-                },
-                "keywords": {
-                    "description": "Keywords used to describe this content.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "license": {
-                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
-                    "items": {
-                        "$ref": "#/$defs/LicenseType"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "measurementTechnique": {
-                    "items": {
-                        "$ref": "#/$defs/MeasurementTechniqueType"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "name": {
-                    "allOf": [
-                        {
-                            "pattern": "^[\\s\\S]{,150}\\Z"
-                        }
-                    ],
-                    "description": "The name of the item.",
-                    "title": "Title",
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "protocol": {
-                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
-                    "items": {
-                        "format": "uri",
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "publishedBy": {
-                    "$ref": "#/$defs/Any",
-                    "anyOf": [
-                        {
-                            "format": "uri",
-                            "pattern": "^(?i:http|https)://[^\\s]+$",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/PublishActivity"
-                        }
-                    ],
-                    "description": "The URL should contain the provenance of the publishing process."
-                },
-                "relatedResource": {
-                    "items": {
-                        "$ref": "#/$defs/Resource"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "repository": {
-                    "description": "location of the item",
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "sameAs": {
-                    "items": {
-                        "format": "uri",
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "schemaKey": {
-                    "enum": [
-                        "PublishedAsset"
-                    ],
-                    "type": "string"
-                },
-                "schemaVersion": {
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "studyTarget": {
-                    "description": "Objectives or specific questions of the study.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "url": {
-                    "description": "permalink to the item",
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "variableMeasured": {
-                    "items": {
-                        "$ref": "#/$defs/PropertyValue"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "wasAttributedTo": {
-                    "description": "Associated participant(s) or subject(s).",
-                    "items": {
-                        "$ref": "#/$defs/Participant"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "wasDerivedFrom": {
-                    "items": {
-                        "$ref": "#/$defs/BioSample"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "wasGeneratedBy": {
-                    "description": "Describe the session, project or activity that generated this asset.",
-                    "items": {
-                        "$ref": "#/$defs/Any",
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Session"
-                            },
-                            {
-                                "$ref": "#/$defs/Project"
-                            },
-                            {
-                                "anyOf": [
-                                    {
-                                        "$ref": "#/$defs/Activity"
-                                    },
-                                    {
-                                        "$ref": "#/$defs/Project"
-                                    },
-                                    {
-                                        "$ref": "#/$defs/PublishActivity"
-                                    },
-                                    {
-                                        "$ref": "#/$defs/Session"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "title": "Name of the session, project or activity.",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                }
-            },
-            "required": [
-                "datePublished",
-                "publishedBy",
-                "contentUrl",
-                "identifier",
-                "contentSize",
-                "digest",
-                "encodingFormat",
-                "path",
-                "id",
-                "schemaKey"
-            ],
             "title": "PublishedAsset",
             "type": "object"
         },
         "PublishedDandiset": {
             "additionalProperties": false,
             "description": "",
-            "properties": {
-                "about": {
-                    "description": "The subject matter of the content, such as disorders, brain anatomy.",
-                    "items": {
-                        "$ref": "#/$defs/Any",
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Disorder"
-                            },
-                            {
-                                "$ref": "#/$defs/Anatomy"
-                            },
-                            {
-                                "$ref": "#/$defs/GenericType"
-                            }
-                        ]
-                    },
-                    "title": "Subject matter of the dataset",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "access": {
-                    "items": {
-                        "$ref": "#/$defs/AccessRequirements"
-                    },
-                    "title": "Access information",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "acknowledgement": {
-                    "description": "Any acknowledgments not covered by contributors or external resources.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "assetsSummary": {
-                    "$ref": "#/$defs/AssetsSummary"
-                },
-                "citation": {
-                    "type": "string"
-                },
-                "contributor": {
-                    "description": "People or Organizations that have contributed to this Dandiset.",
-                    "items": {
-                        "$ref": "#/$defs/Any",
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Person"
-                            },
-                            {
-                                "$ref": "#/$defs/Organization"
-                            }
-                        ]
-                    },
-                    "minItems": 1,
-                    "title": "Dandiset contributors",
-                    "type": "array"
-                },
-                "dateCreated": {
-                    "format": "date-time",
-                    "title": "Dandiset creation date and time.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "dateModified": {
-                    "format": "date-time",
-                    "title": "Last modification date and time.",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "datePublished": {
-                    "format": "date-time",
-                    "type": "string"
-                },
-                "description": {
-                    "allOf": [
-                        {
-                            "pattern": "^[\\s\\S]{,10000}\\Z"
-                        }
-                    ],
-                    "description": "A description of the Dandiset",
-                    "type": "string"
-                },
-                "doi": {
-                    "pattern": "^(10\\.\\d{4,}/[a-z][-a-z]*\\.\\d{6}/\\d+\\.\\d+\\.\\d+|)$",
-                    "title": "DOI",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "ethicsApproval": {
-                    "items": {
-                        "$ref": "#/$defs/EthicsApproval"
-                    },
-                    "title": "Ethics approvals",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "id": {
-                    "description": "Uniform resource identifier.",
-                    "pattern": "^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$",
-                    "type": "string"
-                },
-                "identifier": {
-                    "description": "A Dandiset identifier that can be resolved by identifiers.org.",
-                    "pattern": "^[A-Z][-A-Z]*:\\d{6}$",
-                    "title": "Dandiset identifier",
-                    "type": "string"
-                },
-                "keywords": {
-                    "description": "Keywords used to describe this content.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "license": {
-                    "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
-                    "items": {
-                        "$ref": "#/$defs/LicenseType"
-                    },
-                    "minItems": 1,
-                    "type": "array"
-                },
-                "manifestLocation": {
-                    "items": {
-                        "format": "uri",
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "type": "string"
-                    },
-                    "minItems": 1,
-                    "type": "array"
-                },
-                "name": {
-                    "allOf": [
-                        {
-                            "pattern": "^[\\s\\S]{,150}\\Z"
-                        }
-                    ],
-                    "description": "A title associated with the Dandiset.",
-                    "title": "Dandiset title",
-                    "type": "string"
-                },
-                "protocol": {
-                    "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
-                    "items": {
-                        "format": "uri",
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "publishedBy": {
-                    "$ref": "#/$defs/Any",
-                    "anyOf": [
-                        {
-                            "format": "uri",
-                            "pattern": "^(?i:http|https)://[^\\s]+$",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/PublishActivity"
-                        }
-                    ],
-                    "description": "The URL should contain the provenance of the publishing process."
-                },
-                "relatedResource": {
-                    "items": {
-                        "$ref": "#/$defs/Resource"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "releaseNotes": {
-                    "description": "The description of the release",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "repository": {
-                    "description": "location of the item",
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "sameAs": {
-                    "description": "Known DANDI URLs of the Dandiset at other DANDI instances.",
-                    "items": {
-                        "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "schemaKey": {
-                    "enum": [
-                        "PublishedDandiset"
-                    ],
-                    "type": "string"
-                },
-                "schemaVersion": {
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
-                "studyTarget": {
-                    "description": "Objectives or specific questions of the study.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "url": {
-                    "description": "Permalink to the Dandiset.",
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                },
-                "wasGeneratedBy": {
-                    "description": "Project(s) that generated this Dandiset.",
-                    "items": {
-                        "$ref": "#/$defs/Project"
-                    },
-                    "title": "Associated projects",
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                }
-            },
-            "required": [
-                "datePublished",
-                "publishedBy",
-                "assetsSummary",
-                "citation",
-                "identifier",
-                "manifestLocation",
-                "version",
-                "contributor",
-                "description",
-                "license",
-                "name",
-                "url",
-                "id",
-                "schemaKey"
-            ],
             "title": "PublishedDandiset",
             "type": "object"
         },
@@ -4328,372 +3700,6 @@
     "additionalProperties": true,
     "description": "",
     "metamodel_version": "1.11.0",
-    "properties": {
-        "about": {
-            "description": "The subject matter of the content, such as disorders, brain anatomy.",
-            "items": {
-                "$ref": "#/$defs/Any",
-                "anyOf": [
-                    {
-                        "$ref": "#/$defs/Disorder"
-                    },
-                    {
-                        "$ref": "#/$defs/Anatomy"
-                    },
-                    {
-                        "$ref": "#/$defs/GenericType"
-                    }
-                ]
-            },
-            "title": "Subject matter of the dataset",
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "access": {
-            "items": {
-                "$ref": "#/$defs/AccessRequirements"
-            },
-            "maxItems": 1,
-            "title": "Access information",
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "acknowledgement": {
-            "description": "Any acknowledgments not covered by contributors or external resources.",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "approach": {
-            "items": {
-                "$ref": "#/$defs/ApproachType"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "blobDateModified": {
-            "format": "date-time",
-            "title": "Asset file modification date and time.",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "contentSize": {
-            "$ref": "#/$defs/Any",
-            "anyOf": [
-                {
-                    "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?",
-                    "type": "string"
-                },
-                {
-                    "minimum": 0,
-                    "type": "integer"
-                }
-            ]
-        },
-        "contentUrl": {
-            "items": {
-                "format": "uri",
-                "pattern": "^(?i:http|https)://[^\\s]+$",
-                "type": "string"
-            },
-            "type": "array"
-        },
-        "contributor": {
-            "description": "Contributors to this item: persons or organizations.",
-            "items": {
-                "$ref": "#/$defs/Any",
-                "anyOf": [
-                    {
-                        "$ref": "#/$defs/Person"
-                    },
-                    {
-                        "$ref": "#/$defs/Organization"
-                    }
-                ]
-            },
-            "title": "Contributors",
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "dataType": {
-            "format": "uri",
-            "pattern": "^(?i:http|https)://[^\\s]+$",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "dateModified": {
-            "format": "date-time",
-            "title": "Asset (file or metadata) modification date and time",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "datePublished": {
-            "format": "date-time",
-            "type": "string"
-        },
-        "description": {
-            "description": "A description of the item.",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "digest": {
-            "title": "A map of dandi digests to their values",
-            "type": "string"
-        },
-        "encodingFormat": {
-            "$ref": "#/$defs/Any",
-            "anyOf": [
-                {
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": "string"
-                },
-                {
-                    "type": "string"
-                }
-            ],
-            "title": "File encoding format"
-        },
-        "ethicsApproval": {
-            "items": {
-                "$ref": "#/$defs/EthicsApproval"
-            },
-            "title": "Ethics approvals",
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "id": {
-            "description": "Uniform resource identifier.",
-            "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
-            "type": "string"
-        },
-        "identifier": {
-            "pattern": "^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$",
-            "type": "string"
-        },
-        "keywords": {
-            "description": "Keywords used to describe this content.",
-            "items": {
-                "type": "string"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "license": {
-            "description": "Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.",
-            "items": {
-                "$ref": "#/$defs/LicenseType"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "measurementTechnique": {
-            "items": {
-                "$ref": "#/$defs/MeasurementTechniqueType"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "name": {
-            "allOf": [
-                {
-                    "pattern": "^[\\s\\S]{,150}\\Z"
-                }
-            ],
-            "description": "The name of the item.",
-            "title": "Title",
-            "type": "string"
-        },
-        "path": {
-            "type": "string"
-        },
-        "protocol": {
-            "description": "A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).",
-            "items": {
-                "format": "uri",
-                "pattern": "^(?i:http|https)://[^\\s]+$",
-                "type": "string"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "publishedBy": {
-            "$ref": "#/$defs/Any",
-            "anyOf": [
-                {
-                    "format": "uri",
-                    "pattern": "^(?i:http|https)://[^\\s]+$",
-                    "type": "string"
-                },
-                {
-                    "$ref": "#/$defs/PublishActivity"
-                }
-            ],
-            "description": "The URL should contain the provenance of the publishing process."
-        },
-        "relatedResource": {
-            "items": {
-                "$ref": "#/$defs/Resource"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "repository": {
-            "description": "location of the item",
-            "format": "uri",
-            "pattern": "^(?i:http|https)://[^\\s]+$",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "sameAs": {
-            "items": {
-                "format": "uri",
-                "pattern": "^(?i:http|https)://[^\\s]+$",
-                "type": "string"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "schemaKey": {
-            "enum": [
-                "PublishedAsset"
-            ],
-            "type": "string"
-        },
-        "schemaVersion": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "studyTarget": {
-            "description": "Objectives or specific questions of the study.",
-            "items": {
-                "type": "string"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "url": {
-            "description": "permalink to the item",
-            "format": "uri",
-            "pattern": "^(?i:http|https)://[^\\s]+$",
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "variableMeasured": {
-            "items": {
-                "$ref": "#/$defs/PropertyValue"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "wasAttributedTo": {
-            "description": "Associated participant(s) or subject(s).",
-            "items": {
-                "$ref": "#/$defs/Participant"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "wasDerivedFrom": {
-            "items": {
-                "$ref": "#/$defs/BioSample"
-            },
-            "type": [
-                "array",
-                "null"
-            ]
-        },
-        "wasGeneratedBy": {
-            "description": "Describe the session, project or activity that generated this asset.",
-            "items": {
-                "$ref": "#/$defs/Any",
-                "anyOf": [
-                    {
-                        "$ref": "#/$defs/Session"
-                    },
-                    {
-                        "$ref": "#/$defs/Project"
-                    },
-                    {
-                        "anyOf": [
-                            {
-                                "$ref": "#/$defs/Activity"
-                            },
-                            {
-                                "$ref": "#/$defs/Project"
-                            },
-                            {
-                                "$ref": "#/$defs/PublishActivity"
-                            },
-                            {
-                                "$ref": "#/$defs/Session"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "title": "Name of the session, project or activity.",
-            "type": [
-                "array",
-                "null"
-            ]
-        }
-    },
-    "required": [
-        "datePublished",
-        "publishedBy",
-        "contentUrl",
-        "identifier",
-        "contentSize",
-        "digest",
-        "encodingFormat",
-        "path",
-        "id",
-        "schemaKey"
-    ],
     "title": "dandi-schema",
     "type": "object",
     "version": "0.7.0"

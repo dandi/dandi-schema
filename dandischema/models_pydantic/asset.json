@@ -4043,12 +4043,12 @@
       "type": "string"
     },
     "schemaVersion": {
-      "default": "0.7.0",
+      "default": "0.8.0",
       "linkml_meta": {
         "domain_of": [
           "CommonModel"
         ],
-        "ifabsent": "string(0.7.0)",
+        "ifabsent": "string(0.8.0)",
         "readonly": "Read-only for clients; managed by server"
       },
       "title": "Schemaversion",
@@ -4345,6 +4345,19 @@
       "title": "Contenturl",
       "type": "array"
     },
+    "datePublished": {
+      "default": null,
+      "format": "date-time",
+      "linkml_meta": {
+        "domain_of": [
+          "Asset",
+          "Dandiset"
+        ],
+        "readonly": "Read-only for clients; managed by server"
+      },
+      "title": "Datepublished",
+      "type": "string"
+    },
     "identifier": {
       "linkml_meta": {
         "domain_of": [
@@ -4369,6 +4382,38 @@
       },
       "title": "Identifier",
       "type": "string"
+    },
+    "publishedBy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PublishActivity"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": null,
+      "description": "The URL should contain the provenance of the publishing process.",
+      "linkml_meta": {
+        "any_of": [
+          {
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ],
+            "pattern": "^(?i:http|https)://[^\\s]+$",
+            "range": "uri"
+          },
+          {
+            "range": "PublishActivity"
+          }
+        ],
+        "domain_of": [
+          "Asset",
+          "Dandiset"
+        ],
+        "readonly": "Read-only for clients; managed by server"
+      },
+      "title": "Publishedby"
     }
   },
   "required": [

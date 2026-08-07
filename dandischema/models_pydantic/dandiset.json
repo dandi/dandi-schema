@@ -1705,6 +1705,186 @@
       "title": "Project",
       "type": "object"
     },
+    "PublishActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "Uniform resource identifier",
+          "linkml_meta": {
+            "domain_of": [
+              "DandiBaseModel"
+            ],
+            "readonly": "Read-only for clients; managed by server"
+          },
+          "title": "Id",
+          "type": "string"
+        },
+        "schemaKey": {
+          "const": "PublishActivity",
+          "default": "PublishActivity",
+          "linkml_meta": {
+            "designates_type": true,
+            "domain_of": [
+              "DandiBaseModel"
+            ],
+            "readonly": "Read-only for clients; managed by server"
+          },
+          "title": "Schemakey",
+          "type": "string"
+        },
+        "description": {
+          "default": null,
+          "description": "The description of the activity.",
+          "linkml_meta": {
+            "domain_of": [
+              "AccessRequirements",
+              "Activity",
+              "CommonModel",
+              "Equipment"
+            ]
+          },
+          "title": "Description",
+          "type": "string"
+        },
+        "endDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Enddate",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "linkml_meta": {
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "Allele",
+              "Asset",
+              "BaseType",
+              "BioSample",
+              "Contributor",
+              "Dandiset",
+              "Equipment",
+              "EthicsApproval",
+              "Locus",
+              "Participant",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the activity.",
+          "linkml_meta": {
+            "all_of": [
+              {
+                "pattern": "^[\\s\\S]{,150}\\Z"
+              }
+            ],
+            "domain_of": [
+              "Activity",
+              "Affiliation",
+              "Agent",
+              "BaseType",
+              "CommonModel",
+              "Contributor",
+              "Equipment",
+              "RelatedParticipant",
+              "Resource",
+              "Software"
+            ]
+          },
+          "title": "Title",
+          "type": "string"
+        },
+        "startDate": {
+          "default": null,
+          "format": "date-time",
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Startdate",
+          "type": "string"
+        },
+        "used": {
+          "default": null,
+          "description": "A listing of equipment used for the activity.",
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          },
+          "linkml_meta": {
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Used",
+          "type": "array"
+        },
+        "wasAssociatedWith": {
+          "default": null,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Agent"
+              },
+              {
+                "$ref": "#/$defs/Organization"
+              },
+              {
+                "$ref": "#/$defs/Person"
+              },
+              {
+                "$ref": "#/$defs/Software"
+              }
+            ]
+          },
+          "linkml_meta": {
+            "any_of": [
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Person"
+              },
+              {
+                "notes": [
+                  "pydantic2linkml: Unable to translate the logic contained in the after validation function, <function Contributor.ensure_contact_person_has_email at 0xADDRESS>."
+                ],
+                "range": "Organization"
+              },
+              {
+                "range": "Software"
+              },
+              {
+                "range": "Agent"
+              }
+            ],
+            "domain_of": [
+              "Activity"
+            ]
+          },
+          "title": "Wasassociatedwith",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PublishActivity",
+      "type": "object"
+    },
     "RelationType": {
       "description": "An enumeration of resource relations",
       "enum": [
@@ -2517,12 +2697,12 @@
       "type": "string"
     },
     "schemaVersion": {
-      "default": "0.7.0",
+      "default": "0.8.0",
       "linkml_meta": {
         "domain_of": [
           "CommonModel"
         ],
-        "ifabsent": "string(0.7.0)",
+        "ifabsent": "string(0.8.0)",
         "readonly": "Read-only for clients; managed by server"
       },
       "title": "Schemaversion",
@@ -2544,7 +2724,7 @@
     },
     "url": {
       "default": null,
-      "description": "permalink to the item",
+      "description": "Permalink to the Dandiset.",
       "linkml_meta": {
         "domain_of": [
           "Agent",
@@ -2622,6 +2802,30 @@
       "title": "Last modification date and time.",
       "type": "string"
     },
+    "datePublished": {
+      "default": null,
+      "format": "date-time",
+      "linkml_meta": {
+        "domain_of": [
+          "Asset",
+          "Dandiset"
+        ],
+        "readonly": "Read-only for clients; managed by server"
+      },
+      "title": "Datepublished",
+      "type": "string"
+    },
+    "doi": {
+      "default": null,
+      "linkml_meta": {
+        "domain_of": [
+          "Dandiset"
+        ],
+        "readonly": "Read-only for clients; managed by server"
+      },
+      "title": "DOI",
+      "type": "string"
+    },
     "identifier": {
       "description": "A Dandiset identifier that can be resolved by identifiers.org.",
       "linkml_meta": {
@@ -2664,6 +2868,50 @@
       "minItems": 1,
       "title": "Manifestlocation",
       "type": "array"
+    },
+    "publishedBy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PublishActivity"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": null,
+      "description": "The URL should contain the provenance of the publishing process.",
+      "linkml_meta": {
+        "any_of": [
+          {
+            "notes": [
+              "pydantic2linkml: Unable to translate the logic contained in the wrap validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at 0xADDRESS>."
+            ],
+            "pattern": "^(?i:http|https)://[^\\s]+$",
+            "range": "uri"
+          },
+          {
+            "range": "PublishActivity"
+          }
+        ],
+        "domain_of": [
+          "Asset",
+          "Dandiset"
+        ],
+        "readonly": "Read-only for clients; managed by server"
+      },
+      "title": "Publishedby"
+    },
+    "releaseNotes": {
+      "default": null,
+      "description": "The description of the release",
+      "linkml_meta": {
+        "domain_of": [
+          "Dandiset"
+        ],
+        "readonly": "Read-only for clients; managed by server"
+      },
+      "title": "Releasenotes",
+      "type": "string"
     },
     "sameAs": {
       "default": null,

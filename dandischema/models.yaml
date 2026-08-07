@@ -460,7 +460,7 @@ slots:
   datePublished:
     readonly: Read-only for clients; managed by server
     range: datetime
-    required: true
+    required: false
   description:
     range: string
   digest:
@@ -480,7 +480,6 @@ slots:
   doi:
     title: DOI
     readonly: Read-only for clients; managed by server
-    ifabsent: string()
     range: string
     required: false
     pattern: ^(10\.\d{4,}/[a-z][-a-z]*\.\d{6}/\d+\.\d+\.\d+|)$
@@ -638,15 +637,7 @@ slots:
       process.
     readonly: Read-only for clients; managed by server
     range: Any
-    required: true
-    any_of:
-    - notes:
-      - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
-        function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
-        at 0xADDRESS>.'
-      range: uri
-      pattern: ^(?i:http|https)://[^\s]+$
-    - range: PublishActivity
+    required: false
   relatedParticipant:
     description: Information about related participants or subjects in a study
       or across studies.
@@ -695,7 +686,7 @@ slots:
     required: true
   schemaVersion:
     readonly: Read-only for clients; managed by server
-    ifabsent: string(0.7.0)
+    ifabsent: string(0.8.0)
     range: string
     required: false
   sex:
@@ -728,6 +719,7 @@ slots:
     required: false
   url:
     range: uri
+    required: false
     pattern: ^(?i:http|https)://[^\s]+$
   used:
     description: A listing of equipment used for the activity.
@@ -865,7 +857,6 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        required: false
   Allele:
     is_a: DandiBaseModel
     slots:
@@ -895,7 +886,9 @@ classes:
     is_a: BareAsset
     slots:
     - contentUrl
+    - datePublished
     - identifier
+    - publishedBy
     slot_usage:
       id:
         description: Uniform resource identifier.
@@ -906,6 +899,15 @@ classes:
         required: true
         pattern:
           ^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$
+      publishedBy:
+        any_of:
+        - notes:
+          - 'pydantic2linkml: Unable to translate the logic contained in the wrap
+            validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+            at 0xADDRESS>.'
+          range: uri
+          pattern: ^(?i:http|https)://[^\s]+$
+        - range: PublishActivity
   AssetsSummary:
     description: Summary over assets contained in a dandiset (published or not)
     is_a: DandiBaseModel
@@ -1084,7 +1086,6 @@ classes:
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
         readonly: Read-only for clients; managed by server
-        required: false
       wasGeneratedBy:
         range: Activity
   ContactPoint:
@@ -1101,7 +1102,6 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        required: false
   Contributor:
     is_a: DandiBaseModel
     slots:
@@ -1130,7 +1130,6 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        required: false
   DandiBaseModel:
     slots:
     - id
@@ -1147,8 +1146,12 @@ classes:
     - citation
     - dateCreated
     - dateModified
+    - datePublished
+    - doi
     - identifier
     - manifestLocation
+    - publishedBy
+    - releaseNotes
     - sameAs
     - version
     slot_usage:
@@ -1188,10 +1191,25 @@ classes:
         description: A title associated with the Dandiset.
         title: Dandiset title
         required: true
+      publishedBy:
+        any_of:
+        - notes:
+          - 'pydantic2linkml: Unable to translate the logic contained in the wrap
+            validation function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+            at 0xADDRESS>.'
+          range: uri
+          pattern: ^(?i:http|https)://[^\s]+$
+        - range: PublishActivity
       sameAs:
         description: Known DANDI URLs of the Dandiset at other DANDI instances.
         range: string
         pattern: ^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$
+      url:
+        description: Permalink to the Dandiset.
+        notes:
+        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
+          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
+          at 0xADDRESS>.'
       version:
         readonly: Read-only for clients; managed by server
       wasGeneratedBy:
@@ -1348,57 +1366,8 @@ classes:
     - unitText
     - value
     - valueReference
-  Publishable:
-    is_a: DandiBaseModel
-    slots:
-    - datePublished
-    - publishedBy
   PublishActivity:
     is_a: Activity
-  PublishedAsset:
-    notes:
-    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
-      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
-    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
-      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
-      `schemaKey` slot may be needed.'
-    is_a: Asset
-    mixins:
-    - Publishable
-    slot_usage:
-      id:
-        pattern:
-          ^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$
-  PublishedDandiset:
-    notes:
-    - 'pydantic2linkml: Warning: LinkML does not support multiple inheritance. Publishable
-      is not specified as a parent, through the `is_a` meta slot, but as a mixin.'
-    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
-      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
-      `schemaKey` slot may be needed.'
-    is_a: Dandiset
-    mixins:
-    - Publishable
-    slots:
-    - doi
-    - releaseNotes
-    slot_usage:
-      id:
-        description: Uniform resource identifier.
-        notes:
-        - 'pydantic2linkml: Cannot express in a slot_usage entry a value for the `pattern`
-          constraint meta slot that differs from the base by a change that is not
-          an allowed monotonic refinement (base value: ''^([A-Z][-A-Z]*|[a-z][-a-z]*):\\d{6}(/(draft|\\d+\\.\\d+\\.\\d+))$'';
-          target value: ''^[A-Z][-A-Z]*:\\d{6}/\\d+\\.\\d+\\.\\d+$'').'
-      url:
-        description: Permalink to the Dandiset.
-        notes:
-        - 'pydantic2linkml: Unable to translate the logic contained in the after validation
-          function, <bound method PublishedDandiset.check_url of <class ''dandischema.models.PublishedDandiset''>>.'
-        - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
-          function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
-          at 0xADDRESS>.'
-        required: true
   RelatedParticipant:
     is_a: DandiBaseModel
     slots:
@@ -1425,7 +1394,6 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        required: false
   Resource:
     is_a: DandiBaseModel
     slots:
@@ -1457,7 +1425,6 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        required: false
   SampleType:
     description: OBI based identifier for the sample type used
     is_a: BaseType
@@ -1494,7 +1461,6 @@ classes:
         - 'pydantic2linkml: Unable to translate the logic contained in the wrap validation
           function, <function _BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val
           at 0xADDRESS>.'
-        required: false
   SpeciesType:
     description: Identifier for species of the sample
     is_a: BaseType
@@ -1504,3 +1470,13 @@ classes:
   StrainType:
     description: Identifier for the strain of the sample
     is_a: BaseType
+  PublishedAsset:
+    notes:
+    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
+      `schemaKey` slot may be needed.'
+  PublishedDandiset:
+    notes:
+    - 'MANUAL_NOTE: The default of the `schemaKey` field in the corresponding Pydantic
+      model in `dandischema.models` is not the model''s name. Adjustment to the inherited
+      `schemaKey` slot may be needed.'

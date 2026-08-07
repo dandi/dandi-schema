@@ -737,7 +737,6 @@ class Agent(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "required": False,
                 },
             },
         }
@@ -1645,7 +1644,6 @@ class CommonModel(DandiBaseModel):
                         "at 0xADDRESS>."
                     ],
                     "readonly": "Read-only for clients; managed by server",
-                    "required": False,
                 },
                 "wasGeneratedBy": {"name": "wasGeneratedBy", "range": "Activity"},
             },
@@ -1815,11 +1813,11 @@ class CommonModel(DandiBaseModel):
         },
     )
     schemaVersion: Optional[str] = Field(
-        default="0.7.0",
+        default="0.8.0",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
-                "ifabsent": "string(0.7.0)",
+                "ifabsent": "string(0.8.0)",
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -2289,11 +2287,11 @@ class BareAsset(CommonModel):
         },
     )
     schemaVersion: Optional[str] = Field(
-        default="0.7.0",
+        default="0.8.0",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
-                "ifabsent": "string(0.7.0)",
+                "ifabsent": "string(0.8.0)",
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -2454,6 +2452,25 @@ class Asset(BareAsset):
                     "readonly": "Read-only for clients; managed by " "server",
                     "required": True,
                 },
+                "publishedBy": {
+                    "any_of": [
+                        {
+                            "notes": [
+                                "pydantic2linkml: Unable "
+                                "to translate the logic "
+                                "contained in the wrap "
+                                "validation function, "
+                                "<function "
+                                "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
+                                "at 0xADDRESS>."
+                            ],
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "range": "uri",
+                        },
+                        {"range": "PublishActivity"},
+                    ],
+                    "name": "publishedBy",
+                },
             },
         }
     )
@@ -2469,6 +2486,15 @@ class Asset(BareAsset):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Read-only for clients; managed by server",
+            }
+        },
+    )
+    datePublished: Optional[datetime] = Field(
+        default=None,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Asset", "Dandiset"],
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -2495,6 +2521,29 @@ class Asset(BareAsset):
                     "Resource",
                     "Software",
                 ],
+                "readonly": "Read-only for clients; managed by server",
+            }
+        },
+    )
+    publishedBy: Optional[Union[PublishActivity, str]] = Field(
+        default=None,
+        description="""The URL should contain the provenance of the publishing process.""",
+        json_schema_extra={
+            "linkml_meta": {
+                "any_of": [
+                    {
+                        "notes": [
+                            "pydantic2linkml: Unable to translate the logic "
+                            "contained in the wrap validation function, <function "
+                            "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
+                            "at 0xADDRESS>."
+                        ],
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "range": "uri",
+                    },
+                    {"range": "PublishActivity"},
+                ],
+                "domain_of": ["Asset", "Dandiset"],
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -2795,11 +2844,11 @@ class Asset(BareAsset):
         },
     )
     schemaVersion: Optional[str] = Field(
-        default="0.7.0",
+        default="0.8.0",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
-                "ifabsent": "string(0.7.0)",
+                "ifabsent": "string(0.8.0)",
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -2984,7 +3033,6 @@ class ContactPoint(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "required": False,
                 },
             },
         }
@@ -3095,7 +3143,6 @@ class Contributor(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "required": False,
                 },
             },
         }
@@ -3301,12 +3348,42 @@ class Dandiset(CommonModel):
                     "required": True,
                     "title": "Dandiset title",
                 },
+                "publishedBy": {
+                    "any_of": [
+                        {
+                            "notes": [
+                                "pydantic2linkml: Unable "
+                                "to translate the logic "
+                                "contained in the wrap "
+                                "validation function, "
+                                "<function "
+                                "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
+                                "at 0xADDRESS>."
+                            ],
+                            "pattern": "^(?i:http|https)://[^\\s]+$",
+                            "range": "uri",
+                        },
+                        {"range": "PublishActivity"},
+                    ],
+                    "name": "publishedBy",
+                },
                 "sameAs": {
                     "description": "Known DANDI URLs of the Dandiset at "
                     "other DANDI instances.",
                     "name": "sameAs",
                     "pattern": "^dandi://[A-Z][-A-Z]*/\\d{6}(@(draft|\\d+\\.\\d+\\.\\d+))?(/\\S+)?$",
                     "range": "string",
+                },
+                "url": {
+                    "description": "Permalink to the Dandiset.",
+                    "name": "url",
+                    "notes": [
+                        "pydantic2linkml: Unable to translate the "
+                        "logic contained in the wrap validation "
+                        "function, <function "
+                        "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
+                        "at 0xADDRESS>."
+                    ],
                 },
                 "version": {
                     "name": "version",
@@ -3360,6 +3437,25 @@ class Dandiset(CommonModel):
             }
         },
     )
+    datePublished: Optional[datetime] = Field(
+        default=None,
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Asset", "Dandiset"],
+                "readonly": "Read-only for clients; managed by server",
+            }
+        },
+    )
+    doi: Optional[str] = Field(
+        default=None,
+        title="DOI",
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
+                "readonly": "Read-only for clients; managed by server",
+            }
+        },
+    )
     identifier: str = Field(
         default=...,
         title="Dandiset identifier",
@@ -3400,6 +3496,39 @@ class Dandiset(CommonModel):
                     "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
                     "0xADDRESS>."
                 ],
+                "readonly": "Read-only for clients; managed by server",
+            }
+        },
+    )
+    publishedBy: Optional[Union[PublishActivity, str]] = Field(
+        default=None,
+        description="""The URL should contain the provenance of the publishing process.""",
+        json_schema_extra={
+            "linkml_meta": {
+                "any_of": [
+                    {
+                        "notes": [
+                            "pydantic2linkml: Unable to translate the logic "
+                            "contained in the wrap validation function, <function "
+                            "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
+                            "at 0xADDRESS>."
+                        ],
+                        "pattern": "^(?i:http|https)://[^\\s]+$",
+                        "range": "uri",
+                    },
+                    {"range": "PublishActivity"},
+                ],
+                "domain_of": ["Asset", "Dandiset"],
+                "readonly": "Read-only for clients; managed by server",
+            }
+        },
+    )
+    releaseNotes: Optional[str] = Field(
+        default=None,
+        description="""The description of the release""",
+        json_schema_extra={
+            "linkml_meta": {
+                "domain_of": ["Dandiset"],
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -3594,11 +3723,11 @@ class Dandiset(CommonModel):
         },
     )
     schemaVersion: Optional[str] = Field(
-        default="0.7.0",
+        default="0.8.0",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": ["CommonModel"],
-                "ifabsent": "string(0.7.0)",
+                "ifabsent": "string(0.8.0)",
                 "readonly": "Read-only for clients; managed by server",
             }
         },
@@ -3610,7 +3739,7 @@ class Dandiset(CommonModel):
     )
     url: Optional[str] = Field(
         default=None,
-        description="""permalink to the item""",
+        description="""Permalink to the Dandiset.""",
         json_schema_extra={
             "linkml_meta": {
                 "domain_of": [
@@ -3660,6 +3789,19 @@ class Dandiset(CommonModel):
             }
         },
     )
+
+    @field_validator("doi")
+    def pattern_doi(cls, v):
+        pattern = re.compile(r"^(10\.\d{4,}/[a-z][-a-z]*\.\d{6}/\d+\.\d+\.\d+|)$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.match(element):
+                    err_msg = f"Invalid doi format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.match(v):
+            err_msg = f"Invalid doi format: {v}"
+            raise ValueError(err_msg)
+        return v
 
     @field_validator("identifier")
     def pattern_identifier(cls, v):
@@ -5132,65 +5274,6 @@ class PropertyValue(DandiBaseModel):
     )
 
 
-class Publishable(DandiBaseModel):
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
-    )
-
-    datePublished: datetime = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Publishable"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    publishedBy: Union[PublishActivity, str] = Field(
-        default=...,
-        description="""The URL should contain the provenance of the publishing process.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the wrap validation function, <function "
-                            "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
-                            "at 0xADDRESS>."
-                        ],
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "range": "uri",
-                    },
-                    {"range": "PublishActivity"},
-                ],
-                "domain_of": ["Publishable"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    id: Optional[str] = Field(
-        default=None,
-        description="""Uniform resource identifier""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["DandiBaseModel"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    schemaKey: Literal["Publishable"] = Field(
-        default="Publishable",
-        json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-
-
 class PublishActivity(Activity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {"from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7"}
@@ -5322,1148 +5405,6 @@ class PublishActivity(Activity):
     )
 
 
-class PublishedAsset(Publishable, Asset):
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "mixins": ["Publishable"],
-            "notes": [
-                "pydantic2linkml: Warning: LinkML does not support multiple "
-                "inheritance. Publishable is not specified as a parent, through the "
-                "`is_a` meta slot, but as a mixin.",
-                "MANUAL_NOTE: The default of the `schemaKey` field in the "
-                "corresponding Pydantic model in `dandischema.models` is not the "
-                "model's name. Adjustment to the inherited `schemaKey` slot may be "
-                "needed.",
-            ],
-            "slot_usage": {
-                "id": {
-                    "name": "id",
-                    "pattern": "^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$",
-                }
-            },
-        }
-    )
-
-    datePublished: datetime = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Publishable"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    publishedBy: Union[PublishActivity, str] = Field(
-        default=...,
-        description="""The URL should contain the provenance of the publishing process.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the wrap validation function, <function "
-                            "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
-                            "at 0xADDRESS>."
-                        ],
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "range": "uri",
-                    },
-                    {"range": "PublishActivity"},
-                ],
-                "domain_of": ["Publishable"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    contentUrl: list[str] = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Asset"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    identifier: str = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": [
-                    "Activity",
-                    "Affiliation",
-                    "Agent",
-                    "Allele",
-                    "Asset",
-                    "BaseType",
-                    "BioSample",
-                    "Contributor",
-                    "Dandiset",
-                    "Equipment",
-                    "EthicsApproval",
-                    "Locus",
-                    "Participant",
-                    "RelatedParticipant",
-                    "Resource",
-                    "Software",
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    approach: Optional[list[ApproachType]] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    blobDateModified: Optional[datetime] = Field(
-        default=None,
-        title="Asset file modification date and time.",
-        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}},
-    )
-    contentSize: Union[int, str] = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?", "range": "string"},
-                    {"minimum_value": 0, "range": "integer"},
-                ],
-                "domain_of": ["BareAsset"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method ByteSize._validate of "
-                    "<class 'pydantic.types.ByteSize'>>."
-                ],
-            }
-        },
-    )
-    dataType: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-            }
-        },
-    )
-    dateModified: Optional[datetime] = Field(
-        default=None,
-        title="Asset (file or metadata) modification date and time",
-        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "Dandiset"]}},
-    )
-    digest: str = Field(
-        default=...,
-        title="A map of dandi digests to their values",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method BareAsset.digest_check of "
-                    "<class 'dandischema.models.BareAsset'>>.",
-                    "pydantic2linkml: Warning: The translation is incomplete. `dict` "
-                    "types are yet to be supported.",
-                ],
-            }
-        },
-    )
-    encodingFormat: str = Field(
-        default=...,
-        title="File encoding format",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the wrap validation function, <function "
-                            "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
-                            "at 0xADDRESS>."
-                        ],
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "range": "uri",
-                    },
-                    {"range": "string"},
-                ],
-                "domain_of": ["BareAsset"],
-            }
-        },
-    )
-    measurementTechnique: Optional[list[MeasurementTechniqueType]] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    path: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset"]}}
-    )
-    sameAs: Optional[list[str]] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "BioSample", "Dandiset", "Participant"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-            }
-        },
-    )
-    variableMeasured: Optional[list[PropertyValue]] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["AssetsSummary", "BareAsset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    wasAttributedTo: Optional[list[Participant]] = Field(
-        default=None,
-        description="""Associated participant(s) or subject(s).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
-    )
-    wasDerivedFrom: Optional[list[BioSample]] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["BareAsset", "BioSample"]}},
-    )
-    about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
-        default=None,
-        title="Subject matter of the dataset",
-        description="""The subject matter of the content, such as disorders, brain anatomy.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"range": "Disorder"},
-                    {"range": "Anatomy"},
-                    {"range": "GenericType"},
-                ],
-                "domain_of": ["CommonModel"],
-            }
-        },
-    )
-    access: Optional[list[AccessRequirements]] = Field(
-        default=None,
-        title="Access information",
-        max_length=1,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the default factory, <function "
-                    "BareAsset.<lambda> at 0xADDRESS>, in LinkML.",
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <function "
-                    "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    acknowledgement: Optional[str] = Field(
-        default=None,
-        description="""Any acknowledgments not covered by contributors or external resources.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    contributor: Optional[list[Union[Organization, Person]]] = Field(
-        default=None,
-        title="Contributors",
-        description="""Contributors to this item: persons or organizations.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the after validation function, <function "
-                            "Contributor.ensure_contact_person_has_email at "
-                            "0xADDRESS>."
-                        ],
-                        "range": "Person",
-                    },
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the after validation function, <function "
-                            "Contributor.ensure_contact_person_has_email at "
-                            "0xADDRESS>."
-                        ],
-                        "range": "Organization",
-                    },
-                ],
-                "domain_of": ["CommonModel"],
-            }
-        },
-    )
-    description: Optional[str] = Field(
-        default=None,
-        description="""A description of the item.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": [
-                    "AccessRequirements",
-                    "Activity",
-                    "CommonModel",
-                    "Equipment",
-                ]
-            }
-        },
-    )
-    ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None,
-        title="Ethics approvals",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    keywords: Optional[list[str]] = Field(
-        default=None,
-        description="""Keywords used to describe this content.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    license: Optional[list[LicenseType]] = Field(
-        default=None,
-        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    name: Optional[str] = Field(
-        default=None,
-        title="Title",
-        description="""The name of the item.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
-                "domain_of": [
-                    "Activity",
-                    "Affiliation",
-                    "Agent",
-                    "BaseType",
-                    "CommonModel",
-                    "Contributor",
-                    "Equipment",
-                    "RelatedParticipant",
-                    "Resource",
-                    "Software",
-                ],
-            }
-        },
-    )
-    protocol: Optional[list[str]] = Field(
-        default=None,
-        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-            }
-        },
-    )
-    relatedResource: Optional[list[Resource]] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <function Resource.identifier_or_url at "
-                    "0xADDRESS>."
-                ],
-            }
-        },
-    )
-    repository: Optional[str] = Field(
-        default=None,
-        description="""location of the item""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel", "Resource"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    schemaVersion: Optional[str] = Field(
-        default="0.7.0",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "ifabsent": "string(0.7.0)",
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    studyTarget: Optional[list[str]] = Field(
-        default=None,
-        description="""Objectives or specific questions of the study.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    url: Optional[str] = Field(
-        default=None,
-        description="""permalink to the item""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": [
-                    "Agent",
-                    "CommonModel",
-                    "ContactPoint",
-                    "Contributor",
-                    "RelatedParticipant",
-                    "Resource",
-                    "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    wasGeneratedBy: Optional[
-        list[
-            Union[Project, Session, Union[Activity, Project, PublishActivity, Session]]
-        ]
-    ] = Field(
-        default=None,
-        title="Name of the session, project or activity.",
-        description="""Describe the session, project or activity that generated this asset.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"range": "Session"},
-                    {"range": "Project"},
-                    {"range": "Activity"},
-                ],
-                "domain_of": ["CommonModel", "GenotypeInfo"],
-            }
-        },
-    )
-    id: str = Field(
-        default=...,
-        description="""Uniform resource identifier.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["DandiBaseModel"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    schemaKey: Literal["PublishedAsset"] = Field(
-        default="PublishedAsset",
-        json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-
-    @field_validator("contentUrl")
-    def pattern_contentUrl(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid contentUrl format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid contentUrl format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("identifier")
-    def pattern_identifier(cls, v):
-        pattern = re.compile(
-            r"^(?:urn:uuid:)?[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?4[0-9a-fA-F]{3}-?[89abAB][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$"
-        )
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid identifier format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid identifier format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("dataType")
-    def pattern_dataType(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid dataType format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid dataType format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("sameAs")
-    def pattern_sameAs(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid sameAs format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid sameAs format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("protocol")
-    def pattern_protocol(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid protocol format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid protocol format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("repository")
-    def pattern_repository(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid repository format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid repository format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("url")
-    def pattern_url(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid url format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid url format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("id")
-    def pattern_id(cls, v):
-        pattern = re.compile(
-            r"^dandiasset:[a-f0-9]{8}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{4}[-]*[a-f0-9]{12}$"
-        )
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid id format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid id format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-
-class PublishedDandiset(Publishable, Dandiset):
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {
-            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
-            "mixins": ["Publishable"],
-            "notes": [
-                "pydantic2linkml: Warning: LinkML does not support multiple "
-                "inheritance. Publishable is not specified as a parent, through the "
-                "`is_a` meta slot, but as a mixin.",
-                "MANUAL_NOTE: The default of the `schemaKey` field in the "
-                "corresponding Pydantic model in `dandischema.models` is not the "
-                "model's name. Adjustment to the inherited `schemaKey` slot may be "
-                "needed.",
-            ],
-            "slot_usage": {
-                "id": {
-                    "description": "Uniform resource identifier.",
-                    "name": "id",
-                    "notes": [
-                        "pydantic2linkml: Cannot express in a "
-                        "slot_usage entry a value for the `pattern` "
-                        "constraint meta slot that differs from the "
-                        "base by a change that is not an allowed "
-                        "monotonic refinement (base value: "
-                        "'^([A-Z][-A-Z]*|[a-z][-a-z]*):\\\\d{6}(/(draft|\\\\d+\\\\.\\\\d+\\\\.\\\\d+))$'; "
-                        "target value: "
-                        "'^[A-Z][-A-Z]*:\\\\d{6}/\\\\d+\\\\.\\\\d+\\\\.\\\\d+$')."
-                    ],
-                },
-                "url": {
-                    "description": "Permalink to the Dandiset.",
-                    "name": "url",
-                    "notes": [
-                        "pydantic2linkml: Unable to translate the "
-                        "logic contained in the after validation "
-                        "function, <bound method "
-                        "PublishedDandiset.check_url of <class "
-                        "'dandischema.models.PublishedDandiset'>>.",
-                        "pydantic2linkml: Unable to translate the "
-                        "logic contained in the wrap validation "
-                        "function, <function "
-                        "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
-                        "at 0xADDRESS>.",
-                    ],
-                    "required": True,
-                },
-            },
-        }
-    )
-
-    doi: Optional[str] = Field(
-        default="",
-        title="DOI",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["PublishedDandiset"],
-                "ifabsent": "string()",
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    releaseNotes: Optional[str] = Field(
-        default=None,
-        description="""The description of the release""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["PublishedDandiset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    datePublished: datetime = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Publishable"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    publishedBy: Union[PublishActivity, str] = Field(
-        default=...,
-        description="""The URL should contain the provenance of the publishing process.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the wrap validation function, <function "
-                            "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
-                            "at 0xADDRESS>."
-                        ],
-                        "pattern": "^(?i:http|https)://[^\\s]+$",
-                        "range": "uri",
-                    },
-                    {"range": "PublishActivity"},
-                ],
-                "domain_of": ["Publishable"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    assetsSummary: AssetsSummary = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    citation: str = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    dateCreated: Optional[datetime] = Field(
-        default=None,
-        title="Dandiset creation date and time.",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    dateModified: Optional[datetime] = Field(
-        default=None,
-        title="Last modification date and time.",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "Dandiset"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    identifier: str = Field(
-        default=...,
-        title="Dandiset identifier",
-        description="""A Dandiset identifier that can be resolved by identifiers.org.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": [
-                    "Activity",
-                    "Affiliation",
-                    "Agent",
-                    "Allele",
-                    "Asset",
-                    "BaseType",
-                    "BioSample",
-                    "Contributor",
-                    "Dandiset",
-                    "Equipment",
-                    "EthicsApproval",
-                    "Locus",
-                    "Participant",
-                    "RelatedParticipant",
-                    "Resource",
-                    "Software",
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    manifestLocation: list[str] = Field(
-        default=...,
-        min_length=1,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    sameAs: Optional[list[str]] = Field(
-        default=None,
-        description="""Known DANDI URLs of the Dandiset at other DANDI instances.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["BareAsset", "BioSample", "Dandiset", "Participant"]
-            }
-        },
-    )
-    version: str = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Dandiset", "Software"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    about: Optional[list[Union[Anatomy, Disorder, GenericType]]] = Field(
-        default=None,
-        title="Subject matter of the dataset",
-        description="""The subject matter of the content, such as disorders, brain anatomy.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {"range": "Disorder"},
-                    {"range": "Anatomy"},
-                    {"range": "GenericType"},
-                ],
-                "domain_of": ["CommonModel"],
-            }
-        },
-    )
-    access: Optional[list[AccessRequirements]] = Field(
-        default=None,
-        title="Access information",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to express the default factory, <function "
-                    "CommonModel.<lambda> at 0xADDRESS>, in LinkML.",
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <function "
-                    "AccessRequirements.open_or_embargoed at 0xADDRESS>.",
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    acknowledgement: Optional[str] = Field(
-        default=None,
-        description="""Any acknowledgments not covered by contributors or external resources.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    contributor: list[Union[Organization, Person]] = Field(
-        default=...,
-        title="Dandiset contributors",
-        description="""People or Organizations that have contributed to this Dandiset.""",
-        min_length=1,
-        json_schema_extra={
-            "linkml_meta": {
-                "any_of": [
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the after validation function, <function "
-                            "Contributor.ensure_contact_person_has_email at "
-                            "0xADDRESS>."
-                        ],
-                        "range": "Person",
-                    },
-                    {
-                        "notes": [
-                            "pydantic2linkml: Unable to translate the logic "
-                            "contained in the after validation function, <function "
-                            "Contributor.ensure_contact_person_has_email at "
-                            "0xADDRESS>."
-                        ],
-                        "range": "Organization",
-                    },
-                ],
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "Dandiset.contributor_musthave_contact of <class "
-                    "'dandischema.models.Dandiset'>>."
-                ],
-            }
-        },
-    )
-    description: str = Field(
-        default=...,
-        description="""A description of the Dandiset""",
-        json_schema_extra={
-            "linkml_meta": {
-                "all_of": [{"pattern": "^[\\s\\S]{,10000}\\Z"}],
-                "domain_of": [
-                    "AccessRequirements",
-                    "Activity",
-                    "CommonModel",
-                    "Equipment",
-                ],
-            }
-        },
-    )
-    ethicsApproval: Optional[list[EthicsApproval]] = Field(
-        default=None,
-        title="Ethics approvals",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    keywords: Optional[list[str]] = Field(
-        default=None,
-        description="""Keywords used to describe this content.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    license: list[LicenseType] = Field(
-        default=...,
-        description="""Licenses associated with the item. DANDI only supports a subset of Creative Commons Licenses (creativecommons.org) applicable to datasets.""",
-        min_length=1,
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    name: str = Field(
-        default=...,
-        title="Dandiset title",
-        description="""A title associated with the Dandiset.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "all_of": [{"pattern": "^[\\s\\S]{,150}\\Z"}],
-                "domain_of": [
-                    "Activity",
-                    "Affiliation",
-                    "Agent",
-                    "BaseType",
-                    "CommonModel",
-                    "Contributor",
-                    "Equipment",
-                    "RelatedParticipant",
-                    "Resource",
-                    "Software",
-                ],
-            }
-        },
-    )
-    protocol: Optional[list[str]] = Field(
-        default=None,
-        description="""A list of persistent URLs describing the protocol (e.g. protocols.io, or other DOIs).""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-            }
-        },
-    )
-    relatedResource: Optional[list[Resource]] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <function Resource.identifier_or_url at "
-                    "0xADDRESS>."
-                ],
-            }
-        },
-    )
-    repository: Optional[str] = Field(
-        default=None,
-        description="""location of the item""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel", "Resource"],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>."
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    schemaVersion: Optional[str] = Field(
-        default="0.7.0",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["CommonModel"],
-                "ifabsent": "string(0.7.0)",
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    studyTarget: Optional[list[str]] = Field(
-        default=None,
-        description="""Objectives or specific questions of the study.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CommonModel"]}},
-    )
-    url: str = Field(
-        default=...,
-        description="""Permalink to the Dandiset.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": [
-                    "Agent",
-                    "CommonModel",
-                    "ContactPoint",
-                    "Contributor",
-                    "RelatedParticipant",
-                    "Resource",
-                    "Software",
-                ],
-                "notes": [
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "after validation function, <bound method "
-                    "PublishedDandiset.check_url of <class "
-                    "'dandischema.models.PublishedDandiset'>>.",
-                    "pydantic2linkml: Unable to translate the logic contained in the "
-                    "wrap validation function, <function "
-                    "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val at "
-                    "0xADDRESS>.",
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    wasGeneratedBy: Optional[list[Project]] = Field(
-        default=None,
-        title="Associated projects",
-        description="""Project(s) that generated this Dandiset.""",
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["CommonModel", "GenotypeInfo"]}
-        },
-    )
-    id: str = Field(
-        default=...,
-        description="""Uniform resource identifier.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["DandiBaseModel"],
-                "notes": [
-                    "pydantic2linkml: Cannot express in a slot_usage entry a value for "
-                    "the `pattern` constraint meta slot that differs from the base by a "
-                    "change that is not an allowed monotonic refinement (base value: "
-                    "'^([A-Z][-A-Z]*|[a-z][-a-z]*):\\\\d{6}(/(draft|\\\\d+\\\\.\\\\d+\\\\.\\\\d+))$'; "
-                    "target value: "
-                    "'^[A-Z][-A-Z]*:\\\\d{6}/\\\\d+\\\\.\\\\d+\\\\.\\\\d+$')."
-                ],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-    schemaKey: Literal["PublishedDandiset"] = Field(
-        default="PublishedDandiset",
-        json_schema_extra={
-            "linkml_meta": {
-                "designates_type": True,
-                "domain_of": ["DandiBaseModel"],
-                "readonly": "Read-only for clients; managed by server",
-            }
-        },
-    )
-
-    @field_validator("doi")
-    def pattern_doi(cls, v):
-        pattern = re.compile(r"^(10\.\d{4,}/[a-z][-a-z]*\.\d{6}/\d+\.\d+\.\d+|)$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid doi format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid doi format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("identifier")
-    def pattern_identifier(cls, v):
-        pattern = re.compile(r"^[A-Z][-A-Z]*:\d{6}$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid identifier format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid identifier format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("manifestLocation")
-    def pattern_manifestLocation(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid manifestLocation format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid manifestLocation format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("sameAs")
-    def pattern_sameAs(cls, v):
-        pattern = re.compile(
-            r"^dandi://[A-Z][-A-Z]*/\d{6}(@(draft|\d+\.\d+\.\d+))?(/\S+)?$"
-        )
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid sameAs format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid sameAs format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("protocol")
-    def pattern_protocol(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid protocol format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid protocol format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("repository")
-    def pattern_repository(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid repository format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid repository format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("url")
-    def pattern_url(cls, v):
-        pattern = re.compile(r"^(?i:http|https)://[^\s]+$")
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid url format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid url format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-    @field_validator("id")
-    def pattern_id(cls, v):
-        pattern = re.compile(
-            r"^([A-Z][-A-Z]*|[a-z][-a-z]*):\d{6}(/(draft|\d+\.\d+\.\d+))$"
-        )
-        if isinstance(v, list):
-            for element in v:
-                if isinstance(element, str) and not pattern.match(element):
-                    err_msg = f"Invalid id format: {element}"
-                    raise ValueError(err_msg)
-        elif isinstance(v, str) and not pattern.match(v):
-            err_msg = f"Invalid id format: {v}"
-            raise ValueError(err_msg)
-        return v
-
-
 class RelatedParticipant(DandiBaseModel):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
         {
@@ -6500,7 +5441,6 @@ class RelatedParticipant(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "required": False,
                     "title": "URL of the related participant or subject",
                 },
             },
@@ -6658,7 +5598,6 @@ class Resource(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "required": False,
                     "title": "URL of the resource",
                 },
             },
@@ -7145,7 +6084,6 @@ class Software(DandiBaseModel):
                         "_BaseUrl.__get_pydantic_core_schema__.<locals>.wrap_val "
                         "at 0xADDRESS>."
                     ],
-                    "required": False,
                 },
             },
         }
@@ -7554,6 +6492,38 @@ class StrainType(BaseType):
     )
 
 
+class PublishedAsset(ConfiguredBaseModel):
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
+        {
+            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
+            "notes": [
+                "MANUAL_NOTE: The default of the `schemaKey` field in the "
+                "corresponding Pydantic model in `dandischema.models` is not the "
+                "model's name. Adjustment to the inherited `schemaKey` slot may be "
+                "needed."
+            ],
+        }
+    )
+
+    pass
+
+
+class PublishedDandiset(ConfiguredBaseModel):
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
+        {
+            "from_schema": "https://schema.dandiarchive.org/s/dandi/v0.7",
+            "notes": [
+                "MANUAL_NOTE: The default of the `schemaKey` field in the "
+                "corresponding Pydantic model in `dandischema.models` is not the "
+                "model's name. Adjustment to the inherited `schemaKey` slot may be "
+                "needed."
+            ],
+        }
+    )
+
+    pass
+
+
 # Model rebuild
 # see https://pydantic-docs.helpmanual.io/usage/models/#rebuilding-a-model
 DandiBaseModel.model_rebuild()
@@ -7586,10 +6556,7 @@ Participant.model_rebuild()
 Person.model_rebuild()
 Project.model_rebuild()
 PropertyValue.model_rebuild()
-Publishable.model_rebuild()
 PublishActivity.model_rebuild()
-PublishedAsset.model_rebuild()
-PublishedDandiset.model_rebuild()
 RelatedParticipant.model_rebuild()
 Resource.model_rebuild()
 SampleType.model_rebuild()
@@ -7599,3 +6566,5 @@ Software.model_rebuild()
 SpeciesType.model_rebuild()
 StandardsType.model_rebuild()
 StrainType.model_rebuild()
+PublishedAsset.model_rebuild()
+PublishedDandiset.model_rebuild()
