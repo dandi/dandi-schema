@@ -17,7 +17,7 @@ hatch run linkml-auto-converted:2json
 (
     cd dandischema/models_linkml
     for f in *; do
-        nf=$(echo $f | tr '[A-Z]' '[a-z]' | sed -e 's,published,published-,g')
+        nf=$(echo $f | tr '[A-Z]' '[a-z]')
         mv "$f" "$nf"
     done
 )
