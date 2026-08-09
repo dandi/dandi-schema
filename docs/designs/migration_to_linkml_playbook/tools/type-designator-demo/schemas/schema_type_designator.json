@@ -1,0 +1,135 @@
+{
+    "$defs": {
+        "Activity": {
+            "additionalProperties": false,
+            "description": "A base activity.",
+            "properties": {
+                "schemaKey": {
+                    "enum": [
+                        "Activity"
+                    ],
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "title": "Activity",
+            "type": "object"
+        },
+        "BareAsset": {
+            "additionalProperties": false,
+            "description": "An asset, which is a kind of common model.",
+            "properties": {
+                "schemaKey": {
+                    "enum": [
+                        "BareAsset"
+                    ],
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "title": "BareAsset",
+            "type": "object"
+        },
+        "CommonModel": {
+            "additionalProperties": false,
+            "description": "A base model carrying common slots.",
+            "properties": {
+                "schemaKey": {
+                    "enum": [
+                        "CommonModel"
+                    ],
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "wasGeneratedBy": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/Activity"
+                            },
+                            {
+                                "$ref": "#/$defs/Project"
+                            }
+                        ]
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "title": "CommonModel",
+            "type": "object"
+        },
+        "DandiBaseModel": {
+            "additionalProperties": false,
+            "description": "A base model for Dandi schema.",
+            "properties": {
+                "schemaKey": {
+                    "enum": [
+                        "DandiBaseModel"
+                    ],
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "title": "DandiBaseModel",
+            "type": "object"
+        },
+        "Project": {
+            "additionalProperties": false,
+            "description": "A project, which is a kind of activity.",
+            "properties": {
+                "project_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "schemaKey": {
+                    "enum": [
+                        "Project"
+                    ],
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "title": "Project",
+            "type": "object"
+        }
+    },
+    "$id": "https://example.org/dandi-schema-experiment",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "additionalProperties": true,
+    "metamodel_version": "1.11.0",
+    "title": "dandi-schema-experiment",
+    "type": "object",
+    "version": null
+}
+

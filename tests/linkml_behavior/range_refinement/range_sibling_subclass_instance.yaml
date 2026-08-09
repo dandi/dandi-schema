@@ -1,0 +1,4 @@
+respecifiedSlot:
+  - schemaKey: RangeSiblingSubclass
+    name: a sibling subclass
+    sibling_marker: SIB-1

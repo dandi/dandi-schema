@@ -1,0 +1,97 @@
+# Django (dandi-archive backend role)
+
+Topical role: the Django backend of [`dandi/dandi-archive`](https://github.com/dandi/dandi-archive).
+
+Stacks on top of [`senior-developer.md`](senior-developer.md) — load both together.
+
+## Scope
+
+- Django models, views, serializers, and migrations that depend on `dandischema`'s generated Pydantic models.
+- Server-side validation paths that consume `dandischema` (whether via Pydantic models or JSON Schemas).
+- Verifying that the generated Pydantic from the LinkML schema is a drop-in replacement for the hand-written `dandischema.models` in this consumer (success criterion 2 — see [OVERVIEW](../../OVERVIEW.md#success-criteria)).
+
+## Not in scope
+
+- Vue frontend → see [`vue.md`](vue.md).
+- LinkML schema authoring → see [`linkml.md`](linkml.md).
+- `pydantic2linkml` internals → see [`linkml.md`](linkml.md).
+- [`dandi/dandi-cli`](https://github.com/dandi/dandi-cli) (the other major Python consumer of generated Pydantic) — its own scope; cover it with the senior-developer baseline or split out a `dandi-cli.md` role file later if it accrues distinct concerns.
+
+## What this role needs to know
+
+### Stack landscape (verified against `dandi-archive/pyproject.toml`)
+
+- Package: **`dandiapi`** (top-level), Python **>= 3.13**.
+- **Django 5.2.x** (NOT 4.x — most external Django subagent profiles target 4+; verify before lifting patterns).
+- **Django REST Framework 3.17.x** + `drf-extensions` + `drf-yasg` (OpenAPI/Swagger docs).
+- Auth / permissions: `django-allauth`, `django-oauth-toolkit`, `django-guardian` (object-level perms).
+- Filtering / extensions: `django-filter`, `django-extensions`, `django-cors-headers`, `django-environ`.
+- **Resonant stack:** `django-resonant-settings`, `django-resonant-utils` — opinionated settings/utility layer; understand it before adding settings or storage code.
+- **Celery** with multiple queues (`celery`, `calculate_sha256`, `ingest_zarr_archive`, `manifest-worker`); the backend depends on background workers for non-trivial flows.
+- **PostgreSQL** (port 5432 in dev).
+- Type-stub support via `django-stubs-ext`.
+
+### dandischema pinning observation (critical for the migration)
+
+- `dandi-archive` pins **`dandischema==0.12.1`** (schema version 0.7.0), exact pin — the comment in `pyproject.toml` says: *"Pin dandischema to exact version to make explicit which schema version is being used."*
+- The sibling consumer `dandi-cli` pins `dandischema ~= 0.12.0` (compatible-release).
+- **Implication for the migration:** bumping `dandischema` to a LinkML-derived release requires a coordinated bump in both consumers, and the generated Pydantic must remain importable and behaviorally equivalent across both pin styles (exact and compatible-release). A subtle API or runtime-validation difference can be invisible until one of these two repos breaks.
+
+### Where dandischema crosses into the backend
+
+Files importing `dandischema` (as of inspection):
+
+- `dandiapi/conftest.py`, `dandiapi/api/tests/factories.py`, `dandiapi/api/tests/fuzzy.py` → test infrastructure (factory generation, fuzzy comparators).
+- `dandiapi/api/doi.py` → DOI metadata serialization.
+- `dandiapi/api/multipart.py` → upload-related metadata.
+- `dandiapi/api/tests/test_*.py` → many tests assert on `dandischema` behavior.
+- `dandiapi/zarr/tests/test_ingest_zarr_archive.py` → zarr ingest path.
+
+These are the files most likely to fail loudly if the generated Pydantic diverges from the hand-written one. The test suite is the cheapest first signal for criterion 2 (drop-in replacement).
+
+### Local dev story
+
+From [`DEVELOPMENT.md`](https://github.com/dandi/dandi-archive/blob/master/DEVELOPMENT.md):
+
+- **VSCode Dev Containers** is the recommended quickstart (`Dev Containers: Reopen in Container`).
+- **Docker Compose** is the alternative (`docker compose up`).
+- Backend dev loop (inside container/host):
+  - `./manage.py migrate`, `createcachetable`, `createsuperuser --email …`, `create_dev_dandiset --owner …`.
+  - Three terminals: `./manage.py runserver_plus 0.0.0.0:8000`, the celery worker, and `cd web && npm run dev`.
+- To exercise the parity check: swap the generated `models_linkml.py` Pydantic into where `dandischema.models` is currently imported (or install `dandischema` from a LinkML-converted branch into the dev env) and run the test suite + the local backend against the frontend.
+
+### Operating notes
+
+- The repo uses **`uv`** for dependency resolution (`uv.lock` checked in). Prefer `uv` commands over plain `pip` when touching deps.
+- Resonant settings layer is non-obvious; before adding a setting, check `django-resonant-settings` to see if there's already a knob.
+- Tests live alongside their app (`dandiapi/api/tests/`, `dandiapi/zarr/tests/`); idiom is `pytest-django` style.
+- DRF schemas are exposed via `drf-yasg` — keep `swagger.py` in sync if URL routes change.
+
+### Watch-outs (LinkML-side semantic differences that can surface here)
+
+- The Pydantic generated by `gen-pydantic` (called from the `2pydantic` Hatch script) may differ in subtle ways from hand-written Pydantic: optional-field semantics, validator placement, `model_config` knobs, alias handling, JSON-mode serialization. Backend factories and serializers are the most likely to expose these.
+- Discriminated unions (the `remove-discriminated-unions` patch-queue branch) — if the backend currently relies on `discriminator=` resolution at validation time, removing it changes the parse path. Verify with `dandiapi/api/tests/test_schema.py` and the fuzzy-comparison utilities.
+
+### Generic Django expertise (lifted selectively from upstream community references)
+
+Useful background, not dandi-archive-specific. Source: [`VoltAgent/django-developer.md`](https://github.com/VoltAgent/awesome-claude-code-subagents/blob/main/categories/02-language-specialists/django-developer.md). **Caveat:** the VoltAgent profile is written against Django 4+; this repo is Django 5.2. Don't lift patterns about `async` views, signals, or settings management without re-verifying for Django 5.
+
+- ORM hygiene: `select_related` / `prefetch_related` for N+1 prevention, explicit index design, careful migrations.
+- DRF idioms: ViewSets, serializers, permission/throttle classes, pagination, API versioning, OpenAPI doc consistency.
+- Security: CSRF/XSS, secure cookies, headers, rate limiting — but check this repo's `settings/` first; resonant-settings likely already configures most of these.
+- Async views and ASGI deployment — re-verify behavior in Django 5.2 before adopting.
+
+When borrowing patterns from external Django subagent definitions, verify against `dandi-archive`'s actual conventions (Django 5, resonant stack, celery topology) before applying.
+
+## References
+
+External skill/agent definitions to **lift content from** (review for fit before adopting wholesale — these are community collections of varying quality):
+
+- [`anthropics/skills`](https://github.com/anthropics/skills) — canonical reference for the `SKILL.md` format and frontmatter conventions.
+- [`VoltAgent/awesome-claude-code-subagents` → `django-developer.md`](https://github.com/VoltAgent/awesome-claude-code-subagents/blob/main/categories/02-language-specialists/django-developer.md) — Django 4+ specialist covering REST APIs, async views, ORM optimization, admin patterns. Closest off-the-shelf match.
+- [`ammohq/agents`](https://github.com/ammohq/agents) — described as a "Supreme Django + DRF + ORM + Pillow expert"; useful if dandi-archive uses DRF heavily (verify before relying).
+- [`wshobson/agents`](https://github.com/wshobson/agents) — broader marketplace; check for backend / Django entries.
+
+`dandi-archive`-specific references:
+
+- TODO: link the repo's backend `README.md`, `CONTRIBUTING.md`, or `DEVELOPMENT.md` once a session actually exercises the backend locally.

@@ -1,0 +1,26 @@
+name: LinkML behavior tests
+
+# Runs the LinkML behavior tests under the `linkml-behavior-test` hatch
+# env, which does not pin a LinkML version, so the daily schedule
+# surfaces upstream LinkML regressions early.
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Hatch
+        uses: pypa/hatch@install
+
+      - name: Run LinkML behavior tests
+        run: hatch run linkml-behavior-test:test

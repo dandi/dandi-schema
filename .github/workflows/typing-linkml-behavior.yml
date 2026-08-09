@@ -1,0 +1,22 @@
+name: Type-check LinkML behavior tests
+
+# Static type-checking for `tests/linkml_behavior/` under the
+# `linkml-behavior-typing` hatch env.
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Hatch
+        uses: pypa/hatch@install
+
+      - name: Type-check LinkML behavior tests
+        run: hatch run linkml-behavior-typing:check
