@@ -14,3 +14,4 @@ sandbox/
 venv/
 venvs/
 dandischema/_version.py
+uv.lock
