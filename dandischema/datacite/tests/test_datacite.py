@@ -260,6 +260,11 @@ def test_datacite(dandi_id: str, schema: Any) -> None:
 
     datacite = to_datacite(meta=meta, validate=True)
 
+    # ``doi`` is Optional on the consolidated ``Dandiset`` but always a ``str`` on a
+    # successfully validated published one (here via ``basic_publishmeta``); narrow it
+    # for the str-typed ``datacite_post`` argument.
+    assert meta.doi is not None
+
     # trying to post datacite
     datacite_post(datacite, meta.doi)
 

@@ -16,7 +16,7 @@ from .consts import (
     ALLOWED_VALIDATION_SCHEMAS,
     DANDI_SCHEMA_VERSION,
 )
-from .exceptions import JsonschemaValidationError, PydanticValidationError
+from .exceptions import PydanticValidationError
 from . import models
 from .utils import (
     TransitionalGenerateJsonSchema,
@@ -151,47 +151,16 @@ def publish_model_schemata(releasedir: Union[str, Path]) -> Path:
     return vdir
 
 
-def _validate_obj_json(
-    instance: Any, validator: JsonschemaValidator, *, missing_ok: bool = False
-) -> None:
-    """
-    Validate a data instance using a jsonschema validator with an option to filter out
-    errors related to missing required properties
-
-    :param instance: The data instance to validate
-    :param validator: The JSON schema validator to use
-    :param missing_ok: Indicates whether to filter out errors related to missing
-        required properties
-    :raises JsonschemaValidationError: If the metadata instance is invalid, and there
-        are errors detected in the validation, optionally discounting errors
-        related to missing required properties. An instance of this exception containing
-        a list of `jsonschema.exceptions.ValidationError` instances representing all the
-        (remaining) errors detected in the validation
-    """
-    try:
-        validate_json(instance, validator)
-    except JsonschemaValidationError as e:
-        if missing_ok:
-            remaining_errs = [
-                err for err in e.errors if "is a required property" not in err.message
-            ]
-            # Raise an exception only if there are errors left after filtering
-            if remaining_errs:
-                raise JsonschemaValidationError(remaining_errs) from e
-        else:
-            raise e
-
-
 def _validate_dandiset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "dandiset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj_json(data, dandi_jsonschema_validator(schema))
+    validate_json(data, dandi_jsonschema_validator(schema))
 
 
 def _validate_asset_json(data: dict, schema_dir: Union[str, Path]) -> None:
     with Path(schema_dir, "asset.json").open() as fp:
         schema = json.load(fp)
-    _validate_obj_json(data, dandi_jsonschema_validator(schema))
+    validate_json(data, dandi_jsonschema_validator(schema))
 
 
 @cache
@@ -273,7 +242,6 @@ def validate(
     obj: dict,
     schema_version: Optional[str] = None,
     schema_key: Optional[str] = None,
-    missing_ok: bool = False,
     json_validation: bool = False,
 ) -> None:
     """Validate object using pydantic
@@ -287,9 +255,6 @@ def validate(
     schema_key: str, optional
       Name of the schema key to be used, if not specified, `schemaKey` of the
       object will be consulted
-    missing_ok: bool, optional
-      This flag allows checking if all fields have appropriate values but ignores
-      missing fields. A `ValueError` is raised with the list of all errors.
     json_validation: bool, optional
       If set to True, `obj` is first validated against the corresponding jsonschema.
 
@@ -298,12 +263,15 @@ def validate(
      None
 
      Raises
-     --------
-     ValueError:
-       if no schema_key is provided and object doesn't provide schemaKey or
-       is missing properly formatted values
-     ValidationError
-       if obj fails validation
+     ------
+     ValueError
+       if no schema key is provided through `schema_key` or the `schemaKey`
+       attribute of the object, or if the schema version to validate against
+       is not an allowed one
+     JsonschemaValidationError
+       if `json_validation` is `True` and the object fails JSON schema validation
+     PydanticValidationError
+       if the object fails Pydantic validation
     """
     schema_key = schema_key or obj.get("schemaKey")
     if schema_key is None:
@@ -324,17 +292,12 @@ def validate(
                     "using json schema for older versions"
                 )
             jvalidator = _get_jsonschema_validator(schema_version, schema_key)
-        _validate_obj_json(obj, jvalidator, missing_ok=missing_ok)
+        validate_json(obj, jvalidator)
     klass = getattr(models, schema_key)
     try:
         klass(**obj)
     except pydantic.ValidationError as exc:
-        messages = []
-        for el in exc.errors():
-            if not missing_ok or el["type"] != "missing":
-                messages.append(el)
-        if messages:
-            raise PydanticValidationError(messages)  # type: ignore[arg-type]
+        raise PydanticValidationError(exc.errors())  # type: ignore[arg-type]
 
 
 def migrate(
@@ -358,24 +321,18 @@ def migrate(
         schema version of the provided instance
     """
 
-    # ATM, we only support the latest schema version as a target. See definition of
-    # `ALLOWED_TARGET_SCHEMAS` for details
-    if len(ALLOWED_TARGET_SCHEMAS) > 1:
-        msg = f"Only migration to current version, {DANDI_SCHEMA_VERSION}, is supported"
-        raise NotImplementedError(msg)
-
     # --------------------------------------------------------------
     # Validate DANDI schema version provided in the metadata instance
     # --------------------------------------------------------------
     # DANDI schema version of the provided instance
-    obj_ver = obj.get("schemaVersion")
-    if obj_ver is None:
+    obj_version = obj.get("schemaVersion")
+    if obj_version is None:
         msg = (
-            "The provided Dandiset metadata instance does not have a "
+            "The provided metadata instance does not have a "
             "`schemaVersion` field for specifying the DANDI schema version."
         )
         raise ValueError(msg)
-    if not isinstance(obj_ver, str):
+    if not isinstance(obj_version, str):
         msg = (
             "The provided Dandiset metadata instance has a non-string "
             "`schemaVersion` field for specifying the DANDI schema version."
@@ -384,17 +341,17 @@ def migrate(
     # Check if `obj_ver` is a valid DANDI schema version
     try:
         # DANDI schema version of the provided instance in tuple form
-        obj_ver_tuple = version2tuple(obj_ver)
+        obj_version_tuple = version2tuple(obj_version)
     except ValueError as e:
         msg = (
             "The provided Dandiset metadata instance has an invalid "
             "`schemaVersion` field for specifying the DANDI schema version."
         )
         raise ValueError(msg) from e
-    if obj_ver not in ALLOWED_INPUT_SCHEMAS:
+    if obj_version not in ALLOWED_INPUT_SCHEMAS:
         msg = (
             f"The DANDI schema version of the provided Dandiset metadata instance, "
-            f"{obj_ver!r}, is not one of the supported versions for input "
+            f"{obj_version!r}, is not one of the supported versions for input "
             f"Dandiset metadata instances. The supported versions are "
             f"{ALLOWED_INPUT_SCHEMAS}."
         )
@@ -407,7 +364,7 @@ def migrate(
     # Check if `to_version` is a valid DANDI schema version
     try:
         # The target DANDI schema version in tuple form
-        target_ver_tuple = version2tuple(to_version)
+        to_version_tuple = version2tuple(to_version)
     except ValueError as e:
         msg = (
             "The provided target version, {to_version!r}, is not a valid DANDI schema "
@@ -424,22 +381,17 @@ def migrate(
         raise ValueError(msg)
     # ----------------------------------------------------------------
 
-    # Ensure the target DANDI schema version is at least the DANDI schema version
-    # of the provided instance
-    if obj_ver_tuple > target_ver_tuple:
-        raise ValueError(f"Cannot migrate from {obj_ver} to lower {to_version}.")
-
     # Optionally validate the instance against the DANDI schema it specifies
     # before migration
     if not skip_validation:
-        _validate_obj_json(obj, _get_jsonschema_validator(obj_ver, "Dandiset"))
+        validate_json(obj, _get_jsonschema_validator(obj_version, "Dandiset"))
 
     obj_migrated = deepcopy(obj)
 
-    if obj_ver_tuple == target_ver_tuple:
+    if obj_version_tuple == to_version_tuple:
         return obj_migrated
 
-    if obj_ver_tuple < version2tuple("0.6.0") <= target_ver_tuple:
+    if obj_version_tuple < version2tuple("0.6.0") <= to_version_tuple:
         for val in obj_migrated.get("about", []):
             if "schemaKey" not in val:
                 if "identifier" in val and "UBERON" in val["identifier"]:
@@ -458,6 +410,34 @@ def migrate(
             obj_migrated["assetsSummary"]["schemaKey"] = "AssetsSummary"
         if "schemaKey" not in obj_migrated:
             obj_migrated["schemaKey"] = "Dandiset"
+
+    # Downgrades
+
+    # Simple downgrades that just require removing fields, which is totally fine
+    # if they are empty, as they are None or empty containers (list, tuple, etc)
+    # or empty strings.
+    # List only those for which such notion of "empty" applies.
+    SIMPLE_DOWNGRADES = [
+        # version added, fields to remove
+        ("0.7.0", ["releaseNotes"]),
+        ("0.8.0", ["sameAs"]),
+    ]
+    for ver_added, fields in SIMPLE_DOWNGRADES:
+        # additional guards are via ALLOWED_TARGET_SCHEMAS
+        if to_version_tuple < version2tuple(ver_added) <= obj_version_tuple:
+            for field in fields:
+                if field in obj_migrated:
+                    value = obj_migrated.get(field)
+                    # Explicit check for "empty" value per above description.
+                    if value is None or (
+                        not value and isinstance(value, (list, tuple, dict, set, str))
+                    ):
+                        del obj_migrated[field]
+                    else:
+                        raise ValueError(
+                            f"Cannot downgrade to {to_version} from "
+                            f"{obj_version} with {field}={value!r} present"
+                        )
 
     # Always update schemaVersion when migrating
     obj_migrated["schemaVersion"] = to_version

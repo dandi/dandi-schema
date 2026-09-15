@@ -4,12 +4,12 @@
     "noVersionPrefix": true,
     "plugins": [
         "git-tag",
+        "released",
         [
             "exec",
             {
                   "afterRelease": "python -m build && twine upload dist/*"
             }
-        ],
-        "released"
+        ]
     ]
 }

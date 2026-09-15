@@ -1,4 +1,3 @@
-from contextlib import nullcontext
 from hashlib import md5, sha256
 import json
 from pathlib import Path
@@ -10,11 +9,10 @@ from pydantic import BaseModel
 import pytest
 
 from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandiset
-from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validator
+from dandischema.utils import TransitionalGenerateJsonSchema
 
 from .utils import (
     DANDISET_METADATA_DIR,
-    DOI_PREFIX,
     INSTANCE_NAME,
     METADATA_DIR,
     skipif_instance_name_not_dandi,
@@ -28,7 +26,6 @@ from ..metadata import (
     _get_jsonschema_validator_local,
     _validate_asset_json,
     _validate_dandiset_json,
-    _validate_obj_json,
     aggregate_assets_summary,
     migrate,
     publish_model_schemata,
@@ -132,27 +129,23 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # ``PublishedDandiset`` is now an alias of ``Dandiset``; its
+            # publication-only fields are optional (gated on ``datePublished``),
+            # so an incomplete instance reports the same missing fields as
+            # ``Dandiset``.
             {"schemaKey": "Dandiset"},
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "contributor",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "contributor",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -162,24 +155,16 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "contributor",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "contributor",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -196,23 +181,15 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedDandiset",
             {
-                e
-                for e in [
-                    "assetsSummary",
-                    "citation",
-                    "datePublished",
-                    "description",
-                    "doi",
-                    "id",
-                    "identifier",
-                    "license",
-                    "manifestLocation",
-                    "name",
-                    "publishedBy",
-                    "url",
-                    "version",
-                ]
-                if DOI_PREFIX is not None or e != "doi"
+                "assetsSummary",
+                "citation",
+                "description",
+                "id",
+                "identifier",
+                "license",
+                "manifestLocation",
+                "name",
+                "version",
             },
         ),
         (
@@ -237,12 +214,13 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             {"contentSize", "encodingFormat", "id", "identifier", "path", "contentUrl"},
         ),
         (
+            # ``PublishedAsset`` is now an alias of ``Asset``; ``publishedBy`` and
+            # ``datePublished`` are optional (gated on ``datePublished``), so an
+            # incomplete instance reports the same missing fields as ``Asset``.
             {"schemaKey": "Asset"},
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -252,15 +230,15 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # A sha2_256-only digest fails ``digest_check`` (a non-zarr asset must
+            # have a dandi-etag), so ``digest`` is reported too.
             {
                 "schemaKey": "Asset",
                 "digest": {"dandi:sha2-256": sha256(b"test").hexdigest()},
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -270,20 +248,21 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
         ),
         (
+            # A valid etag digest passes ``digest_check``; the sha2_256
+            # requirement is gated on ``datePublished`` and the model validator
+            # never runs here (required fields are missing), so ``digest`` is not
+            # reported.
             {
                 "schemaKey": "Asset",
                 "digest": {"dandi:dandi-etag": md5(b"test").hexdigest() + "-1"},
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
                 "path",
-                "digest",
                 "contentUrl",
             },
         ),
@@ -297,9 +276,7 @@ def test_mismatch_key(schema_version: str, schema_key: str) -> None:
             },
             "PublishedAsset",
             {
-                "datePublished",
                 "contentSize",
-                "publishedBy",
                 "encodingFormat",
                 "id",
                 "identifier",
@@ -320,66 +297,6 @@ def test_requirements(
         set(loc[0] if (loc := el["loc"]) else None for el in exc.value.errors)
         == missingfields
     )
-
-
-@pytest.mark.parametrize(
-    "obj, schema_key, errors, num_errors",
-    [
-        (
-            {"schemaKey": "Dandiset", "schemaVersion": "0.4.4"},
-            None,
-            {"Field required"},
-            10,
-        ),
-        (
-            {
-                "schemaKey": "Dandiset",
-                "identifier": f"{INSTANCE_NAME}:000000",
-                "schemaVersion": "0.4.4",
-            },
-            None,
-            {"Field required"},
-            9,
-        ),
-    ],
-)
-def test_missing_ok(
-    obj: Dict[str, Any], schema_key: Optional[str], errors: Set[str], num_errors: int
-) -> None:
-    validate(
-        obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION, missing_ok=True
-    )
-    with pytest.raises(PydanticValidationError) as exc:
-        validate(obj, schema_key=schema_key, schema_version=DANDI_SCHEMA_VERSION)
-    exc_errors = [el["msg"] for el in exc.value.errors]
-    assert len(exc_errors) == num_errors
-    assert set(exc_errors) == errors
-
-
-@skipif_no_network
-def test_missing_ok_error() -> None:
-    if INSTANCE_NAME == "DANDI":
-        # Skip for when the instance being tested is not `DANDI` since the JSON schema
-        # version at `0.4.4` is hardcoded to only for an instance named `DANDI`
-        with pytest.raises(JsonschemaValidationError):
-            validate(
-                {
-                    "schemaKey": "Dandiset",
-                    "identifier": "000000",
-                    "schemaVersion": "0.4.4",
-                },
-                json_validation=True,
-                missing_ok=True,
-            )
-    with pytest.raises(PydanticValidationError):
-        validate(
-            {
-                "schemaKey": "Dandiset",
-                "identifier": "000000",
-                "schemaVersion": "0.4.4",
-            },
-            missing_ok=True,
-        )
 
 
 @pytest.mark.parametrize(
@@ -425,20 +342,6 @@ def test_migrate_value_errors(obj: Dict[str, Any], target: Any, msg: str) -> Non
     """
     with pytest.raises(ValueError, match=msg):
         migrate(obj, to_version=target, skip_validation=True)
-
-
-def test_migrate_value_errors_lesser_target(monkeypatch: pytest.MonkeyPatch) -> None:
-    """
-    Test cases when `migrate()` is expected to raise a `ValueError` exception
-    when the target schema version is lesser than the schema version of the metadata
-    instance
-    """
-    from dandischema import metadata
-
-    monkeypatch.setattr(metadata, "ALLOWED_TARGET_SCHEMAS", ["0.6.0"])
-
-    with pytest.raises(ValueError, match="Cannot migrate from .* to lower"):
-        migrate({"schemaVersion": "0.6.7"}, to_version="0.6.0", skip_validation=True)
 
 
 @skipif_no_network
@@ -510,6 +413,65 @@ def test_migrate_schemaversion_update() -> None:
         f"Expected schemaVersion to be {DANDI_SCHEMA_VERSION}, "
         f"but got {result['schemaVersion']}"
     )
+
+
+@pytest.mark.ai_generated
+def test_migrate_downgrade() -> None:
+    """Test downgrade from 0.7.0 to 0.6.10 handling releaseNotes and sameAs fields"""
+
+    # Minimal metadata at current (0.7.0) version
+    meta_dict: dict = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "identifier": "DANDI:000000",
+    }
+
+    # Test 1: Downgrade without new fields (should succeed)
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+    assert "sameAs" not in downgraded
+
+    # Test 2: Downgrade with empty releaseNotes (should succeed)
+    meta_dict["releaseNotes"] = ""
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 3: Downgrade with None releaseNotes (should succeed)
+    meta_dict["releaseNotes"] = None
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "releaseNotes" not in downgraded
+
+    # Test 4: Downgrade with empty sameAs list (should succeed)
+    meta_dict.pop("releaseNotes")
+    meta_dict["sameAs"] = []
+    downgraded = migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+    assert downgraded["schemaVersion"] == "0.6.10"
+    assert "sameAs" not in downgraded
+
+    # Test 5: Downgrade with non-empty releaseNotes (should fail)
+    meta_dict.pop("sameAs")
+    meta_dict["releaseNotes"] = "Releasing during testing"
+    with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
+        migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+
+    # Test 6: Downgrade with non-empty sameAs (should fail)
+    meta_dict.pop("releaseNotes")
+    meta_dict["sameAs"] = ["dandi://DANDI-SANDBOX/123456"]
+    with pytest.raises(ValueError, match="Cannot downgrade to 0.6.10 from"):
+        migrate(meta_dict, to_version="0.6.10", skip_validation=True)
+
+    # Test 7: No-op migration (already at target version)
+    meta_dict_0610 = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": "0.6.10",
+        "identifier": "DANDI:000000",
+    }
+    migrated = migrate(meta_dict_0610, to_version="0.6.10", skip_validation=True)
+    assert migrated == meta_dict_0610
+    assert migrated is not meta_dict_0610  # but we do create a copy
 
 
 @pytest.mark.parametrize(
@@ -812,143 +774,6 @@ def test_aggregate_number_of_sessions() -> None:
     data = [_bids_asset("ses-A/eeg/task-rest_eeg.edf")]
     summary = aggregate_assets_summary(data)
     assert "numberOfSessions" not in summary
-
-
-class TestValidateObjJson:
-    """
-    Tests for `_validate_obj_json()`
-    """
-
-    @pytest.fixture
-    def dummy_jvalidator(self) -> JsonschemaValidator:
-        """Returns a dummy jsonschema validator initialized with a dummy schema."""
-        return jsonschema_validator(
-            {
-                "type": "object",
-                "properties": {"name": {"type": "string"}},
-                "required": ["name"],
-            },
-            check_format=True,
-        )
-
-    @pytest.fixture
-    def dummy_instance(self) -> dict:
-        """Returns a dummy instance"""
-        return {"name": "Example"}
-
-    def test_valid_obj_no_errors(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-        dummy_jvalidator: JsonschemaValidator,
-        dummy_instance: dict,
-    ) -> None:
-        """
-        Test that `_validate_obj_json` does not raise when `validate_json` has no errors
-        """
-
-        def mock_validate_json(_instance: dict, _schema: dict) -> None:
-            """Simulate successful validation with no exceptions."""
-            return  # No error raised
-
-        # Patch the validate_json function used inside `_validate_obj_json`
-        from dandischema import metadata
-
-        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
-
-        # `_validate_obj_json` should succeed without raising an exception
-        _validate_obj_json(dummy_instance, dummy_jvalidator)
-
-    def test_raises_error_without_missing_ok(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-        dummy_jvalidator: JsonschemaValidator,
-        dummy_instance: dict,
-    ) -> None:
-        """
-        Test that `_validate_obj_json` forwards JsonschemaValidationError
-        when `missing_ok=False`.
-        """
-
-        def mock_validate_json(_instance: dict, _schema: dict) -> None:
-            """Simulate validation error."""
-            # Create a mock error that says a field is invalid
-            raise JsonschemaValidationError(
-                errors=[MagicMock(message="`name` is a required property")]
-            )
-
-        from dandischema import metadata
-
-        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
-
-        # Since `missing_ok=False`, any error should be re-raised.
-        with pytest.raises(JsonschemaValidationError) as excinfo:
-            _validate_obj_json(dummy_instance, dummy_jvalidator, missing_ok=False)
-        assert "`name` is a required property" == excinfo.value.errors[0].message
-
-    @pytest.mark.parametrize(
-        ("validation_errs", "expect_raises", "expected_remaining_errs_count"),
-        [
-            pytest.param(
-                [
-                    MagicMock(message="`name` is a required property"),
-                    MagicMock(message="`title` is a required property ..."),
-                ],
-                False,
-                None,
-                id="no_remaining_errors",
-            ),
-            pytest.param(
-                [
-                    MagicMock(message="`name` is a required property"),
-                    MagicMock(message="Some other validation error"),
-                ],
-                True,
-                1,
-                id="one_remaining_error",
-            ),
-        ],
-    )
-    def test_raises_only_nonmissing_errors_with_missing_ok(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-        dummy_jvalidator: JsonschemaValidator,
-        dummy_instance: dict,
-        validation_errs: list[MagicMock],
-        expect_raises: bool,
-        expected_remaining_errs_count: Optional[int],
-    ) -> None:
-        """
-        Test that `_validate_obj_json` filters out 'is a required property' errors
-        when `missing_ok=True`.
-        """
-
-        def mock_validate_json(_instance: dict, _schema: dict) -> None:
-            """
-            Simulate multiple validation errors, including missing required property.
-            """
-            raise JsonschemaValidationError(
-                errors=validation_errs  # type: ignore[arg-type]
-            )
-
-        from dandischema import metadata
-
-        monkeypatch.setattr(metadata, "validate_json", mock_validate_json)
-
-        # If expect_raises is True, we use pytest.raises(ValidationError)
-        # Otherwise, we enter a no-op context
-        ctx = (
-            pytest.raises(JsonschemaValidationError) if expect_raises else nullcontext()
-        )
-
-        with ctx as excinfo:
-            _validate_obj_json(dummy_instance, dummy_jvalidator, missing_ok=True)
-
-        if excinfo is not None:
-            filtered_errors = excinfo.value.errors
-
-            # We expect the "required property" error to be filtered out,
-            # so we should only see the "Some other validation error".
-            assert len(filtered_errors) == expected_remaining_errs_count
 
 
 class TestGetJsonschemaValidator:
