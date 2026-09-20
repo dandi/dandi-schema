@@ -1,0 +1,94 @@
+id: https://example.org/range-refinement
+name: range_refinement
+description: >-
+  Minimal schema exercising the LinkML behaviors relied on wherever a
+  `slot_usage` entry respecifies the range of an inherited multivalued slot.
+  Two respecifications are covered: narrowing the range to a subclass of the
+  inherited range, and widening it to `Any` constrained by an `any_of` naming
+  the inherited range alongside one of its subclasses. The subclass the
+  `any_of` leaves out is still accepted, since naming the inherited range
+  already covers every class below it.
+
+  Two details make constraint loss observable rather than silent. Each
+  subclass of `RangeBase` adds a required marker slot its siblings lack, so
+  an instance is attributable to exactly one class; and `schemaKey` is a type
+  designator (`designates_type: true`), so each instance also states its own
+  class outright.
+
+  The `*Holder` classes deliberately do not carry `schemaKey`. A required
+  type designator on them would have to name one specific holder, which would
+  stop a single instance file from being validated against all three.
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ex: https://example.org/
+default_prefix: ex
+default_range: string
+imports:
+  - linkml:types
+
+slots:
+  schemaKey:
+    designates_type: true
+    required: true
+  name:
+    required: true
+  subclass_marker:
+    required: true
+  sibling_marker:
+    required: true
+  outsider_marker:
+    required: true
+  respecifiedSlot:
+    required: false
+    multivalued: true
+
+classes:
+  Any:
+    description: Any object
+    class_uri: linkml:Any
+
+  TypeDesignatedBase:
+    slots:
+      - schemaKey
+
+  RangeBase:
+    is_a: TypeDesignatedBase
+    slots:
+      - name
+
+  RangeSubclass:
+    is_a: RangeBase
+    slots:
+      - subclass_marker
+
+  RangeSiblingSubclass:
+    is_a: RangeBase
+    slots:
+      - sibling_marker
+
+  OutsideRangeHierarchy:
+    is_a: TypeDesignatedBase
+    slots:
+      - outsider_marker
+
+  DeclaredRangeHolder:
+    slots:
+      - respecifiedSlot
+    slot_usage:
+      respecifiedSlot:
+        range: RangeBase
+
+  NarrowedRangeHolder:
+    is_a: DeclaredRangeHolder
+    slot_usage:
+      respecifiedSlot:
+        range: RangeSubclass
+
+  AnyOfRangeHolder:
+    is_a: DeclaredRangeHolder
+    slot_usage:
+      respecifiedSlot:
+        range: Any
+        any_of:
+          - range: RangeSubclass
+          - range: RangeBase

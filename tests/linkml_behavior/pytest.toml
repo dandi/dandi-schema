@@ -1,0 +1,7 @@
+# Empty `[pytest]` section so pytest's upward config-file walk stops here
+# (https://docs.pytest.org/en/stable/reference/customize.html — first match
+# wins, no merging) instead of reaching the repo-root `tox.ini`, whose
+# `[pytest]` section is tailored to the `dandischema` package test suite
+# (e.g. `--cov=dandischema`, `filterwarnings = error`) and is not applicable
+# to this detached LinkML-behavior test env.
+[pytest]
