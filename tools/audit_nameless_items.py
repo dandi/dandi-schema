@@ -17,6 +17,12 @@ The script walks the public S3 manifests of a DANDI instance
 * ``empty``    -- ``name`` is ``""`` or only whitespace (would break only if we
   also add ``min_length=1`` / a non-blank pattern)
 
+and, for nested objects of *any* class (``--no-empty-records`` to skip):
+
+* ``empty_record`` -- nothing but ``schemaKey``: every other field is absent,
+  ``null``, an empty string/list/dict, or equal to the field's default (e.g.
+  ``{"schemaKey": "Organization", "roleName": [], "includeInCitation": false}``)
+
 together with whether the object carries an ``identifier`` (i.e. whether the
 alternative "``name`` OR ``identifier``" rule would still accept it).
 
@@ -25,7 +31,7 @@ also migrated to the current schema version and validated with the *installed*
 ``dandischema`` (``--no-validate`` to skip).  Run it with a ``dandischema``
 version *preceding* the tightening (e.g. ``pip install dandischema==0.14.0``)
 to get the baseline; the verdict ``WOULD_BREAK`` means the record validates
-with it but contains at least one ``missing`` name.
+with it but contains at least one ``missing`` name or ``empty_record``.
 
 Examples
 --------
@@ -77,12 +83,17 @@ VERSION_RE = re.compile(r"^\d+\.\d{6}\.\d{4}$")
 # identified by path; ``CommonModel`` is only an abstract base).
 EXCLUDED_CLASSES = {"CommonModel", "BareAsset", "Asset"}
 
+# Finding kinds which make a record invalid under the proposed changes
+BREAKING_KINDS = {"missing", "empty_record"}
+
+_NO_DEFAULT = object()
+
 
 @dataclass
 class Finding:
     schema_key: str
     path: str
-    kind: str  # "missing" | "empty"
+    kind: str  # "missing" | "empty" | "empty_record"
     has_identifier: bool
     identifier: Optional[str] = None
 
@@ -104,7 +115,7 @@ class VersionReport:
     def verdict(self) -> str:
         if self.fetch_error:
             return "FETCH_ERROR"
-        missing = any(f.kind == "missing" for f in self.findings)
+        missing = any(f.kind in BREAKING_KINDS for f in self.findings)
         if not missing:
             return "OK_EMPTY_ONLY" if self.findings else "OK"
         if self.valid_now is None:
@@ -131,11 +142,71 @@ def named_schema_keys() -> Set[str]:
     return keys
 
 
-def scan(obj: Any, targets: Set[str], path: str = "") -> Iterator[Finding]:
-    """Yield findings for nested dicts with a targeted ``schemaKey``."""
+def field_defaults() -> Dict[str, Dict[str, Any]]:
+    """Map ``schemaKey`` to ``{field: default}`` of the corresponding model.
+
+    Fields without a default map to ``_NO_DEFAULT``.
+    """
+    out: Dict[str, Dict[str, Any]] = {}
+    for obj in vars(models).values():
+        if not (
+            isinstance(obj, type)
+            and issubclass(obj, BaseModel)
+            and obj.__module__ == models.__name__
+            and "schemaKey" in obj.model_fields
+        ):
+            continue
+        key = obj.model_fields["schemaKey"].default
+        if not isinstance(key, str) or obj.__name__ != key:
+            continue  # aliases and bases sharing a subclass' schemaKey
+        out[key] = {
+            name: (_NO_DEFAULT if f.is_required() else f.get_default())
+            for name, f in obj.model_fields.items()
+        }
+    return out
+
+
+def _is_blank(value: Any, default: Any) -> bool:
+    if value is None or (isinstance(value, (str, list, dict)) and not value):
+        return True
+    if isinstance(value, str) and not value.strip():
+        return True
+    return default is not _NO_DEFAULT and value == default
+
+
+def is_empty_record(obj: Dict[str, Any], defaults: Dict[str, Any]) -> bool:
+    """Whether ``obj`` carries no information besides its ``schemaKey``."""
+    return all(
+        _is_blank(v, defaults.get(k, _NO_DEFAULT))
+        for k, v in obj.items()
+        if k != "schemaKey"
+    )
+
+
+def scan(
+    obj: Any,
+    targets: Set[str],
+    defaults: Optional[Dict[str, Dict[str, Any]]] = None,
+    path: str = "",
+) -> Iterator[Finding]:
+    """Yield findings for nested dicts with a ``schemaKey``.
+
+    ``targets`` are the schemaKeys checked for a missing/empty ``name``;
+    if ``defaults`` (see `field_defaults`) is given, nested records of any
+    schemaKey are also checked for being empty (`is_empty_record`).
+    """
     if isinstance(obj, dict):
         key = obj.get("schemaKey")
-        if path and key in targets:
+        if (
+            path
+            and defaults is not None
+            and isinstance(key, str)
+            and is_empty_record(obj, defaults.get(key, {}))
+        ):
+            yield Finding(
+                schema_key=key, path=path, kind="empty_record", has_identifier=False
+            )
+        elif path and key in targets:
             name = obj.get("name")
             kind = None
             if name is None:
@@ -152,10 +223,10 @@ def scan(obj: Any, targets: Set[str], path: str = "") -> Iterator[Finding]:
                     identifier=str(ident) if ident else None,
                 )
         for k, v in obj.items():
-            yield from scan(v, targets, f"{path}.{k}" if path else k)
+            yield from scan(v, targets, defaults, f"{path}.{k}" if path else k)
     elif isinstance(obj, list):
         for i, v in enumerate(obj):
-            yield from scan(v, targets, f"{path}[{i}]")
+            yield from scan(v, targets, defaults, f"{path}[{i}]")
 
 
 class Fetcher:
@@ -219,6 +290,7 @@ def audit_version(
     dandiset: str,
     version: str,
     targets: Set[str],
+    defaults: Optional[Dict[str, Dict[str, Any]]],
     do_validate: bool,
     do_assets: bool,
     max_assets_mb: float,
@@ -231,7 +303,7 @@ def audit_version(
         rep.fetch_error = f"{type(e).__name__}: {e}"
         return rep
     rep.schema_version = meta.get("schemaVersion")
-    rep.findings = list(scan(meta, targets))
+    rep.findings = list(scan(meta, targets, defaults))
     if do_validate:
         rep.valid_now, rep.validation_error = validate_now(meta)
     if do_assets:
@@ -249,7 +321,7 @@ def audit_version(
             else:
                 rep.assets_scanned = len(assets)
                 for i, asset in enumerate(assets):
-                    for f in scan(asset, targets):
+                    for f in scan(asset, targets, defaults):
                         f.path = f"{asset.get('path', i)}:{f.path}"
                         rep.asset_findings.append(f)
     return rep
@@ -291,6 +363,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="schemaKey to check (repeatable). Default: every class with a "
         "`name` field, derived from the installed dandischema.",
     )
+    p.add_argument(
+        "--no-empty-records",
+        dest="empty_records",
+        action="store_false",
+        help="Do not check nested records of any class for carrying nothing "
+        "but schemaKey",
+    )
     p.add_argument("--no-validate", dest="validate", action="store_false")
     p.add_argument("--assets", action="store_true", help="Also scan assets.jsonld")
     p.add_argument(
@@ -307,6 +386,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     targets = set(args.schema_key) if args.schema_key else named_schema_keys()
     print(f"Checking schemaKeys: {', '.join(sorted(targets))}", file=sys.stderr)
 
+    defaults = field_defaults() if args.empty_records else None
+
     fetcher = Fetcher(args.bucket_url, args.cache_dir)
     versions = list_versions(fetcher, args.dandiset, args.include_draft, args.jobs)
     print(f"{len(versions)} versions to audit", file=sys.stderr)
@@ -320,6 +401,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                 ds,
                 v,
                 targets,
+                defaults,
                 args.validate,
                 args.assets,
                 args.max_assets_mb,
@@ -364,13 +446,15 @@ def main(argv: Optional[List[str]] = None) -> int:
             continue
         print(f"\n# {title} findings (schemaKey, kind, has identifier): count")
         for (sk, kind, has_id), c in sorted(counter.items()):
-            print(f"  {sk:26} {kind:8} {'id' if has_id else 'no-id':6} {c}")
+            print(f"  {sk:26} {kind:12} {'id' if has_id else 'no-id':6} {c}")
     breaking = [r for r in reports if r.verdict == "WOULD_BREAK"]
     if breaking:
         print("\n# Published versions that are valid now but would become invalid:")
         for r in breaking:
             paths = ", ".join(
-                f"{f.path}({f.schema_key})" for f in r.findings if f.kind == "missing"
+                f"{f.path}({f.schema_key})"
+                for f in r.findings
+                if f.kind in BREAKING_KINDS
             )
             print(f"  {r.dandiset}/{r.version}: {paths}")
     return 0
