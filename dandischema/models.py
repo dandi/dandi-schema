@@ -736,9 +736,9 @@ class BaseType(DandiBaseModel):
         " supported by identifiers.org.",
         json_schema_extra={"nskey": "schema"},
     )
-    name: Optional[str] = Field(
-        None,
+    name: str = Field(
         description="The name of the item.",
+        min_length=1,
         max_length=150,
         json_schema_extra={"nskey": "schema"},
     )
@@ -906,7 +906,7 @@ class Contributor(DandiBaseModel):
         "people or ROR (ror.org) for institutions.",
         json_schema_extra={"nskey": "schema"},
     )
-    name: Optional[str] = Field(None, json_schema_extra={"nskey": "schema"})
+    name: str = Field(min_length=1, json_schema_extra={"nskey": "schema"})
     email: Optional[EmailStr] = Field(None, json_schema_extra={"nskey": "schema"})
     url: Optional[AnyHttpUrl] = Field(None, json_schema_extra={"nskey": "schema"})
     roleName: Optional[List[RoleType]] = Field(

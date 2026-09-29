@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """Audit published DANDI manifests for nested items lacking a ``name``.
 
-Motivation: https://github.com/dandi/dandi-schema/issues/442 proposes making
-``name`` required on ``Contributor`` (hence ``Organization``), ``BaseType``
-subclasses (``Anatomy``, ``SpeciesType``, ...) and possibly other classes whose
-``name`` is currently ``Optional``.  Before doing so we need to know which
-already *published* (immutable) versions would turn from valid to invalid.
+Motivation: https://github.com/dandi/dandi-schema/issues/442 made ``name``
+required on ``Contributor`` (hence ``Organization``) and ``BaseType`` subclasses
+(``Anatomy``, ``SpeciesType``, ...), which were ``Optional`` in schema 0.8.0 and
+earlier.  This script tells which already *published* (immutable) versions
+turn from valid to invalid by such a change, and can be reused for similar
+tightening of other classes.
 
 The script walks the public S3 manifests of a DANDI instance
 (``dandisets/<id>/<version>/dandiset.jsonld`` and, optionally,
 ``assets.jsonld``) without authentication, and for every nested object whose
-``schemaKey`` belongs to a class with an optional ``name`` it reports:
+``schemaKey`` belongs to a class with a ``name`` field it reports:
 
 * ``missing``  -- ``name`` absent or ``null``  (breaks with ``name: str``)
 * ``empty``    -- ``name`` is ``""`` or only whitespace (would break only if we
@@ -21,9 +22,10 @@ alternative "``name`` OR ``identifier``" rule would still accept it).
 
 To tell "valid -> invalid" apart from "already invalid", each Dandiset record is
 also migrated to the current schema version and validated with the *installed*
-``dandischema`` (``--no-validate`` to skip).  Run it with ``dandischema`` from
-``master`` to get the baseline; the verdict ``WOULD_BREAK`` means the record
-validates today but contains at least one ``missing`` name.
+``dandischema`` (``--no-validate`` to skip).  Run it with a ``dandischema``
+version *preceding* the tightening (e.g. ``pip install dandischema==0.14.0``)
+to get the baseline; the verdict ``WOULD_BREAK`` means the record validates
+with it but contains at least one ``missing`` name.
 
 Examples
 --------
@@ -110,8 +112,8 @@ class VersionReport:
         return "WOULD_BREAK" if self.valid_now else "ALREADY_INVALID"
 
 
-def optional_name_schema_keys() -> Set[str]:
-    """``schemaKey`` values of models whose ``name`` field is optional."""
+def named_schema_keys() -> Set[str]:
+    """``schemaKey`` values of models having a ``name`` field."""
     keys: Set[str] = set()
     for obj in vars(models).values():
         if not (
@@ -122,7 +124,7 @@ def optional_name_schema_keys() -> Set[str]:
         ):
             continue
         fields = obj.model_fields
-        if "name" not in fields or fields["name"].is_required():
+        if "name" not in fields:
             continue
         default = fields["schemaKey"].default if "schemaKey" in fields else None
         keys.add(default if isinstance(default, str) else obj.__name__)
@@ -286,8 +288,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--schema-key",
         action="append",
         default=None,
-        help="schemaKey to check (repeatable). Default: every class with an "
-        "optional `name`, derived from the installed dandischema.",
+        help="schemaKey to check (repeatable). Default: every class with a "
+        "`name` field, derived from the installed dandischema.",
     )
     p.add_argument("--no-validate", dest="validate", action="store_false")
     p.add_argument("--assets", action="store_true", help="Also scan assets.jsonld")
@@ -302,7 +304,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--output", "-o", type=Path, help="Write per-version JSON lines")
     args = p.parse_args(argv)
 
-    targets = set(args.schema_key) if args.schema_key else optional_name_schema_keys()
+    targets = set(args.schema_key) if args.schema_key else named_schema_keys()
     print(f"Checking schemaKeys: {', '.join(sorted(targets))}", file=sys.stderr)
 
     fetcher = Fetcher(args.bucket_url, args.cache_dir)
