@@ -31,6 +31,7 @@ Dandiset metadata to [DataCite](https://datacite.org/) metadata for DOI generati
 Important files in this repository include:
 - [models.py](./dandischema/models.py) - contains the Pydantic models defining the metadata models
 - [metadata.py](./dandischema/metadata.py) - contains functions for validating, migrating, and aggregating metadata
+- [lint.py](./dandischema/lint.py) - contains advisory, non-fatal checks (`lint()`) for metadata which is valid but likely unintended, e.g. nested records carrying nothing but their `schemaKey`
 - [datacite package](./dandischema/datacite) - contains functions for converting Dandiset metadata to DataCite metadata
 
 ## Customization with Vendor Information
