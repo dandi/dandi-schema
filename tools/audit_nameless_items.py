@@ -1,52 +1,62 @@
 #!/usr/bin/env python3
-"""Audit published DANDI manifests for nested items lacking a ``name``.
+"""Audit DANDI manifests for records which a schema change would invalidate.
 
 Motivation: https://github.com/dandi/dandi-schema/issues/442 made ``name``
 required on ``Contributor`` (hence ``Organization``) and ``BaseType`` subclasses
 (``Anatomy``, ``SpeciesType``, ...), which were ``Optional`` in schema 0.8.0 and
-earlier.  This script tells which already *published* (immutable) versions
-turn from valid to invalid by such a change, and can be reused for similar
-tightening of other classes.
+earlier.  This script tells which existing versions turn from valid to invalid
+by such a change, and can be reused for similar tightening of other classes.
 
 The script walks the public S3 manifests of a DANDI instance
-(``dandisets/<id>/<version>/dandiset.jsonld`` and, optionally,
-``assets.jsonld``) without authentication, and for every nested object whose
-``schemaKey`` belongs to a class with a ``name`` field it reports:
+(``dandisets/<id>/<version>/dandiset.jsonld`` and, with ``--assets``,
+``assets.jsonld``) without authentication and
 
-* ``missing``  -- ``name`` absent or ``null``  (breaks with ``name: str``)
-* ``empty``    -- ``name`` is ``""`` or only whitespace (would break only if we
-  also add ``min_length=1`` / a non-blank pattern)
+1. validates every record with the *installed* ``dandischema``: Dandiset
+   records are migrated to the current schema version and validated as
+   ``Dandiset``, asset records are validated as ``Asset``
+   (``--no-validate`` to skip);
+2. reports items which point at the cause, for nested objects whose
+   ``schemaKey`` belongs to one of the checked classes (by default the
+   ``BaseType`` and ``Contributor`` subclasses; see ``--schema-key``):
 
-and, for nested objects of *any* class (``--no-empty-records`` to skip):
+   * ``missing`` -- ``name`` absent or ``null``
+   * ``empty``   -- ``name`` is ``""`` or only whitespace
 
-* ``empty_record`` -- nothing but ``schemaKey``: every other field is absent,
-  ``null``, an empty string/list/dict, or equal to the field's default (e.g.
-  ``{"schemaKey": "Organization", "roleName": [], "includeInCitation": false}``)
+   and, for nested objects of *any* class (``--no-empty-records`` to skip):
 
-together with whether the object carries an ``identifier`` (i.e. whether the
-alternative "``name`` OR ``identifier``" rule would still accept it).
+   * ``empty_record`` -- nothing but ``schemaKey``: every other field is
+     absent, ``null``, an empty string/list/dict, or equal to the field's
+     default (e.g. ``{"schemaKey": "ContactPoint"}``)
 
-To tell "valid -> invalid" apart from "already invalid", each Dandiset record is
-also migrated to the current schema version and validated with the *installed*
-``dandischema`` (``--no-validate`` to skip).  Run it with a ``dandischema``
-version *preceding* the tightening (e.g. ``pip install dandischema==0.14.0``)
-to get the baseline; the verdict ``WOULD_BREAK`` means the record validates
-with it but contains at least one ``missing`` name or ``empty_record``.
+The verdict is decided by validation, not by these items.  Run the script
+twice: once with the ``dandischema`` preceding the change (the baseline) and
+once with the changed one, passing the output of the first run with
+``--baseline``.  A version is then reported as
+
+* ``BREAKS``     -- some record (the Dandiset or an asset) validates with the
+  baseline but not with the installed ``dandischema``;
+* ``NEW_ERRORS`` -- no record turns invalid, but some already invalid record
+  gets new validation errors;
+* ``UNCHANGED``  -- otherwise.
+
+Without ``--baseline`` a version is reported as ``VALID`` or ``INVALID``.
 
 Examples
 --------
+Baseline with the released ``dandischema``, then the change, comparing the two
+(``--cache-dir`` avoids downloading the manifests twice)::
+
+    pip install dandischema==0.14.0
+    python tools/audit_nameless_items.py --include-draft --assets \\
+        --cache-dir ~/.cache/dandi-audit -j 16 -o baseline.jsonl
+    pip install -e .
+    python tools/audit_nameless_items.py --include-draft --assets \\
+        --cache-dir ~/.cache/dandi-audit -j 16 -o new.jsonl \\
+        --baseline baseline.jsonl
+
 Quick look at a few Dandisets::
 
     python tools/audit_nameless_items.py --dandiset 000003 --dandiset 000026
-
-Full audit of published Dandiset-level metadata, cached for re-runs::
-
-    python tools/audit_nameless_items.py --cache-dir ~/.cache/dandi-audit \\
-        --jobs 16 --output audit.jsonl
-
-Include asset-level metadata (downloads can be large; see ``--max-assets-mb``)::
-
-    python tools/audit_nameless_items.py --assets --output audit.jsonl
 """
 
 from __future__ import annotations
@@ -55,6 +65,7 @@ import argparse
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass, field
+import gzip
 import json
 import os
 from pathlib import Path
@@ -79,12 +90,9 @@ DEFAULT_BUCKET_URL = "https://dandiarchive.s3.amazonaws.com"
 S3_NS = {"s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
 VERSION_RE = re.compile(r"^\d+\.\d{6}\.\d{4}$")
 
-# Top-level records for which an optional ``name`` is by design (assets are
-# identified by path; ``CommonModel`` is only an abstract base).
-EXCLUDED_CLASSES = {"CommonModel", "BareAsset", "Asset"}
-
-# Finding kinds which make a record invalid under the proposed changes
-BREAKING_KINDS = {"missing", "empty_record"}
+# Validation errors kept per record (the full list can be long for records
+# made with old schema versions)
+MAX_ERRORS = 50
 
 _NO_DEFAULT = object()
 
@@ -103,42 +111,33 @@ class VersionReport:
     dandiset: str
     version: str
     schema_version: Optional[str] = None
-    valid_now: Optional[bool] = None
-    validation_error: Optional[str] = None
+    # Validation errors ("loc: type") of the Dandiset record; None if not
+    # validated, [] if valid
+    errors: Optional[List[str]] = None
+    # Validation errors of the invalid assets, by asset path; None if not
+    # validated
+    asset_errors: Optional[Dict[str, List[str]]] = None
     findings: List[Finding] = field(default_factory=list)
     asset_findings: List[Finding] = field(default_factory=list)
     assets_scanned: Optional[int] = None
     assets_skipped_reason: Optional[str] = None
     fetch_error: Optional[str] = None
-
-    @property
-    def verdict(self) -> str:
-        if self.fetch_error:
-            return "FETCH_ERROR"
-        missing = any(f.kind in BREAKING_KINDS for f in self.findings)
-        if not missing:
-            return "OK_EMPTY_ONLY" if self.findings else "OK"
-        if self.valid_now is None:
-            return "HAS_MISSING"
-        return "WOULD_BREAK" if self.valid_now else "ALREADY_INVALID"
+    # Filled in when compared with a baseline
+    verdict: Optional[str] = None
+    new_errors: Dict[str, List[str]] = field(default_factory=dict)
 
 
-def named_schema_keys() -> Set[str]:
-    """``schemaKey`` values of models having a ``name`` field."""
+def checked_schema_keys() -> Set[str]:
+    """``schemaKey`` values of the ``BaseType`` and ``Contributor`` subclasses."""
     keys: Set[str] = set()
     for obj in vars(models).values():
-        if not (
+        if (
             isinstance(obj, type)
-            and issubclass(obj, BaseModel)
+            and issubclass(obj, (models.BaseType, models.Contributor))
             and obj.__module__ == models.__name__
-            and obj.__name__ not in EXCLUDED_CLASSES
         ):
-            continue
-        fields = obj.model_fields
-        if "name" not in fields:
-            continue
-        default = fields["schemaKey"].default if "schemaKey" in fields else None
-        keys.add(default if isinstance(default, str) else obj.__name__)
+            default = obj.model_fields["schemaKey"].default
+            keys.add(default if isinstance(default, str) else obj.__name__)
     return keys
 
 
@@ -259,30 +258,49 @@ class Fetcher:
         return int(r.headers.get("Content-Length", 0))
 
     def get_json(self, key: str) -> Any:
-        cached = self.cache_dir / key if self.cache_dir else None
-        if cached is not None and cached.exists():
-            return json.loads(cached.read_bytes())
+        """Fetch a JSON document, caching it gzip-compressed in ``cache_dir``"""
+        if self.cache_dir is not None:
+            plain = self.cache_dir / key
+            gz = plain.with_name(plain.name + ".gz")
+            if gz.exists():
+                return json.loads(gzip.decompress(gz.read_bytes()))
+            if plain.exists():  # cache made by earlier versions of this script
+                return json.loads(plain.read_bytes())
         r = self.session.get(f"{self.bucket_url}/{key}", timeout=600)
         r.raise_for_status()
-        if cached is not None:
-            cached.parent.mkdir(parents=True, exist_ok=True)
-            cached.write_bytes(r.content)
+        if self.cache_dir is not None:
+            gz.parent.mkdir(parents=True, exist_ok=True)
+            gz.write_bytes(gzip.compress(r.content))
         return r.json()
 
 
-def validate_now(meta: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
-    """Validate a Dandiset record with the installed ``dandischema``."""
+def _errors(e: Exception) -> List[str]:
+    if isinstance(e, ValidationError):
+        errs = sorted(
+            {f"{'.'.join(map(str, err['loc']))}: {err['type']}" for err in e.errors()}
+        )
+    else:  # migration failures etc.
+        errs = [f"{type(e).__name__}: {e}"[:500]]
+    return errs[:MAX_ERRORS]
+
+
+def validate_dandiset(meta: Dict[str, Any]) -> List[str]:
+    """Validation errors of a Dandiset record with the installed ``dandischema``"""
     try:
         migrated = migrate(meta, to_version=DANDI_SCHEMA_VERSION, skip_validation=True)
         models.Dandiset.model_validate(migrated)
-    except ValidationError as e:
-        errs = "; ".join(
-            f"{'.'.join(map(str, err['loc']))}: {err['msg']}" for err in e.errors()
-        )
-        return False, errs[:2000]
-    except Exception as e:  # migration failures etc.
-        return False, f"{type(e).__name__}: {e}"[:2000]
-    return True, None
+    except Exception as e:
+        return _errors(e)
+    return []
+
+
+def validate_asset(meta: Dict[str, Any]) -> List[str]:
+    """Validation errors of an asset record with the installed ``dandischema``"""
+    try:
+        models.Asset.model_validate(meta)
+    except Exception as e:
+        return _errors(e)
+    return []
 
 
 def audit_version(
@@ -305,7 +323,7 @@ def audit_version(
     rep.schema_version = meta.get("schemaVersion")
     rep.findings = list(scan(meta, targets, defaults))
     if do_validate:
-        rep.valid_now, rep.validation_error = validate_now(meta)
+        rep.errors = validate_dandiset(meta)
     if do_assets:
         key = f"{base}/assets.jsonld"
         size = fetcher.size(key)
@@ -320,11 +338,52 @@ def audit_version(
                 rep.assets_skipped_reason = f"{type(e).__name__}: {e}"
             else:
                 rep.assets_scanned = len(assets)
+                if do_validate:
+                    rep.asset_errors = {}
                 for i, asset in enumerate(assets):
+                    apath = str(asset.get("path", i))
                     for f in scan(asset, targets, defaults):
-                        f.path = f"{asset.get('path', i)}:{f.path}"
+                        f.path = f"{apath}:{f.path}"
                         rep.asset_findings.append(f)
+                    if rep.asset_errors is not None:
+                        errs = validate_asset(asset)
+                        if errs:
+                            rep.asset_errors[apath] = errs
     return rep
+
+
+def compare(rep: VersionReport, baseline: Optional[VersionReport]) -> None:
+    """Set ``rep.verdict`` and ``rep.new_errors`` relative to ``baseline``"""
+    if rep.fetch_error:
+        rep.verdict = "FETCH_ERROR"
+        return
+    if baseline is None:
+        if rep.errors is None:
+            rep.verdict = "NOT_VALIDATED"
+        else:
+            rep.verdict = "INVALID" if rep.errors or rep.asset_errors else "VALID"
+        return
+    breaks = False
+    # (record, errors now, errors in baseline); a record not validated in the
+    # baseline is not compared
+    records: List[Tuple[str, List[str], Optional[List[str]]]] = []
+    if rep.errors is not None and baseline.errors is not None:
+        records.append(("<dandiset>", rep.errors, baseline.errors))
+    if rep.asset_errors is not None and baseline.asset_errors is not None:
+        for apath, errs in rep.asset_errors.items():
+            records.append((apath, errs, baseline.asset_errors.get(apath, [])))
+    for name, errs, base_errs in records:
+        assert base_errs is not None
+        new = sorted(set(errs) - set(base_errs))
+        if new:
+            rep.new_errors[name] = new
+            breaks = breaks or not base_errs
+    if breaks:
+        rep.verdict = "BREAKS"
+    elif rep.new_errors:
+        rep.verdict = "NEW_ERRORS"
+    else:
+        rep.verdict = "UNCHANGED"
 
 
 def list_versions(
@@ -344,6 +403,21 @@ def list_versions(
         )
 
 
+def load_baseline(path: Path) -> Dict[Tuple[str, str], VersionReport]:
+    out: Dict[Tuple[str, str], VersionReport] = {}
+    with path.open() as fh:
+        for line in fh:
+            d = json.loads(line)
+            rep = VersionReport(
+                dandiset=d["dandiset"],
+                version=d["version"],
+                errors=d.get("errors"),
+                asset_errors=d.get("asset_errors"),
+            )
+            out[(rep.dandiset, rep.version)] = rep
+    return out
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -360,8 +434,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--schema-key",
         action="append",
         default=None,
-        help="schemaKey to check (repeatable). Default: every class with a "
-        "`name` field, derived from the installed dandischema.",
+        help="schemaKey to check for a missing/empty `name` (repeatable). "
+        "Default: the BaseType and Contributor subclasses.",
     )
     p.add_argument(
         "--no-empty-records",
@@ -371,7 +445,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         "but schemaKey",
     )
     p.add_argument("--no-validate", dest="validate", action="store_false")
-    p.add_argument("--assets", action="store_true", help="Also scan assets.jsonld")
+    p.add_argument(
+        "--baseline",
+        type=Path,
+        help="JSON lines output of an earlier run (with the dandischema "
+        "preceding the change) to compare the validation results with",
+    )
+    p.add_argument("--assets", action="store_true", help="Also audit assets.jsonld")
     p.add_argument(
         "--max-assets-mb",
         type=float,
@@ -383,10 +463,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--output", "-o", type=Path, help="Write per-version JSON lines")
     args = p.parse_args(argv)
 
-    targets = set(args.schema_key) if args.schema_key else named_schema_keys()
+    targets = set(args.schema_key) if args.schema_key else checked_schema_keys()
     print(f"Checking schemaKeys: {', '.join(sorted(targets))}", file=sys.stderr)
-
     defaults = field_defaults() if args.empty_records else None
+    baseline = load_baseline(args.baseline) if args.baseline else None
 
     fetcher = Fetcher(args.bucket_url, args.cache_dir)
     versions = list_versions(fetcher, args.dandiset, args.include_draft, args.jobs)
@@ -410,12 +490,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         ]
         for n, fut in enumerate(as_completed(futs), 1):
             rep = fut.result()
+            if baseline is not None:
+                compare(rep, baseline.get((rep.dandiset, rep.version)))
+            else:
+                compare(rep, None)
             reports.append(rep)
-            if rep.findings or rep.asset_findings or rep.fetch_error:
+            if rep.verdict in ("BREAKS", "NEW_ERRORS", "FETCH_ERROR"):
                 print(
-                    f"[{n}/{len(futs)}] {rep.dandiset}/{rep.version}: {rep.verdict}"
-                    f" ({len(rep.findings)} dandiset-level,"
-                    f" {len(rep.asset_findings)} asset-level findings)",
+                    f"[{n}/{len(futs)}] {rep.dandiset}/{rep.version}: {rep.verdict}",
                     file=sys.stderr,
                 )
 
@@ -423,7 +505,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.output:
         with args.output.open("w") as fh:
             for rep in reports:
-                fh.write(json.dumps({**asdict(rep), "verdict": rep.verdict}) + "\n")
+                fh.write(json.dumps(asdict(rep)) + "\n")
 
     # ---- summary -----------------------------------------------------------
     verdicts = Counter(r.verdict for r in reports)
@@ -434,10 +516,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         asset_by_key.update(
             (f.schema_key, f.kind, f.has_identifier) for f in r.asset_findings
         )
+    skipped = [r for r in reports if r.assets_skipped_reason]
 
     print(f"\n# Versions audited: {len(reports)}")
-    for v, c in sorted(verdicts.items()):
-        print(f"  {v:16} {c}")
+    for v, c in sorted(verdicts.items(), key=lambda kv: str(kv[0])):
+        print(f"  {v!s:16} {c}")
+    if args.assets:
+        print(f"  assets scanned: {sum(r.assets_scanned or 0 for r in reports)}")
+        print(f"  assets.jsonld skipped: {len(skipped)}")
     for title, counter in (
         ("Dandiset-level", by_key),
         ("Asset-level", asset_by_key),
@@ -447,16 +533,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"\n# {title} findings (schemaKey, kind, has identifier): count")
         for (sk, kind, has_id), c in sorted(counter.items()):
             print(f"  {sk:26} {kind:12} {'id' if has_id else 'no-id':6} {c}")
-    breaking = [r for r in reports if r.verdict == "WOULD_BREAK"]
-    if breaking:
-        print("\n# Published versions that are valid now but would become invalid:")
-        for r in breaking:
-            paths = ", ".join(
-                f"{f.path}({f.schema_key})"
-                for f in r.findings
-                if f.kind in BREAKING_KINDS
-            )
-            print(f"  {r.dandiset}/{r.version}: {paths}")
+    changed = [r for r in reports if r.verdict in ("BREAKS", "NEW_ERRORS")]
+    if changed:
+        print("\n# Versions with new validation errors (record: errors):")
+        for r in changed:
+            print(f"  {r.dandiset}/{r.version} [{r.verdict}]")
+            for name, errs in r.new_errors.items():
+                print(f"    {name}: {'; '.join(errs)}")
     return 0
 
 
