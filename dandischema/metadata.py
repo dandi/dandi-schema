@@ -4,7 +4,7 @@ from functools import cache
 from inspect import isclass
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, TypeVar, Union, cast, get_args
+from typing import Any, Dict, Iterable, List, Optional, TypeVar, Union, cast, get_args
 
 from jsonschema.protocols import Validator as JsonschemaValidator
 import pydantic
@@ -306,19 +306,27 @@ def migrate(
     skip_validation: bool = False,
 ) -> dict:
     """
-    Migrate a Dandiset metadata instance to a newer DANDI schema version
+    Migrate a metadata instance to another (newer or older) DANDI schema version
 
-    :param obj: The Dandiset metadata instance to migrate
+    Upgrades are supported for Dandiset metadata.  Downgrades (to one of
+    `ALLOWED_TARGET_SCHEMAS`) remove fields introduced after the target
+    version, and also apply to Asset metadata (as used by dandi-cli to send
+    metadata to servers with an older schema): fields with user-provided
+    content are removed only if empty, while automatically derived ones (such
+    as per-asset ``dataStandard``) are removed regardless.
+
+    :param obj: The metadata instance to migrate
     :param to_version: The target DANDI schema version to migrate to
     :param skip_validation: If True, the given instance will not be validated before
-        migration. Otherwise, the instance will be validated before migration.
-    :return: The Dandiset metadata instance migrated to the target DANDI schema version
+        migration. Otherwise, the instance will be validated (as a Dandiset)
+        before migration.
+    :return: The metadata instance migrated to the target DANDI schema version
     :raises ValueError: If the provided instance doesn't have a `schemaVersion` field
         that specifies a valid DANDI schema version
     :raises ValueError: If `to_version` is not a valid DANDI schema version or an
         allowed target schema
-    :raises ValueError: If the target DANDI schema version is lower than the DANDI
-        schema version of the provided instance
+    :raises ValueError: If downgrading would lose a non-empty value of a field
+        with user-provided content
     """
 
     # --------------------------------------------------------------
@@ -439,6 +447,34 @@ def migrate(
                             f"{obj_version} with {field}={value!r} present"
                         )
 
+    # Downgrades that drop fields even if populated, since their values are
+    # derived automatically (e.g. extracted from data files by clients such as
+    # dandi-cli), so no user-provided information is lost.
+    LOSSY_DOWNGRADES = [
+        # version added, fields to remove
+        ("0.9.0", ["dataStandard"]),  # per-asset dataStandard
+    ]
+    for ver_added, fields in LOSSY_DOWNGRADES:
+        if to_version_tuple < version2tuple(ver_added) <= obj_version_tuple:
+            for field in fields:
+                obj_migrated.pop(field, None)
+
+    if to_version_tuple < version2tuple("0.9.0") <= obj_version_tuple:
+        # StandardsType.version and .extensions were added in 0.9.0.
+        # assetsSummary is computed by the server, so it is safe to strip them.
+        assets_summary = obj_migrated.get("assetsSummary") or {}
+        if standards := assets_summary.get("dataStandard"):
+            stripped: List[dict] = []
+            for standard in standards:
+                standard = {
+                    k: v
+                    for k, v in standard.items()
+                    if k not in ("version", "extensions")
+                }
+                if standard not in stripped:
+                    stripped.append(standard)
+            assets_summary["dataStandard"] = stripped
+
     # Always update schemaVersion when migrating
     obj_migrated["schemaVersion"] = to_version
     return obj_migrated
@@ -526,18 +562,57 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
         if standard not in stats["dataStandard"]:
             stats["dataStandard"].append(standard)
 
-    # Collect per-asset dataStandard declarations populated by dandi-cli
+    # Collect per-asset dataStandard declarations (populated by dandi-cli)
     for standard in assetmeta.get("dataStandard") or []:
         add_if_missing(standard)
 
-    # DEPRECATED: path/encoding heuristic fallbacks for older clients that do not
-    # populate per-asset dataStandard.  Remove after 2026-12-01.
+    # Heuristic fallbacks for assets uploaded by older clients which did not
+    # populate per-asset dataStandard.  If an asset does declare a standard,
+    # possibly with a version, the bare entry added here is pruned by
+    # _merge_data_standards().
+    # TODO: remove once all assets on the server have dataStandard populated.
     if "nwb" in assetmeta["encodingFormat"]:
         add_if_missing(models.nwb_standard)
     if Path(assetmeta["path"]).name == "dataset_description.json":
         add_if_missing(models.bids_standard)
     if Path(assetmeta["path"]).suffixes == [".ome", ".zarr"]:
         add_if_missing(models.ome_ngff_standard)
+
+
+def _merge_data_standards(standards: List[dict]) -> List[dict]:
+    """Merge per-asset dataStandard entries into a list for AssetsSummary
+
+    Produces a single entry per standard (as identified by its ``identifier``,
+    or ``name`` if there is none) and version, with ``extensions`` united
+    across all assets.  An entry without a version and extensions is dropped
+    if the same standard is also listed with a version, so that assets from
+    older clients (see the heuristics in ``_add_asset_to_stats``) do not
+    produce duplicates.
+    """
+    merged: Dict[tuple, dict] = {}
+    for standard in standards:
+        key = (
+            standard.get("identifier") or standard.get("name"),
+            standard.get("version"),
+        )
+        entry = merged.setdefault(
+            key, {k: v for k, v in standard.items() if k != "extensions"}
+        )
+        for ext in standard.get("extensions") or []:
+            exts = entry.setdefault("extensions", [])
+            if ext not in exts:
+                exts.append(ext)
+    versioned = {std_id for std_id, version in merged if version is not None}
+    result = []
+    for (std_id, version), entry in merged.items():
+        if "extensions" in entry:
+            entry["extensions"].sort(
+                key=lambda e: (e.get("name") or "", e.get("version") or "")
+            )
+        elif version is None and std_id in versioned:
+            continue
+        result.append(entry)
+    return result
 
 
 # TODO?: move/bind such helpers as .from_metadata or alike within
@@ -558,4 +633,6 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
+    if "dataStandard" in stats:
+        stats["dataStandard"] = _merge_data_standards(stats["dataStandard"])
     return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)

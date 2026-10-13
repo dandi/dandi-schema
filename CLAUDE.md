@@ -56,7 +56,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   per-asset `dataStandard`) and by `aggregate_assets_summary()` (heuristic
   fallback for assets uploaded by older clients).
 - `metadata.py` — `validate()`, `migrate()` (upgrades and downgrades; dandi-cli
-  also applies it to outgoing *asset* metadata to talk to older servers), and
+  applies it to all outgoing metadata, Asset and Dandiset alike, to talk to
+  older servers), and
   `aggregate_assets_summary()` (run by dandi-archive to build
   `Dandiset.assetsSummary` from asset metadata).
 - `consts.py` — `DANDI_SCHEMA_VERSION`, `ALLOWED_INPUT_SCHEMAS`,
@@ -72,10 +73,13 @@ When adding/removing/changing fields of any model:
    `DANDI_SCHEMA_VERSION` in `consts.py` and add the previous version to
    `ALLOWED_INPUT_SCHEMAS` and (if a downgrade path exists)
    `ALLOWED_TARGET_SCHEMAS`.
-2. Register a downgrade for new fields in `migrate()` (`SIMPLE_DOWNGRADES` for
-   top-level fields that may only be dropped when empty).  Remember that
-   dandi-cli runs `migrate()` on asset metadata too, so a field it populates
-   must be downgradable or new clients cannot talk to older servers.
+2. Register a downgrade for new fields in `migrate()`: `SIMPLE_DOWNGRADES` for
+   top-level fields that may only be dropped when empty (user-provided
+   content), `LOSSY_DOWNGRADES` for automatically derived ones that may be
+   dropped even when populated, or custom code for nested changes.  dandi-cli
+   runs `migrate()` on all outgoing metadata (Asset and Dandiset), so a field
+   it populates must be downgradable or new clients cannot talk to older
+   servers.
 3. Update `test_duplicate_classes` in `tests/test_models.py` if the same field
    name now lives on two unrelated models (e.g. `dandi:dataStandard` on
    `Asset` and `AssetsSummary`).

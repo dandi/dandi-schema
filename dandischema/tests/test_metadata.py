@@ -8,7 +8,15 @@ from jsonschema.protocols import Validator as JsonschemaValidator
 from pydantic import BaseModel
 import pytest
 
-from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandiset
+from dandischema.models import (
+    Asset,
+    Dandiset,
+    PublishedAsset,
+    PublishedDandiset,
+    bids_standard,
+    hed_standard,
+    nwb_standard,
+)
 from dandischema.utils import TransitionalGenerateJsonSchema
 
 from .utils import (
@@ -723,53 +731,162 @@ def test_aggregation_bids() -> None:
     )  # only a single entry so we do not duplicate them
 
 
+@pytest.mark.ai_generated
 def test_hed_standard_structure() -> None:
-    from dandischema.models import hed_standard
-
     assert hed_standard["schemaKey"] == "StandardsType"
     assert hed_standard["name"] == "Hierarchical Event Descriptors (HED)"
     assert hed_standard["identifier"] == "RRID:SCR_014074"
 
 
+def _asset_meta(path: str, encoding_format: str, **kwargs: Any) -> dict:
+    """Minimal asset metadata record for aggregation tests"""
+    return {
+        "schemaKey": "Asset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "path": path,
+        "encodingFormat": encoding_format,
+        "contentSize": 512,
+        "digest": {"dandi:dandi-etag": "abc123-1"},
+        **kwargs,
+    }
+
+
+@pytest.mark.ai_generated
 def test_aggregate_per_asset_datastandard() -> None:
     """Per-asset dataStandard entries are collected into the summary."""
-    from dandischema.models import hed_standard
-
     data = [
-        {
-            "schemaKey": "Asset",
-            "schemaVersion": "0.6.0",
-            "path": "dataset_description.json",
-            "encodingFormat": "application/json",
-            "contentSize": 512,
-            "digest": {"dandi:dandi-etag": "abc123-1"},
-            "dataStandard": [hed_standard],
-        },
+        _asset_meta(
+            "dataset_description.json", "application/json", dataStandard=[hed_standard]
+        ),
     ]
     summary = aggregate_assets_summary(data)
     assert hed_standard in summary["dataStandard"]
-    # dataset_description.json also triggers BIDS via deprecated heuristic
-    assert sum("BIDS" in s.get("name", "") for s in summary["dataStandard"]) == 1
+    # dataset_description.json also triggers BIDS via the heuristic
+    assert bids_standard in summary["dataStandard"]
+    assert len(summary["dataStandard"]) == 2
 
 
+@pytest.mark.ai_generated
 def test_aggregate_per_asset_datastandard_no_duplication() -> None:
     """No duplication when a standard is declared both per-asset and via heuristic."""
-    from dandischema.models import bids_standard
-
     data = [
-        {
-            "schemaKey": "Asset",
-            "schemaVersion": "0.6.0",
-            "path": "dataset_description.json",
-            "encodingFormat": "application/json",
-            "contentSize": 512,
-            "digest": {"dandi:dandi-etag": "abc123-1"},
-            "dataStandard": [bids_standard],
-        },
+        _asset_meta(
+            "dataset_description.json",
+            "application/json",
+            dataStandard=[{**bids_standard, "version": "1.9.0"}],
+        ),
+        # older client: no dataStandard, the heuristic adds bare NWB
+        _asset_meta("sub-1/sub-1.nwb", "application/x-nwb"),
+        # newer client: NWB with version and an extension
+        _asset_meta(
+            "sub-2/sub-2.nwb",
+            "application/x-nwb",
+            dataStandard=[
+                {
+                    **nwb_standard,
+                    "version": "2.7.0",
+                    "extensions": [
+                        {
+                            "name": "ndx-events",
+                            "version": "0.4.0",
+                            "schemaKey": "StandardsType",
+                        },
+                    ],
+                }
+            ],
+        ),
     ]
     summary = aggregate_assets_summary(data)
-    bids_count = sum("BIDS" in s.get("name", "") for s in summary["dataStandard"])
-    assert bids_count == 1, "BIDS should appear exactly once, not duplicated"
+    assert summary["dataStandard"] == [
+        {**bids_standard, "version": "1.9.0"},
+        {
+            **nwb_standard,
+            "version": "2.7.0",
+            "extensions": [
+                {"name": "ndx-events", "version": "0.4.0", "schemaKey": "StandardsType"}
+            ],
+        },
+    ]
+
+
+@pytest.mark.ai_generated
+def test_aggregate_per_asset_datastandard_merge_extensions() -> None:
+    """Extensions are united per standard version, distinct versions are kept."""
+
+    def nwb(version: str, *exts: tuple) -> dict:
+        standard = {**nwb_standard, "version": version}
+        if exts:
+            standard["extensions"] = [
+                {"name": n, "version": v, "schemaKey": "StandardsType"} for n, v in exts
+            ]
+        return standard
+
+    standards = [
+        nwb("2.7.0", ("ndx-events", "0.4.0")),
+        nwb("2.7.0", ("ndx-ecog", "0.2.0"), ("ndx-events", "0.4.0")),
+        nwb("2.7.0", ("ndx-events", "0.3.0")),
+        nwb("2.8.0"),
+    ]
+    data = [
+        _asset_meta(f"sub-{i}/sub-{i}.nwb", "application/x-nwb", dataStandard=[std])
+        for i, std in enumerate(standards)
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["dataStandard"] == [
+        nwb(
+            "2.7.0",
+            ("ndx-ecog", "0.2.0"),
+            ("ndx-events", "0.3.0"),
+            ("ndx-events", "0.4.0"),
+        ),
+        nwb("2.8.0"),
+    ]
+
+
+@pytest.mark.ai_generated
+def test_migrate_downgrade_datastandard() -> None:
+    """Downgrade below 0.9.0 drops per-asset dataStandard and
+    version/extensions of StandardsType in assetsSummary"""
+    nwb_270 = {
+        **nwb_standard,
+        "version": "2.7.0",
+        "extensions": [
+            {"name": "ndx-events", "version": "0.4.0", "schemaKey": "StandardsType"}
+        ],
+    }
+    asset = _asset_meta("sub-1/sub-1.nwb", "application/x-nwb", dataStandard=[nwb_270])
+    for target in ("0.8.0", "0.7.0", "0.6.10"):
+        downgraded = migrate(asset, to_version=target, skip_validation=True)
+        assert downgraded["schemaVersion"] == target
+        assert "dataStandard" not in downgraded
+        assert {k: v for k, v in downgraded.items() if k != "schemaVersion"} == {
+            k: v for k, v in asset.items() if k not in ("schemaVersion", "dataStandard")
+        }
+    # original is not modified
+    assert asset["dataStandard"] == [nwb_270]
+    # no-op if not downgrading
+    assert (
+        migrate(asset, to_version=DANDI_SCHEMA_VERSION, skip_validation=True) == asset
+    )
+
+    dandiset: Dict[str, Any] = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "identifier": "DANDI:000000",
+        "assetsSummary": {
+            "schemaKey": "AssetsSummary",
+            "numberOfBytes": 1,
+            "numberOfFiles": 1,
+            "dataStandard": [
+                nwb_270,
+                {**nwb_standard, "version": "2.8.0"},
+                {**bids_standard, "version": "1.9.0"},
+            ],
+        },
+    }
+    downgraded = migrate(dandiset, to_version="0.8.0", skip_validation=True)
+    assert downgraded["assetsSummary"]["dataStandard"] == [nwb_standard, bids_standard]
+    assert dandiset["assetsSummary"]["dataStandard"][0] == nwb_270
 
 
 class TestGetJsonschemaValidator:
