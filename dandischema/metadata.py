@@ -452,15 +452,15 @@ def migrate(
     # dandi-cli), so no user-provided information is lost.
     LOSSY_DOWNGRADES = [
         # version added, fields to remove
-        ("0.9.0", ["dataStandard"]),  # per-asset dataStandard
+        ("0.8.1", ["dataStandard"]),  # per-asset dataStandard
     ]
     for ver_added, fields in LOSSY_DOWNGRADES:
         if to_version_tuple < version2tuple(ver_added) <= obj_version_tuple:
             for field in fields:
                 obj_migrated.pop(field, None)
 
-    if to_version_tuple < version2tuple("0.9.0") <= obj_version_tuple:
-        # StandardsType.version and .extensions were added in 0.9.0.
+    if to_version_tuple < version2tuple("0.8.1") <= obj_version_tuple:
+        # StandardsType.version and .extensions were added in 0.8.1.
         # assetsSummary is computed by the server, so it is safe to strip them.
         assets_summary = obj_migrated.get("assetsSummary") or {}
         if standards := assets_summary.get("dataStandard"):
@@ -546,15 +546,32 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     # which components already found, so we do not count more than
     # once in some incorrectly named datasets
     found: Dict[str, str] = {}
-    for part in Path(assetmeta["path"]).name.split(".")[0].split("_"):
-        if not found.get("subject") and part.startswith("sub-"):
-            found["subject"] = subject = part.split("sub-", 1)[1]
-            if subject not in stats["subjects"]:
-                stats["subjects"].append(subject)
-        if not found.get("sample") and part.startswith("sample-"):
-            found["sample"] = sample = part.replace("sample-", "")
-            if sample not in stats["tissuesample"]:
-                stats["tissuesample"].append(sample)
+    asset_path = Path(assetmeta["path"])
+    # (entity key, BIDS prefix, unique-values bucket in stats; None if not aggregated)
+    entities = [
+        ("subject", "sub-", "subjects"),
+        ("sample", "sample-", "tissuesample"),
+        ("session", "ses-", None),
+    ]
+    for part in asset_path.name.split(".")[0].split("_"):
+        for key, prefix, bucket in entities:
+            if not found.get(key) and part.startswith(prefix):
+                found[key] = value = part.split(prefix, 1)[1]
+                if bucket is not None and value not in stats[bucket]:
+                    stats[bucket].append(value)
+    # If ses- is absent from the filename, fall back to scanning the path
+    # parts (BIDS keeps `ses-X` as its own directory).  Deliberately no such
+    # fallback for sub-, so that subject counting behavior stays unchanged.
+    if not found.get("session"):
+        for part in asset_path.parts[:-1]:
+            if part.startswith("ses-"):
+                found["session"] = part.split("ses-", 1)[1]
+                break
+    stats["sessions"] = stats.get("sessions", [])
+    if found.get("subject") and found.get("session"):
+        pair = (found["subject"], found["session"])
+        if pair not in stats["sessions"]:
+            stats["sessions"].append(pair)
 
     stats["dataStandard"] = stats.get("dataStandard", [])
 
@@ -633,6 +650,7 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
+    stats["numberOfSessions"] = len(stats.pop("sessions", [])) or None
     if "dataStandard" in stats:
         stats["dataStandard"] = _merge_data_standards(stats["dataStandard"])
     return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)

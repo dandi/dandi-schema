@@ -11,7 +11,6 @@ from typing import (
     List,
     Literal,
     Optional,
-    Sequence,
     Type,
     TypeVar,
     Union,
@@ -736,9 +735,9 @@ class BaseType(DandiBaseModel):
         " supported by identifiers.org.",
         json_schema_extra={"nskey": "schema"},
     )
-    name: Optional[str] = Field(
-        None,
+    name: str = Field(
         description="The name of the item.",
+        min_length=1,
         max_length=150,
         json_schema_extra={"nskey": "schema"},
     )
@@ -928,7 +927,7 @@ class Contributor(DandiBaseModel):
         "people or ROR (ror.org) for institutions.",
         json_schema_extra={"nskey": "schema"},
     )
-    name: Optional[str] = Field(None, json_schema_extra={"nskey": "schema"})
+    name: str = Field(min_length=1, json_schema_extra={"nskey": "schema"})
     email: Optional[EmailStr] = Field(None, json_schema_extra={"nskey": "schema"})
     url: Optional[AnyHttpUrl] = Field(None, json_schema_extra={"nskey": "schema"})
     roleName: Optional[List[RoleType]] = Field(
@@ -950,7 +949,7 @@ class Contributor(DandiBaseModel):
         description="Identifier associated with a sponsored or gift award.",
         json_schema_extra={"nskey": DANDI_NSKEY},
     )
-    schemaKey: Literal["Contributor", "Organization", "Person"] = Field(
+    schemaKey: Literal["Contributor"] = Field(
         "Contributor", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -987,7 +986,7 @@ class Organization(Contributor):
         description="Contact for the organization",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Organization"] = Field(
+    schemaKey: Literal["Organization"] = Field(  # type: ignore[assignment]
         "Organization", validate_default=True, json_schema_extra={"readOnly": True}
     )
     _ldmeta = {
@@ -1036,7 +1035,7 @@ class Person(Contributor):
         description="An organization that this person is affiliated with.",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Person"] = Field(
+    schemaKey: Literal["Person"] = Field(  # type: ignore[assignment]
         "Person", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1222,6 +1221,12 @@ class AssetsSummary(DandiBaseModel):
         None, json_schema_extra={"readOnly": True}
     )  # more of NWB
     numberOfCells: Optional[int] = Field(None, json_schema_extra={"readOnly": True})
+    numberOfSessions: Optional[int] = Field(
+        None,
+        description="Number of unique (subject, session) pairs, derived from "
+        "BIDS or DANDI ses-* tokens in asset file names or paths.",
+        json_schema_extra={"readOnly": True},
+    )
 
     dataStandard: Optional[List[StandardsType]] = Field(
         None, json_schema_extra={"readOnly": True}
@@ -1311,7 +1316,7 @@ class Activity(DandiBaseModel):
         description="A listing of equipment used for the activity.",
         json_schema_extra={"nskey": "prov"},
     )
-    schemaKey: Literal["Activity", "Project", "Session", "PublishActivity"] = Field(
+    schemaKey: Literal["Activity"] = Field(
         "Activity", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1333,7 +1338,7 @@ class Project(Activity):
         description="A brief description of the project.",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Project"] = Field(
+    schemaKey: Literal["Project"] = Field(  # type: ignore[assignment]
         "Project", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1350,13 +1355,13 @@ class Session(Activity):
         description="A brief description of the session.",
         json_schema_extra={"nskey": "schema"},
     )
-    schemaKey: Literal["Session"] = Field(
+    schemaKey: Literal["Session"] = Field(  # type: ignore[assignment]
         "Session", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
 
 class PublishActivity(Activity):
-    schemaKey: Literal["PublishActivity"] = Field(
+    schemaKey: Literal["PublishActivity"] = Field(  # type: ignore[assignment]
         "PublishActivity", validate_default=True, json_schema_extra={"readOnly": True}
     )
 
@@ -1659,9 +1664,9 @@ class CommonModel(DandiBaseModel):
         None, json_schema_extra={"nskey": DANDI_NSKEY}
     )
 
-    wasGeneratedBy: Optional[Sequence[Activity]] = Field(
-        None, json_schema_extra={"nskey": "prov"}
-    )
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(None, json_schema_extra={"nskey": "prov"})
     schemaKey: str = Field(
         "CommonModel", validate_default=True, json_schema_extra={"readOnly": True}
     )
@@ -1806,7 +1811,7 @@ class Dandiset(CommonModel):
         json_schema_extra={"readOnly": True, "nskey": "schema"},
     )
 
-    wasGeneratedBy: Optional[Sequence[Project]] = Field(
+    wasGeneratedBy: Optional[list[Project]] = Field(  # type: ignore[assignment]
         None,
         title="Associated projects",
         description="Project(s) that generated this Dandiset.",
@@ -1949,10 +1954,12 @@ class BareAsset(CommonModel):
         description="Associated participant(s) or subject(s).",
         json_schema_extra={"nskey": "prov"},
     )
-    wasGeneratedBy: Optional[List[Union[Session, Project, Activity]]] = Field(
+    wasGeneratedBy: Optional[
+        list[Union[Activity, Project, PublishActivity, Session]]
+    ] = Field(
         None,
-        title="Name of the session, project or activity.",
-        description="Describe the session, project or activity that generated this asset.",
+        title="Associated activities",
+        description="Activities that generated this asset.",
         json_schema_extra={"nskey": "prov"},
     )
 
