@@ -850,14 +850,14 @@ class TestContributor:
         with pytest.raises(
             pydantic.ValidationError, match="Contact person must have an email address"
         ):
-            Contributor(roleName=roles)
+            Contributor(name="Nemo", roleName=roles)
 
     @pytest.mark.parametrize("roles", _NON_CONTACT_PERSON_ROLES_ARGS)
     def test_non_contact_person_without_email(self, roles: List[RoleType]) -> None:
         """
         Test creating a `Contributor` instance as a non-contact person without an email
         """
-        Contributor(roleName=roles)
+        Contributor(name="Nemo", roleName=roles)
 
     @pytest.mark.parametrize(
         "roles", _NON_CONTACT_PERSON_ROLES_ARGS + _CONTACT_PERSON_ROLES_ARGS
@@ -866,7 +866,49 @@ class TestContributor:
         """
         Test creating a `Contributor` instance with an email
         """
-        Contributor(email="nemo@dandiarchive.org", roleName=roles)
+        Contributor(name="Nemo", email="nemo@dandiarchive.org", roleName=roles)
+
+    @pytest.mark.ai_generated
+    @pytest.mark.parametrize("model", [Contributor, Organization, Person])
+    @pytest.mark.parametrize("name_kwargs", [{}, {"name": None}, {"name": ""}])
+    def test_name_required(
+        self, model: Type[Contributor], name_kwargs: Dict[str, Any]
+    ) -> None:
+        """
+        Test that `name` is required and non-empty for `Contributor` and subclasses
+
+        (https://github.com/dandi/dandi-schema/issues/442)
+        """
+        with pytest.raises(pydantic.ValidationError) as exc_info:
+            model(**name_kwargs)
+        assert [e["loc"] for e in exc_info.value.errors()] == [("name",)]
+
+
+@pytest.mark.ai_generated
+@pytest.mark.parametrize(
+    "model",
+    [
+        m
+        for m in vars(models).values()
+        if isclass(m) and issubclass(m, BaseType) and m.__module__ == models.__name__
+    ],
+)
+class TestBaseTypeName:
+    """
+    `name` is required and non-empty for `BaseType` and all its subclasses
+    (https://github.com/dandi/dandi-schema/issues/442)
+    """
+
+    @pytest.mark.parametrize("name_kwargs", [{}, {"name": None}, {"name": ""}])
+    def test_name_required(
+        self, model: Type[BaseType], name_kwargs: Dict[str, Any]
+    ) -> None:
+        with pytest.raises(pydantic.ValidationError) as exc_info:
+            model(identifier="UBERON:0004727", **name_kwargs)
+        assert [e["loc"] for e in exc_info.value.errors()] == [("name",)]
+
+    def test_with_name(self, model: Type[BaseType]) -> None:
+        assert model(name="cochlear nerve").name == "cochlear nerve"
 
 
 def _get_field_pattern(
