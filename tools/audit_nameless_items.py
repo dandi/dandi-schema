@@ -75,6 +75,8 @@ from typing import Any, Dict, Iterator, List, Optional, Set, Tuple
 from xml.etree import ElementTree
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Published records use "DANDI:<id>" identifiers; the models pick the instance
 # config up at import time, so it has to be in place before importing them.
@@ -233,6 +235,16 @@ class Fetcher:
         self.bucket_url = bucket_url.rstrip("/")
         self.cache_dir = cache_dir
         self.session = requests.Session()
+        # Ride out transient connection failures and throttling of S3 (or
+        # of a proxy in between) instead of failing the whole run
+        retry = Retry(
+            total=5,
+            backoff_factor=2,
+            status_forcelist=(429, 500, 502, 503, 504),
+            allowed_methods=("GET", "HEAD"),
+        )
+        self.session.mount("https://", HTTPAdapter(max_retries=retry))
+        self.session.mount("http://", HTTPAdapter(max_retries=retry))
 
     def list_prefixes(self, prefix: str) -> List[str]:
         out: List[str] = []
@@ -326,8 +338,14 @@ def audit_version(
         rep.errors = validate_dandiset(meta)
     if do_assets:
         key = f"{base}/assets.jsonld"
-        size = fetcher.size(key)
-        if size is None:
+        size: Optional[int] = None
+        try:
+            size = fetcher.size(key)
+        except requests.RequestException as e:
+            rep.assets_skipped_reason = f"{type(e).__name__}: {e}"
+        if rep.assets_skipped_reason is not None:
+            pass  # could not even check whether there is an assets.jsonld
+        elif size is None:
             rep.assets_skipped_reason = "no assets.jsonld"
         elif max_assets_mb and size > max_assets_mb * 2**20:
             rep.assets_skipped_reason = f"assets.jsonld is {size / 2**20:.0f} MB"
