@@ -776,6 +776,60 @@ def test_aggregate_number_of_sessions() -> None:
     assert "numberOfSessions" not in summary
 
 
+def _nwb_asset(path: str, *subject_ids: str) -> Dict[str, Any]:
+    asset = _bids_asset(path)
+    asset["wasAttributedTo"] = [
+        {"schemaKey": "Participant", "identifier": i} for i in subject_ids
+    ]
+    return asset
+
+
+@pytest.mark.ai_generated
+def test_aggregate_subjects_sanitized_names() -> None:
+    # File name produced by an older dandi-cli, which kept "," (as in
+    # https://dandiarchive.org/dandiset/000550): the same subject, counted once
+    data = [
+        _nwb_asset(
+            "sub-Fig6-5xBi-0,83MHz-08/sub-Fig6-5xBi-0,83MHz-08_image.nwb",
+            "Fig6_5xBi_0,83MHz_08",
+        )
+    ]
+    assert aggregate_assets_summary(data)["numberOfSubjects"] == 1
+
+    # Legacy ("-") and BIDS ("+") sanitized names of the same subject
+    data = [
+        _nwb_asset("sub-fly-226/sub-fly-226_ses-1_ecephys.nwb", "fly_226"),
+        _nwb_asset("sub-fly+226/sub-fly+226_ses-2_ecephys.nwb", "fly_226"),
+    ]
+    assert aggregate_assets_summary(data)["numberOfSubjects"] == 1
+
+    # Distinct subjects stay distinct even if their sanitized forms coincide
+    # (as in https://dandiarchive.org/dandiset/001702), with or without metadata
+    data = [
+        _nwb_asset("sub-5XFAD+-M1/sub-5XFAD+-M1_ses-1.nwb", "5XFAD+_M1"),
+        _nwb_asset("sub-5XFAD--M1/sub-5XFAD--M1_ses-1.nwb", "5XFAD-_M1"),
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["numberOfSubjects"] == 2
+    assert summary["numberOfSessions"] == 2
+    for asset in data:
+        del asset["wasAttributedTo"]
+    summary = aggregate_assets_summary(data)
+    assert summary["numberOfSubjects"] == 2
+    assert summary["numberOfSessions"] == 2
+
+    # A file name which does not correspond to the subject metadata still adds
+    # a subject (as in https://dandiarchive.org/dandiset/001869)
+    data = [
+        _nwb_asset("sub-fly-226/sub-fly-226_ses-1.nwb", "fly_0"),
+        _nwb_asset("sub-fly-226/sub-fly-226_ses-2.nwb", "fly_0"),
+        _nwb_asset("sub-fly-228/sub-fly-228_ses-1.nwb", "fly_228"),
+    ]
+    assert aggregate_assets_summary(data)["numberOfSubjects"] == 3
+    with pytest.raises(AssertionError):
+        aggregate_assets_summary(data[:1])
+
+
 class TestGetJsonschemaValidator:
     @pytest.mark.parametrize(
         "schema_version, schema_key, expected_error_msg",
