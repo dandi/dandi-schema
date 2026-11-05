@@ -23,6 +23,7 @@ from .utils import (
     _ensure_newline,
     dandi_jsonschema_validator,
     json_object_adapter,
+    sanitize_label,
     sanitize_value,
     strip_top_level_optional,
     validate_json,
@@ -511,18 +512,23 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     # once in some incorrectly named datasets
     found: Dict[str, str] = {}
     asset_path = Path(assetmeta["path"])
-    # (entity key, BIDS prefix, unique-values bucket in stats; None if not aggregated)
+    # (entity key, BIDS prefix, unique-values bucket in stats; None if not aggregated).
+    # Values from file names go to separate "filename_*" buckets, since they can be
+    # differently sanitized versions of the identifiers in the metadata; see
+    # `_count_distinct`.
     entities = [
-        ("subject", "sub-", "subjects"),
-        ("sample", "sample-", "tissuesample"),
+        ("subject", "sub-", "filename_subjects"),
+        ("sample", "sample-", "filename_tissuesample"),
         ("session", "ses-", None),
     ]
     for part in asset_path.name.split(".")[0].split("_"):
         for key, prefix, bucket in entities:
             if not found.get(key) and part.startswith(prefix):
                 found[key] = value = part.split(prefix, 1)[1]
-                if bucket is not None and value not in stats[bucket]:
-                    stats[bucket].append(value)
+                if bucket is not None:
+                    stats[bucket] = stats.get(bucket, [])
+                    if value not in stats[bucket]:
+                        stats[bucket].append(value)
     # If ses- is absent from the filename, fall back to scanning the path
     # parts (BIDS keeps `ses-X` as its own directory).  Deliberately no such
     # fallback for sub-, so that subject counting behavior stays unchanged.
@@ -552,6 +558,25 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
         add_if_missing(models.ome_ngff_standard)
 
 
+def _count_distinct(stats: _stats_type, bucket: str) -> int:
+    """Pop `bucket` and ``filename_<bucket>`` from `stats` and count distinct values
+
+    ``stats[bucket]`` holds the distinct identifiers from the metadata (as
+    sanitized by `sanitize_value`) and ``stats["filename_" + bucket]`` the distinct
+    labels found in file names.  A label from a file name is counted only if it is
+    not merely a differently sanitized form of an identifier from the metadata,
+    i.e., if its `sanitize_label` form differs from theirs.  Otherwise values are
+    compared as they are, so e.g. ``5XFAD+_M1`` and ``5XFAD-_M1`` stay distinct
+    although their `sanitize_label` forms coincide.
+    """
+    from_metadata = cast(list, stats.pop(bucket, []))
+    from_filenames = cast(list, stats.pop(f"filename_{bucket}", []))
+    known = {sanitize_label(v) for v in from_metadata}
+    return len(from_metadata) + sum(
+        sanitize_label(v) not in known for v in from_filenames
+    )
+
+
 # TODO?: move/bind such helpers as .from_metadata or alike within
 #        model classes themselves to centralize access to those constructors.
 def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
@@ -561,13 +586,13 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
         _add_asset_to_stats(meta, stats)
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
     stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
-    stats["numberOfSubjects"] = len(stats.pop("subjects", [])) or None
+    stats["numberOfSubjects"] = _count_distinct(stats, "subjects") or None
     if stats["numberOfSubjects"]:
         # Must not happen. If does -- a bug in software
         assert stats["numberOfFiles"]
         assert stats["numberOfSubjects"] <= stats["numberOfFiles"]
     stats["numberOfSamples"] = (
-        len(stats.pop("tissuesample", [])) + len(stats.pop("slice", []))
+        _count_distinct(stats, "tissuesample") + len(stats.pop("slice", []))
     ) or None
     stats["numberOfCells"] = len(stats.pop("cell", [])) or None
     stats["numberOfSessions"] = len(stats.pop("sessions", [])) or None

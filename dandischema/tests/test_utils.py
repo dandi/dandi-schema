@@ -1,4 +1,5 @@
 from contextlib import nullcontext
+import re
 from typing import Any, Dict, List, Optional, Union, cast
 from unittest.mock import patch
 
@@ -9,10 +10,12 @@ import pytest
 
 from dandischema.exceptions import JsonschemaValidationError
 from dandischema.utils import (
+    BIDS_LABEL_REGEX,
     _ensure_newline,
     dandi_jsonschema_validator,
     jsonschema_validator,
     name2title,
+    sanitize_label,
     sanitize_value,
     strip_top_level_optional,
     validate_json,
@@ -97,6 +100,39 @@ def test_sanitize_value() -> None:
     assert sanitize_value("A;B") == "A-B"
     assert sanitize_value("A\\/B") == "A--B"
     assert sanitize_value("A\"'B") == "A--B"
+
+
+@pytest.mark.ai_generated
+@pytest.mark.parametrize(
+    "value,label",
+    [
+        ("fly226", "fly226"),
+        ("fly_226", "fly+226"),
+        ("fly-226", "fly+226"),
+        ("a+b", "a+b"),
+        # identifiers from https://dandiarchive.org/dandiset/000550 and 000703
+        ("Fig6_5xBi_0,83MHz_08", "Fig6+5xBi+0+83MHz+08"),
+        ("nac (2)", "nac++2+"),
+        # one-to-one replacement: nothing is collapsed or stripped
+        ("-0.4V", "+0+4V"),
+        ("0.4V", "0+4V"),
+        ("A B\t C", "A+B++C"),
+        ("µm", "+m"),
+    ],
+)
+def test_sanitize_label(value: str, label: str) -> None:
+    assert sanitize_label(value) == label
+    assert re.fullmatch(BIDS_LABEL_REGEX, label)
+
+
+@pytest.mark.ai_generated
+@pytest.mark.parametrize("field", ["non-extension", "extension"])
+def test_sanitize_label_of_sanitized_value(field: str) -> None:
+    # Labels in file names produced with sanitize_value map to the same BIDS label
+    # as the identifiers they were produced from
+    value = "".join(chr(i) for i in range(32, 127)) + " \t\nµé"
+    for v in [value, *value]:
+        assert sanitize_label(sanitize_value(v, field)) == sanitize_label(v)
 
 
 @pytest.fixture

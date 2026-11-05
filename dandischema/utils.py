@@ -134,6 +134,8 @@ def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> 
 
     Based on dandi.organize._sanitize_value.
 
+    See `sanitize_label` for producing labels that are valid in BIDS.
+
     .. versionchanged:: 0.8.3
 
             ``sanitize_value`` added
@@ -142,6 +144,39 @@ def sanitize_value(value: str, field: str = "non-extension", sub: str = "-") -> 
     if field != "extension":
         value = value.replace(".", sub)
     return value
+
+
+#: Regular expression for a BIDS label.  BIDS 1.11.0 allows ``+`` in labels
+#: (https://github.com/bids-standard/bids-specification/pull/1926).
+BIDS_LABEL_REGEX = r"[0-9a-zA-Z+]+"
+
+
+def sanitize_label(value: str) -> str:
+    """Make `value` (e.g., a subject or session identifier) a BIDS label
+
+    Every character other than an ASCII letter, an ASCII digit or ``+`` is
+    replaced with ``+``, so the result matches `BIDS_LABEL_REGEX` unless
+    `value` is empty.  The replacement is one-to-one: runs are not collapsed
+    and nothing is stripped, so identifiers such as ``"-0.4V"`` and ``"0.4V"``
+    stay distinct.
+
+    Since `sanitize_value` only replaces characters which this function
+    replaces too, ``sanitize_label(sanitize_value(v)) == sanitize_label(v)``
+    for any `v`.  This makes `sanitize_label` suitable for matching a label in
+    a file name produced with `sanitize_value` (as by older dandi-cli
+    versions) against the identifier it was produced from.
+
+    Parameters
+    ----------
+    value : str
+        Value to sanitize.
+
+    Returns
+    -------
+    str
+        The sanitized value.
+    """
+    return re.sub(r"[^0-9a-zA-Z+]", "+", value)
 
 
 def dandi_jsonschema_validator(schema: dict[str, Any]) -> JsonschemaValidator:
