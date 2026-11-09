@@ -1,5 +1,13 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
+# Each migration-playbook demo exhibit keeps its source schemas and their raw
+# `gen-pydantic` / `gen-json-schema` output under a `schemas/` folder, kept for
+# reference. Treat that whole folder as generated/reference material — don't lint
+# or reformat it (e.g. flake8 F401 on the generator's fixed import block). New
+# exhibits following the `schemas/` convention are covered automatically.
+exclude: 'migration_to_linkml_playbook/.*/schemas/'
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

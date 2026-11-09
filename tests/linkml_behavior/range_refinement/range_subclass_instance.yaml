@@ -1,0 +1,4 @@
+respecifiedSlot:
+  - schemaKey: RangeSubclass
+    name: a range subclass
+    subclass_marker: SUB-1
