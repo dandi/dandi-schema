@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from copy import deepcopy
 from enum import Enum
 from functools import cache
@@ -459,6 +460,10 @@ def migrate(
             for field in fields:
                 obj_migrated.pop(field, None)
 
+    if to_version_tuple < version2tuple("0.8.2") <= obj_version_tuple:
+        # The archive can recompute this summary from the assets.
+        (obj_migrated.get("assetsSummary") or {}).pop("anatomy", None)
+
     if to_version_tuple < version2tuple("0.8.1") <= obj_version_tuple:
         # StandardsType.version and .extensions were added in 0.8.1.
         # assetsSummary is computed by the server, so it is safe to strip them.
@@ -632,13 +637,31 @@ def _merge_data_standards(standards: List[dict]) -> List[dict]:
     return result
 
 
+def _sample_anatomy(samples: Iterable[dict]) -> Iterator[dict]:
+    for sample in samples:
+        if sample.get("schemaKey") == "BioSample":
+            yield from sample.get("anatomy") or []
+            yield from _sample_anatomy(sample.get("wasDerivedFrom") or [])
+
+
 # TODO?: move/bind such helpers as .from_metadata or alike within
 #        model classes themselves to centralize access to those constructors.
 def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     """Given an iterable of metadata records produce AssetSummary"""
     stats: _stats_type = {}
+    anatomy: Dict[tuple[str, str], dict] = {}
     for meta in metadata:
         _add_asset_to_stats(meta, stats)
+        for term in _sample_anatomy(meta.get("wasDerivedFrom") or []):
+            # Anatomy permits name-only terms. Keep these distinct from identifiers.
+            key = (
+                ("id", term["identifier"])
+                if term.get("identifier")
+                else ("name", term["name"])
+            )
+            anatomy.setdefault(key, term)
+    if anatomy:
+        stats["anatomy"] = list(anatomy.values())
     stats["numberOfBytes"] = stats.get("numberOfBytes", 0)
     stats["numberOfFiles"] = stats.get("numberOfFiles", 0)
     stats["numberOfSubjects"] = len(stats.pop("subjects", [])) or None

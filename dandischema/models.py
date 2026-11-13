@@ -1243,6 +1243,11 @@ class AssetsSummary(DandiBaseModel):
         None, json_schema_extra={"readOnly": True, "nskey": "schema"}
     )
 
+    anatomy: Optional[List[Anatomy]] = Field(
+        None,
+        description="Anatomical structures represented in the assets' biological samples.",
+        json_schema_extra={"readOnly": True},
+    )
     species: Optional[List[SpeciesType]] = Field(
         None, json_schema_extra={"readOnly": True}
     )

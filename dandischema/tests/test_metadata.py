@@ -805,6 +805,52 @@ def _asset_meta(path: str, encoding_format: str, **kwargs: Any) -> dict:
 
 
 @pytest.mark.ai_generated
+def test_aggregate_sample_anatomy() -> None:
+    cortex = {"name": "cortex", "identifier": "UBERON:0000956", "schemaKey": "Anatomy"}
+    muscle = {"name": "muscle", "schemaKey": "Anatomy"}
+    skin = {"name": "skin", "schemaKey": "Anatomy"}
+    sample = {
+        "schemaKey": "BioSample",
+        "identifier": "a",
+        "sampleType": {"name": "slice"},
+    }
+    first = _asset_meta(
+        "a.bin",
+        "application/octet-stream",
+        wasDerivedFrom=[
+            {
+                **sample,
+                "anatomy": [cortex],
+                "wasDerivedFrom": [
+                    sample,
+                    {**sample, "anatomy": [muscle]},
+                ],
+            },
+            {**sample, "anatomy": [skin]},
+        ],
+    )
+    second = _asset_meta(
+        "b.bin",
+        "application/octet-stream",
+        wasDerivedFrom=[
+            {**sample, "anatomy": [{**cortex, "name": "another label"}, muscle]},
+        ],
+    )
+    summary = aggregate_assets_summary([first, second])
+    assert summary["anatomy"] == [cortex, muscle, skin]
+    assert "anatomy" not in aggregate_assets_summary(
+        [_asset_meta("c.bin", "text/plain")]
+    )
+
+    record = {"schemaVersion": DANDI_SCHEMA_VERSION, "assetsSummary": summary}
+    older = migrate(record, to_version="0.8.1", skip_validation=True)
+    assert older["assetsSummary"] == {
+        k: v for k, v in summary.items() if k != "anatomy"
+    }
+    assert summary["anatomy"] == [cortex, muscle, skin]
+
+
+@pytest.mark.ai_generated
 def test_aggregate_per_asset_datastandard() -> None:
     """Per-asset dataStandard entries are collected into the summary."""
     data = [

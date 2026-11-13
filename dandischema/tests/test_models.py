@@ -647,6 +647,11 @@ def test_duplicate_classes() -> None:
                 "AssetsSummary",
             }:
                 return
+            if qname == "dandi:anatomy" and {t.__name__, klass.__name__} == {
+                "BioSample",
+                "AssetsSummary",
+            }:
+                return
             if qname == "dandi:species" and {t.__name__, klass.__name__} == {
                 "Participant",
                 "AssetsSummary",
