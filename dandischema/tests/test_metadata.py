@@ -1086,3 +1086,107 @@ class TestGetJsonschemaValidatorLocal:
 
         with pytest.raises(ValueError, match="Schema key must be one of"):
             _get_jsonschema_validator_local(invalid_schema_key)
+
+
+MOVE_TORSO = {
+    "schemaKey": "HedTag",
+    "name": "Action/Move/Move-body-part/Move-torso",
+    "identifier": "HED:HED_0012113",
+}
+LABEL = {
+    "schemaKey": "HedTag",
+    "name": "Property/Informational-property/Label",
+    "identifier": "HED:HED_0012760",
+}
+ANNOTATION = {
+    "schemaKey": "HedAnnotation",
+    "value": "(Agent/Animal-agent, (Action/Move/Move-body-part/Move-torso))",
+}
+
+
+@pytest.mark.ai_generated
+def test_aggregate_hed_tag() -> None:
+    """Per-asset hedTag entries are merged into the summary without duplicates,
+    and the summary has no hedTag when no asset has one"""
+    data = [
+        _asset_meta("sub-1/sub-1.nwb", "application/x-nwb", hedTag=[MOVE_TORSO]),
+        _asset_meta("sub-2/sub-2.nwb", "application/x-nwb", hedTag=[MOVE_TORSO, LABEL]),
+        _asset_meta("sub-3/sub-3.nwb", "application/x-nwb"),
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["hedTag"] == [MOVE_TORSO, LABEL]
+
+    summary = aggregate_assets_summary(data[2:])
+    assert "hedTag" not in summary
+
+
+@pytest.mark.ai_generated
+def test_aggregate_hed_tag_count() -> None:
+    """Counts of the same tag are added up across assets, and dropped from the
+    summary entry if any asset with that tag has no count"""
+    data = [
+        _asset_meta(
+            "sub-1/sub-1.nwb",
+            "application/x-nwb",
+            hedTag=[{**MOVE_TORSO, "count": 3}, {**LABEL, "count": 1}],
+        ),
+        _asset_meta(
+            "sub-2/sub-2.nwb",
+            "application/x-nwb",
+            hedTag=[{**MOVE_TORSO, "count": 2}, LABEL],
+        ),
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["hedTag"] == [{**MOVE_TORSO, "count": 5}, LABEL]
+
+
+@pytest.mark.ai_generated
+def test_aggregate_hed_annotation() -> None:
+    """hedAnnotation entries are merged like hedTag entries, adding up counts"""
+    data = [
+        _asset_meta(
+            f"sub-{i}/sub-{i}.nwb",
+            "application/x-nwb",
+            hedAnnotation=[{**ANNOTATION, "count": i}],
+        )
+        for i in (1, 2)
+    ]
+    summary = aggregate_assets_summary(data)
+    assert summary["hedAnnotation"] == [{**ANNOTATION, "count": 3}]
+
+
+@pytest.mark.ai_generated
+def test_migrate_downgrade_hed_tag() -> None:
+    """Downgrade below 0.8.1 drops hedTag and hedAnnotation from assets and from
+    assetsSummary"""
+    asset = _asset_meta(
+        "sub-1/sub-1.nwb",
+        "application/x-nwb",
+        hedTag=[MOVE_TORSO],
+        hedAnnotation=[ANNOTATION],
+    )
+    for target in ("0.8.0", "0.7.0", "0.6.10"):
+        downgraded = migrate(asset, to_version=target, skip_validation=True)
+        assert "hedTag" not in downgraded
+        assert "hedAnnotation" not in downgraded
+    assert asset["hedTag"] == [MOVE_TORSO]
+    assert (
+        migrate(asset, to_version=DANDI_SCHEMA_VERSION, skip_validation=True) == asset
+    )
+
+    dandiset: Dict[str, Any] = {
+        "schemaKey": "Dandiset",
+        "schemaVersion": DANDI_SCHEMA_VERSION,
+        "identifier": "DANDI:000000",
+        "assetsSummary": {
+            "schemaKey": "AssetsSummary",
+            "numberOfBytes": 1,
+            "numberOfFiles": 1,
+            "hedTag": [MOVE_TORSO],
+            "hedAnnotation": [ANNOTATION],
+        },
+    }
+    downgraded = migrate(dandiset, to_version="0.8.0", skip_validation=True)
+    assert "hedTag" not in downgraded["assetsSummary"]
+    assert "hedAnnotation" not in downgraded["assetsSummary"]
+    assert dandiset["assetsSummary"]["hedTag"] == [MOVE_TORSO]

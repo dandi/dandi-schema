@@ -452,7 +452,10 @@ def migrate(
     # dandi-cli), so no user-provided information is lost.
     LOSSY_DOWNGRADES = [
         # version added, fields to remove
-        ("0.8.1", ["dataStandard"]),  # per-asset dataStandard
+        (
+            "0.8.1",
+            ["dataStandard", "hedTag", "hedAnnotation"],
+        ),  # per-asset dataStandard
     ]
     for ver_added, fields in LOSSY_DOWNGRADES:
         if to_version_tuple < version2tuple(ver_added) <= obj_version_tuple:
@@ -463,6 +466,8 @@ def migrate(
         # StandardsType.version and .extensions were added in 0.8.1.
         # assetsSummary is computed by the server, so it is safe to strip them.
         assets_summary = obj_migrated.get("assetsSummary") or {}
+        assets_summary.pop("hedTag", None)
+        assets_summary.pop("hedAnnotation", None)
         if standards := assets_summary.get("dataStandard"):
             stripped: List[dict] = []
             for standard in standards:
@@ -595,6 +600,30 @@ def _add_asset_to_stats(assetmeta: Dict[str, Any], stats: _stats_type) -> None:
     if Path(assetmeta["path"]).suffixes == [".ome", ".zarr"]:
         add_if_missing(models.ome_ngff_standard)
 
+    for key in ["hedTag", "hedAnnotation"]:
+        if entries := assetmeta.get(key):
+            stats[key] = stats.get(key, []) + entries
+
+
+def _merge_hed_entries(entries: List[dict]) -> List[dict]:
+    """Merge per-asset hedTag or hedAnnotation entries into a list for AssetsSummary
+
+    Entries that differ only in their count are combined into one.  Their counts
+    are added up only if every entry has one, since a partial sum would
+    understate the total.
+    """
+    merged: Dict[tuple, dict] = {}
+    for entry in entries:
+        key = tuple(sorted((k, v) for k, v in entry.items() if k != "count"))
+        if key not in merged:
+            merged[key] = dict(entry)
+        elif "count" in merged[key]:
+            if "count" in entry:
+                merged[key]["count"] += entry["count"]
+            else:
+                del merged[key]["count"]
+    return list(merged.values())
+
 
 def _merge_data_standards(standards: List[dict]) -> List[dict]:
     """Merge per-asset dataStandard entries into a list for AssetsSummary
@@ -653,4 +682,7 @@ def aggregate_assets_summary(metadata: Iterable[Dict[str, Any]]) -> dict:
     stats["numberOfSessions"] = len(stats.pop("sessions", [])) or None
     if "dataStandard" in stats:
         stats["dataStandard"] = _merge_data_standards(stats["dataStandard"])
+    for key in ["hedTag", "hedAnnotation"]:
+        if key in stats:
+            stats[key] = _merge_hed_entries(stats[key])
     return models.AssetsSummary(**stats).model_dump(mode="json", exclude_none=True)

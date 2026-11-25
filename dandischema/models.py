@@ -855,6 +855,53 @@ class MeasurementTechniqueType(BaseType):
     )
 
 
+class HedTag(BaseType):
+    """A HED (Hierarchical Event Descriptors) tag used in an asset's annotations"""
+
+    # Overrides BaseType.name to drop its max_length: long forms in HED library
+    # schemas exceed 150 characters (166 in SCORE 2.1.0).
+    name: str = Field(
+        description="The tag in long form (its full path in the HED schema), "
+        "without a value. A tag from a library schema starts with the library "
+        "name, e.g. score:Feature-property/Episode-property/Seizure-semiology.",
+        min_length=1,
+        json_schema_extra={"nskey": "schema"},
+    )
+    count: Optional[int] = Field(
+        None,
+        description="Number of events (table rows) whose assembled annotation "
+        "contains the tag.",
+        ge=0,
+        json_schema_extra={"nskey": DANDI_NSKEY},
+    )
+    schemaKey: Literal["HedTag"] = Field(
+        "HedTag", validate_default=True, json_schema_extra={"readOnly": True}
+    )
+
+
+class HedAnnotation(DandiBaseModel):
+    """A HED (Hierarchical Event Descriptors) annotation as it applies to events"""
+
+    value: str = Field(
+        description="The annotation in long form with its groups, with values "
+        "other than label text replaced by #. Tags from a library schema start "
+        "with the library name, as in HedTag.name.",
+        min_length=1,
+        json_schema_extra={"nskey": "schema"},
+    )
+    count: Optional[int] = Field(
+        None,
+        description="Number of events (table rows) with this annotation.",
+        ge=0,
+        json_schema_extra={"nskey": DANDI_NSKEY},
+    )
+    schemaKey: Literal["HedAnnotation"] = Field(
+        "HedAnnotation", validate_default=True, json_schema_extra={"readOnly": True}
+    )
+
+    _ldmeta = {"rdfs:subClassOf": ["schema:Thing", "prov:Entity"], "nskey": DANDI_NSKEY}
+
+
 class StandardsType(BaseType):
     """Identifier for data standard used"""
 
@@ -1244,6 +1291,10 @@ class AssetsSummary(DandiBaseModel):
     )
 
     species: Optional[List[SpeciesType]] = Field(
+        None, json_schema_extra={"readOnly": True}
+    )
+    hedTag: Optional[List[HedTag]] = Field(None, json_schema_extra={"readOnly": True})
+    hedAnnotation: Optional[List[HedAnnotation]] = Field(
         None, json_schema_extra={"readOnly": True}
     )
     schemaKey: Literal["AssetsSummary"] = Field(
@@ -1966,6 +2017,18 @@ class BareAsset(CommonModel):
     dataStandard: Optional[List[StandardsType]] = Field(
         None,
         description="Data standard(s) applicable to this asset.",
+        json_schema_extra={"nskey": DANDI_NSKEY},
+    )
+    hedTag: Optional[List[HedTag]] = Field(
+        None,
+        description="Distinct HED (Hierarchical Event Descriptors) tags used in "
+        "the annotations of this asset.",
+        json_schema_extra={"nskey": DANDI_NSKEY},
+    )
+    hedAnnotation: Optional[List[HedAnnotation]] = Field(
+        None,
+        description="Distinct HED (Hierarchical Event Descriptors) annotations "
+        "of the events in this asset.",
         json_schema_extra={"nskey": DANDI_NSKEY},
     )
 
