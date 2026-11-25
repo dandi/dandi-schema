@@ -24,6 +24,8 @@ from ..models import (
     DandiBaseModel,
     Dandiset,
     DigestType,
+    HedAnnotation,
+    HedTag,
     IdentifierType,
     LicenseType,
     Organization,
@@ -647,6 +649,16 @@ def test_duplicate_classes() -> None:
                 "AssetsSummary",
             }:
                 return
+            if qname in ("dandi:hedTag", "dandi:hedAnnotation") and {
+                t.__name__,
+                klass.__name__,
+            } == {"Asset", "AssetsSummary"}:
+                return
+            if qname == "dandi:count" and {t.__name__, klass.__name__} == {
+                "HedTag",
+                "HedAnnotation",
+            }:
+                return
             if qname == "dandi:species" and {t.__name__, klass.__name__} == {
                 "Participant",
                 "AssetsSummary",
@@ -1182,3 +1194,31 @@ class TestDandisetSameAs:
         base_dandiset_metadata["sameAs"] = dandi_urls
         with pytest.raises(ValidationError):
             Dandiset.model_validate(base_dandiset_metadata)
+
+
+@pytest.mark.ai_generated
+def test_hed_tag_long_name() -> None:
+    """HedTag accepts long forms longer than BaseType's 150-character limit,
+    as found in HED library schemas"""
+    name = (
+        "Feature-property/Episode-property/Seizure-semiology/Semiology-elementary-motor/"
+        "Semiology-tonic-clonic/Semiology-tonic-clonic-with-figure-of-four-extension-right-elbow"
+    )
+    assert len(name) > 150
+    tag = HedTag(name=name, identifier="HED:HED_0012113")
+    assert tag.name == name
+    with pytest.raises(ValidationError):
+        HedTag(name="")
+    with pytest.raises(ValidationError):
+        HedTag(name="Property/Informational-property/Label", count=-1)
+
+
+@pytest.mark.ai_generated
+def test_hed_annotation() -> None:
+    """HedAnnotation needs a non-empty value and a non-negative count"""
+    value = "(Property/Informational-property/Label/Experimenter_Axial-AIM, Agent/Animal-agent)"
+    assert HedAnnotation(value=value, count=4).count == 4
+    with pytest.raises(ValidationError):
+        HedAnnotation(value="")
+    with pytest.raises(ValidationError):
+        HedAnnotation(value=value, count=-1)
